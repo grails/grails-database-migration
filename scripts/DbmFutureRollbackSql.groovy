@@ -23,7 +23,7 @@ target(dbmFutureRollbackSql: 'Writes SQL to roll back the database to the curren
 	depends dbmInit
 
 	doAndClose {
-		liquibase.futureRollbackSQL null, newPrintWriter()
+		liquibase.futureRollbackSQL contexts, newPrintWriter()
 	}
 }
 

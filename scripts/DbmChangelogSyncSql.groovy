@@ -23,7 +23,7 @@ target(dbmChangelogSyncSql: 'Writes SQL to mark all changes as executed in the d
 	depends dbmInit
 
 	doAndClose {
-		liquibase.changeLogSync null, newPrintWriter()
+		liquibase.changeLogSync contexts, newPrintWriter()
 	}
 }
 

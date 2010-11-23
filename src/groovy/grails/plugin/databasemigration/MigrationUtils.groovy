@@ -22,7 +22,7 @@ import liquibase.database.DatabaseFactory
 import liquibase.database.jvm.JdbcConnection
 import liquibase.diff.Diff
 
-import org.codehaus.groovy.grails.commons.ApplicationHolder as AH
+import org.codehaus.groovy.grails.commons.GrailsApplication
 
 /**
  * @author <a href='mailto:burt@burtbeckwith.com'>Burt Beckwith</a>
@@ -33,21 +33,47 @@ class MigrationUtils {
 		// static only
 	}
 
-	static Database getDatabase(Connection connection) {
-		DatabaseFactory.instance.findCorrectDatabaseImplementation new JdbcConnection(connection)
+	/**
+	 * Set at startup.
+	 */
+	static GrailsApplication application
+
+	static Database getDatabase(Connection connection, String defaultSchema = null) {
+		def database = DatabaseFactory.instance.findCorrectDatabaseImplementation(
+			new JdbcConnection(connection))
+		if (defaultSchema) {
+			database.defaultSchemaName = defaultSchema
+		}
+//		database.defaultSchemaName = connection.catalog // TODO
+		database
+	}
+
+	static Database getDatabase() {
+		getDatabase application.mainContext.dataSource.connection
 	}
 
 	static Liquibase getLiquibase(Database database) {
-		def resourceAccessor = AH.application.mainContext.migrationResourceAccessor
-		String changelogXmlName = getConfig().changelogXmlName ?: 'changelog.xml'
-		new Liquibase(changelogXmlName, resourceAccessor, database)
+		getLiquibase database, getChangelogFileName()
+	}
+
+	static Liquibase getLiquibase(Database database, String changelogFileName) {
+		def resourceAccessor = application.mainContext.migrationResourceAccessor
+		new Liquibase(changelogFileName, resourceAccessor, database)
 	}
 
 	static ConfigObject getConfig() {
-		AH.application.config.grails.plugin.databasemigration
+		application.config.grails.plugin.databasemigration
 	}
 
 	static String getDbDocLocation() {
 		getConfig().dbDocLocation ?: 'target/dbdoc'
+	}
+
+	static String getChangelogFileName() {
+		getConfig().changelogFileName ?: 'changelog.groovy'
+	}
+
+	static String getChangelogLocation() {
+		getConfig().changelogLocation ?: 'grails-app/conf/migrations'
 	}
 }

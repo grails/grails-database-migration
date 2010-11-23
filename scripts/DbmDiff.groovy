@@ -21,10 +21,6 @@ import grails.util.Environment
 
 import java.sql.DriverManager
 
-import liquibase.database.DatabaseFactory
-import liquibase.database.jvm.JdbcConnection
-import liquibase.diff.Diff
-
 includeTargets << new File("$databaseMigrationPluginDir/scripts/_DatabaseMigrationCommon.groovy")
 
 target(dbmDiff: 'Writes description of differences to standard out') {
@@ -35,23 +31,25 @@ target(dbmDiff: 'Writes description of differences to standard out') {
 		errorAndDie 'You must specify the environment to diff against'
 	}
 
-	if (otherEnv == Environment.current.name) {
+	if (Environment.getEnvironment(otherEnv) == Environment.current ||
+			otherEnv == Environment.current.name) {
 		errorAndDie 'You must specify a different environment than the one the script is running in'
 	}
 
 	def thisDatabase
 	def otherDatabase
 	try {
-		ant.echo message: "Starting $hyphenatedScriptName against environment '$otherEnv'"
+		echo "Starting $hyphenatedScriptName against environment '$otherEnv'"
 
-		thisDatabase = MigrationUtils.getDatabase(appCtx.dataSource.connection)
+		thisDatabase = MigrationUtils.getDatabase()
 
 		otherDatabase = buildOtherDatabase(otherEnv)
-		def diff = new Diff(thisDatabase, otherDatabase)
-		diff.addStatusListener appCtx.diffStatusListener
-		diff.compare().printChangeLog calculateDestination(1), otherDatabase
 
-		ant.echo message: "Finished $hyphenatedScriptName"
+		executeAndWrite argsList[1], { PrintStream out ->
+			createDiff(thisDatabase, otherDatabase).compare().printChangeLog(out, otherDatabase)
+		}
+
+		echo "Finished $hyphenatedScriptName"
 	}
 	catch (e) {
 		printStackTrace e
@@ -68,11 +66,13 @@ buildOtherDatabase = { String otherEnv ->
 	def configSlurper = new ConfigSlurper(otherEnv)
 	configSlurper.binding = binding.variables
 	def otherDsConfig = configSlurper.parse(classLoader.loadClass('DataSource')).dataSource
+
 	Class.forName otherDsConfig.driverClassName, true, classLoader
 
 	def connection = DriverManager.getConnection(
 		otherDsConfig.url ?: null, otherDsConfig.username ?: null, otherDsConfig.password ?: null)
-	DatabaseFactory.instance.findCorrectDatabaseImplementation new JdbcConnection(connection)
+
+	MigrationUtils.getDatabase connection
 }
 
 setDefaultTarget dbmDiff

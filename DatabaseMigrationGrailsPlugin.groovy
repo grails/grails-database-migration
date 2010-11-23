@@ -13,16 +13,18 @@
  * limitations under the License.
  */
 
+import grails.plugin.databasemigration.GormDatabaseSnapshotGenerator
+import grails.plugin.databasemigration.GrailsChange
+import grails.plugin.databasemigration.GrailsChangeLogParser
+import grails.plugin.databasemigration.GrailsClassLoaderResourceAccessor
 import grails.plugin.databasemigration.GrailsDiffStatusListener
+import grails.plugin.databasemigration.MigrationRunner
 import grails.plugin.databasemigration.MigrationUtils
 
-import grails.util.BuildSettingsHolder
-import grails.util.Environment
-
-import liquibase.resource.ClassLoaderResourceAccessor
+import liquibase.change.ChangeFactory
+import liquibase.parser.ChangeLogParserFactory
 import liquibase.resource.FileSystemResourceAccessor
-
-import org.codehaus.groovy.grails.commons.ApplicationHolder as AH
+import liquibase.snapshot.DatabaseSnapshotGeneratorFactory
 
 class DatabaseMigrationGrailsPlugin {
 
@@ -34,21 +36,29 @@ class DatabaseMigrationGrailsPlugin {
 	String description = 'Grails Database Migration Plugin'
 	String documentation = 'http://grails.org/plugin/database-migration'
 
-	String pluginExcludes = [
-		'src/docs'
-	]
+	List pluginExcludes = ['grails-app/domain/**']
 
 	def doWithSpring = {
 
-		if (Environment.current == Environment.DEVELOPMENT) {
-			String changelogLocation = MigrationUtils.config.changelogLocation ?: 'grails-app/migrations'
-			String changelogLocationPath = new File(BuildSettingsHolder.settings.baseDir, changelogLocation).path
-			migrationResourceAccessor(FileSystemResourceAccessor, changelogLocationPath)
+		MigrationUtils.application = application
+
+		if (application.warDeployed) {
+			migrationResourceAccessor(GrailsClassLoaderResourceAccessor, application.classLoader)
 		}
 		else {
-			migrationResourceAccessor(ClassLoaderResourceAccessor, AH.application.classLoader)
+			String changelogLocation = MigrationUtils.changelogLocation
+			String changelogLocationPath = new File(changelogLocation).path
+			migrationResourceAccessor(FileSystemResourceAccessor, changelogLocationPath)
 		}
 
 		diffStatusListener(GrailsDiffStatusListener)
+	}
+
+	def doWithApplicationContext = { ctx ->
+		ChangeLogParserFactory.instance.register new GrailsChangeLogParser()
+		DatabaseSnapshotGeneratorFactory.instance.register new GormDatabaseSnapshotGenerator()
+		ChangeFactory.instance.register GrailsChange
+
+		MigrationRunner.autoRun()
 	}
 }

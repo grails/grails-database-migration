@@ -23,7 +23,7 @@ target(dbmUpdateSql: 'Writes SQL to update database to current version to STDOUT
 	depends dbmInit
 
 	doAndClose {
-		liquibase.update null, newPrintWriter()
+		liquibase.update contexts, newPrintWriter()
 	}
 }
 

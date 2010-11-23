@@ -22,8 +22,10 @@ import grails.util.GrailsUtil
 
 import java.text.SimpleDateFormat
 
+import liquibase.diff.Diff
+
 import org.apache.log4j.Logger
-import org.springframework.util.StringUtils
+import org.codehaus.groovy.grails.orm.hibernate.cfg.GrailsAnnotationConfiguration
 
 includeTargets << grailsScript('_GrailsBootstrap')
 
@@ -37,7 +39,11 @@ target(dbmInit: 'General initialization, also creates a Liquibase instance') {
 		hyphenatedScriptName = GrailsNameUtils.getScriptName(scriptName)
 		log = Logger.getLogger('grails.plugin.databasemigration.Scripts')
 		MigrationUtils = classLoader.loadClass('grails.plugin.databasemigration.MigrationUtils')
-		argsList = StringUtils.tokenizeToStringArray(args, '\n', true, true) as List
+
+		argsList = argsMap.params
+		contexts = argsMap.contexts
+		diffTypes = argsMap.diffTypes
+		defaultSchema = argsMap.defaultSchema
 	}
 	catch (e) {
 		printStackTrace e
@@ -53,64 +59,139 @@ printStackTrace = { e ->
 calculateDestination = { int argIndex = 0 ->
 	argsList[argIndex] ? new PrintStream(argsList[argIndex]) : System.out
 }
-newPrintWriter = { -> new PrintWriter(calculateDestination()) }
-newOutputStreamWriter = { -> new OutputStreamWriter(calculateDestination()) }
+
+newPrintWriter = { int argIndex = 0 ->
+	new PrintWriter(calculateDestination(argIndex))
+}
+
+newOutputStreamWriter = { int argIndex = 0 ->
+	new OutputStreamWriter(calculateDestination(argIndex))
+}
 
 doAndClose = { Closure c ->
 	try {
-		database = MigrationUtils.getDatabase(appCtx.dataSource.connection)
+		database = MigrationUtils.getDatabase()
 		liquibase = MigrationUtils.getLiquibase(database)
 
 		def dsConfig = config.dataSource
 		String dbDesc = dsConfig.jndiName ? "JNDI $dsConfig.jndiName" : "$dsConfig.username @ $dsConfig.url"
-		ant.echo message: "Starting $hyphenatedScriptName for database $dbDesc"
+		echo "Starting $hyphenatedScriptName for database $dbDesc"
 		c()
-		ant.echo message: "Finished $hyphenatedScriptName"
+		echo "Finished $hyphenatedScriptName"
 	}
 	catch (e) {
 		printStackTrace e
 		exit 1
 	}
 	finally {
-		closeConnection database?.connection
+		closeConnection database
 	}
 }
 
-closeConnection = { try { it?.close() } catch (ignored) { } }
+// run a script (called by the closure) which generates changelog XML, and
+// write it to STDOUT if no filename was specified, to an XML file if the
+// extension is .xml, and convert to the Groovy DSL and write to a Groovy
+// file if the extension is .groovy
+executeAndWrite = { String filename, Closure c ->
+	PrintStream out
+	ByteArrayOutputStream baos
+	if (filename) {
+		if (filename.toLowerCase().endsWith('groovy')) {
+			baos = new ByteArrayOutputStream()
+			out = new PrintStream(baos)
+		}
+		else {
+			out = new PrintStream(filename)
+		}
+	}
+	else {
+		out = System.out
+	}
+
+	c(out)
+
+	if (baos) {
+		String xml = new String(baos.toString('UTF-8'))
+		ChangelogXml2Groovy = classLoader.loadClass('grails.plugin.databasemigration.ChangelogXml2Groovy')
+		String groovy = ChangelogXml2Groovy.convert(xml)
+		new File(filename).withWriter { it.write groovy }
+	}
+}
+
+echo = { String message -> ant.echo message: message }
+
+closeConnection = { try { it?.close() } catch (ignored) {} }
 
 errorAndDie = { String message ->
-	ant.echo "\nERROR: $message"
+	echo "\nERROR: $message"
 	exit 1
 }
 
 calculateDate = { ->
-
-	def dateFormat
+	String dateFormat
 	String dateString
-	if (argsMap.day instanceof CharSequence) {
-		if (argsMap.time instanceof CharSequence) {
-			dateString = argsMap.day.trim() + ' ' + argsMap.time.trim()
-			dateFormat = new SimpleDateFormat(FULL_DATE_FORMAT)
-		}
-		else {
-			dateString = argsMap.day.trim()
-			dateFormat = new SimpleDateFormat(DAY_DATE_FORMAT)
-		}
-	}
-	else {
-		dateString = argsList.join(' ')
-		dateFormat = new SimpleDateFormat(dateString.contains(' ') ? FULL_DATE_FORMAT : DAY_DATE_FORMAT)
+	binding.calculateDateFileNameIndex = null
+
+	switch (argsList.size()) {
+		case 1:
+			dateFormat = DAY_DATE_FORMAT
+			dateString = argsList[0].trim()
+			break
+		case 2:
+			dateFormat = FULL_DATE_FORMAT
+			dateString = argsList[0] + ' ' + argsList[1]
+			try {
+				new SimpleDateFormat(dateFormat).parse(dateString)
+			}
+			catch (e) {
+				// assume that 2nd param is filename
+				dateFormat = DAY_DATE_FORMAT
+				dateString = argsList[0]
+				calculateDateFileNameIndex = 1
+			}
+			break
+		case 3:
+			dateFormat = FULL_DATE_FORMAT
+			dateString = argsList[0] + ' ' + argsList[1]
+			calculateDateFileNameIndex = 2
 	}
 
 	if (dateString) {
 		try {
-			return dateFormat.parse(dateString)
+			return new SimpleDateFormat(dateFormat).parse(dateString)
 		}
 		catch (e) {
 			errorAndDie "Problem parsing '$dateString' as a Date: $e.message"
 		}
 	}
 
-	errorAndDie 'Date must be specified either with --day and --time parameters or as\n' +
-	     '       two strings, and the combined format must be yyyy-MM-dd HH:mm:ss'
+	errorAndDie 'Date must be specified as two strings with the format "yyyy-MM-dd HH:mm:ss"' +
+	            'or as one strings with the format "yyyy-MM-dd"'
+}
+
+createGormDatabase = { ->
+	def dialect = config.dataSource.dialect
+	if (dialect) {
+		if (dialect instanceof Class) {
+			dialect = dialect.name
+		}
+	}
+	else {
+		dialect = appCtx.dialectDetector
+	}
+
+	def configuration = new GrailsAnnotationConfiguration(
+		grailsApplication: appCtx.grailsApplication,
+		properties: ['hibernate.dialect': dialect.toString()] as Properties)
+	configuration.buildMappings()
+
+	GormDatabase = classLoader.loadClass('grails.plugin.databasemigration.GormDatabase')
+	GormDatabase.newInstance configuration
+}
+
+createDiff = { referenceDatabase, targetDatabase ->
+	def diff = new Diff(referenceDatabase, targetDatabase)
+	diff.diffTypes = diffTypes
+	diff.addStatusListener appCtx.diffStatusListener
+	diff
 }

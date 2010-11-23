@@ -28,7 +28,7 @@ target(dbmRollback: 'Rolls back the database to the state it was in when the tag
 	}
 
 	doAndClose {
-		liquibase.rollback tag, null
+		liquibase.rollback tag, contexts
 	}
 }
 

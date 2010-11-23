@@ -23,7 +23,7 @@ target(dbmChangelogSync: 'Mark all changes as executed in the database') {
 	depends dbmInit
 
 	doAndClose {
-		liquibase.changeLogSync null
+		liquibase.changeLogSync contexts
 	}
 }
 

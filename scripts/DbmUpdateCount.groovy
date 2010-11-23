@@ -32,7 +32,7 @@ target(dbmUpdateCount: 'Applies the next <value> change sets') {
 	}
 
 	doAndClose {
-		liquibase.update count.toInteger(), null
+		liquibase.update count.toInteger(), contexts
 	}
 }
 

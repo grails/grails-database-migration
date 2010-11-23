@@ -23,7 +23,15 @@ target(dbmRollbackToDateSql: 'Writes SQL to roll back the database to the state 
 	depends dbmInit
 
 	doAndClose {
-		liquibase.rollback calculateDate(), null, newPrintWriter()
+		Date date = calculateDate()
+		PrintWriter pw
+		if (calculateDateFileNameIndex) {
+			pw = new PrintWriter(new PrintStream(argsList[calculateDateFileNameIndex]))
+		}
+		else {
+			pw = new PrintWriter(System.out)
+		}
+		liquibase.rollback date, contexts, pw
 	}
 }
 

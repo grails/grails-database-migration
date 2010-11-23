@@ -23,7 +23,7 @@ target(dbmRollbackToDate: 'Rolls back the database to the state it was in at the
 	depends dbmInit
 
 	doAndClose {
-		liquibase.rollback calculateDate(), null
+		liquibase.rollback calculateDate(), contexts
 	}
 }
 

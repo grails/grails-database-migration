@@ -23,7 +23,7 @@ target(dbmUpdate: 'Updates database to current version') {
 	depends dbmInit
 
 	doAndClose {
-		liquibase.update null
+		liquibase.update contexts
 	}
 }
 

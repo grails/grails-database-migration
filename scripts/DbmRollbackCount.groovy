@@ -32,7 +32,7 @@ target(dbmRollbackCount: 'Rolls back the last <value> change sets') {
 	}
 
 	doAndClose {
-		liquibase.rollback count.toInteger(), null
+		liquibase.rollback count.toInteger(), contexts
 	}
 }
 

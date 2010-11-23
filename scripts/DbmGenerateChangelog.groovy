@@ -17,17 +17,15 @@
  * @author <a href='mailto:burt@burtbeckwith.com'>Burt Beckwith</a>
  */
 
-import liquibase.diff.Diff
-
 includeTargets << new File("$databaseMigrationPluginDir/scripts/_DatabaseMigrationCommon.groovy")
 
 target(dbmGenerateChangelog: 'Generates an initial changelog XML file') {
 	depends dbmInit
 
 	doAndClose {
-		def diff = new Diff(database, null)
-		diff.addStatusListener appCtx.diffStatusListener
-		diff.compare().printChangeLog calculateDestination(), database
+		executeAndWrite argsList[0], { PrintStream out ->
+			createDiff(database, null).compare().printChangeLog out, database
+		}
 	}
 }
 

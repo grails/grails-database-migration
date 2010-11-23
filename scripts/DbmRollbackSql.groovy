@@ -28,7 +28,7 @@ target(dbmRollbackSql: 'Writes SQL to roll back the database to the state it was
 	}
 
 	doAndClose {
-		liquibase.rollback tag, null, newOutputStreamWriter()
+		liquibase.rollback tag, contexts, newOutputStreamWriter(1)
 	}
 }
 

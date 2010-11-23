@@ -18,7 +18,7 @@
  */
 
 import liquibase.exception.ValidationFailedException
- 
+
 includeTargets << new File("$databaseMigrationPluginDir/scripts/_DatabaseMigrationCommon.groovy")
 
 target(dbmValidate: 'Checks the changelog for errors') {
