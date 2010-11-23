@@ -17,6 +17,7 @@ package grails.plugin.databasemigration
 import org.springframework.beans.PropertyAccessorFactory
 
 import liquibase.changelog.ChangeLogParameters
+import liquibase.resource.FileSystemResourceAccessor
 import liquibase.resource.ResourceAccessor
 import liquibase.parser.core.xml.XMLChangeLogSAXParser
 
@@ -35,7 +36,7 @@ class ParserTests extends GroovyTestCase {
 	@Override
 	protected void tearDown() {
 		super.tearDown()
-//		new File('target/includestest').deleteDir()
+		new File('target/includestest').deleteDir()
 	}
 
 	/**
@@ -74,16 +75,36 @@ class ParserTests extends GroovyTestCase {
 		copyFile 'sub4.changelist.g', 'sub1/sub_all', 'sub4.changelist.groovy'
 		copyFile 'sub5.changelist.xml', 'sub1/sub_all'
 
-		def resourceAccessor = new ParserTestResourceAccessor() {
-			InputStream getResourceAsStream(String file) {
-				new FileInputStream(new File('target/includestest', file))
-			}
-		}
+		def resourceAccessor = new FileSystemResourceAccessor('target/includestest')
 
 		def changeLog = new GrailsChangeLogParser().parse('test.including.changelist.groovy',
 			new ChangeLogParameters(), resourceAccessor)
 
-		println xmlChangeLog.changeSets.dump()
+		assertEquals 6, changeLog.changeSets.size()
+
+		assertEquals 't1', changeLog.changeSets[0].id
+		assertEquals 'burt', changeLog.changeSets[0].author
+		assertEquals 'test.including.changelist.groovy', changeLog.changeSets[0].filePath
+
+		assertEquals 't2', changeLog.changeSets[1].id
+		assertEquals 'burt', changeLog.changeSets[1].author
+		assertEquals 'sub1/sub1.changelist.xml', changeLog.changeSets[1].filePath
+		
+		assertEquals 't3', changeLog.changeSets[2].id
+		assertEquals 'not_burt', changeLog.changeSets[2].author
+		assertEquals 'sub1/sub2.changelist.groovy', changeLog.changeSets[2].filePath
+
+		assertEquals 't4', changeLog.changeSets[3].id
+		assertEquals 'burt', changeLog.changeSets[3].author
+		assertEquals 'sub1/sub2/sub3.changelist.xml', changeLog.changeSets[3].filePath
+
+		assertEquals 't5', changeLog.changeSets[4].id
+		assertEquals 'burt', changeLog.changeSets[4].author
+		assertEquals 'sub1/sub_all/sub4.changelist.groovy', changeLog.changeSets[4].filePath
+
+		assertEquals 't6', changeLog.changeSets[5].id
+		assertEquals 'burt', changeLog.changeSets[5].author
+		assertEquals 'sub1/sub_all/sub5.changelist.xml', changeLog.changeSets[5].filePath
 	}
 
 	private void copyFile(String filename, String relativeDir, String rename = filename) {
