@@ -14,13 +14,14 @@
  */
 package grails.plugin.databasemigration
 
-import org.apache.log4j.Logger
-
 import liquibase.changelog.ChangeLogParameters
 import liquibase.changelog.DatabaseChangeLog
 import liquibase.exception.ChangeLogParseException
 import liquibase.parser.ChangeLogParser
 import liquibase.resource.ResourceAccessor
+
+import org.apache.log4j.Logger
+import org.springframework.context.ApplicationContext
 
 /**
  * Loads a DSL script and invokes the builder. Registered in DatabaseMigrationGrailsPlugin.doWithApplicationContext().
@@ -30,6 +31,16 @@ import liquibase.resource.ResourceAccessor
 class GrailsChangeLogParser implements ChangeLogParser {
 
 	private Logger log = Logger.getLogger(getClass())
+
+	private ApplicationContext ctx
+
+	/**
+	 * Constructor.
+	 * @param ctx the Spring app context
+	 */
+	GrailsChangeLogParser(ApplicationContext ctx) {
+		this.ctx = ctx
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -49,7 +60,7 @@ class GrailsChangeLogParser implements ChangeLogParser {
 			new Binding(bindingVars)).parse(inputStream.text)
 		script.run()
 
-		def builder = new DslBuilder(changeLogParameters, resourceAccessor, physicalChangeLogLocation)
+		def builder = new DslBuilder(changeLogParameters, resourceAccessor, physicalChangeLogLocation, ctx)
 
 		def root = script.databaseChangeLog
 		root.delegate = builder
@@ -58,7 +69,7 @@ class GrailsChangeLogParser implements ChangeLogParser {
 		builder.databaseChangeLog
 	}
 
-	boolean supports(String changeLogFile, ResourceAccessor ra) { changeLogFile.endsWith 'groovy' }
+	boolean supports(String changeLogFile, ResourceAccessor ra) { changeLogFile.toLowerCase().endsWith 'groovy' }
 
 	int getPriority() { PRIORITY_DEFAULT }
 }

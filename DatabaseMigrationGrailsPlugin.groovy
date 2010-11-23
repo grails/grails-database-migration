@@ -18,11 +18,13 @@ import grails.plugin.databasemigration.GrailsChange
 import grails.plugin.databasemigration.GrailsChangeLogParser
 import grails.plugin.databasemigration.GrailsClassLoaderResourceAccessor
 import grails.plugin.databasemigration.GrailsDiffStatusListener
+import grails.plugin.databasemigration.GrailsPrecondition
 import grails.plugin.databasemigration.MigrationRunner
 import grails.plugin.databasemigration.MigrationUtils
 
 import liquibase.change.ChangeFactory
 import liquibase.parser.ChangeLogParserFactory
+import liquibase.precondition.PreconditionFactory
 import liquibase.resource.FileSystemResourceAccessor
 import liquibase.snapshot.DatabaseSnapshotGeneratorFactory
 
@@ -55,9 +57,10 @@ class DatabaseMigrationGrailsPlugin {
 	}
 
 	def doWithApplicationContext = { ctx ->
-		ChangeLogParserFactory.instance.register new GrailsChangeLogParser()
+		ChangeLogParserFactory.instance.register new GrailsChangeLogParser(ctx)
 		DatabaseSnapshotGeneratorFactory.instance.register new GormDatabaseSnapshotGenerator()
 		ChangeFactory.instance.register GrailsChange
+		PreconditionFactory.instance.register GrailsPrecondition
 
 		MigrationRunner.autoRun()
 	}

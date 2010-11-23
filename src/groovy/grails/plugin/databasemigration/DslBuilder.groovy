@@ -18,6 +18,7 @@ import java.lang.reflect.Method
 
 import org.apache.log4j.Logger
 import org.codehaus.groovy.runtime.InvokerHelper
+import org.springframework.context.ApplicationContext
 
 import liquibase.change.Change
 import liquibase.change.ChangeFactory
@@ -79,15 +80,17 @@ class DslBuilder extends BuilderSupport {
 
 	private ResourceAccessor resourceAccessor
 	private ChangeLogParameters changeLogParameters
+	private ApplicationContext ctx
 
 	// set after the parser runs
 	DatabaseChangeLog databaseChangeLog
 
 	DslBuilder(ChangeLogParameters changeLogParameters, ResourceAccessor resourceAccessor,
-	           String changeLogLocation) {
+	           String changeLogLocation, ApplicationContext ctx) {
 
 		this.changeLogParameters = changeLogParameters
 		this.resourceAccessor = resourceAccessor
+		this.ctx = ctx
 
 		databaseChangeLog = new DatabaseChangeLog(changeLogLocation)
 		databaseChangeLog.setPhysicalFilePath changeLogLocation
@@ -99,6 +102,11 @@ class DslBuilder extends BuilderSupport {
 
 		if (currentChange instanceof GrailsChange &&
 				processGrailsChangeProperty(methodName, args)) {
+			return
+		}
+
+		if (currentPrecondition instanceof GrailsPrecondition &&
+				processGrailsPreconditionProperty(methodName, args)) {
 			return
 		}
 
@@ -145,6 +153,10 @@ class DslBuilder extends BuilderSupport {
 
 			if (currentPrecondition instanceof PreconditionLogic) {
 				preconditionLogicStack << currentPrecondition
+			}
+			else if (currentPrecondition instanceof GrailsPrecondition) {
+				currentPrecondition.ctx = ctx
+				currentPrecondition.resourceAccessor = resourceAccessor
 			}
 
 			if ('sqlCheck' == name) {
@@ -257,6 +269,18 @@ class DslBuilder extends BuilderSupport {
 					return true
 				}
 				break
+		}
+
+		false
+	}
+
+	private boolean processGrailsPreconditionProperty(String methodName, args) {
+		args = InvokerHelper.asList(args)
+
+		if ('check' == methodName.toLowerCase() &&
+				args.size() == 1 && args[0] instanceof Closure) {
+			currentPrecondition.checkClosure = args[0]
+			return true
 		}
 
 		false
@@ -436,6 +460,9 @@ class DslBuilder extends BuilderSupport {
 				attributes.encoding = 'UTF-8' // default from XSD
 			}
 		}
+		else if (currentChange instanceof GrailsChange) {
+			currentChange.ctx = ctx
+		}
 
 		if (currentChange instanceof CustomChangeWrapper) {
 			currentChange.setClassLoader resourceAccessor.toClassLoader()
@@ -501,8 +528,10 @@ class DslBuilder extends BuilderSupport {
 		String dbms = StringUtils.trimToNull(attributes.dbms)
 		if (StringUtils.trimToNull(attributes.file)) {
 //			changeLogParameters.set attributes.name, attributes.value, context, dbms
+println "changeLogParameters.set $attributes.name, $attributes.value"
 		}
 		else {
+println "LOAD PROPS FROM FILE $attributes.file"
 //			Properties props = new Properties()
 //			InputStream propertiesStream = resourceAccessor.getResourceAsStream(attributes.file)
 //			if (!propertiesStream) {
@@ -563,6 +592,9 @@ class DslBuilder extends BuilderSupport {
 			}
 			else if ('customPrecondition' == name) {
 				currentPrecondition.setClassLoader resourceAccessor.toClassLoader()
+				currentPrecondition = null
+			}
+			else if ('grailsPrecondition' == name) {
 				currentPrecondition = null
 			}
 		}
@@ -653,13 +685,25 @@ class DslBuilder extends BuilderSupport {
 	}
 
 	private boolean handleIncludedChangeLog(String fileName, boolean isRelativePath, String relativeBaseFileName) {
-		if (!(fileName.endsWith('.xml') || fileName.endsWith('.groovy') || fileName.endsWith('.sql'))) {
+		String lowerName = fileName.toLowerCase()
+		if (!(lowerName.endsWith('.xml') || lowerName.endsWith('.groovy') || lowerName.endsWith('.sql'))) {
 			log.debug "$relativeBaseFileName/$fileName is not a recognized file type"
 			return false
 		}
 
+//		List<String> DEFAULTEXCLUDES = [
+//			"**/*~",
+//			"**/#*#",
+//			"**/%*%",
+//			"**/CVS",
+//			"**/CVS/**",
+//			"**/SCCS",
+//			"**/SCCS/**",
+//			"**/vssver.scc"
+//		]
+
 		// TODO ant excludes
-		if (fileName.startsWith('.') || fileName.equalsIgnoreCase('cvs')) {
+		if (lowerName.startsWith('.') || lowerName.equals('cvs')) {
 			return false
 		}
 

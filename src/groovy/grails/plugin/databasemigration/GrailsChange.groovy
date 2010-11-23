@@ -14,9 +14,9 @@
  */
 package grails.plugin.databasemigration
 
-import java.sql.Connection
-
 import groovy.sql.Sql
+
+import java.sql.Connection
 
 import liquibase.change.AbstractChange
 import liquibase.change.ChangeMetaData
@@ -33,6 +33,9 @@ import liquibase.exception.UnsupportedChangeException
 import liquibase.exception.ValidationErrors
 import liquibase.exception.Warnings
 import liquibase.statement.SqlStatement
+
+import org.codehaus.groovy.grails.commons.GrailsApplication
+import org.springframework.context.ApplicationContext
 
 /**
  * Custom Groovy-based change.
@@ -51,13 +54,16 @@ class GrailsChange extends AbstractChange {
 	private Warnings warnings = new Warnings()
 
 	@ChangeProperty(includeInSerialization = false)
-	private Database database
-
-	@ChangeProperty(includeInSerialization = false)
 	private List<SqlStatement> statements = []
 
 	@ChangeProperty(includeInSerialization = false)
-	private Sql sql
+	Database database
+
+	@ChangeProperty(includeInSerialization = false)
+	Sql sql
+
+	@ChangeProperty(includeInSerialization = false)
+	ApplicationContext ctx
 
 	@ChangeProperty(includeInSerialization = false)
 	Closure initClosure
@@ -117,7 +123,7 @@ class GrailsChange extends AbstractChange {
 	}
 
 	/**
-	 * Called by the validate closure.
+	 * Called by the validate closure. Adds a validation error.
 	 *
 	 * @param message the error message
 	 */
@@ -126,7 +132,7 @@ class GrailsChange extends AbstractChange {
 	}
 
 	/**
-	 * Called by the validate closure.
+	 * Called by the validate closure. Adds a warning message.
 	 *
 	 * @param warning the warning message
 	 */
@@ -150,6 +156,10 @@ class GrailsChange extends AbstractChange {
 		statements as SqlStatement[]
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * @see liquibase.change.AbstractChange#generateRollbackStatements(liquibase.database.Database)
+	 */
 	@Override
 	SqlStatement[] generateRollbackStatements(Database database) {
 		this.database = database
@@ -163,7 +173,7 @@ class GrailsChange extends AbstractChange {
 	}
 
 	/**
-	 * Called by the change or rollback closure.
+	 * Called by the change or rollback closure. Adds a statement to be executed.
 	 *
 	 * @param statement the statement
 	 */
@@ -172,7 +182,7 @@ class GrailsChange extends AbstractChange {
 	}
 
 	/**
-	 * Called by the change or rollback closure.
+	 * Called by the change or rollback closure. Adds multiple statements to be executed.
 	 *
 	 * @param statement the statement
 	 */
@@ -181,21 +191,33 @@ class GrailsChange extends AbstractChange {
 	}
 
 	/**
-	 * Called by the change or rollback closure.
+	 * Called by the change or rollback closure. Overrides the confirmation message.
 	 *
 	 * @param message the confirmation message
 	 */
 	void confirm(String message) { confirmationMessage = message }
 
+	/**
+	 * {@inheritDoc}
+	 * @see liquibase.change.AbstractChange#supportsRollback(liquibase.database.Database)
+	 */
 	@Override
 	boolean supportsRollback(Database database) { true }
 
+	/**
+	 * {@inheritDoc}
+	 * @see liquibase.change.AbstractChange#generateCheckSum()
+	 */
 	@Override
 	CheckSum generateCheckSum() {
 		checksumString ? CheckSum.compute(checksumString) : super.generateCheckSum()
 	}
 
-	// called from change or rollback closure
+	/**
+	 * Called from the change or rollback closure. Creates a <code>Sql</code> instance from the current connection.
+	 *
+	 * @return the sql instance
+	 */
 	Sql getSql() {
 		if (!connection) return null
 
@@ -210,11 +232,26 @@ class GrailsChange extends AbstractChange {
 		sql
 	}
 
-	// called from change or rollback closure
+	/**
+	 * Called from the change or rollback closure. Shortcut to get the (wrapper) database connection.
+	 *
+	 * @return the connection or <code>null</code> if the database isn't set yet
+	 */
 	DatabaseConnection getDatabaseConnection() { database?.connection }
 
-	// called from change or rollback closure
+	/**
+	 * Called from the change or rollback closure. Shortcut to get the real database connection.
+	 *
+	 * @return the connection or <code>null</code> if the database isn't set yet
+	 */
 	Connection getConnection() { database?.connection?.wrappedConnection }
+
+	/**
+	 * Called from the change or rollback closure. Shortcut for the current application.
+	 *
+	 * @return the application
+	 */
+	GrailsApplication getApplication() { ctx.grailsApplication }
 
 	// warn is called then validate, but both are handled by
 	// the 'warnings' closure, so we only want to run it once
