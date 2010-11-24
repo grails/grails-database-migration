@@ -15,6 +15,7 @@
 package grails.plugin.databasemigration
 
 import java.lang.reflect.Method
+import java.util.jar.JarFile
 
 import org.apache.log4j.Logger
 import org.codehaus.groovy.runtime.InvokerHelper
@@ -291,7 +292,6 @@ class DslBuilder extends BuilderSupport {
 		currentText = StringUtils.trimToNull(value)
 	}
 
-	// TODO cleanup
 	private void processIncludeAll(Map attributes) {
 		String pathName = attributes.path.replace('\\', '/')
 		if (!pathName.endsWith('/')) {
@@ -305,7 +305,8 @@ class DslBuilder extends BuilderSupport {
 			File changeLogFile = new File(databaseChangeLog.physicalFilePath)
 			File resourceBase = new File(changeLogFile.parent, pathName)
 			if (!resourceBase.exists()) {
-				throw new ChangeLogParseException("Resource directory for includeAll does not exist [$resourceBase.path]")
+				throw new ChangeLogParseException(
+					"Resource directory for includeAll does not exist [$resourceBase.path]")
 			}
 			pathName = resourceBase.path.replace('\\', '/') + '/'
 		}
@@ -320,8 +321,7 @@ class DslBuilder extends BuilderSupport {
 		for (URL fileUrl : resources) {
 			if (!fileUrl.toExternalForm().startsWith('file:')) {
 				if (fileUrl.toExternalForm().startsWith('jar:file:')) {
-					File zipFileDir = extractZipFile(fileUrl)
-					fileUrl = new File(zipFileDir, pathName).toURI().toURL()
+					fileUrl = new File(extractZipFile(fileUrl), pathName).toURI().toURL()
 				}
 				else {
 					log.debug "${fileUrl.toExternalForm()} is not a file path"
@@ -363,6 +363,25 @@ class DslBuilder extends BuilderSupport {
 			throw new ChangeLogParseException("Could not find directory or directory was empty for includeAll '$pathName'")
 		}
 	}
+
+	private File extractZipFile(URL resource) {
+		String path = resource.file.split('!')[0]
+		if (path.matches('file:\\/[A-Za-z]:\\/.*')) {
+			path = path.replaceFirst('file:\\/', '')
+		}
+		else {
+			path = path.replaceFirst('file:', '')
+		}
+
+		File tempDir = File.createTempFile('liquibase-sax', '.dir')
+		tempDir.deleteDir()
+		tempDir.mkdir()
+
+		File zipfile = new File(URLDecoder.decode(path))
+		new JarFile(zipfile).entries().each { new File(tempDir, it.name).mkdirs() }
+
+		tempDir
+  }
 
 	private void processChangeSet(Map attributes) {
 		boolean alwaysRun = 'true'.equalsIgnoreCase(attributes.runAlways)
@@ -691,18 +710,6 @@ println "LOAD PROPS FROM FILE $attributes.file"
 			return false
 		}
 
-//		List<String> DEFAULTEXCLUDES = [
-//			"**/*~",
-//			"**/#*#",
-//			"**/%*%",
-//			"**/CVS",
-//			"**/CVS/**",
-//			"**/SCCS",
-//			"**/SCCS/**",
-//			"**/vssver.scc"
-//		]
-
-		// TODO ant excludes
 		if (lowerName.startsWith('.') || lowerName.equals('cvs')) {
 			return false
 		}
