@@ -54,7 +54,7 @@ class GrailsChange extends AbstractChange {
 	private Warnings warnings = new Warnings()
 
 	@ChangeProperty(includeInSerialization = false)
-	private List<SqlStatement> statements = []
+	private List<SqlStatement> allStatements = []
 
 	@ChangeProperty(includeInSerialization = false)
 	Database database
@@ -153,7 +153,7 @@ class GrailsChange extends AbstractChange {
 			changeClosure()
 		}
 
-		statements as SqlStatement[]
+		allStatements as SqlStatement[]
 	}
 
 	/**
@@ -169,7 +169,7 @@ class GrailsChange extends AbstractChange {
 			rollbackClosure()
 		}
 
-		statements as SqlStatement[]
+		allStatements as SqlStatement[]
 	}
 
 	/**
@@ -178,7 +178,7 @@ class GrailsChange extends AbstractChange {
 	 * @param statement the statement
 	 */
 	void sqlStatement(SqlStatement statement) {
-		if (statement) statements << statement
+		if (statement) allStatements << statement
 	}
 
 	/**
@@ -187,7 +187,7 @@ class GrailsChange extends AbstractChange {
 	 * @param statement the statement
 	 */
 	void sqlStatements(statements) {
-		if (statements) statements.addAll statements as List
+		if (statements) allStatements.addAll (statements as List)
 	}
 
 	/**
