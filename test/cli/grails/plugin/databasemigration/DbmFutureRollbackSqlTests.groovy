@@ -14,14 +14,21 @@
  */
 package grails.plugin.databasemigration
 
-import java.sql.SQLException
-
 /**
  * @author <a href='mailto:burt@burtbeckwith.com'>Burt Beckwith</a>
  */
 class DbmFutureRollbackSqlTests extends AbstractScriptTests {
 
 	void testFutureRollbackSql() {
-		// TODO
+		assertTableCount 1
+		copyTestChangelog()
+		executeAndCheck(['dbm-update-count', '2'])
+		assertTableCount 4
+
+		executeAndCheck 'dbm-future-rollback-sql'
+
+		assertTrue output.contains('Starting dbm-future-rollback-sql')
+		assertTrue output.contains('ALTER TABLE PERSON DROP COLUMN ZIPCODE')
+		assertTrue output.contains("DELETE FROM DATABASECHANGELOG  WHERE ID='test-3'")
 	}
 }
