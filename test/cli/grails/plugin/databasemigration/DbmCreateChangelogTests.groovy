@@ -43,7 +43,7 @@ class DbmCreateChangelogTests extends AbstractScriptTests {
 
 	void testCreateChangelogInSubdirectory() {
 
-		def file = new File('target/foo/bar/newChangeLog.groovy')
+		def file = new File('target/foo/bar/otherChangeLog.groovy')
 		assertFalse file.exists()
 
 		executeAndCheck(['dbm-create-changelog', 'foo/bar/otherChangeLog'])

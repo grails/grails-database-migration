@@ -34,7 +34,6 @@ class DbmGenerateChangelogTests extends AbstractScriptTests {
 		assertTrue xml.contains('<databaseChangeLog ')
 		assertTrue xml.contains('<changeSet ')
 		assertTrue xml.contains('<createTable ')
-		assertTrue xml.contains('<createIndex ')
 
 		assertTrue output.contains(
 			'Starting dbm-generate-changelog for database sa @ jdbc:h2:tcp://localhost/./target/testdb/testdb')
@@ -55,7 +54,6 @@ class DbmGenerateChangelogTests extends AbstractScriptTests {
 		assertTrue groovy.contains('databaseChangeLog = {')
 		assertTrue groovy.contains('changeSet(')
 		assertTrue groovy.contains('createTable(')
-		assertTrue groovy.contains('createIndex(')
 
 		assertTrue output.contains(
 			'Starting dbm-generate-changelog for database sa @ jdbc:h2:tcp://localhost/./target/testdb/testdb')

@@ -46,10 +46,10 @@ class DbmChangelogToGroovyTests extends AbstractScriptTests {
 		assertTrue output.contains('Converting target/changelog.xml to target/changelog.groovy')
 
 		String groovy = file.text
+
 		assertTrue groovy.contains('databaseChangeLog = {')
 		assertTrue groovy.contains('changeSet(')
 		assertTrue groovy.contains('createTable(')
-		assertTrue groovy.contains('createIndex(')
 
 		file = new File('target/cl.groovy')
 		file.delete()
@@ -66,6 +66,5 @@ class DbmChangelogToGroovyTests extends AbstractScriptTests {
 		assertTrue groovy.contains('databaseChangeLog = {')
 		assertTrue groovy.contains('changeSet(')
 		assertTrue groovy.contains('createTable(')
-		assertTrue groovy.contains('createIndex(')
 	}
 }

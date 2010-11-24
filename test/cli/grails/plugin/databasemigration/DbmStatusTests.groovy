@@ -24,8 +24,9 @@ class DbmStatusTests extends AbstractScriptTests {
 		generateChangelog()
 
 		executeAndCheck 'dbm-status'
+
 		assertTrue output.contains(
-			'2 change sets have not been applied to SA@jdbc:h2:tcp://localhost/./target/testdb/testdb')
+			'1 change sets have not been applied to SA@jdbc:h2:tcp://localhost/./target/testdb/testdb')
 
 		executeUpdate 'drop table thing'
 
@@ -35,9 +36,7 @@ class DbmStatusTests extends AbstractScriptTests {
 		assertTrue output.contains('ChangeSet changelog.cli.test.groovy::')
 		assertTrue output.contains('ran successfully in ')
 
-		// should be one left to apply
 		executeAndCheck 'dbm-status'
-		assertTrue output.contains(
-			'1 change sets have not been applied to SA@jdbc:h2:tcp://localhost/./target/testdb/testdb')
+		assertTrue output.contains('SA@jdbc:h2:tcp://localhost/./target/testdb/testdb is up to date')
 	}
 }
