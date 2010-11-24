@@ -42,7 +42,10 @@ class DatabaseMigrationGrailsPlugin {
 	String description = 'Grails Database Migration Plugin'
 	String documentation = 'http://grails.org/plugin/database-migration'
 
-	List pluginExcludes = ['grails-app/domain/**']
+	List pluginExcludes = [
+		'grails-app/domain/**',
+		'src/groovy/grails/plugin/databasemigration/test/**'
+	]
 
 	def doWithSpring = {
 

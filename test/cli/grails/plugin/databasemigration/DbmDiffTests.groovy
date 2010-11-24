@@ -86,6 +86,7 @@ class DbmDiffTests extends AbstractScriptTests {
 		createTables()
 
 		def file = new File('target/cl.groovy')
+		file.delete()
 		assertFalse file.exists()
 
 		executeAndCheck(['dbm-diff', 'dbdiff', 'target/cl.groovy'])
