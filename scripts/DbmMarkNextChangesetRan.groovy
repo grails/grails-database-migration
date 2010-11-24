@@ -19,7 +19,7 @@
 
 includeTargets << new File("$databaseMigrationPluginDir/scripts/_DatabaseMigrationCommon.groovy")
 
-target(markNextChangeSetRan: 'Mark the next change set as executed in the database') {
+target(markNextChangesetRan: 'Mark the next change set as executed in the database') {
 	depends dbmInit
 
 	doAndClose {
@@ -27,4 +27,4 @@ target(markNextChangeSetRan: 'Mark the next change set as executed in the databa
 	}
 }
 
-setDefaultTarget markNextChangeSetRan
+setDefaultTarget markNextChangesetRan
