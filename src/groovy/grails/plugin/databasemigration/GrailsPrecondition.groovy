@@ -70,6 +70,9 @@ class GrailsPrecondition implements Precondition {
 			catch (PreconditionFailedException e) {
 				throw e
 			}
+			catch (AssertionError e) {
+				throw new PreconditionFailedException(e.message, changeLog, this)
+			}
 			catch (e) {
 				throw new PreconditionErrorException(e, changeLog, this);
 			}

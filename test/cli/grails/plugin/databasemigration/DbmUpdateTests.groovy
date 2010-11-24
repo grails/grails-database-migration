@@ -125,4 +125,125 @@ class DbmUpdateTests extends AbstractScriptTests {
 		executeUpdate "insert into grails(name, foo) values ('test.name.2', 2000)"
 		assertEquals 2, tableSize()
 	}
+
+	void testUpdateWithGroovyPreconditionOk() {
+
+		assertTableCount 1
+
+		copyTestChangelog 'test.customprecondition.changelog'
+
+		def checkFile = new File('target/created_in_check')
+		checkFile.deleteOnExit()
+		assertFalse checkFile.exists()
+
+		def dataFile = new File('target/check_data')
+		dataFile.deleteOnExit()
+		dataFile.delete()
+		assertFalse dataFile.exists()
+		dataFile.withWriter { it.write '5' }
+
+		executeAndCheck 'dbm-update'
+
+		assertTrue output.contains('ChangeSet changelog.cli.test.groovy::create_grails_table::burt ran successfully')
+
+		// original + 2 Liquibase + new 'grails' table
+		assertTableCount 4
+		assertTrue findAllTableNames().contains('precondition_test')
+
+		assertTrue checkFile.exists()
+		String checkFileContent = checkFile.text
+		assertTrue checkFileContent.contains('database null: false')
+		assertTrue checkFileContent.contains('changeLog null: false')
+		assertTrue checkFileContent.contains('changeSet null: false')
+		assertTrue checkFileContent.contains('ctx null: false')
+		assertTrue checkFileContent.contains('resourceAccessor null: false')
+	}
+
+	void testUpdateWithGroovyPreconditionFail() {
+
+		assertTableCount 1
+
+		copyTestChangelog 'test.customprecondition.changelog'
+
+		def dataFile = new File('target/check_data')
+		dataFile.deleteOnExit()
+		dataFile.delete()
+		assertFalse dataFile.exists()
+		dataFile.withWriter { it.write '15' }
+
+		executeAndCheck(['dbm-update'], false)
+
+		assertTrue output.contains('Migration failed for change set changelog.cli.test.groovy::create_grails_table::burt:')
+		assertTrue output.contains('changelog.cli.test.groovy : value cannot be larger than 10')
+		assertTrue output.contains('Caused By: Preconditions Failed')
+
+		// original + 2 Liquibase but no new table from changelog
+		assertTableCount 3
+	}
+
+	void testUpdateWithGroovyPreconditionFailAssert() {
+
+		assertTableCount 1
+
+		copyTestChangelog 'test.customprecondition.changelog'
+
+		def dataFile = new File('target/check_data')
+		dataFile.deleteOnExit()
+		dataFile.delete()
+		assertFalse dataFile.exists()
+		dataFile.withWriter { it.write '42' }
+
+		executeAndCheck(['dbm-update'], false)
+
+		assertTrue output.contains('Migration failed for change set changelog.cli.test.groovy::create_grails_table::burt:')
+		assertTrue output.contains('changelog.cli.test.groovy : assert testValue != 42')
+		assertTrue output.contains('Caused By: Preconditions Failed')
+
+		// original + 2 Liquibase but no new table from changelog
+		assertTableCount 3
+	}
+
+	void testUpdateWithGroovyPreconditionFailAssertWithMessage() {
+
+		assertTableCount 1
+
+		copyTestChangelog 'test.customprecondition.changelog'
+
+		def dataFile = new File('target/check_data')
+		dataFile.deleteOnExit()
+		dataFile.delete()
+		assertFalse dataFile.exists()
+		dataFile.withWriter { it.write '237' }
+
+		executeAndCheck(['dbm-update'], false)
+
+		assertTrue output.contains('Migration failed for change set changelog.cli.test.groovy::create_grails_table::burt:')
+		assertTrue output.contains('changelog.cli.test.groovy : value cannot be 237. Expression: (testValue != 237). Values: testValue = 237')
+		assertTrue output.contains('Caused By: Preconditions Failed')
+
+		// original + 2 Liquibase but no new table from changelog
+		assertTableCount 3
+	}
+
+	void testUpdateWithGroovyPreconditionUnhandledException() {
+
+		assertTableCount 1
+
+		copyTestChangelog 'test.customprecondition.changelog'
+
+		def dataFile = new File('target/check_data')
+		dataFile.deleteOnExit()
+		dataFile.delete()
+		assertFalse dataFile.exists()
+		dataFile.withWriter { it.write '-1' }
+
+		executeAndCheck(['dbm-update'], false)
+
+		assertTrue output.contains('Migration failed for change set changelog.cli.test.groovy::create_grails_table::burt:')
+		assertTrue output.contains('changelog.cli.test.groovy : unhandled runtime exception')
+		assertTrue output.contains('Caused By: Precondition Error')
+
+		// original + 2 Liquibase but no new table from changelog
+		assertTableCount 3
+	}
 }
