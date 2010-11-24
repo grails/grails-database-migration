@@ -19,13 +19,17 @@ import grails.plugin.databasemigration.GrailsChangeLogParser
 import grails.plugin.databasemigration.GrailsClassLoaderResourceAccessor
 import grails.plugin.databasemigration.GrailsDiffStatusListener
 import grails.plugin.databasemigration.GrailsPrecondition
+import grails.plugin.databasemigration.Log4jLogger
 import grails.plugin.databasemigration.MigrationRunner
 import grails.plugin.databasemigration.MigrationUtils
 
 import liquibase.change.ChangeFactory
+import liquibase.logging.Logger
+import liquibase.logging.LogFactory
 import liquibase.parser.ChangeLogParserFactory
 import liquibase.precondition.PreconditionFactory
 import liquibase.resource.FileSystemResourceAccessor
+import liquibase.servicelocator.ServiceLocator
 import liquibase.snapshot.DatabaseSnapshotGeneratorFactory
 
 class DatabaseMigrationGrailsPlugin {
@@ -62,6 +66,21 @@ class DatabaseMigrationGrailsPlugin {
 		ChangeFactory.instance.register GrailsChange
 		PreconditionFactory.instance.register GrailsPrecondition
 
+		fixLogging()
+		
 		MigrationRunner.autoRun()
+	}
+
+	private void fixLogging() {
+		// ensure that classesBySuperclass is populated
+		LogFactory.getLogger 'NOT_A_REAL_LOGGER_NAME'
+
+		try {
+			// register the plugin's logger
+			ServiceLocator.instance.classesBySuperclass[Logger] << Log4jLogger
+		}
+		catch (Throwable t) {
+			// ignored, fall back to default logging
+		}
 	}
 }

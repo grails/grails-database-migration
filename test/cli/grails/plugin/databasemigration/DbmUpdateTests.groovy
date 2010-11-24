@@ -77,7 +77,7 @@ class DbmUpdateTests extends AbstractScriptTests {
 
 		executeAndCheck 'dbm-update'
 
-		assertTrue output.contains("WARNING: Keep out of reach of children")
+		assertTrue output.contains("Keep out of reach of children")
 
 		// original + 2 Liquibase + new 'grails' table
 		assertTableCount 4
