@@ -41,7 +41,7 @@ target(dbmDiff: 'Writes description of differences to standard out') {
 	try {
 		echo "Starting $hyphenatedScriptName against environment '$otherEnv'"
 
-		thisDatabase = MigrationUtils.getDatabase()
+		thisDatabase = MigrationUtils.getDatabase(defaultSchema)
 
 		otherDatabase = buildOtherDatabase(otherEnv)
 
@@ -72,7 +72,7 @@ buildOtherDatabase = { String otherEnv ->
 	def connection = DriverManager.getConnection(
 		otherDsConfig.url ?: null, otherDsConfig.username ?: null, otherDsConfig.password ?: null)
 
-	MigrationUtils.getDatabase connection
+	MigrationUtils.getDatabase connection, defaultSchema
 }
 
 setDefaultTarget dbmDiff
