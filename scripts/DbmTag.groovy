@@ -19,7 +19,7 @@
 
 includeTargets << new File("$databaseMigrationPluginDir/scripts/_DatabaseMigrationCommon.groovy")
 
-target(dbmTag: 'Drops all database objects owned by the user') {
+target(dbmTag: "'Tags' the current database state for future rollback") {
 	depends dbmInit
 
 	String tag = argsList[0]

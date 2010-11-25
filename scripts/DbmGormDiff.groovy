@@ -16,7 +16,7 @@
 includeTargets << new File("$databaseMigrationPluginDir/scripts/_DatabaseMigrationCommon.groovy")
 
 /**
- * Similar to dbm-db-diff but diffs the current configuration based on the
+ * Similar to dbm-diff but diffs the current configuration based on the
  * application's domain classes with the database configured for the current environment.
  *
  * Run 'grails dbm-gorm-diff' for the dev environment, or 'grails prod dbm-gorm-diff' for the

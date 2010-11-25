@@ -21,7 +21,7 @@ class DbmCreateChangelogTests extends AbstractScriptTests {
 
 	void testBadParams() {
 		executeAndCheck(['dbm-create-changelog'], false)
-		assertTrue output.contains('ERROR: You must specify the migration name')
+		assertTrue output.contains('ERROR: You must specify the changelog file name')
 	}
 
 	void testCreateChangelog() {

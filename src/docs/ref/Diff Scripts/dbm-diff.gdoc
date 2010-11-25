@@ -1,0 +1,26 @@
+h1. dbm-diff
+
+h2. Purpose
+
+Compares two databases and creates a changelog that will make the changes required to bring them into sync.
+
+h2. Description
+
+Executes against the database configured in @DataSource.groovy@ for the current environment (defaults to @dev@) and another configured datasource in @DataSource.groovy@.
+
+If a filename parameter is specified then the output will be written to the named file, otherwise it will write to the console. If the filename ends with .groovy a Groovy DSL file will be created, otherwise a standard XML file will be created.
+
+Usage:
+{code:java}
+grails [environment] dbm-diff [otherEnv] [filename] --defaultSchema=[defaultSchema]
+{code}
+
+Required arguments:
+
+* @otherEnv@ - The name of the environment to compare to
+
+Optional arguments:
+
+* @filename@ - The path to the output file to write to. If not specified output is written to the console
+* @defaultSchema@ - The default schema name to use
+

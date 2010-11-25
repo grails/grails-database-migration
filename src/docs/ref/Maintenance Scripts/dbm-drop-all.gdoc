@@ -1,0 +1,20 @@
+h1. dbm-drop-all
+
+h2. Purpose
+
+Drops all database objects owned by the user.
+
+h2. Description
+
+Usage:
+{code:java}
+grails [environment] dbm-drop-all [schemaNames] --defaultSchema=[defaultSchema]
+{code}
+
+Required arguments: _none_ .
+
+Optional arguments:
+
+* @schemaNames@ - A comma-delimited list of schema names to use
+* @defaultSchema@ - The default schema name to use if the @schemaNames@ parameter isn't present
+

@@ -1,0 +1,22 @@
+h1. dbm-changelog-sync
+
+h2. Purpose
+
+Mark all changes as executed in the database.
+
+h2. Description
+
+Registers all changesets as having been run in the Liquibase control table. This is useful when then changes have already been applied, for example if you've just created a changelog from your database using the [dbm-generate-changelog|Rollback Scripts] script.
+
+Usage:
+{code:java}
+grails [environment] dbm-changelog-sync --contexts=[contexts] --defaultSchema=[defaultSchema]
+{code}
+
+Required arguments: _none_ .
+
+Optional arguments:
+
+* @contexts@ - A comma-delimited list of [context|http://www.liquibase.org/manual/contexts] names. If specified, only changesets tagged with one of the context names will be included
+* @defaultSchema@ - The default schema name to use
+

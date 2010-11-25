@@ -1,0 +1,23 @@
+h1. dbm-tag
+
+h2. Purpose
+
+Adds a tag to mark the current database state.
+
+h2. Description
+
+Useful for future rollbacks to a specific tag (e.g. using the [dbm-rollback|Rollback Scripts] script).
+
+Usage:
+{code:java}
+grails [environment] dbm-tag [tagName] --defaultSchema=[defaultSchema]
+{code}
+
+Required arguments:
+
+* @tagName@ - The name of the tag to use
+
+Optional arguments:
+
+* @defaultSchema@ - The default schema name to use
+

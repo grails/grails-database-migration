@@ -1,0 +1,22 @@
+h1. dbm-rollback-count
+
+h2. Purpose
+
+Rolls back the specified number of change sets
+
+h2. Description
+
+Usage:
+{code:java}
+grails [environment] dbm-rollback-count [number] --contexts=[contexts] --defaultSchema=[defaultSchema]
+{code}
+
+Required arguments:
+
+* @number@ - The number of changesets to roll back
+
+Optional arguments:
+
+* @contexts@ - A comma-delimited list of [context|http://www.liquibase.org/manual/contexts] names. If specified, only changesets tagged with one of the context names will be run
+* @defaultSchema@ - The default schema name to use
+

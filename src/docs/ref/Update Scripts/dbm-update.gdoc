@@ -1,0 +1,22 @@
+h1. dbm-update
+
+h2. Purpose
+
+Updates a database to the current version.
+
+h2. Description
+
+Runs all un-run changeSets from the changelog. Executes against the database configured in @DataSource.groovy@ for the current environment (defaults to @dev@).
+
+Usage:
+{code:java}
+grails [environment] dbm-update --contexts=[contexts] --defaultSchema=[defaultSchema]
+{code}
+
+Required arguments: _none_ .
+
+Optional arguments:
+
+* @contexts@ - A comma-delimited list of [context|http://www.liquibase.org/manual/contexts] names. If specified, only changesets tagged with one of the context names will be run
+* @defaultSchema@ - The default schema name to use
+

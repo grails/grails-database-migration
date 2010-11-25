@@ -1,0 +1,25 @@
+h1. dbm-generate-changelog
+
+h2. Purpose
+
+Generates an initial changelog XML or Groovy DSL file from the database.
+
+h2. Description
+
+Creates a Groovy DSL file if the filename is specified and it ends with .groovy. If another extension is specified it creates a standard Liquibase XML file, and if no filename is specified it writes to the console.
+
+Executes against the database configured in @DataSource.groovy@ for the current environment (defaults to @dev@).
+
+Usage:
+{code:java}
+grails [environment] dbm-generate-changelog [filename] --diffTypes=[diffTypes] --defaultSchema=[defaultSchema]
+{code}
+
+Required arguments: _none_ .
+
+Optional arguments:
+
+* @filename@ - The path to the output file to write to. If not specified output is written to the console
+* @diffTypes@ - A comma-delimited list of change types to include - see [the documentation|http://www.liquibase.org/manual/diff#controlling_checks_since_1.8] for what types are available
+* @defaultSchema@ - The default schema name to use
+
