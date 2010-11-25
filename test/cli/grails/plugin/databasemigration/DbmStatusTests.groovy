@@ -19,7 +19,7 @@ package grails.plugin.databasemigration
  */
 class DbmStatusTests extends AbstractScriptTests {
 
-	void testStatus() {
+	void testStatusList() {
 
 		generateChangelog()
 
@@ -27,6 +27,9 @@ class DbmStatusTests extends AbstractScriptTests {
 
 		assertTrue output.contains(
 			'1 change sets have not been applied to SA@jdbc:h2:tcp://localhost/./target/testdb/testdb')
+
+		assertTrue output.contains(
+			'changelog.cli.test.groovy::')
 
 		executeUpdate 'drop table thing'
 
@@ -38,5 +41,17 @@ class DbmStatusTests extends AbstractScriptTests {
 
 		executeAndCheck 'dbm-status'
 		assertTrue output.contains('SA@jdbc:h2:tcp://localhost/./target/testdb/testdb is up to date')
+	}
+
+	void testStatusCount() {
+
+		generateChangelog()
+
+		executeAndCheck(['dbm-status', '--verbose=false'])
+
+		assertTrue output.contains(
+			'1 change sets have not been applied to SA@jdbc:h2:tcp://localhost/./target/testdb/testdb')
+
+		assertFalse output.contains('changelog.cli.test.groovy::')
 	}
 }
