@@ -48,8 +48,8 @@ class MigrationUtils {
 		database
 	}
 
-	static Database getDatabase() {
-		getDatabase application.mainContext.dataSource.connection
+	static Database getDatabase(String defaultSchema = null) {
+		getDatabase application.mainContext.dataSource.connection, defaultSchema
 	}
 
 	static Liquibase getLiquibase(Database database) {

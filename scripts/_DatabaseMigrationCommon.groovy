@@ -70,7 +70,7 @@ newOutputStreamWriter = { int argIndex = 0 ->
 
 doAndClose = { Closure c ->
 	try {
-		database = MigrationUtils.getDatabase()
+		database = MigrationUtils.getDatabase(defaultSchema)
 		liquibase = MigrationUtils.getLiquibase(database)
 
 		def dsConfig = config.dataSource
