@@ -38,7 +38,7 @@ class MigrationUtils {
 	 */
 	static GrailsApplication application
 
-	static Database getDatabase(Connection connection, String defaultSchema = null) {
+	static Database getDatabase(Connection connection, String defaultSchema) {
 		def database = DatabaseFactory.instance.findCorrectDatabaseImplementation(
 			new JdbcConnection(connection))
 		if (defaultSchema) {
