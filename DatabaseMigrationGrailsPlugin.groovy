@@ -70,7 +70,7 @@ class DatabaseMigrationGrailsPlugin {
 		PreconditionFactory.instance.register GrailsPrecondition
 
 		fixLogging()
-		
+
 		MigrationRunner.autoRun()
 	}
 

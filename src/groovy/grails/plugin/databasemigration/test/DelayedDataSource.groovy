@@ -36,7 +36,7 @@ class DelayedDataSource extends DelegatingDataSource {
 		initialize()
 		super.getConnection()
 	}
-	
+
 	@Override
 	void afterPropertiesSet() {
 		// override to not check for targetDataSource since it's lazily created

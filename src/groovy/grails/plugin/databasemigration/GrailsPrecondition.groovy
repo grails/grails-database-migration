@@ -43,11 +43,12 @@ import org.springframework.context.ApplicationContext
  */
 class GrailsPrecondition implements Precondition {
 
+	Closure checkClosure
+
 	// fields accessible to the check closure
 	Database database
 	DatabaseChangeLog changeLog
 	ChangeSet changeSet
-	Closure checkClosure
 	ApplicationContext ctx
 	ResourceAccessor resourceAccessor
 
@@ -60,7 +61,7 @@ class GrailsPrecondition implements Precondition {
 		this.database = database
 		this.changeLog = changeLog
 		this.changeSet = changeSet
-		
+
 		if (checkClosure) {
 			checkClosure.delegate = this
 
@@ -103,7 +104,7 @@ class GrailsPrecondition implements Precondition {
 	 * @param schemaName the schema name
 	 * @return a snapshot for the current database and schema name
 	 */
-	DatabaseSnapshot createDatabaseSnapshot(String schemaName) {
+	DatabaseSnapshot createDatabaseSnapshot(String schemaName = null) {
 		try {
 			return DatabaseSnapshotGeneratorFactory.instance.createSnapshot(database, schemaName, null)
 		}

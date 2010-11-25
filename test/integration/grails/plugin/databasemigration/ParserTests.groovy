@@ -89,7 +89,7 @@ class ParserTests extends GroovyTestCase {
 		assertEquals 't2', changeLog.changeSets[1].id
 		assertEquals 'burt', changeLog.changeSets[1].author
 		assertEquals 'sub1/sub1.changelist.xml', changeLog.changeSets[1].filePath
-		
+
 		assertEquals 't3', changeLog.changeSets[2].id
 		assertEquals 'not_burt', changeLog.changeSets[2].author
 		assertEquals 'sub1/sub2.changelist.groovy', changeLog.changeSets[2].filePath
@@ -115,6 +115,7 @@ class ParserTests extends GroovyTestCase {
 
 	void testParseWithProperties() {
 		// TODO
+		fail 'implement me'
 	}
 
 	private void checkLists(List xmlList, List groovyList, String type) {

@@ -10,11 +10,11 @@ databaseChangeLog = {
 				check {
 
 					new File('target/created_in_check').withWriter {
-						it.write "database null: ${database == null}\n" 
-						it.write "changeLog null: ${changeLog == null}\n" 
-						it.write "changeSet null: ${changeSet == null}\n" 
-						it.write "ctx null: ${ctx == null}\n" 
-						it.write "resourceAccessor null: ${resourceAccessor == null}\n" 
+						it.write "database null: ${database == null}\n"
+						it.write "changeLog null: ${changeLog == null}\n"
+						it.write "changeSet null: ${changeSet == null}\n"
+						it.write "ctx null: ${ctx == null}\n"
+						it.write "resourceAccessor null: ${resourceAccessor == null}\n"
 					}
 
 					int testValue = new File('target/check_data').text.trim().toInteger()
