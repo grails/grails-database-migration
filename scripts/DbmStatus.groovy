@@ -23,7 +23,7 @@ target(dbmStatus: 'Outputs list of unrun change sets') {
 	depends dbmInit
 
 	doAndClose {
-		boolean verbose = argsMap.verbose instanceof Boolean ? argsMap.verbose : true
+		boolean verbose = argsMap.verbose == null ? true : Boolean.valueOf(argsMap.verbose)
 		liquibase.reportStatus verbose, contexts, newOutputStreamWriter()
 	}
 }
