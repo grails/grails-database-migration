@@ -116,6 +116,9 @@ class DslBuilder extends BuilderSupport {
 
 	@Override
 	protected createNode(name, Map attributes, value) {
+
+		attributes = expandExpressions(attributes)
+
 		if ('comment' == name) {
 			setText value
 		}
@@ -218,6 +221,14 @@ class DslBuilder extends BuilderSupport {
 		name
 	}
 
+	private Map expandExpressions(Map original) {
+		def expanded = [:]
+		original.each { name, value ->
+			expanded[name] = changeLogParameters.expandExpressions(original[name])
+		}
+		expanded
+	}
+
 	private boolean processGrailsChangeProperty(String methodName, args) {
 		args = InvokerHelper.asList(args)
 
@@ -288,8 +299,7 @@ class DslBuilder extends BuilderSupport {
 	}
 
 	private void setText(String value) {
-//		currentText = changeLogParameters.expandExpressions(StringUtils.trimToNull(value))
-		currentText = StringUtils.trimToNull(value)
+		currentText = changeLogParameters.expandExpressions(StringUtils.trimToNull(value))
 	}
 
 	private void processIncludeAll(Map attributes) {
@@ -545,24 +555,21 @@ class DslBuilder extends BuilderSupport {
 	private void processProperty(Map attributes) {
 		String context = StringUtils.trimToNull(attributes.context)
 		String dbms = StringUtils.trimToNull(attributes.dbms)
-		if (StringUtils.trimToNull(attributes.file)) {
-//			changeLogParameters.set attributes.name, attributes.value, context, dbms
-println "changeLogParameters.set $attributes.name, $attributes.value"
+		if (!StringUtils.trimToNull(attributes.file)) {
+			changeLogParameters.set attributes.name, attributes.value, context, dbms
 		}
 		else {
-println "LOAD PROPS FROM FILE $attributes.file"
-//			Properties props = new Properties()
-//			InputStream propertiesStream = resourceAccessor.getResourceAsStream(attributes.file)
-//			if (!propertiesStream) {
-//				log.info "Could not open properties file $attributes.file"
-//			}
-//			else {
-//				props.load propertiesStream
-//				props.each { propName, propValue ->
-//					// TODO add to binding
-//					changeLogParameters.set propName.toString(), propValue.toString(), context, dbms
-//				}
-//			}
+			def props = new Properties()
+			def propertiesStream = resourceAccessor.getResourceAsStream(attributes.file)
+			if (!propertiesStream) {
+				log.info "Could not open properties file $attributes.file"
+			}
+			else {
+				props.load propertiesStream
+				props.each { propName, propValue ->
+					changeLogParameters.set propName.toString(), propValue.toString(), context, dbms
+				}
+			}
 		}
 	}
 
@@ -689,7 +696,7 @@ println "LOAD PROPS FROM FILE $attributes.file"
 	}
 
 	private void setPropertyValue(object, String name, String value) {
-//		value = changeLogParameters.expandExpressions(value)
+		value = changeLogParameters.expandExpressions(value)
 		if (object instanceof CustomChangeWrapper) {
 			if ('class' == name) {
 				object.setClass value

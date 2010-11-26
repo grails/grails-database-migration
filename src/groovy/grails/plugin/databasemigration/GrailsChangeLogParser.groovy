@@ -24,7 +24,8 @@ import org.apache.log4j.Logger
 import org.springframework.context.ApplicationContext
 
 /**
- * Loads a DSL script and invokes the builder. Registered in DatabaseMigrationGrailsPlugin.doWithApplicationContext().
+ * Loads a DSL script and invokes the builder. Registered in
+ * DatabaseMigrationGrailsPlugin.doWithApplicationContext().
  *
  * @author <a href='mailto:burt@burtbeckwith.com'>Burt Beckwith</a>
  */
@@ -53,14 +54,18 @@ class GrailsChangeLogParser implements ChangeLogParser {
 
 		log.debug "parsing $physicalChangeLogLocation"
 
-		def bindingVars = [:]
-
 		def inputStream = resourceAccessor.getResourceAsStream(physicalChangeLogLocation)
 		Script script = new GroovyShell(Thread.currentThread().contextClassLoader,
-			new Binding(bindingVars)).parse(inputStream.text)
+			new Binding(MigrationUtils.changelogProperties)).parse(inputStream.text)
 		script.run()
 
-		def builder = new DslBuilder(changeLogParameters, resourceAccessor, physicalChangeLogLocation, ctx)
+		MigrationUtils.changelogProperties.each { name, value ->
+			// TODO context, dbms
+			changeLogParameters.set name, value, null, null
+		}
+
+		def builder = new DslBuilder(changeLogParameters, resourceAccessor,
+			physicalChangeLogLocation, ctx)
 
 		def root = script.databaseChangeLog
 		root.delegate = builder
@@ -69,7 +74,9 @@ class GrailsChangeLogParser implements ChangeLogParser {
 		builder.databaseChangeLog
 	}
 
-	boolean supports(String changeLogFile, ResourceAccessor ra) { changeLogFile.toLowerCase().endsWith 'groovy' }
+	boolean supports(String changeLogFile, ResourceAccessor resourceAccessor) {
+		changeLogFile.toLowerCase().endsWith 'groovy'
+	}
 
 	int getPriority() { PRIORITY_DEFAULT }
 }

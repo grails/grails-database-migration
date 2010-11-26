@@ -76,4 +76,8 @@ class MigrationUtils {
 	static String getChangelogLocation() {
 		getConfig().changelogLocation ?: 'grails-app/conf/migrations'
 	}
+
+	static ConfigObject getChangelogProperties() {
+		getConfig().changelogProperties
+	}
 }

@@ -16,6 +16,7 @@ package grails.plugin.databasemigration
 
 import org.springframework.beans.PropertyAccessorFactory
 
+import liquibase.change.core.CreateTableChange
 import liquibase.changelog.ChangeLogParameters
 import liquibase.resource.FileSystemResourceAccessor
 import liquibase.resource.ResourceAccessor
@@ -107,15 +108,61 @@ class ParserTests extends GroovyTestCase {
 		assertEquals 'sub1/sub_all/sub5.changelist.xml', changeLog.changeSets[5].filePath
 	}
 
+	void testParseWithProperties() {
+		copyFile 'test.property.changelist.g', '', 'test.property.changelist.groovy'
+		copyFile 'test.property.changelist.xml', ''
+		copyFile 'columns.properties', ''
+
+		def resourceAccessor = new FileSystemResourceAccessor('target/includestest')
+
+		def changeLog = new GrailsChangeLogParser().parse('test.property.changelist.groovy',
+			new ChangeLogParameters(), resourceAccessor)
+
+		assertEquals 2, changeLog.changeSets.size()
+
+		def changeset = changeLog.changeSets[0]
+		assertEquals 'Hunter S. Thompson', changeset.author
+		assertEquals 'Fear and Loathing in Las Vegas', changeset.id
+
+		assertEquals 1, changeset.changes.size()
+		def change = changeset.changes[0]
+		assertTrue change instanceof CreateTableChange
+
+		assertEquals 'property_based', change.tableName
+
+		assertEquals 3, change.columns.size()
+
+		assertEquals 'table_id', change.columns[0].name
+
+		assertEquals 'col_1', change.columns[1].name
+		assertEquals 'VARCHAR(255)', change.columns[1].type
+
+		assertEquals 'col_2', change.columns[2].name
+		assertEquals 'BIGINT', change.columns[2].type
+
+		changeset = changeLog.changeSets[1]
+
+		assertEquals 1, changeset.changes.size()
+		change = changeset.changes[0]
+		assertTrue change instanceof CreateTableChange
+
+		assertEquals 'property_based_xml', change.tableName
+
+		assertEquals 3, change.columns.size()
+
+		assertEquals 'xml_table_id', change.columns[0].name
+
+		assertEquals 'col_3', change.columns[1].name
+		assertEquals 'VARCHAR(100)', change.columns[1].type
+
+		assertEquals 'col_4', change.columns[2].name
+		assertEquals 'float', change.columns[2].type
+	}
+
 	private void copyFile(String filename, String relativeDir, String rename = filename) {
 		def file = new File("target/includestest/$relativeDir", rename)
 		file.parentFile.mkdirs()
 		file.withWriter { it.write getClass().getResourceAsStream(filename).text }
-	}
-
-	void testParseWithProperties() {
-		// TODO
-		fail 'implement me'
 	}
 
 	private void checkLists(List xmlList, List groovyList, String type) {
