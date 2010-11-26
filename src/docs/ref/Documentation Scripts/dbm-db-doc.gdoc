@@ -6,16 +6,16 @@ Generates Javadoc-like documentation based on current database and change log.
 
 h2. Description
 
-Writes to the location specifed by the @grails.plugin.databasemigration.dbDocLocation@ configuration option (defaults to @target/dbdoc@).
-
-You can specify just the date, or the date and time. The date format must be @yyyy-MM-dd@ and the time format must be @HH:mm:ss@.
+Writes to the folder specified by the @destination@ parameter, or to the @grails.plugin.databasemigration.dbDocLocation@ configuration option (defaults to @target/dbdoc@).
 
 Usage:
 {code:java}
-grails [environment] dbm-db-doc [date] [time] [filename] --contexts=[contexts] --defaultSchema=[defaultSchema]
+grails [environment] dbm-db-doc [destination]
 {code}
 
 Required arguments: _none_ .
 
-Optional arguments: _none_ .
+Optional arguments:
+
+* @destination@ - The path to write to
 
