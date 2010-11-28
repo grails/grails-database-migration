@@ -24,7 +24,8 @@ target(dbmGenerateGormChangelog: 'Generates an initial changelog XML file based 
 
 	doAndClose {
 		executeAndWrite argsList[0], { PrintStream out ->
-			createDiff(database, null).compare().printChangeLog out, database
+			def gormDatabase = createGormDatabase()
+			createDiff(gormDatabase, null).compare().printChangeLog out, gormDatabase
 		}
 	}
 }
