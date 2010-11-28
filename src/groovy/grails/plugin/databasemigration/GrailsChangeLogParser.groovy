@@ -59,10 +59,7 @@ class GrailsChangeLogParser implements ChangeLogParser {
 			new Binding(MigrationUtils.changelogProperties)).parse(inputStream.text)
 		script.run()
 
-		MigrationUtils.changelogProperties.each { name, value ->
-			// TODO context, dbms
-			changeLogParameters.set name, value, null, null
-		}
+		setChangelogProperties changeLogParameters
 
 		def builder = new DslBuilder(changeLogParameters, resourceAccessor,
 			physicalChangeLogLocation, ctx)
@@ -79,4 +76,20 @@ class GrailsChangeLogParser implements ChangeLogParser {
 	}
 
 	int getPriority() { PRIORITY_DEFAULT }
+
+	private void setChangelogProperties(ChangeLogParameters changeLogParameters) {
+
+		MigrationUtils.changelogProperties.each { name, value ->
+
+			String contexts
+			String databases
+			if (value instanceof Map) {
+				contexts = value.contexts
+				databases = value.databases
+				value = value.value
+			}
+
+			changeLogParameters.set name, value, contexts, databases
+		}
+	}
 }
