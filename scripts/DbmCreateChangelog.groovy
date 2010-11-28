@@ -28,8 +28,8 @@ target(dbmCreateChangelog: 'Creates an empty changelog file') {
 	}
 
 	try {
-		def file = new File(new File(basedir, MigrationUtils.changelogLocation), name + '.groovy')
-		file.parentFile.mkdirs()
+		def file = new File(name)
+		file.parentFile?.mkdirs()
 
 		String user = (System.getProperty('user.name') ?: '').trim()
 		String author = user ? "$user (generated)" : 'diff-generated';
