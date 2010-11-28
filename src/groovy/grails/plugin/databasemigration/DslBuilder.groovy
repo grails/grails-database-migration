@@ -330,7 +330,9 @@ class DslBuilder extends BuilderSupport {
 		Set<String> seenPaths = []
 		for (URL fileUrl : resources) {
 			if (!fileUrl.toExternalForm().startsWith('file:')) {
-				if (fileUrl.toExternalForm().startsWith('jar:file:')) {
+				if (fileUrl.toExternalForm().startsWith('jar:file:') ||
+				    fileUrl.toExternalForm().startsWith('wsjar:file:') ||
+				    fileUrl.toExternalForm().startsWith('zip:')) {
 					fileUrl = new File(extractZipFile(fileUrl), pathName).toURI().toURL()
 				}
 				else {
@@ -722,7 +724,14 @@ class DslBuilder extends BuilderSupport {
 		}
 
 		if (isRelativePath) {
-			fileName = FilenameUtils.concat(FilenameUtils.getFullPath(relativeBaseFileName), fileName)
+			// workaround for FilenameUtils.normalize() returning null for relative paths like ../conf/liquibase.xml
+			String tempFile = FilenameUtils.concat(FilenameUtils.getFullPath(relativeBaseFileName), fileName)
+			if (tempFile && new File(tempFile).exists()) {
+				fileName = tempFile
+			}
+			else {
+				fileName = FilenameUtils.getFullPath(relativeBaseFileName) + fileName;
+			}
 		}
 
 		DatabaseChangeLog changeLog = ChangeLogParserFactory.instance.getParser(fileName, resourceAccessor).parse(
