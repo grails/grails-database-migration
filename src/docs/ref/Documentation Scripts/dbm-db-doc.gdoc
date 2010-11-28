@@ -10,7 +10,7 @@ Writes to the folder specified by the @destination@ parameter, or to the @grails
 
 Usage:
 {code:java}
-grails [environment] dbm-db-doc [destination]
+grails [environment] dbm-db-doc [destination] --contexts=[contexts]
 {code}
 
 Required arguments: _none_ .
@@ -18,4 +18,4 @@ Required arguments: _none_ .
 Optional arguments:
 
 * @destination@ - The path to write to
-
+* @contexts@ - A comma-delimited list of [context|http://www.liquibase.org/manual/contexts] names. If specified, only changesets tagged with one of the context names will be included
