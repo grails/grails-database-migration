@@ -76,7 +76,7 @@ class GormDatabaseSnapshotGenerator implements DatabaseSnapshotGenerator {
 						decimalDigits: hibernateColumn.scale,
 						defaultValue: hibernateColumn.defaultValue,
 						nullable: hibernateColumn.nullable,
-						primaryKey: hibernatePrimaryKey?.columns?.contains(hibernateColumn),
+						primaryKey: hibernatePrimaryKey == null ? false : hibernatePrimaryKey.columns.contains(hibernateColumn),
 						table: table,
 						typeName: hibernateColumn.getSqlType(dialect, mapping).replaceFirst('\\(.*\\)', ''),
 						unique: hibernateColumn.unique,
