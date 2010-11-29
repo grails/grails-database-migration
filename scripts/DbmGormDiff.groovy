@@ -33,7 +33,7 @@ includeTargets << new File("$databaseMigrationPluginDir/scripts/_DatabaseMigrati
 target(dbmGormDiff: 'Diff GORM classes against database and generate a changelog') {
 	depends dbmInit
 
-	if (!okToWrite()) return
+	if (!okToWrite(0, true)) return
 
 	def realDatabase
 	try {

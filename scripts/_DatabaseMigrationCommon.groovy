@@ -127,6 +127,45 @@ executeAndWrite = { String filename, Closure c ->
 		String groovy = ChangelogXml2Groovy.convert(xml)
 		new File(filename).withWriter { it.write groovy }
 	}
+
+	if (argsMap.add) {
+		def fullPath = new File(filename).absolutePath
+		def fullMigrationFolderPath = new File(MigrationUtils.changelogLocation).absolutePath
+		String relativePath = (fullPath - fullMigrationFolderPath).substring(1)
+		appendToChangelog new File(filename), "\n\tinclude file: '$relativePath'"
+	}
+}
+
+appendToChangelog = { File sourceFile, String content ->
+
+	def changelog = new File(MigrationUtils.changelogLocation, MigrationUtils.changelogFileName)
+	if (changelog.absolutePath.equals(sourceFile.absolutePath)) {
+		return
+	}
+
+	def asLines = changelog.text.readLines()
+	int count = asLines.size()
+	int index = -1
+	for (int i = count - 1; i > -1; i--) {
+		if (asLines[i].trim() == '}') {
+			index = i
+			break
+		}
+	}
+
+	if (index == -1) {
+		// TODO
+		return
+	}
+
+	// TODO backup
+	changelog.withWriter {
+		index.times { i -> it.write asLines[i]; it.newLine() }
+
+		it.write content; it.newLine()
+
+		(count - index).times { i -> it.write asLines[index + i]; it.newLine() }
+	}
 }
 
 echo = { String message -> ant.echo message: message }
@@ -207,17 +246,21 @@ createDiff = { referenceDatabase, targetDatabase ->
 	diff
 }
 
-okToWrite = { destinationOrIndex = 0 ->
+okToWrite = { destinationOrIndex = 0, boolean relativeToMigrationDir = false ->
 
 	String destination
-	if (destinationOrIndex instanceof Integer) {
-		destination = argsList[destination]
+	if (destinationOrIndex instanceof Number) {
+		destination = argsList[destinationOrIndex]
 		if (!destination) {
 			return true // stdout
 		}
 	}
 	else {
 		destination = destinationOrIndex
+	}
+
+	if (relativeToMigrationDir) {
+		destination = MigrationUtils.changelogLocation + '/' + destination
 	}
 
 	def file = new File(destination)
@@ -235,4 +278,3 @@ okToWrite = { destinationOrIndex = 0 ->
 
 	true
 }
-	
