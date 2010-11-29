@@ -25,6 +25,8 @@ import liquibase.exception.DatabaseException
 import liquibase.snapshot.DatabaseSnapshot
 import liquibase.snapshot.DatabaseSnapshotGenerator
 
+import org.hibernate.dialect.MySQLDialect
+
 /**
  * Used by the gorm-diff script. Registered in DatabaseMigrationGrailsPlugin.doWithApplicationContext().
  *
@@ -80,6 +82,7 @@ class GormDatabaseSnapshotGenerator implements DatabaseSnapshotGenerator {
 						table: table,
 						typeName: hibernateColumn.getSqlType(dialect, mapping).replaceFirst('\\(.*\\)', ''),
 						unique: hibernateColumn.unique,
+						autoIncrement: hibernateColumn.value.isIdentityColumn(dialect),
 						certainDataType: false)
 					column.columnSize = column.numeric ? hibernateColumn.precision : hibernateColumn.length
 
@@ -125,6 +128,9 @@ class GormDatabaseSnapshotGenerator implements DatabaseSnapshotGenerator {
 
 					fk.primaryKeyColumns = fkColumns.join(', ')
 					snapshot.foreignKeys << fk
+					if (dialect instanceof MySQLDialect) {
+						addMysqlFkIndex snapshot, fk.foreignKeyTable, hibernateForeignKey
+					}
 				}
 			}
 		}
@@ -133,6 +139,16 @@ class GormDatabaseSnapshotGenerator implements DatabaseSnapshotGenerator {
 		}
 
 		snapshot
+	}
+
+	// MySQL is unique in that the Dialect adds an index to each FK but it's
+	// not exposed in the object model. so we add it here to be consistent
+	private void addMysqlFkIndex(DatabaseSnapshot snapshot, Table table, hibernateForeignKey) {
+		Index index = new Index(table: table, name: hibernateForeignKey.name)
+		for (hibernateColumn in hibernateForeignKey.columnIterator) {
+			index.columns << hibernateColumn.name
+		}
+		snapshot.indexes << index
 	}
 
 	boolean supports(Database db) { db instanceof GormDatabase }
