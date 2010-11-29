@@ -14,10 +14,8 @@
  */
 package grails.plugin.databasemigration
 
-import liquibase.exception.UnexpectedLiquibaseException
 import liquibase.logging.LogLevel
 
-import org.apache.log4j.Level
 import org.apache.log4j.Logger
 
 /**
