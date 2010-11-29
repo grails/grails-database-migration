@@ -48,6 +48,11 @@ class DelayedSessionFactoryBean extends ConfigurableLocalSessionFactoryBean {
 		}
 	}
 
+	SessionFactory getRealSessionFactory() {
+		initialize()
+		_realSessionFactory
+	}
+
 	private synchronized void initialize() {
 		if (_initialized) {
 			return

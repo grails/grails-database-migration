@@ -16,8 +16,6 @@ package grails.plugin.databasemigration
 
 import grails.util.GrailsUtil
 
-import liquibase.Liquibase
-
 import org.apache.log4j.Logger
 
 /**
@@ -31,6 +29,11 @@ class MigrationRunner {
 	private static Logger LOG = Logger.getLogger(this)
 
 	static void autoRun() {
+
+		if (!MigrationUtils.canAutoMigrate()) {
+			return
+		}
+
 		def config = MigrationUtils.config
 
 		if (!config.updateOnStart) {
@@ -40,10 +43,12 @@ class MigrationRunner {
 
 		def database
 		try {
-			database = MigrationUtils.getDatabase() // TODO support defaultSchema?
-			for (name in config.updateOnStartFileNames) {
-				LOG.info "Running script '$name'"
-				MigrationUtils.getLiquibase(database, name).update null
+			MigrationUtils.executeInSession {
+				database = MigrationUtils.getDatabase() // TODO support defaultSchema?
+				for (name in config.updateOnStartFileNames) {
+					LOG.info "Running script '$name'"
+					MigrationUtils.getLiquibase(database, name).update null
+				}
 			}
 		}
 		catch (e) {

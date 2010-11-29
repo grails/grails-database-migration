@@ -70,14 +70,16 @@ newOutputStreamWriter = { int argIndex = 0 ->
 
 doAndClose = { Closure c ->
 	try {
-		database = MigrationUtils.getDatabase(defaultSchema)
-		liquibase = MigrationUtils.getLiquibase(database)
+		MigrationUtils.executeInSession {
+			database = MigrationUtils.getDatabase(defaultSchema)
+			liquibase = MigrationUtils.getLiquibase(database)
 
-		def dsConfig = config.dataSource
-		String dbDesc = dsConfig.jndiName ? "JNDI $dsConfig.jndiName" : "$dsConfig.username @ $dsConfig.url"
-		echo "Starting $hyphenatedScriptName for database $dbDesc"
-		c()
-		echo "Finished $hyphenatedScriptName"
+			def dsConfig = config.dataSource
+			String dbDesc = dsConfig.jndiName ? "JNDI $dsConfig.jndiName" : "$dsConfig.username @ $dsConfig.url"
+			echo "Starting $hyphenatedScriptName for database $dbDesc"
+			c()
+			echo "Finished $hyphenatedScriptName"
+		}
 	}
 	catch (e) {
 		printStackTrace e
