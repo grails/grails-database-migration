@@ -22,6 +22,8 @@ includeTargets << new File("$databaseMigrationPluginDir/scripts/_DatabaseMigrati
 target(markNextChangesetRan: 'Mark the next change set as executed in the database') {
 	depends dbmInit
 
+	if (!okToWrite()) return
+
 	doAndClose {
 		liquibase.markNextChangeSetRan contexts, newPrintWriter()
 	}

@@ -31,7 +31,7 @@ class DbmGormDiffTests extends AbstractScriptTests {
 		def file = new File('target/gormdiff.xml')
 		assertFalse file.exists()
 
-		executeAndCheck(['dbm-gorm-diff', 'target/gormdiff.xml'])
+		executeAndCheck(['dbm-gorm-diff', 'gormdiff.xml'])
 
 		assertTrue file.exists()
 		file.deleteOnExit()
@@ -64,7 +64,7 @@ class DbmGormDiffTests extends AbstractScriptTests {
 		def file = new File('target/gormdiff.groovy')
 		assertFalse file.exists()
 
-		executeAndCheck(['dbm-gorm-diff', 'target/gormdiff.groovy'])
+		executeAndCheck(['dbm-gorm-diff', 'gormdiff.groovy'])
 
 		assertTrue file.exists()
 		file.deleteOnExit()

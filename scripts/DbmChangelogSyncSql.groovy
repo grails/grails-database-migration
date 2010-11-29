@@ -22,6 +22,8 @@ includeTargets << new File("$databaseMigrationPluginDir/scripts/_DatabaseMigrati
 target(dbmChangelogSyncSql: 'Writes SQL to mark all changes as executed in the database to STDOUT') {
 	depends dbmInit
 
+	if (!okToWrite()) return
+
 	doAndClose {
 		liquibase.changeLogSync contexts, newPrintWriter()
 	}

@@ -26,6 +26,7 @@ target(dbmRollbackToDateSql: 'Writes SQL to roll back the database to the state 
 		Date date = calculateDate()
 		PrintWriter pw
 		if (calculateDateFileNameIndex) {
+			if (!okToWrite(calculateDateFileNameIndex)) return
 			pw = new PrintWriter(new PrintStream(argsList[calculateDateFileNameIndex]))
 		}
 		else {

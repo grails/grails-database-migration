@@ -29,6 +29,8 @@ target(dbmChangelogToGroovy: 'Creates a Groovy DSL changelog from a Liquibase XM
 
 	String groovy = argsList[1] ?: argsList[0][0..-4] + 'groovy'
 
+	if (!okToWrite(groovy)) return
+
 	echo "Converting $xml to $groovy"
 
 	ChangelogXml2Groovy = classLoader.loadClass('grails.plugin.databasemigration.ChangelogXml2Groovy')

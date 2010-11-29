@@ -26,7 +26,7 @@ class DbmGenerateChangelogTests extends AbstractScriptTests {
 
 		initFile false
 
-		executeAndCheck(['dbm-generate-changelog', 'target/' + file.name])
+		executeAndCheck(['dbm-generate-changelog', file.name])
 
 		assertTrue file.exists()
 		String xml = file.text
@@ -46,7 +46,7 @@ class DbmGenerateChangelogTests extends AbstractScriptTests {
 
 		initFile true
 
-		executeAndCheck(['dbm-generate-changelog', 'target/' + file.name])
+		executeAndCheck(['dbm-generate-changelog', file.name])
 
 		assertTrue file.exists()
 		String groovy = file.text

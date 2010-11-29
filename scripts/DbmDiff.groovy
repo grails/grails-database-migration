@@ -36,6 +36,8 @@ target(dbmDiff: 'Writes description of differences to standard out') {
 		errorAndDie 'You must specify a different environment than the one the script is running in'
 	}
 
+	if (!okToWrite(1)) return
+
 	def thisDatabase
 	def otherDatabase
 	try {

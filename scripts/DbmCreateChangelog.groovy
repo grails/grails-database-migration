@@ -22,20 +22,22 @@ includeTargets << new File("$databaseMigrationPluginDir/scripts/_DatabaseMigrati
 target(dbmCreateChangelog: 'Creates an empty changelog file') {
 	depends dbmInit
 
-	String name = argsList[0]
-	if (!name) {
-		errorAndDie 'You must specify the migration name'
+	String name = argsList[0] ?: MigrationUtils.changelogFileName
+	if (!name.toLowerCase().endsWith('.groovy')) {
+		name += '.groovy'
 	}
 
 	try {
-		def file = new File(name)
+		def file = new File(MigrationUtils.changelogLocation + '/' + name)
 		file.parentFile?.mkdirs()
+
+		if (!okToWrite(file.path)) return
 
 		String user = (System.getProperty('user.name') ?: '').trim()
 		String author = user ? "$user (generated)" : 'diff-generated';
 
 		ant.copy(file: "$databaseMigrationPluginDir/src/resources/changelog.template",
-		         tofile: file.path, verbose: true) {
+		         tofile: file.path, verbose: true, overwrite: true) {
 			filterset {
 				filter token: 'author', value: author
 				filter token: 'id', value: file.name - '.groovy'

@@ -22,6 +22,8 @@ includeTargets << new File("$databaseMigrationPluginDir/scripts/_DatabaseMigrati
 target(dbmStatus: 'Outputs list of unrun change sets') {
 	depends dbmInit
 
+	if (!okToWrite()) return
+
 	doAndClose {
 		boolean verbose = argsMap.verbose == null ? true : Boolean.valueOf(argsMap.verbose)
 		liquibase.reportStatus verbose, contexts, newOutputStreamWriter()

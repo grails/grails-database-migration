@@ -22,6 +22,8 @@ includeTargets << new File("$databaseMigrationPluginDir/scripts/_DatabaseMigrati
 target(dbmUpdateSql: 'Writes SQL to update database to current version to STDOUT') {
 	depends dbmInit
 
+	if (!okToWrite()) return
+
 	doAndClose {
 		liquibase.update contexts, newPrintWriter()
 	}

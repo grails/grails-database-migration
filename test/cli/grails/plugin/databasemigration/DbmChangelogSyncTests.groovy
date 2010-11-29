@@ -25,7 +25,7 @@ class DbmChangelogSyncTests extends AbstractScriptTests {
 		assertEquals 1, tableNames.size()
 		assertTrue tableNames.contains('thing')
 
-		executeAndCheck(['dbm-generate-changelog', 'target/changelog.cli.test.groovy'])
+		executeAndCheck(['dbm-generate-changelog', 'changelog.cli.test.groovy'])
 
 		executeAndCheck 'dbm-changelog-sync'
 

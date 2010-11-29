@@ -29,7 +29,7 @@ import org.h2.tools.Server
  */
 abstract class AbstractScriptTests extends AbstractCliTestCase {
 
-	private static final String TEST_CHANGELOG = 'target/changelog.cli.test.groovy'
+	private static final String TEST_CHANGELOG = 'changelog.cli.test.groovy'
 
 	protected static final String URL = 'jdbc:h2:tcp://localhost/./target/testdb/testdb'
 
@@ -118,7 +118,7 @@ abstract class AbstractScriptTests extends AbstractCliTestCase {
 	}
 
 	protected void copyTestChangelog(String name = 'test.changelog') {
-		def file = new File(TEST_CHANGELOG)
+		def file = new File('target', TEST_CHANGELOG)
 		file.deleteOnExit()
 		file.withWriter {
 			it.write getClass().getResourceAsStream(name).text

@@ -19,35 +19,40 @@ package grails.plugin.databasemigration
  */
 class DbmCreateChangelogTests extends AbstractScriptTests {
 
-	void testBadParams() {
-		executeAndCheck(['dbm-create-changelog'], false)
-		assertTrue output.contains('ERROR: You must specify the changelog file name')
+	void testCreateChangelogDefault() {
+
+		def file = new File('target/changelog.cli.test.groovy')
+		file.delete()
+		assertFalse file.exists()
+
+		executeAndCheck(['dbm-create-changelog'])
+
+		verifyFile file
 	}
 
 	void testCreateChangelog() {
 
 		def file = new File('target/newChangeLog.groovy')
+		file.delete()
 		assertFalse file.exists()
 
 		executeAndCheck(['dbm-create-changelog', 'newChangeLog'])
 
-		assertTrue file.exists()
-		file.deleteOnExit()
-
-		String groovy = file.text
-
-		assertTrue groovy.contains('databaseChangeLog = {')
-		assertTrue groovy.contains('changeSet(author: ')
-		assertTrue groovy.contains(', id: "newChangeLog") {')
+		verifyFile file
 	}
 
 	void testCreateChangelogInSubdirectory() {
 
 		def file = new File('target/foo/bar/otherChangeLog.groovy')
+		file.delete()
 		assertFalse file.exists()
 
 		executeAndCheck(['dbm-create-changelog', 'foo/bar/otherChangeLog'])
 
+		verifyFile file
+	}
+
+	private void verifyFile(file) {
 		assertTrue file.exists()
 		file.deleteOnExit()
 
@@ -55,6 +60,6 @@ class DbmCreateChangelogTests extends AbstractScriptTests {
 
 		assertTrue groovy.contains('databaseChangeLog = {')
 		assertTrue groovy.contains('changeSet(author: ')
-		assertTrue groovy.contains(', id: "otherChangeLog") {')
+		assertTrue groovy.contains(", id: \"${file.name - '.groovy'}\") {")
 	}
 }

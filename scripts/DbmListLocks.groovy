@@ -22,6 +22,8 @@ includeTargets << new File("$databaseMigrationPluginDir/scripts/_DatabaseMigrati
 target(dbmListLocks: 'Lists who currently has locks on the database changelog') {
 	depends dbmInit
 
+	if (!okToWrite()) return
+
 	doAndClose {
 		liquibase.reportLocks calculateDestination()
 	}

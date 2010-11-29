@@ -22,6 +22,8 @@ includeTargets << new File("$databaseMigrationPluginDir/scripts/_DatabaseMigrati
 target(dbmFutureRollbackSql: 'Writes SQL to roll back the database to the current state after the changes in the changeslog have been applied') {
 	depends dbmInit
 
+	if (!okToWrite()) return
+
 	doAndClose {
 		liquibase.futureRollbackSQL contexts, newPrintWriter()
 	}

@@ -31,6 +31,8 @@ target(dbmRollbackCountSql: 'Writes SQL to roll back the last <value> change set
 		errorAndDie "The change set count argument '$count' isn't a number"
 	}
 
+	if (!okToWrite(1)) return
+
 	doAndClose {
 		liquibase.rollback count.toInteger(), contexts, newOutputStreamWriter(1)
 	}

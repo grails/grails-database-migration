@@ -22,6 +22,8 @@ includeTargets << new File("$databaseMigrationPluginDir/scripts/_DatabaseMigrati
 target(dbmGenerateChangelog: 'Generates an initial changelog XML file') {
 	depends dbmInit
 
+	if (!okToWrite()) return
+
 	doAndClose {
 		executeAndWrite argsList[0], { PrintStream out ->
 			createDiff(database, null).compare().printChangeLog out, database

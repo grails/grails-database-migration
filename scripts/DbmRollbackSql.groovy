@@ -27,6 +27,8 @@ target(dbmRollbackSql: 'Writes SQL to roll back the database to the state it was
 		errorAndDie "The $hyphenatedScriptName script requires a tag"
 	}
 
+	if (!okToWrite(1)) return
+
 	doAndClose {
 		liquibase.rollback tag, contexts, newOutputStreamWriter(1)
 	}

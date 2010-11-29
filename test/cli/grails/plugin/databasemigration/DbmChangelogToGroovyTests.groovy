@@ -25,7 +25,7 @@ class DbmChangelogToGroovyTests extends AbstractScriptTests {
 		file.delete()
 		assertFalse file.exists()
 
-		executeAndCheck(['dbm-generate-changelog', 'target/changelog.xml'])
+		executeAndCheck(['dbm-generate-changelog', 'changelog.xml'])
 
 		assertTrue file.exists()
 		file.deleteOnExit()

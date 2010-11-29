@@ -67,7 +67,7 @@ class DbmDiffTests extends AbstractScriptTests {
 		def file = new File('target/cl.xml')
 		assertFalse file.exists()
 
-		executeAndCheck(['dbm-diff', 'dbdiff', 'target/cl.xml'])
+		executeAndCheck(['dbm-diff', 'dbdiff', 'cl.xml'])
 
 		assertTrue file.exists()
 		file.deleteOnExit()
@@ -89,7 +89,7 @@ class DbmDiffTests extends AbstractScriptTests {
 		file.delete()
 		assertFalse file.exists()
 
-		executeAndCheck(['dbm-diff', 'dbdiff', 'target/cl.groovy'])
+		executeAndCheck(['dbm-diff', 'dbdiff', 'cl.groovy'])
 
 		assertTrue file.exists()
 		file.deleteOnExit()

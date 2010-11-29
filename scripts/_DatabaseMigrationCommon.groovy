@@ -56,16 +56,24 @@ printStackTrace = { e ->
 	e.printStackTrace()
 }
 
-calculateDestination = { int argIndex = 0 ->
-	argsList[argIndex] ? new PrintStream(argsList[argIndex]) : System.out
+calculateDestination = { Integer argIndex = 0, boolean relativeToMigrationDir = false ->
+	if (!argsList[argIndex]) {
+		return System.out
+	}
+
+	String destination = argsList[argIndex]
+	if (relativeToMigrationDir) {
+		destination = MigrationUtils.changelogLocation + '/' + destination
+	}
+	new PrintStream(destination)
 }
 
-newPrintWriter = { int argIndex = 0 ->
-	new PrintWriter(calculateDestination(argIndex))
+newPrintWriter = { Integer argIndex = 0, boolean relativeToMigrationDir = true ->
+	new PrintWriter(calculateDestination(argIndex, relativeToMigrationDir))
 }
 
-newOutputStreamWriter = { int argIndex = 0 ->
-	new OutputStreamWriter(calculateDestination(argIndex))
+newOutputStreamWriter = { Integer argIndex = 0, boolean relativeToMigrationDir = true ->
+	new OutputStreamWriter(calculateDestination(argIndex, relativeToMigrationDir))
 }
 
 doAndClose = { Closure c ->
@@ -98,6 +106,7 @@ executeAndWrite = { String filename, Closure c ->
 	PrintStream out
 	ByteArrayOutputStream baos
 	if (filename) {
+		filename = MigrationUtils.changelogLocation + '/' + filename
 		if (filename.toLowerCase().endsWith('groovy')) {
 			baos = new ByteArrayOutputStream()
 			out = new PrintStream(baos)
@@ -197,3 +206,33 @@ createDiff = { referenceDatabase, targetDatabase ->
 	diff.addStatusListener appCtx.diffStatusListener
 	diff
 }
+
+okToWrite = { destinationOrIndex = 0 ->
+
+	String destination
+	if (destinationOrIndex instanceof Integer) {
+		destination = argsList[destination]
+		if (!destination) {
+			return true // stdout
+		}
+	}
+	else {
+		destination = destinationOrIndex
+	}
+
+	def file = new File(destination)
+	if (!file.exists()) {
+		return true
+	}
+
+	String propertyName = "file.overwrite.$file.name"
+	ant.input(addProperty: propertyName, message: "$destination exists, ok to overwrite?",
+	          validargs: 'y,n', defaultvalue: 'y')
+
+	if (ant.antProject.properties."$propertyName" == 'n') {
+		return false
+	}
+
+	true
+}
+	
