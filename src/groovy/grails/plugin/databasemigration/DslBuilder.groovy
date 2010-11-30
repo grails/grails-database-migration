@@ -632,7 +632,7 @@ class DslBuilder extends BuilderSupport {
 		}
 		else if (currentChange instanceof RawSQLChange && 'comment' == name) {
 			currentChange.setComments currentText
-			currentText = value
+			currentText = null
 		}
 		else if (currentChange && 'where' == name) {
 			if (currentChange instanceof UpdateDataChange) {
@@ -644,20 +644,20 @@ class DslBuilder extends BuilderSupport {
 			else {
 				throw new ChangeLogParseException("Unexpected change type: ${currentChange.getClass().name}")
 			}
-			currentText = value
+			currentText = null
 		}
 		else if (currentChange instanceof CreateProcedureChange && 'comment' == name) {
 			currentChange.setComments currentText
-			currentText = value
+			currentText = null
 		}
 		else if (currentChange instanceof CustomChangeWrapper && currentParamName != null && 'param' == name) {
 			currentChange.setParam currentParamName, currentText
-			currentText = value
+			currentText = null
 			currentParamName = null
 		}
 		else if (currentChangeSet && 'comment' == name) {
 			currentChangeSet.setComments currentText
-			currentText = value
+			currentText = null
 		}
 		else if (currentChangeSet && 'changeSet' == name) {
 			databaseChangeLog.addChangeSet currentChangeSet
@@ -670,7 +670,7 @@ class DslBuilder extends BuilderSupport {
 			else {
 				throw new ChangeLogParseException("Unexpected column with text: $currentText")
 			}
-			currentText = value
+			currentText = null
 		}
 		else if (currentChange && name == currentChange.changeMetaData.name) {
 			if (inRollback) {
