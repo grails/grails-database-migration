@@ -68,11 +68,11 @@ calculateDestination = { Integer argIndex = 0, boolean relativeToMigrationDir = 
 	new PrintStream(destination)
 }
 
-newPrintWriter = { Integer argIndex = 0, boolean relativeToMigrationDir = true ->
+newPrintWriter = { Integer argIndex = 0, boolean relativeToMigrationDir = false ->
 	new PrintWriter(calculateDestination(argIndex, relativeToMigrationDir))
 }
 
-newOutputStreamWriter = { Integer argIndex = 0, boolean relativeToMigrationDir = true ->
+newOutputStreamWriter = { Integer argIndex = 0, boolean relativeToMigrationDir = false ->
 	new OutputStreamWriter(calculateDestination(argIndex, relativeToMigrationDir))
 }
 
