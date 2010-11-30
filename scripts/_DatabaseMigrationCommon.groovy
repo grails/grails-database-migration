@@ -129,11 +129,15 @@ executeAndWrite = { String filename, Closure c ->
 	}
 
 	if (argsMap.add) {
-		def fullPath = new File(filename).absolutePath
-		def fullMigrationFolderPath = new File(MigrationUtils.changelogLocation).absolutePath
-		String relativePath = (fullPath - fullMigrationFolderPath).substring(1)
-		appendToChangelog new File(filename), "\n\tinclude file: '$relativePath'"
+		registerInclude filename
 	}
+}
+
+registerInclude = { String filename ->
+	def fullPath = new File(filename).absolutePath
+	def fullMigrationFolderPath = new File(MigrationUtils.changelogLocation).absolutePath
+	String relativePath = (fullPath - fullMigrationFolderPath).substring(1)
+	appendToChangelog new File(filename), "\n\tinclude file: '$relativePath'"
 }
 
 appendToChangelog = { File sourceFile, String content ->
