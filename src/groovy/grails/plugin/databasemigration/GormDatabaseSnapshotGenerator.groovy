@@ -49,7 +49,7 @@ class GormDatabaseSnapshotGenerator implements DatabaseSnapshotGenerator {
 		try {
 			def cfg = db.configuration
 			String dialectName = cfg.getProperty('hibernate.dialect')
-			def dialect = Class.forName(dialectName).newInstance()
+			def dialect = MigrationUtils.createInstance(dialectName)
 //			def dialect = new HibernateGenericDialect(dialectName) // TODO
 
 			def mapping = cfg.buildMapping()

@@ -22,6 +22,7 @@ import grails.plugin.databasemigration.GrailsPrecondition
 import grails.plugin.databasemigration.Log4jLogger
 import grails.plugin.databasemigration.MigrationRunner
 import grails.plugin.databasemigration.MigrationUtils
+import grails.plugin.databasemigration.MysqlAwareCreateTableGenerator
 
 import liquibase.change.ChangeFactory
 import liquibase.logging.Logger
@@ -31,6 +32,8 @@ import liquibase.precondition.PreconditionFactory
 import liquibase.resource.FileSystemResourceAccessor
 import liquibase.servicelocator.ServiceLocator
 import liquibase.snapshot.DatabaseSnapshotGeneratorFactory
+import liquibase.sqlgenerator.SqlGeneratorFactory
+import liquibase.sqlgenerator.core.CreateTableGenerator
 
 class DatabaseMigrationGrailsPlugin {
 
@@ -64,14 +67,29 @@ class DatabaseMigrationGrailsPlugin {
 	}
 
 	def doWithApplicationContext = { ctx ->
-		ChangeLogParserFactory.instance.register new GrailsChangeLogParser(ctx)
-		DatabaseSnapshotGeneratorFactory.instance.register new GormDatabaseSnapshotGenerator()
-		ChangeFactory.instance.register GrailsChange
-		PreconditionFactory.instance.register GrailsPrecondition
+		register ctx
 
 		fixLogging()
 
 		MigrationRunner.autoRun()
+	}
+
+	private void register(ctx) {
+		// adds support for .groovy extension
+		ChangeLogParserFactory.instance.register new GrailsChangeLogParser(ctx)
+
+		// used by gorm-diff and generate-gorm-changelog
+		DatabaseSnapshotGeneratorFactory.instance.register new GormDatabaseSnapshotGenerator()
+
+		// adds support for Groovy-based changes in DSL changelogs
+		ChangeFactory.instance.register GrailsChange
+
+		// adds support for Groovy-based preconditions in DSL changelogs
+		PreconditionFactory.instance.register GrailsPrecondition
+
+		// appends 'ENGINE=InnoDB' to 'create table ...' statements in MySQL if using InnoDB
+		SqlGeneratorFactory.instance.unregister CreateTableGenerator
+		SqlGeneratorFactory.instance.register new MysqlAwareCreateTableGenerator()
 	}
 
 	private void fixLogging() {

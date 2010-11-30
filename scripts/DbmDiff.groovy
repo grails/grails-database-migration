@@ -74,7 +74,7 @@ buildOtherDatabase = { String otherEnv ->
 	def connection = DriverManager.getConnection(
 		otherDsConfig.url ?: null, otherDsConfig.username ?: null, otherDsConfig.password ?: null)
 
-	MigrationUtils.getDatabase connection, defaultSchema
+	MigrationUtils.getDatabase connection, defaultSchema, null
 }
 
 setDefaultTarget dbmDiff

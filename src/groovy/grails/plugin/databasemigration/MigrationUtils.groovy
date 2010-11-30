@@ -43,19 +43,40 @@ class MigrationUtils {
 	/** Set from _Events.groovy in eventPackageAppEnd. */
 	static String scriptName
 
-	static Database getDatabase(Connection connection, String defaultSchema) {
+	static Database getDatabase(Connection connection, String defaultSchema, String dialectName) {
 		def database = DatabaseFactory.instance.findCorrectDatabaseImplementation(
 			new JdbcConnection(connection))
+
 		if (defaultSchema) {
 			database.defaultSchemaName = defaultSchema
 		}
 //		database.defaultSchemaName = connection.catalog // TODO
+
+		if (dialectName) {
+			def dialect = createInstance(dialectName)
+			def emc = new ExpandoMetaClass(database.getClass(), false)
+			emc.getDialect = { -> dialect }
+			emc.initialize()
+			database.metaClass = emc
+		}
+
 		database
 	}
 
 	static Database getDatabase(String defaultSchema = null) {
 		def connection = findSessionFactory().currentSession.connection()
-		getDatabase connection, defaultSchema
+
+		def dialect = application.config.dataSource.dialect
+		if (dialect) {
+			if (dialect instanceof Class) {
+				dialect = dialect.name
+			}
+		}
+		else {
+			dialect = application.mainContext.dialectDetector
+		}
+
+		getDatabase connection, defaultSchema, dialect.toString()
 	}
 
 	static Liquibase getLiquibase(Database database) {
@@ -125,6 +146,10 @@ class MigrationUtils {
 		}
 
 		false
+	}
+
+	static createInstance(String className) {
+		application.classLoader.loadClass(className).newInstance()
 	}
 
 	static ConfigObject getConfig() {
