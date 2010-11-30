@@ -55,6 +55,10 @@ class GrailsChangeLogParser implements ChangeLogParser {
 		log.debug "parsing $physicalChangeLogLocation"
 
 		def inputStream = resourceAccessor.getResourceAsStream(physicalChangeLogLocation)
+		if (!inputStream) {
+			throw new ChangeLogParseException("$physicalChangeLogLocation not found")
+		}
+
 		Script script = new GroovyShell(Thread.currentThread().contextClassLoader,
 			new Binding(MigrationUtils.changelogProperties)).parse(inputStream.text)
 		script.run()
