@@ -47,6 +47,8 @@ class DatabaseMigrationGrailsPlugin {
 
 	List pluginExcludes = [
 		'grails-app/domain/**',
+		'docs/**',
+		'src/docs/**',
 		'src/groovy/grails/plugin/databasemigration/test/**'
 	]
 
