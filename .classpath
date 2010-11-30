@@ -5,7 +5,9 @@
 	<classpathentry kind="src" path="src/resources"/>
 	<classpathentry excluding="hibernate/|spring/|hibernate/|spring/" kind="src" path="grails-app/conf"/>
 	<classpathentry kind="src" path="grails-app/conf/spring"/>
+	<classpathentry kind="src" path="grails-app/controllers"/>
 	<classpathentry kind="src" path="grails-app/domain"/>
+	<classpathentry kind="src" path="grails-app/views"/>
 	<classpathentry kind="src" path="scripts"/>
 	<classpathentry kind="src" path="test/cli"/>
 	<classpathentry kind="src" path="test/integration"/>
