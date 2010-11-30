@@ -39,46 +39,46 @@ import org.springframework.context.ApplicationContext
  */
 class GrailsChange extends AbstractChange {
 
-	@ChangeProperty(includeInSerialization = false)
+	@ChangeProperty(includeInSerialization=false)
 	private boolean validateClosureCalled
 
-	@ChangeProperty(includeInSerialization = false)
+	@ChangeProperty(includeInSerialization=false)
 	private ValidationErrors validationErrors = new ValidationErrors()
 
-	@ChangeProperty(includeInSerialization = false)
+	@ChangeProperty(includeInSerialization=false)
 	private Warnings warnings = new Warnings()
 
-	@ChangeProperty(includeInSerialization = false)
+	@ChangeProperty(includeInSerialization=false)
 	private List<SqlStatement> allStatements = []
 
-	@ChangeProperty(includeInSerialization = false)
+	@ChangeProperty(includeInSerialization=false)
 	Database database
 
-	@ChangeProperty(includeInSerialization = false)
+	@ChangeProperty(includeInSerialization=false)
 	Sql sql
 
-	@ChangeProperty(includeInSerialization = false)
+	@ChangeProperty(includeInSerialization=false)
 	ApplicationContext ctx
 
-	@ChangeProperty(includeInSerialization = false)
+	@ChangeProperty(includeInSerialization=false)
 	Closure initClosure
 
-	@ChangeProperty(includeInSerialization = false)
+	@ChangeProperty(includeInSerialization=false)
 	Closure validateClosure
 
-	@ChangeProperty(includeInSerialization = false)
+	@ChangeProperty(includeInSerialization=false)
 	Closure changeClosure
 
-	@ChangeProperty(includeInSerialization = false)
+	@ChangeProperty(includeInSerialization=false)
 	Closure rollbackClosure
 
 	/**
 	 * @see liquibase.change.Change#getConfirmationMessage()
 	 */
-	@ChangeProperty(includeInSerialization = false)
+	@ChangeProperty(includeInSerialization=false)
 	String confirmationMessage = 'Executed GrailsChange'
 
-	@ChangeProperty(includeInSerialization = false)
+	@ChangeProperty(includeInSerialization=false)
 	String checksumString
 
 	/**
@@ -205,7 +205,12 @@ class GrailsChange extends AbstractChange {
 	 */
 	@Override
 	CheckSum generateCheckSum() {
-		checksumString ? CheckSum.compute(checksumString) : super.generateCheckSum()
+//		if (checksumString) {
+//			return CheckSum.compute(checksumString)
+//		}
+//		CheckSum.compute new GroovyAwareStringChangeLogSerializer().serialize(this)
+
+		CheckSum.compute checksumString ?: 'Grails Change'
 	}
 
 	/**
