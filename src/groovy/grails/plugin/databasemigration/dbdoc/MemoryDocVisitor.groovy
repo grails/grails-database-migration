@@ -15,17 +15,18 @@
 package grails.plugin.databasemigration.dbdoc
 
 import java.lang.reflect.Field
-import java.lang.reflect.Method
 
 import liquibase.change.Change
+import liquibase.changelog.ChangeSet
+import liquibase.changelog.DatabaseChangeLog
 import liquibase.changelog.visitor.DBDocVisitor
 import liquibase.database.Database
 import liquibase.database.structure.Column
 import liquibase.database.structure.DatabaseObject
 import liquibase.database.structure.Table
-import liquibase.exception.DatabaseHistoryException
 import liquibase.resource.ResourceAccessor
 import liquibase.snapshot.DatabaseSnapshot
+import liquibase.snapshot.DatabaseSnapshotGeneratorFactory
 
 import org.springframework.util.ReflectionUtils
 
@@ -34,17 +35,19 @@ import org.springframework.util.ReflectionUtils
  */
 class MemoryDocVisitor extends DBDocVisitor {
 
-	private static final int MAX_RECENT_CHANGE = 50
-	private Database database
-   private SortedSet changeLogs
-   private Map<String, List<Change>> changesByAuthor
-   private Map<DatabaseObject, List<Change>> changesByObject
-   private Map<DatabaseObject, List<Change>> changesToRunByObject
-   private Map<String, List<Change>> changesToRunByAuthor
-   private List<Change> changesToRun
-   private List<Change> recentChanges
+	protected static final int MAX_RECENT_CHANGE = 50
 
-   private String rootChangeLog
+	protected Database database
+	protected SortedSet changeLogs
+	protected Map<String, List<Change>> changesByAuthor
+	protected Map<DatabaseObject, List<Change>> changesByObject
+	protected Map<DatabaseObject, List<Change>> changesToRunByObject
+	protected Map<String, List<Change>> changesToRunByAuthor
+	protected List<Change> changesToRun
+	protected List<Change> recentChanges
+
+	protected String rootChangeLogName
+	protected DatabaseChangeLog rootChangeLog
 
 	MemoryDocVisitor(Database database) {
 		super(database)
@@ -59,9 +62,22 @@ class MemoryDocVisitor extends DBDocVisitor {
 		recentChanges = getFieldValue('recentChanges')
 	}
 
+	void visit(ChangeSet changeSet, DatabaseChangeLog databaseChangeLog, Database database) {
+		if (rootChangeLogName == null) {
+			rootChangeLogName = changeSet.getFilePath();
+		}
+
+		if (rootChangeLog == null) {
+			rootChangeLog = databaseChangeLog
+		}
+
+		super.visit changeSet, databaseChangeLog, database
+	}
+
 	Map generateHTML(ResourceAccessor resourceAccessor) {
 
-		DatabaseSnapshot snapshot = database.createDatabaseSnapshot(null, null)
+		DatabaseSnapshot snapshot = DatabaseSnapshotGeneratorFactory.instance.createSnapshot(
+			database, null, null)
 		Map files = [:]
 
 		new ChangeLogListWriter(files).writeHTML(changeLogs)
@@ -70,17 +86,17 @@ class MemoryDocVisitor extends DBDocVisitor {
 
 		HTMLWriter authorWriter = new AuthorWriter(files, database)
 		for (String author : changesByAuthor.keySet()) {
-			authorWriter.writeHTML(author, changesByAuthor.get(author), changesToRunByAuthor.get(author), rootChangeLog)
+			authorWriter.writeHTML(author, changesByAuthor.get(author), changesToRunByAuthor.get(author), rootChangeLogName)
 		}
 
 		HTMLWriter tableWriter = new TableWriter(files, database)
 		for (Table table : snapshot.getTables()) {
-			tableWriter.writeHTML(table, changesByObject.get(table), changesToRunByObject.get(table), rootChangeLog)
+			tableWriter.writeHTML(table, changesByObject.get(table), changesToRunByObject.get(table), rootChangeLogName)
 		}
 
 		HTMLWriter columnWriter = new ColumnWriter(files, database)
 		for (Column column : snapshot.getColumns()) {
-			columnWriter.writeHTML(column, changesByObject.get(column), changesToRunByObject.get(column), rootChangeLog)
+			columnWriter.writeHTML(column, changesByObject.get(column), changesToRunByObject.get(column), rootChangeLogName)
 		}
 
 		ChangeLogWriter changeLogWriter = new ChangeLogWriter(resourceAccessor, files)
@@ -89,114 +105,21 @@ class MemoryDocVisitor extends DBDocVisitor {
 		}
 
 		HTMLWriter pendingChangesWriter = new PendingChangesWriter(files, database)
-		pendingChangesWriter.writeHTML('index', null, changesToRun, rootChangeLog)
+		pendingChangesWriter.writeHTML('index', null, changesToRun, rootChangeLogName)
 
-		HTMLWriter pendingSQLWriter = new PendingSQLWriter(files, database)
-		pendingSQLWriter.writeHTML('sql', null, changesToRun, rootChangeLog)
-
-		HTMLWriter recentChangesWriter = new RecentChangesWriter(files, database)
-		if (recentChanges.size() > MAX_RECENT_CHANGE) {
-			recentChanges = recentChanges.subList(0, MAX_RECENT_CHANGE)
-		}
-		recentChangesWriter.writeHTML('index', recentChanges, null, rootChangeLog)
-
-//		Method copyFile = getClass().getSuperclass().getDeclaredMethod('copyFile', String.class, File.class)
-//		copyFile.setAccessible(true)
-//ReflectionUtils.invokeMethod(copyFile, this, 'liquibase/dbdoc/stylesheet.css', files)
-//ReflectionUtils.invokeMethod(copyFile, this, 'liquibase/dbdoc/index.html', files)
-//ReflectionUtils.invokeMethod(copyFile, this, 'liquibase/dbdoc/globalnav.html', files)
-//ReflectionUtils.invokeMethod(copyFile, this, 'liquibase/dbdoc/overview-summary.html', files)
-		files
-	}
-
-	Map writeChangelogs(ResourceAccessor resourceAccessor) {
-		DatabaseSnapshot snapshot = database.createDatabaseSnapshot(null, null)
-		Map files = [:]
-		new ChangeLogListWriter(files).writeHTML(changeLogs)
-		files
-	}
-
-	Map writeTableList(ResourceAccessor resourceAccessor) {
-		DatabaseSnapshot snapshot = database.createDatabaseSnapshot(null, null)
-		Map files = [:]
-		new TableListWriter(files).writeHTML(new TreeSet<Object>(snapshot.getTables()))
-		files
-	}
-
-	Map writeAuthorList(ResourceAccessor resourceAccessor) {
-		DatabaseSnapshot snapshot = database.createDatabaseSnapshot(null, null)
-		Map files = [:]
-		new AuthorListWriter(files).writeHTML(new TreeSet<Object>(changesByAuthor.keySet()))
-		files
-	}
-
-	Map writeAuthors(ResourceAccessor resourceAccessor) {
-		DatabaseSnapshot snapshot = database.createDatabaseSnapshot(null, null)
-		Map files = [:]
-
-		HTMLWriter authorWriter = new AuthorWriter(files, database)
-		for (String author : changesByAuthor.keySet()) {
-			authorWriter.writeHTML(author, changesByAuthor.get(author), changesToRunByAuthor.get(author), rootChangeLog)
-		}
-
-		files
-	}
-
-	Map writeTables(ResourceAccessor resourceAccessor) {
-		DatabaseSnapshot snapshot = database.createDatabaseSnapshot(null, null)
-		Map files = [:]
-
-		HTMLWriter tableWriter = new TableWriter(files, database)
-		for (Table table : snapshot.getTables()) {
-			tableWriter.writeHTML(table, changesByObject.get(table), changesToRunByObject.get(table), rootChangeLog)
-		}
-
-		files
-	}
-
-	Map writeColumns(ResourceAccessor resourceAccessor) {
-		DatabaseSnapshot snapshot = database.createDatabaseSnapshot(null, null)
-		Map files = [:]
-
-		HTMLWriter columnWriter = new ColumnWriter(files, database)
-		for (Column column : snapshot.getColumns()) {
-			columnWriter.writeHTML(column, changesByObject.get(column), changesToRunByObject.get(column), rootChangeLog)
-		}
-
-		files
-	}
-
-	Map writeChangeLogs(ResourceAccessor resourceAccessor) {
-		DatabaseSnapshot snapshot = database.createDatabaseSnapshot(null, null)
-		Map files = [:]
-
-		ChangeLogWriter changeLogWriter = new ChangeLogWriter(resourceAccessor, files)
-		for (changeLog in changeLogs) {
-			changeLogWriter.writeChangeLog(changeLog.logicalPath, changeLog.physicalPath)
-		}
-
-		files
-	}
-
-	// TODO
-	Map writePendingChanges(ResourceAccessor resourceAccessor) {
-		DatabaseSnapshot snapshot = database.createDatabaseSnapshot(null, null)
-		Map files = [:]
-
-		HTMLWriter pendingChangesWriter = new PendingChangesWriter(files, database)
-		pendingChangesWriter.writeHTML('index', null, changesToRun, rootChangeLog)
-
-		HTMLWriter pendingSQLWriter = new PendingSQLWriter(files, database)
-		pendingSQLWriter.writeHTML('sql', null, changesToRun, rootChangeLog)
+		HTMLWriter pendingSQLWriter = new PendingSQLWriter(files, database, rootChangeLog)
+		pendingSQLWriter.writeHTML('sql', null, changesToRun, rootChangeLogName)
 
 		HTMLWriter recentChangesWriter = new RecentChangesWriter(files, database)
 		if (recentChanges.size() > MAX_RECENT_CHANGE) {
 			recentChanges = recentChanges.subList(0, MAX_RECENT_CHANGE)
 		}
-		recentChangesWriter.writeHTML('index', recentChanges, null, rootChangeLog)
+		recentChangesWriter.writeHTML('index', recentChanges, null, rootChangeLogName)
+
+		files
 	}
 
-	private getFieldValue(String name) {
+	protected getFieldValue(String name) {
 		Field field = ReflectionUtils.findField(getClass().superclass, name)
 		field.accessible = true
 		ReflectionUtils.getField field, this

@@ -14,13 +14,11 @@
  */
 package grails.plugin.databasemigration.dbdoc
 
-import java.util.List;
-
 import liquibase.change.Change
-import liquibase.changelog.ChangeSet;
-import liquibase.changelog.DatabaseChangeLog;
+import liquibase.changelog.ChangeSet
+import liquibase.changelog.DatabaseChangeLog
 import liquibase.database.Database
-import liquibase.exception.MigrationFailedException;
+import liquibase.exception.MigrationFailedException
 
 /**
  * @author <a href='mailto:burt@burtbeckwith.com'>Burt Beckwith</a>

@@ -34,37 +34,36 @@ class HTMLListWriter {
 	void writeHTML(SortedSet objects) {
 		StringBuilder content = new StringBuilder()
 		content.append """\
-<HTML>
-<HEAD>
-<TITLE>
+<html>
+<head>
+<title>
 $title
-</TITLE>
-<LINK REL ="stylesheet" TYPE="text/css" HREF="stylesheet" TITLE="Style">
-</HEAD>
-</HEAD>
-<BODY BGCOLOR="white">
-<FONT size="+1" CLASS="FrameHeadingFont">
-<B>$title</B></FONT>
-<BR>
-<TABLE BORDER="0" WIDTH="100%" SUMMARY=""><TR>
-<TD NOWRAP><FONT CLASS="FrameItemFont">
+</title>
+<link rel="stylesheet" type="text/css" href="dbdoc_stylesheet_css" title="Style"/>
+</head>
+<body bgcolor="white">
+<font size="+1" class="FrameHeadingFont">
+<b>$title</b></font>
+<br/>
+<table border="0" width="100%" summary=""><tr>
+<td nowrap><font class="FrameItemFont">
 """
 
 		for (object in objects) {
 			String s = object.toString()
 			String hrefName = s.toLowerCase().endsWith('.xml') ? s[0..-5] : s
-			content.append """<A HREF="$directory/${hrefName.toLowerCase()}" target="objectFrame">"""
+			content.append """<a href="$directory/${hrefName.toLowerCase()}" target="objectFrame">"""
 			content.append s
-			content.append "</A><BR>\n"
+			content.append "</a><br/>\n"
 		}
 
 		content.append '''\
-</FONT></TD>
-</TR>
-</TABLE>
+</font></td>
+</tr>
+</table>
 
-</BODY>
-</HTML>'''
+</body>
+</html>'''
 
 		files[filename] = content.toString()
 	}

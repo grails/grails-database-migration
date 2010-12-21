@@ -36,7 +36,7 @@ class TableWriter extends HTMLWriter {
 	protected void writeCustomHTML(StringBuilder content, table, List<Change> changes) {
 		List<List<String>> cells = table.columns.collect {
 			[TypeConverterFactory.instance.findTypeConverter(database).convertToDatabaseTypeString(it, database),
-			 """<A HREF="columns/${table.name.toLowerCase()}.${it.name.toLowerCase()}">$it.name</A>""".toString()]
+			 """<a href="columns/${table.name.toLowerCase()}/${it.name.toLowerCase()}">$it.name</a>""".toString()]
 		}
 		writeTable 'Current Columns', cells, content
 	}

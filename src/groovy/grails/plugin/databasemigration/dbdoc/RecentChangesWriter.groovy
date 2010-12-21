@@ -32,7 +32,7 @@ class RecentChangesWriter extends HTMLWriter {
 	@Override
 	protected void writeBody(StringBuilder content, object, List<Change> ranChanges, List<Change> changesToRun) {
 		writeCustomHTML(content, object, ranChanges)
-		writeChanges('Most Recent Changes', content, ranChanges)
+		writeChanges('Most Recent Changes', content, ranChanges, false)
 	}
 
 	@Override

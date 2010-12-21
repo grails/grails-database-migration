@@ -30,6 +30,6 @@ class ChangeLogWriter {
 	}
 
 	void writeChangeLog(String changeLog, String physicalFilePath) {
-		files["changelogs/$physicalFilePath"] = resourceAccessor.getResourceAsStream(physicalFilePath).text
+		files["changelogs/$physicalFilePath".toString()] = resourceAccessor.getResourceAsStream(physicalFilePath).text
 	}
 }
