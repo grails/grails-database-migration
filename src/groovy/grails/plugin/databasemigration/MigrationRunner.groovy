@@ -55,8 +55,5 @@ class MigrationRunner {
 			GrailsUtil.deepSanitize e
 			throw e
 		}
-		finally {
-			database?.close()
-		}
 	}
 }
