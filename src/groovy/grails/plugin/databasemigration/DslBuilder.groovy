@@ -93,7 +93,7 @@ class DslBuilder extends BuilderSupport {
 		this.resourceAccessor = resourceAccessor
 		this.ctx = ctx
 
-		databaseChangeLog = new DatabaseChangeLog(changeLogLocation)
+		databaseChangeLog = new DatabaseChangeLog()
 		databaseChangeLog.setPhysicalFilePath changeLogLocation
 		databaseChangeLog.setChangeLogParameters changeLogParameters
 	}
@@ -405,8 +405,7 @@ class DslBuilder extends BuilderSupport {
 		}
 
 		currentChangeSet = new ChangeSet(attributes.id, attributes.author, alwaysRun, runOnChange,
-				filePath, databaseChangeLog.physicalFilePath, attributes.context, attributes.dbms,
-				Boolean.valueOf(attributes.runInTransaction))
+			filePath, attributes.context, attributes.dbms,Boolean.valueOf(attributes.runInTransaction))
 
 		if (StringUtils.trimToNull(attributes.failOnError)) {
 			currentChangeSet.setFailOnError Boolean.parseBoolean(attributes.failOnError)
@@ -745,7 +744,6 @@ class DslBuilder extends BuilderSupport {
 		}
 
 		changeLog.changeSets.each { databaseChangeLog.addChangeSet it }
-
 		true
 	}
 }
