@@ -1,6 +1,6 @@
 // for testing only, not included in plugin zip
 
-grails.plugin.databasemigration.changelogLocation = 'target'
+grails.plugin.databasemigration.changelogLocation = 'target/changelogs'
 grails.plugin.databasemigration.changelogFileName = 'changelog.cli.test.groovy'
 grails.plugin.databasemigration.changelogProperties = [
 	changeset_author: 'Hunter S. Thompson',

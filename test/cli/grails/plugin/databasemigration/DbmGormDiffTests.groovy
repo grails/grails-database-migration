@@ -28,7 +28,7 @@ class DbmGormDiffTests extends AbstractScriptTests {
 		// original + 2 Liquibase + new person table
 		assertTableCount 4
 
-		def file = new File('target/gormdiff.xml')
+		def file = new File(CHANGELOG_DIR, '/gormdiff.xml')
 		assertFalse file.exists()
 
 		executeAndCheck(['dbm-gorm-diff', 'gormdiff.xml'])
@@ -61,7 +61,7 @@ class DbmGormDiffTests extends AbstractScriptTests {
 		// original + 2 Liquibase + new person table
 		assertTableCount 4
 
-		def file = new File('target/gormdiff.groovy')
+		def file = new File(CHANGELOG_DIR, '/gormdiff.groovy')
 		assertFalse file.exists()
 
 		executeAndCheck(['dbm-gorm-diff', 'gormdiff.groovy'])

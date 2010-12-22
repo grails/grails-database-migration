@@ -21,7 +21,7 @@ class DbmChangelogToGroovyTests extends AbstractScriptTests {
 
 	void testChangelogToGroovy() {
 
-		def file = new File('target/changelog.xml')
+		def file = new File(CHANGELOG_DIR, '/changelog.xml')
 		file.delete()
 		assertFalse file.exists()
 
@@ -34,16 +34,16 @@ class DbmChangelogToGroovyTests extends AbstractScriptTests {
 		executeAndCheck(['dbm-changelog-to-groovy'], false)
 		assertTrue output.contains('ERROR: Must specify the source XML file path')
 
-		file = new File('target/changelog.groovy')
+		file = new File(CHANGELOG_DIR, '/changelog.groovy')
 		file.delete()
 		assertFalse file.exists()
 
-		executeAndCheck(['dbm-changelog-to-groovy', 'target/changelog.xml'])
+		executeAndCheck(['dbm-changelog-to-groovy', CHANGELOG_DIR + '/changelog.xml'])
 
 		assertTrue file.exists()
 		file.deleteOnExit()
 
-		assertTrue output.contains('Converting target/changelog.xml to target/changelog.groovy')
+		assertTrue output.contains("Converting $CHANGELOG_DIR/changelog.xml to $CHANGELOG_DIR/changelog.groovy".toString())
 
 		String groovy = file.text
 
@@ -51,16 +51,18 @@ class DbmChangelogToGroovyTests extends AbstractScriptTests {
 		assertTrue groovy.contains('changeSet(')
 		assertTrue groovy.contains('createTable(')
 
-		file = new File('target/cl.groovy')
+		file = new File(CHANGELOG_DIR, '/cl.groovy')
 		file.delete()
 		assertFalse file.exists()
 
-		executeAndCheck(['dbm-changelog-to-groovy', 'target/changelog.xml', 'target/cl.groovy'])
+		executeAndCheck(['dbm-changelog-to-groovy',
+			CHANGELOG_DIR + '/changelog.xml',
+			CHANGELOG_DIR + '/cl.groovy'])
 
 		assertTrue file.exists()
 		file.deleteOnExit()
 
-		assertTrue output.contains('Converting target/changelog.xml to target/cl.groovy')
+		assertTrue output.contains("Converting $CHANGELOG_DIR/changelog.xml to $CHANGELOG_DIR/cl.groovy".toString())
 
 		groovy = file.text
 		assertTrue groovy.contains('databaseChangeLog = {')

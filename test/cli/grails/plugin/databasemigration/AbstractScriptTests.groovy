@@ -30,6 +30,7 @@ import org.h2.tools.Server
 abstract class AbstractScriptTests extends AbstractCliTestCase {
 
 	private static final String TEST_CHANGELOG = 'changelog.cli.test.groovy'
+	protected static final String CHANGELOG_DIR = 'target/changelogs'
 
 	protected static final String URL = 'jdbc:h2:tcp://localhost/./target/testdb/testdb'
 
@@ -41,6 +42,8 @@ abstract class AbstractScriptTests extends AbstractCliTestCase {
 		super.setUp()
 
 		new File('target/testdb').deleteDir()
+		new File(CHANGELOG_DIR).deleteDir()
+		new File(CHANGELOG_DIR).mkdirs()
 
 		server = Server.createTcpServer().start()
 		assertEquals 9092, server.port
@@ -83,7 +86,7 @@ abstract class AbstractScriptTests extends AbstractCliTestCase {
 
 	protected void initFile(boolean groovy) {
 		String name = 'changelog_' + System.currentTimeMillis() + (groovy ? '.groovy' : '.xml')
-		file = new File('target', name)
+		file = new File(CHANGELOG_DIR, name)
 		file.deleteOnExit()
 		assertFalse file.exists()
 	}
@@ -118,7 +121,7 @@ abstract class AbstractScriptTests extends AbstractCliTestCase {
 	}
 
 	protected void copyTestChangelog(String name = 'test.changelog') {
-		def file = new File('target', TEST_CHANGELOG)
+		def file = new File(CHANGELOG_DIR, TEST_CHANGELOG)
 		file.deleteOnExit()
 		file.withWriter {
 			it.write getClass().getResourceAsStream(name).text

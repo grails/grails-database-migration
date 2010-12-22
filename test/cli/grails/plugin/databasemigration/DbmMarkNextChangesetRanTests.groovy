@@ -31,8 +31,35 @@ class DbmMarkNextChangesetRanTests extends AbstractScriptTests {
 		executeAndCheck 'dbm-mark-next-changeset-ran'
 		assertTrue output.contains('Starting dbm-mark-next-changeset-ran')
 
+		assertTrue output.contains('Executing EXECUTE database command: INSERT INTO DATABASECHANGELOG')
+		assertTrue output.contains("VALUES ('burt', '', NOW(), 'Add Column', 'EXECUTED', 'changelog.cli.test.groovy', 'test-3', ")
+
 		executeAndCheck 'dbm-update'
-println output
-//		assertTrue output.contains("DELETE FROM DATABASECHANGELOG  WHERE ID='test-3'")
+		assertFalse output.contains('ChangeSet changelog.cli.test.groovy::test-3::burt ran successfully')
+	}
+
+	void testMarkNextChangesetRanToFile() {
+		assertTableCount 1
+		copyTestChangelog()
+		executeAndCheck(['dbm-update-count', '2'])
+		assertTableCount 4
+
+		assertTrue output.contains('ChangeSet changelog.cli.test.groovy::test-1::burt ran successfully')
+		assertTrue output.contains('ChangeSet changelog.cli.test.groovy::test-2::burt ran successfully')
+
+		def file = new File(CHANGELOG_DIR, '/ran.log')
+		file.delete()
+		assertFalse file.exists()
+
+		executeAndCheck(['dbm-mark-next-changeset-ran', CHANGELOG_DIR + '/ran.log'])
+
+		assertTrue file.exists()
+		file.deleteOnExit()
+
+		String content = file.text
+		assertFalse content.contains('Executing EXECUTE database command')
+		assertTrue content.contains('SQL to add all changesets to database history table')
+		assertTrue content.contains('INSERT INTO DATABASECHANGELOG')
+		assertTrue content.contains("VALUES ('burt', '', NOW(), 'Add Column', 'EXECUTED', 'changelog.cli.test.groovy', 'test-3', ")
 	}
 }

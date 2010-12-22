@@ -64,7 +64,7 @@ class DbmDiffTests extends AbstractScriptTests {
 
 		createTables()
 
-		def file = new File('target/cl.xml')
+		def file = new File(CHANGELOG_DIR, '/cl.xml')
 		assertFalse file.exists()
 
 		executeAndCheck(['dbm-diff', 'dbdiff', 'cl.xml'])
@@ -85,7 +85,7 @@ class DbmDiffTests extends AbstractScriptTests {
 
 		createTables()
 
-		def file = new File('target/cl.groovy')
+		def file = new File(CHANGELOG_DIR, '/cl.groovy')
 		file.delete()
 		assertFalse file.exists()
 

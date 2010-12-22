@@ -21,7 +21,7 @@ class DbmCreateChangelogTests extends AbstractScriptTests {
 
 	void testCreateChangelogDefault() {
 
-		def file = new File('target/changelog.cli.test.groovy')
+		def file = new File(CHANGELOG_DIR, '/changelog.cli.test.groovy')
 		file.delete()
 		assertFalse file.exists()
 
@@ -32,7 +32,7 @@ class DbmCreateChangelogTests extends AbstractScriptTests {
 
 	void testCreateChangelog() {
 
-		def file = new File('target/newChangeLog.groovy')
+		def file = new File(CHANGELOG_DIR, '/newChangeLog.groovy')
 		file.delete()
 		assertFalse file.exists()
 
@@ -43,7 +43,7 @@ class DbmCreateChangelogTests extends AbstractScriptTests {
 
 	void testCreateChangelogInSubdirectory() {
 
-		def file = new File('target/foo/bar/otherChangeLog.groovy')
+		def file = new File(CHANGELOG_DIR, '/foo/bar/otherChangeLog.groovy')
 		file.delete()
 		assertFalse file.exists()
 
