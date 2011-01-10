@@ -1,0 +1,26 @@
+h1. dbm-rollback-to-date-sql
+
+h2. Purpose
+
+Writes SQL to roll back the database to the state it was in at the given date/time to STDOUT or a file.
+
+h2. Description
+
+You can specify just the date, or the date and time. The date format must be @yyyy-MM-dd@ and the time format must be @HH:mm:ss@.
+
+Usage:
+{code:java}
+grails [environment] dbm-rollback-to-date-sql [date] [time] [filename] --contexts=[contexts] --defaultSchema=[defaultSchema]
+{code}
+
+Required arguments:
+
+* @date@ - The rollback date
+
+Optional arguments:
+
+* @time@ - The rollback time
+* @filename@ - The path to the output file to write to. If not specified output is written to the console
+* @contexts@ - A comma-delimited list of [context|http://www.liquibase.org/manual/contexts] names. If specified, only changesets tagged with one of the context names will be included
+* @defaultSchema@ - The default schema name to use
+

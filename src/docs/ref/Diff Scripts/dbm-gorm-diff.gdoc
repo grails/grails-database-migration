@@ -1,0 +1,29 @@
+h1. dbm-gorm-diff
+
+h2. Purpose
+
+Diffs GORM classes against a database and generates a changelog XML or Groovy DSL file.
+
+h2. Description
+
+Creates a Groovy DSL file if the filename is specified and it ends with .groovy. If another extension is specified it creates a standard Liquibase XML file, and if no filename is specified it writes to the console.
+
+File are written to the migrations folder, so specify the filename relative to the migrations folder (@grails-app/conf/migrations@ by default).
+
+Similar to [dbm-diff|Diff Scripts] but diffs the current configuration based on the application's domain classes with the database configured in @DataSource.groovy@ for the current environment (defaults to @dev@).
+
+Doesn't modify any existing files - you need to manually merge the output into the changeset along with any necessary modifications.
+
+Usage:
+{code:java}
+grails [environment] dbm-gorm-diff [filename] --defaultSchema=[defaultSchema] --add
+{code}
+
+Required arguments: _none_ .
+
+Optional arguments:
+
+* @filename@ - The path to the output file to write to. If not specified output is written to the console
+* @defaultSchema@ - The default schema name to use
+* @add@ - if specified add an include in the root changelog file referencing the new file
+

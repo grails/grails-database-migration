@@ -1,0 +1,23 @@
+h1. dbm-changelog-sync-sql
+
+h2. Purpose
+
+Writes the SQL that will mark all changes as executed in the database to STDOUT or a file.
+
+h2. Description
+
+Generates the SQL statements for the Liquibase @DATABASECHANGELOG@ control table.
+
+Usage:
+{code:java}
+grails [environment] dbm-changelog-sync --contexts=[contexts] --defaultSchema=[defaultSchema]
+{code}
+
+Required arguments: _none_ .
+
+Optional arguments:
+
+* @filename@ - The path to the output file to write to. If not specified output is written to the console
+* @contexts@ - A comma-delimited list of [context|http://www.liquibase.org/manual/contexts] names. If specified, only changesets tagged with one of the context names will be included
+* @defaultSchema@ - The default schema name to use
+

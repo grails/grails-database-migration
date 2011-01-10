@@ -1,0 +1,18 @@
+h1. dbm-register-changelog
+
+h2. Purpose
+
+Adds an include for the specified changelog to the main changelog.
+
+h2. Description
+
+Usage:
+{code:java}
+grails [environment] dbm-register-changelog [filename]
+{code}
+
+Required arguments:
+
+* @filename@ - The path to the changelog file to include.
+
+Optional arguments: _none_ .

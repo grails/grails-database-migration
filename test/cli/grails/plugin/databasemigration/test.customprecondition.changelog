@@ -1,0 +1,47 @@
+import liquibase.statement.core.AddColumnStatement
+
+databaseChangeLog = {
+	changeSet(author: 'burt', id: 'create_grails_table') {
+
+		preConditions {
+
+			grailsPrecondition {
+
+				check {
+
+					new File('target/created_in_check').withWriter {
+						it.write "database null: ${database == null}\n"
+						it.write "changeLog null: ${changeLog == null}\n"
+						it.write "changeSet null: ${changeSet == null}\n"
+						it.write "ctx null: ${ctx == null}\n"
+						it.write "resourceAccessor null: ${resourceAccessor == null}\n"
+					}
+
+					int testValue = new File('target/check_data').text.trim().toInteger()
+
+					if (testValue == 42) {
+						assert testValue != 42
+					}
+
+					if (testValue == 237) {
+						assert testValue != 237 : 'value cannot be 237'
+					}
+
+					if (testValue == -1) {
+						throw new RuntimeException('unhandled runtime exception')
+					}
+
+					if (testValue > 10) {
+						fail 'value cannot be larger than 10'
+					}
+				}
+			}
+		}
+
+		createTable(tableName: 'precondition_test') {
+			column(autoIncrement: 'true', name: 'ID', type: 'BIGINT') {
+				constraints(nullable: 'false', primaryKey: 'true', primaryKeyName: 'pk_precondition_test')
+			}
+		}
+	}
+}

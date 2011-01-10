@@ -1,0 +1,24 @@
+h1. dbm-rollback
+
+h2. Purpose
+
+Rolls back the database to the state it was in when the tag was applied.
+
+h2. Description
+
+Requires that the named tag exists. You can create tags with the [dbm-tag|Maintenance Scripts] script.
+
+Usage:
+{code:java}
+grails [environment] dbm-rollback [tagName] --contexts=[contexts] --defaultSchema=[defaultSchema]
+{code}
+
+Required arguments:
+
+* @tagName@ - The name of the tag to use
+
+Optional arguments:
+
+* @contexts@ - A comma-delimited list of [context|http://www.liquibase.org/manual/contexts] names. If specified, only changesets tagged with one of the context names will be run
+* @defaultSchema@ - The default schema name to use
+

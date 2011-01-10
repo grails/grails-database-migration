@@ -1,0 +1,20 @@
+h1. dbm-list-locks
+
+h2. Purpose
+
+Lists who currently has locks on the database changelog to STDOUT or a file.
+
+h2. Description
+
+Usage:
+{code:java}
+grails [environment] dbm-list-locks [filename] --defaultSchema=[defaultSchema]
+{code}
+
+Required arguments: _none_ .
+
+Optional arguments:
+
+* @filename@ - The path to the output file to write to. If not specified output is written to the console
+* @defaultSchema@ - The default schema name to use
+

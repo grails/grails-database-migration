@@ -1,0 +1,21 @@
+h1. dbm-create-changelog
+
+h2. Purpose
+
+Creates an empty changelog file.
+
+h2. Description
+
+Creates a new empty file instead of generating the file from the database (using [dbm-generate-changelog|Rollback Scripts]) or your GORM classes (using [dbm-generate-gorm-changelog|Rollback Scripts]).
+
+Usage:
+{code:java}
+grails [environment] dbm-create-changelog [filename]
+{code}
+
+Required arguments:
+
+* @filename@ - The path to the output file to write to
+
+Optional arguments: _none_ .
+

@@ -1,0 +1,19 @@
+h1. dbm-validate
+
+h2. Purpose
+
+Checks the changelog for errors.
+
+h2. Description
+
+Prints any validation messages to the console.
+
+Usage:
+{code:java}
+grails [environment] dbm-validate
+{code}
+
+Required arguments: _none_ .
+
+Optional arguments: _none_ .
+

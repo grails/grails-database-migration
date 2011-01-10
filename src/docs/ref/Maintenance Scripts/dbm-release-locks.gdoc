@@ -1,0 +1,19 @@
+h1. dbm-release-locks
+
+h2. Purpose
+
+Releases all locks on the database changelog.
+
+h2. Description
+
+Usage:
+{code:java}
+grails [environment] dbm-release-locks --defaultSchema=[defaultSchema]
+{code}
+
+Required arguments: _none_ .
+
+Optional arguments:
+
+* @defaultSchema@ - The default schema name to use
+

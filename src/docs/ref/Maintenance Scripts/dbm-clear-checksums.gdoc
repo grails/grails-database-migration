@@ -1,0 +1,17 @@
+h1. dbm-clear-checksums
+
+h2. Purpose
+
+Removes current checksums from database. On next run checksums will be recomputed.
+
+h2. Description
+
+Usage:
+{code:java}
+grails [environment] dbm-clear-checksums
+{code}
+
+Required arguments: _none_ .
+
+Optional arguments: _none_ .
+
