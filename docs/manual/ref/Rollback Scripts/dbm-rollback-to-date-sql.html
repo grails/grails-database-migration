@@ -1,0 +1,32 @@
+<html>
+    <head>
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
+        <title>Database Migration Plugin 0.1 - Reference Documentation</title>
+        <link rel="stylesheet" href="../../css/ref.css" type="text/css" media="screen" title="Ref" charset="utf-8"/>
+    </head>
+    <body class="body">
+    <h1>dbm-rollback-to-date-sql</h1><p class="paragraph"/><h2>Purpose</h2><p class="paragraph"/>Writes SQL to roll back the database to the state it was in at the given date/time to STDOUT or a file.<p class="paragraph"/><h2>Description</h2><p class="paragraph"/>You can specify just the date, or the date and time. The date format must be <code>yyyy-MM-dd</code> and the time format must be <code>HH:mm:ss</code>.<p class="paragraph"/>Usage:
+<div class="code"><pre>grails &#91;environment&#93; dbm&#45;rollback&#45;to&#45;date&#45;sql &#91;date&#93; &#91;time&#93; &#91;filename&#93; &#45;&#45;contexts=&#91;contexts&#93; &#45;&#45;defaultSchema=&#91;defaultSchema&#93;</pre></div><p class="paragraph"/>Required arguments:
+<ul class="star">
+<li><code>date</code> - The rollback date</li>
+</ul><p class="paragraph"/>Optional arguments:
+<ul class="star">
+<li><code>time</code> - The rollback time</li>
+<li><code>filename</code> - The path to the output file to write to. If not specified output is written to the console</li>
+<li><code>contexts</code> - A comma-delimited list of <a href="http://www.liquibase.org/manual/contexts" target="blank">context</a> names. If specified, only changesets tagged with one of the context names will be included</li>
+<li><code>defaultSchema</code> - The default schema name to use</li>
+</ul><p class="paragraph"/>
+    
+<script type="text/javascript">
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-16219500-1']);
+	_gaq.push(['_trackPageview']);
+
+	(function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	})();
+</script>
+</body>
+</html>

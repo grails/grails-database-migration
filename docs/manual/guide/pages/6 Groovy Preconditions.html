@@ -1,0 +1,84 @@
+<html>
+    <head>
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
+        <title>6 Groovy Preconditions</title>
+        <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen" title="Ref" charset="utf-8"/>
+    </head>
+    <body class="body">
+    In addition to the built-in Liquibase preconditions (see <a href="http://www.liquibase.org/manual/preconditions" target="blank">the documentation</a> for what's available) you can also specify preconditions using Groovy code (as long as you're using the Groovy DSL file format). These changes use the <code>grailsPrecondition</code> tag name and are contained in the <code>databaseChangeLog</code> tag or in a <code>changeSet</code> tag like standard built-in tags.<p class="paragraph"/><h4>General format</h4><p class="paragraph"/>This is general format of a Groovy-based precondition:<p class="paragraph"/><div class="code"><pre>grailsPrecondition &#123;<p class="paragraph"/>   check &#123;<p class="paragraph"/>      // use an assertion
+      assert x == x<p class="paragraph"/>      // use an assertion with an error message
+      assert y == y : 'value cannot be 237'<p class="paragraph"/>      // call the fail method
+      <span class="java&#45;keyword">if</span> (x != x) &#123;
+         fail 'x != x'
+      &#125;<p class="paragraph"/>      // <span class="java&#45;keyword">throw</span> an exception (the fail method is preferred)
+      <span class="java&#45;keyword">if</span> (y != y) &#123;
+         <span class="java&#45;keyword">throw</span> <span class="java&#45;keyword">new</span> RuntimeException('y != y')
+      &#125;
+   &#125;
+&#125;</pre></div><p class="paragraph"/>As you can see there are a few ways to indicate that a precondition wasn't met:
+<ul class="star">
+<li>use a simple assertion</li>
+<li>use an assertion with a message</li>
+<li>call the <code>fail(String message)</code> method (throws a <code>PreconditionFailedException</code>)</li>
+<li>throw an exception (shouldn't be necessary - use <code>assert</code> or <code>fail()</code> instead)</li>
+</ul><p class="paragraph"/><h4>Available variables</h4>
+<ul class="star">
+<li><code>database</code></li>
+<ul class="star">
+<li>the current Liquibase <code>Database</code> instance</li>
+</ul>
+<li><code>databaseConnection</code></li>
+<ul class="star">
+<li>the current Liquibase <code>DatabaseConnection</code> instance, which is a wrapper around the JDBC <code>Connection</code> (but doesn't implement the <code>Connection</code> interface)</li>
+</ul>
+<li><code>connection</code></li>
+<ul class="star">
+<li>the real JDBC <code>Connection</code> instance (a shortcut for <code>database.connection.wrappedConnection</code>)</li>
+</ul>
+<li><code>sql</code></li>
+<ul class="star">
+<li>a <code>groovy.sql.Sql</code> instance which uses the current <code>connection</code> and can be used for arbitrary queries and updates</li>
+</ul>
+<li><code>resourceAccessor</code></li>
+<ul class="star">
+<li>the current Liquibase <code>ResourceAccessor</code> instance</li>
+</ul>
+<li><code>ctx</code></li>
+<ul class="star">
+<li>the Spring <code>ApplicationContext</code></li>
+</ul>
+<li><code>application</code></li>
+<ul class="star">
+<li>the <code>GrailsApplication</code></li>
+</ul>
+<li><code>changeSet</code></li>
+<ul class="star">
+<li>the current Liquibase <code>ChangeSet</code> instance</li>
+</ul>
+<li><code>changeLog</code></li>
+<ul class="star">
+<li>the current Liquibase <code>DatabaseChangeLog</code> instance</li>
+</ul></ul><p class="paragraph"/><h4>Utility methods</h4>
+<ul class="star">
+<li><code>createDatabaseSnapshotGenerator()</code></li>
+<ul class="star">
+<li>retrieves the <code>DatabaseSnapshotGenerator</code> for the current <code>Database</code></li>
+</ul>
+<li><code>createDatabaseSnapshot(String schemaName = null)</code></li>
+<ul class="star">
+<li>creates a <code>DatabaseSnapshot</code> for the current <code>Database</code> (and schema if specified)</li>
+</ul></ul><p class="paragraph"/>
+    
+<script type="text/javascript">
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-16219500-1']);
+	_gaq.push(['_trackPageview']);
+
+	(function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	})();
+</script>
+</body>
+</html>

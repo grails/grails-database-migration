@@ -1,0 +1,24 @@
+<html>
+    <head>
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
+        <title>2 Getting Started</title>
+        <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen" title="Ref" charset="utf-8"/>
+    </head>
+    <body class="body">
+    <h1><a name="2 Getting Started">2 Getting Started</a></h1><h4>The first step is to install the plugin:</h4><p class="paragraph"/><div class="code"><pre>grails install&#45;plugin database&#45;migration</pre></div><p class="paragraph"/><h4>Typical initial workflow</h4><p class="paragraph"/>Next you'll need to create an initial changelog. You can use Liquibase XML or the plugin's Groovy DSL for individual files. You can even mix and match; Groovy files can include other Groovy files and Liquibase XML files (but XML files can't include Groovy files).<p class="paragraph"/>Depending on the state of your database and code, you have two options; either create a changelog from the database or create it from your domain classes. The decision tends to be based on whether you prefer to design the database and adjust the domain classes to work with it, or to design your domain classes and use Hibernate to create the corresponding database structure.<p class="paragraph"/>To create a changelog from the database, use the <a href="../ref/Rollback Scripts/dbm-generate-changelog.html" class="Rollback Scripts">dbm-generate-changelog</a> script:
+<div class="code"><pre>grails dbm&#45;generate&#45;changelog changelog.groovy</pre></div><p class="paragraph"/>or<p class="paragraph"/><div class="code"><pre>grails dbm&#45;generate&#45;changelog changelog.xml</pre></div><p class="paragraph"/>depending on whether you prefer the Groovy DSL or XML. The filename is relative to the changelog base folder, which defaults to <code>grails-app/conf/migrations</code>.<p class="paragraph"/>Since the database is already correct, run the <a href="../ref/Maintenance Scripts/dbm-changelog-sync.html" class="Maintenance Scripts">dbm-changelog-sync</a> script to record that the changes have already been applied:
+<div class="code"><pre>grails dbm&#45;changelog&#45;sync</pre></div><p class="paragraph"/>Running this script is primarily a no-op except that it records the execution(s) in the Liquibase DATABASECHANGELOG table.<p class="paragraph"/>To create a changelog from your domain classes, use the <a href="../ref/Rollback Scripts/dbm-generate-gorm-changelog.html" class="Rollback Scripts">dbm-generate-gorm-changelog</a> script:<p class="paragraph"/><div class="code"><pre>grails dbm&#45;generate&#45;gorm&#45;changelog changelog.groovy</pre></div><p class="paragraph"/>or<p class="paragraph"/><div class="code"><pre>grails dbm&#45;generate&#45;gorm&#45;changelog changelog.xml</pre></div><p class="paragraph"/>If you haven't created the database yet, run the <a href="../ref/Update Scripts/dbm-update.html" class="Update Scripts">dbm-update</a> script to create the corresponding tables:<p class="paragraph"/><div class="code"><pre>grails dbm&#45;update</pre></div><p class="paragraph"/>or the <a href="../ref/Maintenance Scripts/dbm-changelog-sync.html" class="Maintenance Scripts">dbm-changelog-sync</a> script if the database is already in sync with your code:<p class="paragraph"/><div class="code"><pre>grails dbm&#45;changelog&#45;sync</pre></div><p class="paragraph"/><h4>Source control</h4><p class="paragraph"/>Now you can commit the changelog and the corresponding application code to source control. Other developers can then update and syncronize their databases, and start doing migrations themselves.<p class="paragraph"/>
+    
+<script type="text/javascript">
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-16219500-1']);
+	_gaq.push(['_trackPageview']);
+
+	(function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	})();
+</script>
+</body>
+</html>

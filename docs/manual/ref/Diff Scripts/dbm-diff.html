@@ -1,0 +1,31 @@
+<html>
+    <head>
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
+        <title>Database Migration Plugin 0.1 - Reference Documentation</title>
+        <link rel="stylesheet" href="../../css/ref.css" type="text/css" media="screen" title="Ref" charset="utf-8"/>
+    </head>
+    <body class="body">
+    <h1>dbm-diff</h1><p class="paragraph"/><h2>Purpose</h2><p class="paragraph"/>Compares two databases and creates a changelog that will make the changes required to bring them into sync.<p class="paragraph"/><h2>Description</h2><p class="paragraph"/>Executes against the database configured in <code>DataSource.groovy</code> for the current environment (defaults to <code>dev</code>) and another configured datasource in <code>DataSource.groovy</code>.<p class="paragraph"/>If a filename parameter is specified then the output will be written to the named file, otherwise it will write to the console. If the filename ends with .groovy a Groovy DSL file will be created, otherwise a standard XML file will be created.<p class="paragraph"/>File are written to the migrations folder, so specify the filename relative to the migrations folder (<code>grails-app/conf/migrations</code> by default).<p class="paragraph"/>Usage:
+<div class="code"><pre>grails &#91;environment&#93; dbm&#45;diff &#91;otherEnv&#93; &#91;filename&#93; &#45;&#45;defaultSchema=&#91;defaultSchema&#93; &#45;&#45;add</pre></div><p class="paragraph"/>Required arguments:
+<ul class="star">
+<li><code>otherEnv</code> - The name of the environment to compare to</li>
+</ul><p class="paragraph"/>Optional arguments:
+<ul class="star">
+<li><code>filename</code> - The path to the output file to write to. If not specified output is written to the console</li>
+<li><code>defaultSchema</code> - The default schema name to use</li>
+<li><code>add</code> - if specified add an include in the root changelog file referencing the new file</li>
+</ul><p class="paragraph"/>
+    
+<script type="text/javascript">
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-16219500-1']);
+	_gaq.push(['_trackPageview']);
+
+	(function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	})();
+</script>
+</body>
+</html>

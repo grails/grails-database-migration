@@ -1,0 +1,30 @@
+<html>
+    <head>
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
+        <title>Database Migration Plugin 0.1 - Reference Documentation</title>
+        <link rel="stylesheet" href="../../css/ref.css" type="text/css" media="screen" title="Ref" charset="utf-8"/>
+    </head>
+    <body class="body">
+    <h1>dbm-rollback</h1><p class="paragraph"/><h2>Purpose</h2><p class="paragraph"/>Rolls back the database to the state it was in when the tag was applied.<p class="paragraph"/><h2>Description</h2><p class="paragraph"/>Requires that the named tag exists. You can create tags with the <a href="../../ref/Maintenance Scripts/dbm-tag.html" class="Maintenance Scripts">dbm-tag</a> script.<p class="paragraph"/>Usage:
+<div class="code"><pre>grails &#91;environment&#93; dbm&#45;rollback &#91;tagName&#93; &#45;&#45;contexts=&#91;contexts&#93; &#45;&#45;defaultSchema=&#91;defaultSchema&#93;</pre></div><p class="paragraph"/>Required arguments:
+<ul class="star">
+<li><code>tagName</code> - The name of the tag to use</li>
+</ul><p class="paragraph"/>Optional arguments:
+<ul class="star">
+<li><code>contexts</code> - A comma-delimited list of <a href="http://www.liquibase.org/manual/contexts" target="blank">context</a> names. If specified, only changesets tagged with one of the context names will be run</li>
+<li><code>defaultSchema</code> - The default schema name to use</li>
+</ul><p class="paragraph"/>
+    
+<script type="text/javascript">
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-16219500-1']);
+	_gaq.push(['_trackPageview']);
+
+	(function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	})();
+</script>
+</body>
+</html>
