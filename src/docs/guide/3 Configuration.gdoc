@@ -1,9 +1,10 @@
-There are a few configuration options for the plugin.
+There are a few configuration options for the plugin:
 
 {table}
 *Property* | *Default* | *Meaning*
 grails.plugin.databasemigration.changelogLocation | @grails-app/conf/migrations@ | the folder containing the main changelog file (which can include one or more other files)
 grails.plugin.databasemigration.changelogFileName | @changelog.groovy@ | the name of the main changelog file
+grails.plugin.databasemigration.changelogProperties | none | a map of properties to use for property substitution in Groovy DSL changelogs
 grails.plugin.databasemigration.dbDocLocation | @target/dbdoc@ | the directory where the output from the [dbm-db-doc|Documentation Scripts] script is written
 grails.plugin.databasemigration.updateOnStart | @false@ | if @true@ then changesets from the specified list of names will be run at startup
 grails.plugin.databasemigration.updateOnStartFileNames | none | one or more file names (relative to @changelogLocation@) to run at startup if @updateOnStart@ is @true@

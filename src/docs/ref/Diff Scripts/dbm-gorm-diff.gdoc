@@ -16,7 +16,7 @@ Doesn't modify any existing files - you need to manually merge the output into t
 
 Usage:
 {code:java}
-grails [environment] dbm-gorm-diff [filename] --defaultSchema=[defaultSchema]
+grails [environment] dbm-gorm-diff [filename] --defaultSchema=[defaultSchema] --add
 {code}
 
 Required arguments: _none_ .
@@ -25,4 +25,5 @@ Optional arguments:
 
 * @filename@ - The path to the output file to write to. If not specified output is written to the console
 * @defaultSchema@ - The default schema name to use
+* @add@ - if specified add an include in the root changelog file referencing the new file
 

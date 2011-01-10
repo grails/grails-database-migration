@@ -14,7 +14,7 @@ File are written to the migrations folder, so specify the filename relative to t
 
 Usage:
 {code:java}
-grails [environment] dbm-diff [otherEnv] [filename] --defaultSchema=[defaultSchema]
+grails [environment] dbm-diff [otherEnv] [filename] --defaultSchema=[defaultSchema] --add
 {code}
 
 Required arguments:
@@ -25,4 +25,4 @@ Optional arguments:
 
 * @filename@ - The path to the output file to write to. If not specified output is written to the console
 * @defaultSchema@ - The default schema name to use
-
+* @add@ - if specified add an include in the root changelog file referencing the new file

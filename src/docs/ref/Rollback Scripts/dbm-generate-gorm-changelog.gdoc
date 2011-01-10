@@ -14,7 +14,7 @@ Executes against the database configured in @DataSource.groovy@ for the current 
 
 Usage:
 {code:java}
-grails [environment] dbm-generate-gorm-changelog [filename]
+grails [environment] dbm-generate-gorm-changelog [filename] --add
 {code}
 
 Required arguments: _none_ .
@@ -22,4 +22,4 @@ Required arguments: _none_ .
 Optional arguments:
 
 * @filename@ - The path to the output file to write to. If not specified output is written to the console
-
+* @add@ - if specified add an include in the root changelog file referencing the new file

@@ -1,5 +1,0 @@
-h4. The first step is installing the plugin:
-
-{code}
-grails install-plugin database-migration
-{code}
