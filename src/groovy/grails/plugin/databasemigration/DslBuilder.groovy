@@ -224,7 +224,7 @@ class DslBuilder extends BuilderSupport {
 	private Map expandExpressions(Map original) {
 		def expanded = [:]
 		original.each { name, value ->
-			expanded[name] = changeLogParameters.expandExpressions(original[name])
+			expanded[name] = changeLogParameters.expandExpressions(original[name]?.toString())
 		}
 		expanded
 	}
