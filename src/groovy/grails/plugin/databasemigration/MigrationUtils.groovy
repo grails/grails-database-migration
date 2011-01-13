@@ -19,7 +19,10 @@ import java.sql.Connection
 import liquibase.Liquibase
 import liquibase.database.Database
 import liquibase.database.DatabaseFactory
+import liquibase.database.core.MySQLDatabase
 import liquibase.database.jvm.JdbcConnection
+import liquibase.database.structure.Index
+import liquibase.diff.DiffResult
 
 import org.codehaus.groovy.grails.commons.GrailsApplication
 import org.hibernate.FlushMode
@@ -170,5 +173,46 @@ class MigrationUtils {
 
 	static ConfigObject getChangelogProperties() {
 		getConfig().changelogProperties ?: [:]
+	}
+
+	static DiffResult fixDiffResult(DiffResult diffResult) {
+
+		if (!(diffResult.referenceSnapshot.database instanceof MySQLDatabase ||
+				diffResult.targetSnapshot.database instanceof MySQLDatabase)) {
+			return diffResult
+		}
+
+		for (Iterator iter = diffResult.missingIndexes.iterator(); iter.hasNext(); ) {
+			Index index = iter.next()
+			for (Index targetIndex in diffResult.targetSnapshot.indexes) {
+				if (index.columns.size() == targetIndex.columns.size() &&
+						index.columns.containsAll(targetIndex.columns) &&
+						index.table.name.equalsIgnoreCase(targetIndex.table.name)) {
+					iter.remove()
+					break
+				}
+			}
+		}
+
+		for (Iterator iter = diffResult.unexpectedIndexes.iterator(); iter.hasNext(); ) {
+			Index index = iter.next()
+			if (index.associatedWith.contains(Index.MARK_PRIMARY_KEY) ||
+					index.associatedWith.contains(Index.MARK_FOREIGN_KEY) ||
+					index.associatedWith.contains(Index.MARK_UNIQUE_CONSTRAINT)) {
+				continue
+			}
+
+			for (Index targetIndex in diffResult.referenceSnapshot.indexes) {
+				if (index.columns.size() == targetIndex.columns.size() &&
+						index.columns.containsAll(targetIndex.columns) &&
+						index.table.name.equalsIgnoreCase(targetIndex.table.name) &&
+						index.unique == targetIndex.unique) {
+					iter.remove()
+					break
+				}
+			}
+		}
+
+		diffResult
 	}
 }

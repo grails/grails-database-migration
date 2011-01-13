@@ -43,7 +43,7 @@ target(dbmGormDiff: 'Diff GORM classes against database and generate a changelog
 			MigrationUtils.executeInSession {
 				realDatabase = MigrationUtils.getDatabase(defaultSchema)
 				def gormDatabase = createGormDatabase()
-				createDiff(gormDatabase, realDatabase).compare().printChangeLog(out, gormDatabase)
+				MigrationUtils.fixDiffResult(createDiff(gormDatabase, realDatabase).compare()).printChangeLog(out, gormDatabase)
 			}
 		}
 
