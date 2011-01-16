@@ -83,7 +83,7 @@ class GormDatabaseSnapshotGenerator implements DatabaseSnapshotGenerator {
 						typeName: hibernateColumn.getSqlType(dialect, mapping).replaceFirst('\\(.*\\)', ''),
 						unique: hibernateColumn.unique,
 						autoIncrement: hibernateColumn.value.isIdentityColumn(dialect),
-						certainDataType: false)
+						certainDataType: hibernateColumn.sqlType != null)
 					column.columnSize = column.numeric ? hibernateColumn.precision : hibernateColumn.length
 
 					table.columns << column
