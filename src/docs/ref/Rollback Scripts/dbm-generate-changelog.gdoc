@@ -25,3 +25,10 @@ Optional arguments:
 * @diffTypes@ - A comma-delimited list of change types to include - see [the documentation|http://www.liquibase.org/manual/diff#controlling_checks_since_1.8] for what types are available
 * @defaultSchema@ - The default schema name to use
 * @add@ - if specified add an include in the root changelog file referencing the new file
+
+{note}
+Note that the @diffTypes@ and @defaultSchema@ parameter name and value must be quoted if executed in Windows, e.g.
+{code}
+grails dbm-generate-changelog "--diffTypes=[diffTypes]" "--defaultSchema=[defaultSchema]"
+{code}
+{note}
