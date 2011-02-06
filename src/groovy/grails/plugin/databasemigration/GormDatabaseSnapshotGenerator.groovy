@@ -19,6 +19,7 @@ import liquibase.database.structure.Column
 import liquibase.database.structure.ForeignKey
 import liquibase.database.structure.Index
 import liquibase.database.structure.PrimaryKey
+import liquibase.database.structure.Sequence
 import liquibase.database.structure.Table
 import liquibase.diff.DiffStatusListener
 import liquibase.exception.DatabaseException
@@ -26,6 +27,8 @@ import liquibase.snapshot.DatabaseSnapshot
 import liquibase.snapshot.DatabaseSnapshotGenerator
 
 import org.hibernate.dialect.MySQLDialect
+import org.hibernate.id.SequenceGenerator
+import org.hibernate.mapping.PersistentClass
 
 /**
  * Used by the gorm-diff script. Registered in DatabaseMigrationGrailsPlugin.doWithApplicationContext().
@@ -139,6 +142,29 @@ class GormDatabaseSnapshotGenerator implements DatabaseSnapshotGenerator {
 					if (dialect instanceof MySQLDialect) {
 						addMysqlFkIndex snapshot, fk.foreignKeyTable, hibernateForeignKey
 					}
+				}
+			}
+
+			if (db.supportsSequences()) {
+				Map generators = [:]
+				for (PersistentClass pc in cfg.classes.values()) {
+					if (pc.isInherited()) {
+						continue
+					}
+
+					def identifierGenerator = pc.identifier.createIdentifierGenerator(
+						dialect, null, null, pc)
+
+					if (identifierGenerator instanceof SequenceGenerator) {
+						generators.put(identifierGenerator.generatorKey(), identifierGenerator)
+					}
+				}
+
+				for (SequenceGenerator generator in generators.values()) {
+					String schema = requestedSchema ?: ''
+					snapshot.sequences << new Sequence(
+						name: generator.sequenceName,
+						schema: db.convertRequestedSchemaToSchema(schema))
 				}
 			}
 		}
