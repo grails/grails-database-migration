@@ -19,9 +19,9 @@ import java.sql.Connection
 import liquibase.Liquibase
 import liquibase.database.Database
 import liquibase.database.DatabaseFactory
-import liquibase.database.core.MySQLDatabase
 import liquibase.database.jvm.JdbcConnection
 import liquibase.database.structure.Index
+import liquibase.database.structure.UniqueConstraint
 import liquibase.diff.DiffResult
 
 import org.codehaus.groovy.grails.commons.GrailsApplication
@@ -56,6 +56,8 @@ class MigrationUtils {
 //		database.defaultSchemaName = connection.catalog // TODO
 
 		if (dialectName) {
+			// add in a per-instance getDialect() method, mostly needed in
+			// MysqlAwareCreateTableGenerator for MySQL InnoDB
 			def dialect = createInstance(dialectName)
 			def emc = new ExpandoMetaClass(database.getClass(), false)
 			emc.getDialect = { -> dialect }
@@ -176,23 +178,8 @@ class MigrationUtils {
 	}
 
 	static DiffResult fixDiffResult(DiffResult diffResult) {
-
-		if (!(diffResult.referenceSnapshot.database instanceof MySQLDatabase ||
-				diffResult.targetSnapshot.database instanceof MySQLDatabase)) {
-			return diffResult
-		}
-
-		for (Iterator iter = diffResult.missingIndexes.iterator(); iter.hasNext(); ) {
-			Index index = iter.next()
-			for (Index targetIndex in diffResult.targetSnapshot.indexes) {
-				if (index.columns.size() == targetIndex.columns.size() &&
-						index.columns.containsAll(targetIndex.columns) &&
-						index.table.name.equalsIgnoreCase(targetIndex.table.name)) {
-					iter.remove()
-					break
-				}
-			}
-		}
+		removeRedundantUnexpectedUnique diffResult
+		removeEquivalentIndexes diffResult
 
 		for (Iterator iter = diffResult.unexpectedIndexes.iterator(); iter.hasNext(); ) {
 			Index index = iter.next()
@@ -214,5 +201,41 @@ class MigrationUtils {
 		}
 
 		diffResult
+	}
+
+	static void removeRedundantUnexpectedUnique(DiffResult diffResult) {
+		for (Iterator iter = diffResult.unexpectedUniqueConstraints.iterator(); iter.hasNext(); ) {
+			UniqueConstraint uniqueConstraint = iter.next()
+			List<String> constraintColumnNames = uniqueConstraint.columns*.toLowerCase()
+			for (Index index in diffResult.targetSnapshot.indexes) {
+				List<String> indexColumnNames = index.columns*.toLowerCase()
+				if (index.unique &&
+						indexColumnNames.size() == constraintColumnNames.size() &&
+						indexColumnNames.containsAll(constraintColumnNames) &&
+						index.table.name.equalsIgnoreCase(uniqueConstraint.table.name)) {
+					iter.remove()
+					break
+				}
+			}
+		}
+	}
+
+	static void removeEquivalentIndexes(DiffResult diffResult) {
+		for (Iterator iter = diffResult.missingIndexes.iterator(); iter.hasNext(); ) {
+			Index index = iter.next()
+			List<String> indexColumnNames = index.columns*.toLowerCase()
+			for (Iterator targetIter = diffResult.targetSnapshot.indexes.iterator(); targetIter.hasNext(); ) {
+				Index targetIndex = targetIter.next()
+				List<String> targetIndexColumnNames = targetIndex.columns*.toLowerCase()
+				if (indexColumnNames.size() == targetIndexColumnNames.size() &&
+						indexColumnNames.containsAll(targetIndexColumnNames) &&
+						index.table.name.equalsIgnoreCase(targetIndex.table.name)) {
+					iter.remove()
+					targetIter.remove()
+					diffResult.unexpectedIndexes.remove targetIndex
+					break
+				}
+			}
+		}
 	}
 }
