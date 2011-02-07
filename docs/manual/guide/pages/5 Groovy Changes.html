@@ -5,19 +5,19 @@
         <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen" title="Ref" charset="utf-8"/>
     </head>
     <body class="body">
-    In addition to the built-in Liquibase changes (see <a href="http://www.liquibase.org/manual/home" target="blank">the documentation</a> for what's available) you can also make database changes using Groovy code (as long as you're using the Groovy DSL file format). These changes use the <code>grailsChange</code> tag name and are contained in a <code>changeSet</code> tag like standard built-in tags.<p class="paragraph"/>There are four supported inner tags and two callable methods (to override the default confirmation message and checksum value).<p class="paragraph"/><h4>General format</h4><p class="paragraph"/>This is the general format of a Groovy-based change; all inner tags and methods are optional:<p class="paragraph"/><div class="code"><pre>databaseChangeLog = &#123;<p class="paragraph"/>	changeSet(author: '...', id: '...') &#123;<p class="paragraph"/>		grailsChange &#123;
-		   init &#123;
-		       // arbitrary initialization code; note that no database or connection is available
-		   &#125;<p class="paragraph"/>		   validate &#123;
-		      // can call warn(<span class="java&#45;object">String</span> message) to log a warning or error(<span class="java&#45;object">String</span> message) to stop processing
-		   &#125;<p class="paragraph"/>		   change &#123;
-		      // arbitrary code; make changes directly and/or <span class="java&#45;keyword">return</span> a &#91;SqlStatement|http://www.liquibase.org/api/liquibase/database/sql/SqlStatement.html&#93; using the sqlStatement(SqlStatement sqlStatement) method or multiple with sqlStatements(List sqlStatements)
-		      confirm 'change confirmation message'
-		   &#125;<p class="paragraph"/>		   rollback &#123;
-		      // arbitrary code; make rollback changes directly and/or <span class="java&#45;keyword">return</span> a &#91;SqlStatement|http://www.liquibase.org/api/liquibase/database/sql/SqlStatement.html&#93; using the sqlStatement(SqlStatement sqlStatement) method or multiple with sqlStatements(List sqlStatements)
-		      confirm 'rollback confirmation message'
-		   &#125;<p class="paragraph"/>		   confirm 'confirmation message'<p class="paragraph"/>		   checkSum 'override value <span class="java&#45;keyword">for</span> checksum'
-		&#125;<p class="paragraph"/>	&#125;
+    In addition to the built-in Liquibase changes (see <a href="http://www.liquibase.org/manual/home" target="blank">the documentation</a> for what's available) you can also make database changes using Groovy code (as long as you're using the Groovy DSL file format). These changes use the <code>grailsChange</code> tag name and are contained in a <code>changeSet</code> tag like standard built-in tags.<p class="paragraph"/>There are four supported inner tags and two callable methods (to override the default confirmation message and checksum value).<p class="paragraph"/><h4>General format</h4><p class="paragraph"/>This is the general format of a Groovy-based change; all inner tags and methods are optional:<p class="paragraph"/><div class="code"><pre>databaseChangeLog = &#123;<p class="paragraph"/>   changeSet(author: '...', id: '...') &#123;<p class="paragraph"/>      grailsChange &#123;
+         init &#123;
+             // arbitrary initialization code; note that no database or connection is available
+         &#125;<p class="paragraph"/>         validate &#123;
+            // can call warn(<span class="java&#45;object">String</span> message) to log a warning or error(<span class="java&#45;object">String</span> message) to stop processing
+         &#125;<p class="paragraph"/>         change &#123;
+            // arbitrary code; make changes directly and/or <span class="java&#45;keyword">return</span> a &#91;SqlStatement|http://www.liquibase.org/api/liquibase/database/sql/SqlStatement.html&#93; using the sqlStatement(SqlStatement sqlStatement) method or multiple with sqlStatements(List sqlStatements)
+            confirm 'change confirmation message'
+         &#125;<p class="paragraph"/>         rollback &#123;
+            // arbitrary code; make rollback changes directly and/or <span class="java&#45;keyword">return</span> a &#91;SqlStatement|http://www.liquibase.org/api/liquibase/database/sql/SqlStatement.html&#93; using the sqlStatement(SqlStatement sqlStatement) method or multiple with sqlStatements(List sqlStatements)
+            confirm 'rollback confirmation message'
+         &#125;<p class="paragraph"/>         confirm 'confirmation message'<p class="paragraph"/>         checkSum 'override value <span class="java&#45;keyword">for</span> checksum'
+      &#125;<p class="paragraph"/>   &#125;
 &#125;</pre></div><p class="paragraph"/><h4>Available variables</h4><p class="paragraph"/>These variables are available throughout the change closure:
 <ul class="star">
 <li><code>changeSet</code></li>
