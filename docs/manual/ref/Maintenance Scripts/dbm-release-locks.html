@@ -9,7 +9,11 @@
 <div class="code"><pre>grails &#91;environment&#93; dbm&#45;release&#45;locks &#45;&#45;defaultSchema=&#91;defaultSchema&#93;</pre></div><p class="paragraph"/>Required arguments: <em class="italic">none</em> .<p class="paragraph"/>Optional arguments:
 <ul class="star">
 <li><code>defaultSchema</code> - The default schema name to use</li>
-</ul><p class="paragraph"/>
+</ul><p class="paragraph"/><blockquote class="note">
+Note that the <code>defaultSchema</code> parameter name and value must be quoted if executed in Windows, e.g.
+<div class="code"><pre>grails dbm&#45;release&#45;locks <span class="java&#45;quote">"&#45;&#45;defaultSchema=&#91;defaultSchema&#93;"</span></pre></div>
+</blockquote>
+
     
 <script type="text/javascript">
 	var _gaq = _gaq || [];

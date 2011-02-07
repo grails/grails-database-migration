@@ -11,7 +11,11 @@
 <li><code>filename</code> - The path to the output file to write to. If not specified output is written to the console</li>
 <li><code>contexts</code> - A comma-delimited list of <a href="http://www.liquibase.org/manual/contexts" target="blank">context</a> names. If specified, only changesets tagged with one of the context names will be included</li>
 <li><code>defaultSchema</code> - The default schema name to use</li>
-</ul><p class="paragraph"/>
+</ul><p class="paragraph"/><blockquote class="note">
+Note that the <code>contexts</code> and <code>defaultSchema</code> parameter name and value must be quoted if executed in Windows, e.g.
+<div class="code"><pre>grails dbm&#45;<span class="java&#45;keyword">future</span>&#45;rollback&#45;sql <span class="java&#45;quote">"&#45;&#45;contexts=&#91;contexts&#93;"</span> <span class="java&#45;quote">"&#45;&#45;defaultSchema=&#91;defaultSchema&#93;"</span></pre></div>
+</blockquote>
+
     
 <script type="text/javascript">
 	var _gaq = _gaq || [];
