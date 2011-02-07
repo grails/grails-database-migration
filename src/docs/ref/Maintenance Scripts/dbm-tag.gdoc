@@ -21,3 +21,9 @@ Optional arguments:
 
 * @defaultSchema@ - The default schema name to use
 
+{note}
+Note that the @defaultSchema@ parameter name and value must be quoted if executed in Windows, e.g.
+{code}
+grails dbm-tag "--defaultSchema=[defaultSchema]"
+{code}
+{note}

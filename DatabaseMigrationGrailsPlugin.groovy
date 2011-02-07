@@ -57,7 +57,7 @@ class DatabaseMigrationGrailsPlugin {
 		MigrationUtils.application = application
 
 		if (application.warDeployed) {
-			migrationResourceAccessor(GrailsClassLoaderResourceAccessor, application.classLoader)
+			migrationResourceAccessor(GrailsClassLoaderResourceAccessor)
 		}
 		else {
 			String changelogLocation = MigrationUtils.changelogLocation

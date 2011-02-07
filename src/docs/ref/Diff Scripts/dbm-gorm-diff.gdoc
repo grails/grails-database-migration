@@ -27,3 +27,9 @@ Optional arguments:
 * @defaultSchema@ - The default schema name to use
 * @add@ - if specified add an include in the root changelog file referencing the new file
 
+{note}
+Note that the @defaultSchema@ parameter name and value must be quoted if executed in Windows, e.g.
+{code}
+grails dbm-gorm-diff "--defaultSchema=[defaultSchema]"
+{code}
+{note}

@@ -26,3 +26,10 @@ Optional arguments:
 * @filename@ - The path to the output file to write to. If not specified output is written to the console
 * @defaultSchema@ - The default schema name to use
 * @add@ - if specified add an include in the root changelog file referencing the new file
+
+{note}
+Note that the @defaultSchema@ parameter name and value must be quoted if executed in Windows, e.g.
+{code}
+grails dbm-diff "--defaultSchema=[defaultSchema]"
+{code}
+{note}

@@ -65,14 +65,36 @@ target(dbmDiff: 'Writes description of differences to standard out') {
 
 // TODO this will fail with JNDI or encryption codec
 buildOtherDatabase = { String otherEnv ->
+	
+	try {
+		// check if it's a full name
+		Environment.valueOf otherEnv
+	}
+	catch (e) {
+		// convert it from short name to full (e.g. 'dev' -> 'development')
+		String fullName = Environment.getEnvironment(otherEnv)?.name
+		if (fullName) {
+			otherEnv = fullName
+		}
+	}
+	
 	def configSlurper = new ConfigSlurper(otherEnv)
 	configSlurper.binding = binding.variables
 	def otherDsConfig = configSlurper.parse(classLoader.loadClass('DataSource')).dataSource
 
-	Class.forName otherDsConfig.driverClassName, true, classLoader
+	try {
+		Class.forName otherDsConfig.driverClassName, true, classLoader
+	}
+	catch (e) {
+		errorAndDie "Driver class $otherDsConfig.driverClassName not found"
+	}
+
+	if (!otherDsConfig.url || !otherDsConfig.username) {
+		errorAndDie "The comparison DataSource URL and/or username is missing, or the DataSource configuration for environment '$otherEnv' wasn't found"
+	}
 
 	def connection = DriverManager.getConnection(
-		otherDsConfig.url ?: null, otherDsConfig.username ?: null, otherDsConfig.password ?: null)
+		otherDsConfig.url, otherDsConfig.username, otherDsConfig.password ?: null)
 
 	MigrationUtils.getDatabase connection, defaultSchema, null
 }

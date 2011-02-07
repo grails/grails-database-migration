@@ -18,3 +18,9 @@ Optional arguments:
 * @filename@ - The path to the output file to write to. If not specified output is written to the console
 * @defaultSchema@ - The default schema name to use
 
+{note}
+Note that the @defaultSchema@ parameter name and value must be quoted if executed in Windows, e.g.
+{code}
+grails dbm-list-locks "--defaultSchema=[defaultSchema]"
+{code}
+{note}

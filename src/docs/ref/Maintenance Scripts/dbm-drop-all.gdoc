@@ -18,3 +18,9 @@ Optional arguments:
 * @schemaNames@ - A comma-delimited list of schema names to use
 * @defaultSchema@ - The default schema name to use if the @schemaNames@ parameter isn't present
 
+{note}
+Note that the @defaultSchema@ parameter name and value must be quoted if executed in Windows, e.g.
+{code}
+grails dbm-drop-all "--defaultSchema=[defaultSchema]"
+{code}
+{note}

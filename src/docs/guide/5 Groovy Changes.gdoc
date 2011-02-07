@@ -7,28 +7,35 @@ h4. General format
 This is the general format of a Groovy-based change; all inner tags and methods are optional:
 
 {code}
-grailsChange {
-   init {
-       // arbitrary initialization code; note that no database or connection is available
-   }
+databaseChangeLog = {
 
-   validate {
-      // can call warn(String message) to log a warning or error(String message) to stop processing
-   }
+	changeSet(author: '...', id: '...') {
 
-   change {
-      // arbitrary code; make changes directly and/or return a [SqlStatement|http://www.liquibase.org/api/liquibase/database/sql/SqlStatement.html] using the sqlStatement(SqlStatement sqlStatement) method or multiple with sqlStatements(List sqlStatements)
-      confirm 'change confirmation message'
-   }
+		grailsChange {
+		   init {
+		       // arbitrary initialization code; note that no database or connection is available
+		   }
 
-   rollback {
-      // arbitrary code; make rollback changes directly and/or return a [SqlStatement|http://www.liquibase.org/api/liquibase/database/sql/SqlStatement.html] using the sqlStatement(SqlStatement sqlStatement) method or multiple with sqlStatements(List sqlStatements)
-      confirm 'rollback confirmation message'
-   }
+		   validate {
+		      // can call warn(String message) to log a warning or error(String message) to stop processing
+		   }
 
-   confirm 'confirmation message'
+		   change {
+		      // arbitrary code; make changes directly and/or return a [SqlStatement|http://www.liquibase.org/api/liquibase/database/sql/SqlStatement.html] using the sqlStatement(SqlStatement sqlStatement) method or multiple with sqlStatements(List sqlStatements)
+		      confirm 'change confirmation message'
+		   }
 
-   checkSum 'override value for checksum'
+		   rollback {
+		      // arbitrary code; make rollback changes directly and/or return a [SqlStatement|http://www.liquibase.org/api/liquibase/database/sql/SqlStatement.html] using the sqlStatement(SqlStatement sqlStatement) method or multiple with sqlStatements(List sqlStatements)
+		      confirm 'rollback confirmation message'
+		   }
+
+		   confirm 'confirmation message'
+
+		   checkSum 'override value for checksum'
+		}
+
+	}
 }
 {code}
 

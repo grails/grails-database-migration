@@ -19,3 +19,10 @@ Optional arguments:
 
 * @destination@ - The path to write to
 * @contexts@ - A comma-delimited list of [context|http://www.liquibase.org/manual/contexts] names. If specified, only changesets tagged with one of the context names will be included
+
+{note}
+Note that the @contexts@ parameter name and value must be quoted if executed in Windows, e.g.
+{code}
+grails dbm-db-doc "--contexts=[contexts]"
+{code}
+{note}
