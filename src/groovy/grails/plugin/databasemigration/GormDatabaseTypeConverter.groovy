@@ -25,19 +25,18 @@ import liquibase.database.typeconversion.core.DefaultTypeConverter
  */
 class GormDatabaseTypeConverter extends DefaultTypeConverter {
 
+	private static final List<String> NAMES = [
+		'longtext', 'mediumtext', 'text', 'tinytext',
+		'tinyblob', 'blob', 'mediumblob', 'longblob']
+
 	@Override
 	String convertToDatabaseTypeString(Column referenceColumn, Database database) {
 
-		if (referenceColumn.typeName.startsWith('longtext')) {
-			return 'longtext'
-		}
-
-		if (referenceColumn.typeName.startsWith('mediumtext')) {
-			return 'longtext'
-		}
-
-		if (referenceColumn.typeName.startsWith('text')) {
-			return 'text'
+		String referenceColumnTypeName = referenceColumn.typeName.toLowerCase()
+		for (name in NAMES) {
+			if (referenceColumnTypeName.startsWith(name)) {
+				return name
+			}
 		}
 
 		super.convertToDatabaseTypeString referenceColumn, database
