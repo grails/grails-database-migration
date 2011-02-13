@@ -1,0 +1,7 @@
+h4. History
+
+* February 13, 2011
+** 0.2 release
+*** One breaking change: the default migrations folder changed from grails-app/conf/migrations to grails-app/migrations
+* May 22, 2010
+** initial 0.1 release
