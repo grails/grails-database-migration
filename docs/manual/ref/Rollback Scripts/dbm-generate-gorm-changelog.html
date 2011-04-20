@@ -1,11 +1,11 @@
 <html>
     <head>
         <meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
-        <title>Database Migration Plugin 0.1 - Reference Documentation</title>
+        <title>Database Migration Plugin 0.2.1 - Reference Documentation</title>
         <link rel="stylesheet" href="../../css/ref.css" type="text/css" media="screen" title="Ref" charset="utf-8"/>
     </head>
     <body class="body">
-    <h1>dbm-generate-gorm-changelog</h1><p class="paragraph"/><h2>Purpose</h2><p class="paragraph"/>Generates an initial changelog XML or Groovy DSL file from current GORM classes.<p class="paragraph"/><h2>Description</h2><p class="paragraph"/>Creates a Groovy DSL file if the filename is specified and it ends with .groovy. If another extension is specified it creates a standard Liquibase XML file, and if no filename is specified it writes to the console.<p class="paragraph"/>File are written to the migrations folder, so specify the filename relative to the migrations folder (<code>grails-app/conf/migrations</code> by default).<p class="paragraph"/>Executes against the database configured in <code>DataSource.groovy</code> for the current environment (defaults to <code>dev</code>).<p class="paragraph"/>Usage:
+    <h1>dbm-generate-gorm-changelog</h1><p class="paragraph"/><h2>Purpose</h2><p class="paragraph"/>Generates an initial changelog XML or Groovy DSL file from current GORM classes.<p class="paragraph"/><h2>Description</h2><p class="paragraph"/>Creates a Groovy DSL file if the filename is specified and it ends with .groovy. If another extension is specified it creates a standard Liquibase XML file, and if no filename is specified it writes to the console.<p class="paragraph"/>File are written to the migrations folder, so specify the filename relative to the migrations folder (<code>grails-app/migrations</code> by default).<p class="paragraph"/>Executes against the database configured in <code>DataSource.groovy</code> for the current environment (defaults to <code>dev</code>).<p class="paragraph"/>Usage:
 <div class="code"><pre>grails &#91;environment&#93; dbm&#45;generate&#45;gorm&#45;changelog &#91;filename&#93; &#45;&#45;add</pre></div><p class="paragraph"/>Required arguments: <em class="italic">none</em> .<p class="paragraph"/>Optional arguments:
 <ul class="star">
 <li><code>filename</code> - The path to the output file to write to. If not specified output is written to the console</li>
