@@ -21,7 +21,7 @@ or
 grails dbm-generate-changelog changelog.xml
 {code}
 
-depending on whether you prefer the Groovy DSL or XML. The filename is relative to the changelog base folder, which defaults to @grails-app/conf/migrations@.
+depending on whether you prefer the Groovy DSL or XML. The filename is relative to the changelog base folder, which defaults to @grails-app/migrations@.
 
 Since the database is already correct, run the [dbm-changelog-sync|Maintenance Scripts] script to record that the changes have already been applied:
 {code}

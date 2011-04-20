@@ -230,4 +230,8 @@ class GormDatabaseSnapshotGenerator implements DatabaseSnapshotGenerator {
 	List<ForeignKey> getForeignKeys(String schema, String foreignKeyTable, Database db) {
 		throw new UnsupportedOperationException()
 	}
+
+	boolean hasView(String schemaName, String viewName, Database database) {
+		throw new UnsupportedOperationException()
+	}
 }

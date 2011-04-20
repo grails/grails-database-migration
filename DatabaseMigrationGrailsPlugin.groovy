@@ -14,6 +14,7 @@
  */
 
 import grails.plugin.databasemigration.GormDatabaseSnapshotGenerator
+import grails.plugin.databasemigration.GormDatabaseTypeConverter
 import grails.plugin.databasemigration.GrailsChange
 import grails.plugin.databasemigration.GrailsChangeLogParser
 import grails.plugin.databasemigration.GrailsClassLoaderResourceAccessor
@@ -25,6 +26,7 @@ import grails.plugin.databasemigration.MigrationUtils
 import grails.plugin.databasemigration.MysqlAwareCreateTableGenerator
 
 import liquibase.change.ChangeFactory
+import liquibase.database.typeconversion.TypeConverterFactory
 import liquibase.logging.Logger
 import liquibase.logging.LogFactory
 import liquibase.parser.ChangeLogParserFactory
@@ -37,7 +39,7 @@ import liquibase.sqlgenerator.core.CreateTableGenerator
 
 class DatabaseMigrationGrailsPlugin {
 
-	String version = '0.1'
+	String version = '0.2.1'
 	String grailsVersion = '1.3.0 > *'
 	String author = 'Burt Beckwith'
 	String authorEmail = 'beckwithb@vmware.com'
@@ -92,6 +94,9 @@ class DatabaseMigrationGrailsPlugin {
 		// appends 'ENGINE=InnoDB' to 'create table ...' statements in MySQL if using InnoDB
 		SqlGeneratorFactory.instance.unregister CreateTableGenerator
 		SqlGeneratorFactory.instance.register new MysqlAwareCreateTableGenerator()
+
+		// fixes changelog errors generated from the GORM scripts
+		TypeConverterFactory.instance.register GormDatabaseTypeConverter
 	}
 
 	private void fixLogging() {

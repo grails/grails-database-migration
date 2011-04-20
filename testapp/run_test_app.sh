@@ -76,7 +76,7 @@ verifyExitCode $? "populate-data"
 cd -
 cp Customer.groovy "$TESTAPP_DIR/$APP_NAME/grails-app/domain/$APP_NAME/"
 cp Order.v2.groovy "$TESTAPP_DIR/$APP_NAME/grails-app/domain/$APP_NAME/Order.groovy"
-cp customer.changelog.groovy "$TESTAPP_DIR/$APP_NAME/grails-app/conf/migrations"
+cp customer.changelog.groovy "$TESTAPP_DIR/$APP_NAME/grails-app/migrations"
 cd -
 
 grails dbm-register-changelog customer.changelog.groovy
@@ -87,7 +87,7 @@ verifyExitCode $? "dbm-update"
 # fix Product.prize -> Product.price
 cd -
 cp Product.v2.groovy "$TESTAPP_DIR/$APP_NAME/grails-app/domain/$APP_NAME/Product.groovy"
-cp price.changelog.groovy "$TESTAPP_DIR/$APP_NAME/grails-app/conf/migrations"
+cp price.changelog.groovy "$TESTAPP_DIR/$APP_NAME/grails-app/migrations"
 cd -
 
 grails dbm-register-changelog price.changelog.groovy

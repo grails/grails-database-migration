@@ -8,7 +8,7 @@ h2. Description
 
 Creates a Groovy DSL file if the filename is specified and it ends with .groovy. If another extension is specified it creates a standard Liquibase XML file, and if no filename is specified it writes to the console.
 
-File are written to the migrations folder, so specify the filename relative to the migrations folder (@grails-app/conf/migrations@ by default).
+File are written to the migrations folder, so specify the filename relative to the migrations folder (@grails-app/migrations@ by default).
 
 Similar to [dbm-diff|Diff Scripts] but diffs the current configuration based on the application's domain classes with the database configured in @DataSource.groovy@ for the current environment (defaults to @dev@).
 

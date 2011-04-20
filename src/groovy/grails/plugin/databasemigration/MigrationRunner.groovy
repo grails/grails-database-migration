@@ -44,7 +44,7 @@ class MigrationRunner {
 		def database
 		try {
 			MigrationUtils.executeInSession {
-				database = MigrationUtils.getDatabase() // TODO support defaultSchema?
+				database = MigrationUtils.getDatabase(config.updateOnStartDefaultSchema ?: null)
 				for (name in config.updateOnStartFileNames) {
 					LOG.info "Running script '$name'"
 					MigrationUtils.getLiquibase(database, name).update null
