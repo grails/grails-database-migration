@@ -10,7 +10,7 @@ Executes against the database configured in @DataSource.groovy@ for the current 
 
 If a filename parameter is specified then the output will be written to the named file, otherwise it will write to the console. If the filename ends with .groovy a Groovy DSL file will be created, otherwise a standard XML file will be created.
 
-File are written to the migrations folder, so specify the filename relative to the migrations folder (@grails-app/conf/migrations@ by default).
+File are written to the migrations folder, so specify the filename relative to the migrations folder (@grails-app/migrations@ by default).
 
 Usage:
 {code:java}
