@@ -48,4 +48,3 @@ target(populateData: 'Insert data using GORM') {
 }
 
 setDefaultTarget(populateData)
-

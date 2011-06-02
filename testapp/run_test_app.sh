@@ -2,6 +2,7 @@
 
 # Creates a test app and installs the plugin, then changes domain classes and does the required
 # migrations. Change the hard-coded values in the variables below for your local system to use.
+# Create a MySQL database 'migrationtest' and drop/create before each run.
 
 PLUGIN_DIR="/home/burt/workspace/grails/plugins/grails-database-migration"
 TESTAPP_DIR="/home/burt/workspace/testapps/migration"
@@ -9,7 +10,7 @@ HOME_DIR="/home/burt"
 APP_NAME="migrationtests"
 DB_NAME="migrationtest"
 GRAILS_VERSION="1.3.3"
-PLUGIN_VERSION="0.1"
+PLUGIN_VERSION="0.2.1"
 
 APP_DIR="$TESTAPP_DIR/$APP_NAME"
 
