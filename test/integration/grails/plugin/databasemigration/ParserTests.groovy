@@ -108,6 +108,36 @@ class ParserTests extends GroovyTestCase {
 		assertEquals 'sub1/sub_all/sub5.changelist.xml', changeLog.changeSets[5].filePath
 	}
 
+	void testParseWithLogicalFilePath() {
+		copyFile 'test.logicalpath.changelist.g', '', 'test.logicalpath.changelist.groovy'
+		copyFile 'sub6.changelist.g', '', 'sub6.changelist.groovy'
+		copyFile 'sub7.changelist.g', '', 'sub7.changelist.groovy'
+
+		def resourceAccessor = new FileSystemResourceAccessor('target/includestest')
+
+		def changeLog = new GrailsChangeLogParser().parse('test.logicalpath.changelist.groovy',
+			new ChangeLogParameters(), resourceAccessor)
+
+		assertEquals 4, changeLog.changeSets.size()
+
+		assertEquals 'main', changeLog.logicalFilePath
+		assertEquals 't1', changeLog.changeSets[0].id
+		assertEquals 'burt', changeLog.changeSets[0].author
+		assertEquals 'main', changeLog.changeSets[0].filePath
+
+		assertEquals 't3', changeLog.changeSets[1].id
+		assertEquals 'not_burt', changeLog.changeSets[1].author
+		assertEquals 'site-autobase', changeLog.changeSets[1].filePath
+
+		assertEquals 't4', changeLog.changeSets[2].id
+		assertEquals 'not_burt', changeLog.changeSets[2].author
+		assertEquals 'site-autobase', changeLog.changeSets[2].filePath
+
+		assertEquals 't5', changeLog.changeSets[3].id
+		assertEquals 'burt', changeLog.changeSets[3].author
+		assertEquals 'sub7.changelist.groovy', changeLog.changeSets[3].filePath
+	}
+
 	void testParseWithProperties() {
 		copyFile 'test.property.changelist.g', '', 'test.property.changelist.groovy'
 		copyFile 'test.property.changelist.xml', ''

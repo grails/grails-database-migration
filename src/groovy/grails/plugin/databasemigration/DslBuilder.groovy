@@ -125,6 +125,9 @@ class DslBuilder extends BuilderSupport {
 		else if ('validCheckSum' == name) {
 			setText value
 		}
+		else if ('logicalFilePath' == name) {
+			databaseChangeLog.logicalFilePath = value
+		}
 		else if ('databaseChangeLog' == name) {
 			databaseChangeLog.setLogicalFilePath attributes.logicalFilePath
 		}
