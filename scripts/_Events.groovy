@@ -1,4 +1,4 @@
-// sets the scriptName so we know if we cna automigrate
+// sets the scriptName so we know if we can automigrate
 eventPackageAppEnd = {
 	try {
 		def MigrationUtils = classLoader.loadClass('grails.plugin.databasemigration.MigrationUtils')
