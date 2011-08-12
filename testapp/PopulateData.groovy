@@ -1,7 +1,7 @@
 includeTargets << grailsScript('_GrailsBootstrap')
 
 target(populateData: 'Insert data using GORM') {
-	depends(classpath, bootstrap, loadApp)
+	depends(classpath, enableExpandoMetaClass, bootstrap, loadApp)
 
 	def Product = grailsApp.getDomainClass('migrationtests.Product').clazz
 	def Order = grailsApp.getDomainClass('migrationtests.Order').clazz
@@ -26,5 +26,8 @@ target(populateData: 'Insert data using GORM') {
 	}
 }
 
-setDefaultTarget(populateData)
+target(enableExpandoMetaClass: "Calls ExpandoMetaClass.enableGlobally()") {
+	ExpandoMetaClass.enableGlobally()
+}
 
+setDefaultTarget(populateData)

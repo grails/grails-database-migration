@@ -33,7 +33,7 @@ DAY_DATE_FORMAT = 'yyyy-MM-dd'
 FULL_DATE_FORMAT = DAY_DATE_FORMAT + ' HH:mm:ss'
 
 target(dbmInit: 'General initialization, also creates a Liquibase instance') {
-	depends(classpath, checkVersion, configureProxy, bootstrap, loadApp)
+	depends(classpath, checkVersion, configureProxy, enableExpandoMetaClass, bootstrap, loadApp)
 
 	try {
 		hyphenatedScriptName = GrailsNameUtils.getScriptName(scriptName)
@@ -281,4 +281,8 @@ okToWrite = { destinationOrIndex = 0, boolean relativeToMigrationDir = false ->
 	}
 
 	true
+}
+
+target(enableExpandoMetaClass: "Calls ExpandoMetaClass.enableGlobally()") {
+	ExpandoMetaClass.enableGlobally()
 }
