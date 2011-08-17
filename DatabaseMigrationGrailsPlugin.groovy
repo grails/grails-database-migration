@@ -39,7 +39,7 @@ import liquibase.sqlgenerator.core.CreateTableGenerator
 
 class DatabaseMigrationGrailsPlugin {
 
-	String version = '0.2.1'
+	String version = '1.0'
 	String grailsVersion = '1.3.0 > *'
 	String author = 'Burt Beckwith'
 	String authorEmail = 'beckwithb@vmware.com'
@@ -53,6 +53,12 @@ class DatabaseMigrationGrailsPlugin {
 		'src/docs/**',
 		'src/groovy/grails/plugin/databasemigration/test/**'
 	]
+
+	String license = 'APACHE'
+	def organization = [name: 'SpringSource', url: 'http://www.springsource.org/']
+	def developers = [[name: 'Burt Beckwith', email: 'beckwithb@vmware.com']]
+	def issueManagement = [system: 'JIRA', url: 'http://jira.grails.org/browse/GPDATABASEMIGRATION']
+	def scm = [url: 'https://github.com/grails-plugins/grails-spring-security-core']
 
 	def doWithSpring = {
 

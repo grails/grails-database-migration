@@ -14,6 +14,8 @@
  */
 package grails.plugin.databasemigration
 
+import java.lang.reflect.Method
+
 import liquibase.database.Database
 import liquibase.database.structure.Column
 import liquibase.database.structure.ForeignKey
@@ -26,9 +28,13 @@ import liquibase.exception.DatabaseException
 import liquibase.snapshot.DatabaseSnapshot
 import liquibase.snapshot.DatabaseSnapshotGenerator
 
+import org.hibernate.cfg.Configuration
+import org.hibernate.dialect.Dialect
 import org.hibernate.dialect.MySQLDialect
+import org.hibernate.id.IdentifierGenerator
 import org.hibernate.id.SequenceGenerator
 import org.hibernate.mapping.PersistentClass
+import org.hibernate.mapping.Value
 
 /**
  * Used by the gorm-diff script. Registered in DatabaseMigrationGrailsPlugin.doWithApplicationContext().
@@ -85,7 +91,7 @@ class GormDatabaseSnapshotGenerator implements DatabaseSnapshotGenerator {
 						table: table,
 						typeName: hibernateColumn.getSqlType(dialect, mapping).replaceFirst('\\(.*\\)', ''),
 						unique: hibernateColumn.unique,
-						autoIncrement: hibernateColumn.value.isIdentityColumn(dialect),
+						autoIncrement: isIdentityColumn(hibernateColumn.value, dialect, cfg),
 						certainDataType: hibernateColumn.sqlType != null)
 					column.columnSize = column.numeric ? hibernateColumn.precision : hibernateColumn.length
 
@@ -152,9 +158,7 @@ class GormDatabaseSnapshotGenerator implements DatabaseSnapshotGenerator {
 						continue
 					}
 
-					def identifierGenerator = pc.identifier.createIdentifierGenerator(
-						dialect, null, null, pc)
-
+					def identifierGenerator = createIdentifierGenerator(dialect, pc, cfg)
 					if (identifierGenerator instanceof SequenceGenerator) {
 						generators.put(identifierGenerator.generatorKey(), identifierGenerator)
 					}
@@ -173,6 +177,28 @@ class GormDatabaseSnapshotGenerator implements DatabaseSnapshotGenerator {
 		}
 
 		snapshot
+	}
+
+	// workaround for changed method signature without backwards compatibility
+	private boolean isIdentityColumn(Value value, Dialect dialect, Configuration cfg) {
+		Method method = value.getClass().getMethods().find { it.name == 'isIdentityColumn' }
+		if (method.getParameterTypes().length == 1) {
+			// pre-3.6 Hibernate
+			return value.isIdentityColumn(dialect)
+		}
+
+		value.isIdentityColumn cfg.identifierGeneratorFactory, dialect
+	}
+
+	// another workaround for changed method signature without backwards compatibility
+	private IdentifierGenerator createIdentifierGenerator(Dialect dialect, PersistentClass pc, Configuration cfg) {
+		Method method = pc.identifier.getClass().getMethods().find { it.name == 'createIdentifierGenerator' }
+		if (method.getParameterTypes().length == 4) {
+			// pre-3.6 Hibernate
+			return pc.identifier.createIdentifierGenerator(dialect, null, null, pc)
+		}
+
+		pc.identifier.createIdentifierGenerator cfg.identifierGeneratorFactory, dialect, null, null, pc
 	}
 
 	// MySQL is unique in that the Dialect adds an index to each FK but it's

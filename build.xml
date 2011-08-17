@@ -57,6 +57,7 @@
 		<delete dir='grails-app/views/layouts' />
 		<delete dir='lib' />
 		<delete dir='src/java' />
+		<delete dir='test/unit' />
 		<delete dir='web-app' />
 	</target>
 
