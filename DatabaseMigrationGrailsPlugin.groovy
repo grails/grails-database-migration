@@ -54,6 +54,12 @@ class DatabaseMigrationGrailsPlugin {
 		'src/groovy/grails/plugin/databasemigration/test/**'
 	]
 
+	String license = 'APACHE'
+	def organization = [name: 'SpringSource', url: 'http://www.springsource.org/']
+	def developers = [[name: 'Burt Beckwith', email: 'beckwithb@vmware.com']]
+	def issueManagement = [system: 'JIRA', url: 'http://jira.grails.org/browse/GPDATABASEMIGRATION']
+	def scm = [url: 'https://github.com/grails-plugins/grails-spring-security-core']
+
 	def doWithSpring = {
 
 		MigrationUtils.application = application
