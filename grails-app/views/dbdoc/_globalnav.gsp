@@ -2,22 +2,22 @@
 <html>
 <head>
 <title>Overview</title>
-<link rel="stylesheet" type="text/css" href="dbdoc_stylesheet_css" title="Style">
+<link rel="stylesheet" type="text/css" href="${createLink(action: 'dbdoc_stylesheet_css')}" title="Style">
 </head>
 
 <body bgcolor="white">
 
-<font class="FrameItemFont"><a href="currenttables" target="listFrame">Current Tables</a></font>
+<font class="FrameItemFont"><a href="${createLink(action: 'currenttables')}" target="listFrame">Current Tables</a></font>
 <br/>
-<font class="FrameItemFont"><a href="authors" target="listFrame">Authors</a></font>
+<font class="FrameItemFont"><a href="${createLink(action: 'authors')}" target="listFrame">Authors</a></font>
 <br/>
-<font class="FrameItemFont"><a href="changelogs" target="listFrame">Change Logs</a></font>
+<font class="FrameItemFont"><a href="${createLink(action: 'changelogs')}" target="listFrame">Change Logs</a></font>
 <br/>
-<font class="FrameItemFont"><a href="pending" target="objectFrame">Pending Changes</a></font>
+<font class="FrameItemFont"><a href="${createLink(action: 'pending')}" target="objectFrame">Pending Changes</a></font>
 <br/>
-<font class="FrameItemFont"><a href="pendingsql" target="objectFrame">Pending SQL</a></font>
+<font class="FrameItemFont"><a href="${createLink(action: 'pendingsql')}" target="objectFrame">Pending SQL</a></font>
 <br/>
-<font class="FrameItemFont"><a href="recent" target="objectFrame">Most Recent Changes</a></font>
+<font class="FrameItemFont"><a href="${createLink(action: 'recent')}" target="objectFrame">Most Recent Changes</a></font>
 <br/>
 
 </body>
