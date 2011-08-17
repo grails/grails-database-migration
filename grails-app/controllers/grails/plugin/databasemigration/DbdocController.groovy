@@ -15,6 +15,7 @@
 package grails.plugin.databasemigration
 
 import grails.plugin.databasemigration.dbdoc.MemoryDocVisitor
+import grails.util.Environment
 import liquibase.changelog.ChangeLogIterator
 import liquibase.changelog.ChangeLogParameters
 import liquibase.changelog.DatabaseChangeLog
@@ -31,6 +32,17 @@ class DbdocController {
 	def migrationResourceAccessor
 
 	def index = {
+
+		// only configure if explicitly enabled or in dev mode if not disabled
+		def enabled = grailsApplication.config.grails.plugin.databasemigration.dbDocController.enabled
+		if (!(enabled instanceof Boolean)) {
+			enabled = Environment.current == Environment.DEVELOPMENT
+		}
+		if (!enabled) {
+			response.sendError 404
+			return
+		}
+
 		String section = params.section
 		String filename = params.filename
 		String table = params.table
