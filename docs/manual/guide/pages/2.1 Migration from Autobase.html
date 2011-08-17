@@ -2,12 +2,12 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>Database Migration Plugin 1.0</title>
+    <title>2.1 Migration from Autobase 1.0</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
     <script type="text/javascript">
-function addJsClass(el) {
+function addJsClass() {
     var classes = document.body.className.split(" ");
     classes.push("js");
     document.body.className = classes.join(" ");
@@ -16,14 +16,13 @@ function addJsClass(el) {
 </head>
 
 <body class="body" onload="addJsClass();">
-
 <div id="navigation">
     <ul>
         <li>
             <div id="nav-summary" onmouseover="toggleNavSummary(false)" onmouseout="toggleNavSummary(true)">
                 <a href="../../guide/index.html" class="button">Table of contents</a>
 
-                <div id="nav-summary-childs">
+                <div id="nav-summary-childs" style="display:none;">
                     
                     <div class="toc-item" style="margin-left:0"><a href="../../guide/1%20Introduction%20to%20the%20Database%20Migration%20Plugin.html"><strong>1</strong><span>Introduction to the Database Migration Plugin</span></a>
                     </div>
@@ -69,22 +68,68 @@ function addJsClass(el) {
 <table id="colset" border="0" cellpadding="0" cellspacing="0">
     <tr>
         <td id="col1">
-            <div id="main" class="reference corner-all">
+            <div id="main" class="corner-all">
+
+                
+                    <div class="toc-item prev-left"><a href="../../guide/1%20Introduction%20to%20the%20Database%20Migration%20Plugin.html">&lt;&lt; <strong>1</strong><span>Introduction to the Database Migration Plugin</span></a></div>
+                
 
                 <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
 
-                <h1>dbm-generate-changelog</h1><p class="paragraph"/><h2>Purpose</h2><p class="paragraph"/>Generates an initial changelog XML or Groovy DSL file from the database.<p class="paragraph"/><h2>Description</h2><p class="paragraph"/>Creates a Groovy DSL file if the filename is specified and it ends with .groovy. If another extension is specified it creates a standard Liquibase XML file, and if no filename is specified it writes to the console.<p class="paragraph"/>File are written to the migrations folder, so specify the filename relative to the migrations folder (<code>grails-app/migrations</code> by default).<p class="paragraph"/>Executes against the database configured in <code>DataSource.groovy</code> for the current environment (defaults to <code>dev</code>).<p class="paragraph"/>Usage:
-<div class="code"><pre>grails &#91;environment&#93; dbm&#45;generate&#45;changelog &#91;filename&#93; &#45;&#45;diffTypes=&#91;diffTypes&#93; &#45;&#45;defaultSchema=&#91;defaultSchema&#93; &#45;&#45;add</pre></div><p class="paragraph"/>Required arguments:  <em class="italic">none</em>  .<p class="paragraph"/>Optional arguments:
-<ul class="star">
-<li><code>filename</code> - The path to the output file to write to. If not specified output is written to the console</li>
-<li><code>diffTypes</code> - A comma-delimited list of change types to include - see <a href="http://www.liquibase.org/manual/diff#controlling_checks_since_1.8" target="blank">the documentation</a> for what types are available</li>
-<li><code>defaultSchema</code> - The default schema name to use</li>
-<li><code>add</code> - if specified add an include in the root changelog file referencing the new file</li>
-</ul><p class="paragraph"/><blockquote class="note">
-Note that the <code>diffTypes</code> and <code>defaultSchema</code> parameter name and value must be quoted if executed in Windows, e.g.
-<div class="code"><pre>grails dbm&#45;generate&#45;changelog <span class="java&#45;quote">"&#45;&#45;diffTypes=&#91;diffTypes&#93;"</span> <span class="java&#45;quote">"&#45;&#45;defaultSchema=&#91;defaultSchema&#93;"</span></pre></div>
-</blockquote>
+                
+                    <div class="toc-item next-right"><a href="../../guide/3%20Configuration.html"><strong>3</strong><span>Configuration</span> >></a></div>
+                
 
+
+                <div class="project">
+                    <h1>2.1 Migration from Autobase - Reference Documentation</h1>
+
+                    <p><strong>Authors:</strong> Burt Beckwith</p>
+
+                    <p><strong>Version:</strong> 1.0</p>
+                </div>
+
+                
+
+                
+
+<h2 id="2.1 Migration from Autobase">2.1 Migration from Autobase</h2>
+Autobase is another plugin for managing database migrations. It uses Groovy migration scripts that have a similar syntax to this plugin's ones, but there are some differences that mean you will have to do a little bit of work to migrate your existing scripts. The following notes are applicable to Autobase 0.11 and earlier.<p class="paragraph"/><h4>Location of migration scripts</h4><p class="paragraph"/>Autobase defaulted to putting its migration scripts into a <code>./migrations</code> directory, whereas the Database Migration plugin uses <code>./grails-app/migrations</code> as the default. So, you can either move your scripts or add this setting to your <code>grails-app/conf/Config.groovy</code> file:
+<div class="code"><pre>grails.plugin.databasemigration.changelogLocation = <span class="java&#45;quote">"migrations"</span></pre></div><p class="paragraph"/><h4>New syntax for all scripts</h4><p class="paragraph"/>Autobase allowed you to write changelog files that just included the change sets one after the other. This isn't supported by the Database Migration plugin, so  <em class="italic">all</em>  changelogs must put their change set definitions inside a block like so:<p class="paragraph"/><div class="code"><pre>databaseChangeLog = &#123;
+    changeSet(...) &#123; &#8230; &#125;
+    changeSet(...) &#123; &#8230; &#125;
+    &#8230;
+&#125;</pre></div><p class="paragraph"/>In addition, if your main Autobase changelog specifies a logical file path (see next section), you will have to use the syntax:<p class="paragraph"/><div class="code"><pre>databaseChangeLog = &#123;
+    logicalFilePath <span class="java&#45;quote">"app&#45;autobase"</span>
+    &#8230;
+&#125;</pre></div><p class="paragraph"/>in all the changelog files. If you don't do this, the plugin won't recognise that existing migrations have already been applied to a database and all of them will be reapplied.<p class="paragraph"/>These changes also apply to the main changelog, but there are some other differences to cover for that.<p class="paragraph"/><h4>Parent changelog differences</h4><p class="paragraph"/>The syntax for the main (or parent) Autobase changelog file looks like:<p class="paragraph"/><div class="code"><pre>databaseChangeLog(logicalFilePath: <span class="java&#45;quote">"appName&#45;autobase"</span>) &#123;
+    include <span class="java&#45;quote">"./migrations/batch/SomeBigChanges.groovy"</span>
+    include <span class="java&#45;quote">"./migrations/changelog&#45;1.0.1.groovy"</span>
+    include <span class="java&#45;quote">"./migrations/changelog&#45;1.0.5.groovy"</span>
+&#125;</pre></div><p class="paragraph"/>The new format is noticeably different:<p class="paragraph"/><div class="code"><pre>databaseChangeLog = &#123;
+    logicalFilePath <span class="java&#45;quote">"site&#45;autobase"</span><p class="paragraph"/>    include file: <span class="java&#45;quote">"batch/SomeBigChanges.groovy"</span>
+    include file: <span class="java&#45;quote">"changelog&#45;1.0.1.groovy"</span>
+    include file: <span class="java&#45;quote">"changelog&#45;1.0.5.groovy"</span>
+&#125;</pre></div><p class="paragraph"/>In particular, note that:
+<ul class="star">
+<li>The <code>databaseChangeLog</code> line is different</li>
+<li>The logical file path must be defined inside the block</li>
+<li><code>include</code> takes a named <code>file</code> argument</li>
+<li>The file paths passed to <code>include</code> are relative to the configured migrations directory</li>
+</ul><p class="paragraph"/>Fortunately, these changes are highly localised and pretty trivial to implement.<p class="paragraph"/><h4>modifyColumn refactoring no longer available</h4><p class="paragraph"/>The <code>modifyColumn</code> refactoring has been removed in the version of Liquibase that comes with the Database Migration plugin. Instead you should use the new <code>modifyDataType</code> refactoring like so:<p class="paragraph"/><div class="code"><pre>&#8230;
+    changeSet(id:'IncreaseCommentBodySize', author:'someone') &#123;
+        modifyDataType tableName: 'comment', columnName: 'body', newDataType: 'TEXT'
+    &#125;</pre></div><p class="paragraph"/>The parameters are the same as for <code>modifyColumn</code>, but the syntax is somewhat different.
+
+
+
+                <div style="clear:both;margin-top:15px;"></div>
+                
+                    <div class="toc-item prev-left"><a href="../../guide/1%20Introduction%20to%20the%20Database%20Migration%20Plugin.html">&lt;&lt; <strong>1</strong><span>Introduction to the Database Migration Plugin</span></a></div>
+                
+                    <div class="toc-item next-right"><a href="../../guide/3%20Configuration.html"><strong>3</strong><span>Configuration</span> >></a></div>
+                
+                <div style="clear:both"></div>
             </div>
         </td>
         <td id="col2">
@@ -95,10 +140,8 @@ Note that the <code>diffTypes</code> and <code>defaultSchema</code> parameter na
                 </div>
                 <div class="menu">
                     
-                    <div class="menu-block">
-                        <h1 class="menu-title" onclick="toggleRef(nextElement(this))">Diff Scripts</h1>
-                        <div class="menu-sub">
-                            
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Diff Scripts</h1><div class="menu-sub">
+                        
                             
                             <div class="menu-item"><a href="../../ref/Diff%20Scripts/dbm-diff.html">dbm-diff</a>
                             </div>
@@ -106,24 +149,20 @@ Note that the <code>diffTypes</code> and <code>defaultSchema</code> parameter na
                             <div class="menu-item"><a href="../../ref/Diff%20Scripts/dbm-gorm-diff.html">dbm-gorm-diff</a>
                             </div>
                             
-                        </div>
+                            </div>
                     </div>
                     
-                    <div class="menu-block">
-                        <h1 class="menu-title" onclick="toggleRef(nextElement(this))">Documentation Scripts</h1>
-                        <div class="menu-sub">
-                            
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Documentation Scripts</h1><div class="menu-sub">
+                        
                             
                             <div class="menu-item"><a href="../../ref/Documentation%20Scripts/dbm-db-doc.html">dbm-db-doc</a>
                             </div>
                             
-                        </div>
+                            </div>
                     </div>
                     
-                    <div class="menu-block">
-                        <h1 class="menu-title" onclick="toggleRef(nextElement(this))">Maintenance Scripts</h1>
-                        <div class="menu-sub">
-                            
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Maintenance Scripts</h1><div class="menu-sub">
+                        
                             
                             <div class="menu-item"><a href="../../ref/Maintenance%20Scripts/dbm-changelog-sync-sql.html">dbm-changelog-sync-sql</a>
                             </div>
@@ -164,13 +203,11 @@ Note that the <code>diffTypes</code> and <code>defaultSchema</code> parameter na
                             <div class="menu-item"><a href="../../ref/Maintenance%20Scripts/dbm-validate.html">dbm-validate</a>
                             </div>
                             
-                        </div>
+                            </div>
                     </div>
                     
-                    <div class="menu-block">
-                        <h1 class="menu-title" onclick="toggleRef(nextElement(this))">Rollback Scripts</h1>
-                        <div class="menu-sub selected">
-                            
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Rollback Scripts</h1><div class="menu-sub">
+                        
                             
                             <div class="menu-item"><a href="../../ref/Rollback%20Scripts/dbm-future-rollback-sql.html">dbm-future-rollback-sql</a>
                             </div>
@@ -199,13 +236,11 @@ Note that the <code>diffTypes</code> and <code>defaultSchema</code> parameter na
                             <div class="menu-item"><a href="../../ref/Rollback%20Scripts/dbm-rollback.html">dbm-rollback</a>
                             </div>
                             
-                        </div>
+                            </div>
                     </div>
                     
-                    <div class="menu-block">
-                        <h1 class="menu-title" onclick="toggleRef(nextElement(this))">Update Scripts</h1>
-                        <div class="menu-sub">
-                            
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Update Scripts</h1><div class="menu-sub">
+                        
                             
                             <div class="menu-item"><a href="../../ref/Update%20Scripts/dbm-update-count-sql.html">dbm-update-count-sql</a>
                             </div>
@@ -219,7 +254,7 @@ Note that the <code>diffTypes</code> and <code>defaultSchema</code> parameter na
                             <div class="menu-item"><a href="../../ref/Update%20Scripts/dbm-update.html">dbm-update</a>
                             </div>
                             
-                        </div>
+                            </div>
                     </div>
                     
                 </div>
@@ -232,7 +267,6 @@ Note that the <code>diffTypes</code> and <code>defaultSchema</code> parameter na
     
     
 </div>
-
 
 <script type="text/javascript" src="../../js/docs.js"></script>
 

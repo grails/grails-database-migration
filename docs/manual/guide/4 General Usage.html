@@ -1,11 +1,100 @@
-<html>
-    <head>
-        <meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
-        <title>4 General Usage</title>
-        <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen" title="Ref" charset="utf-8"/>
-    </head>
-    <body class="body">
-    <h1><a name="4 General Usage">4 General Usage</a></h1>After creating the initial changelog, the typical workflow will be along the lines of:
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <title>4 General Usage 1.0</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
+    <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
+    <script type="text/javascript">
+function addJsClass() {
+    var classes = document.body.className.split(" ");
+    classes.push("js");
+    document.body.className = classes.join(" ");
+}
+    </script>
+</head>
+
+<body class="body" onload="addJsClass();">
+<div id="navigation">
+    <ul>
+        <li>
+            <div id="nav-summary" onmouseover="toggleNavSummary(false)" onmouseout="toggleNavSummary(true)">
+                <a href="../guide/index.html" class="button">Table of contents</a>
+
+                <div id="nav-summary-childs" style="display:none;">
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../guide/1%20Introduction%20to%20the%20Database%20Migration%20Plugin.html"><strong>1</strong><span>Introduction to the Database Migration Plugin</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../guide/2%20Getting%20Started.html"><strong>2</strong><span>Getting Started</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../guide/3%20Configuration.html"><strong>3</strong><span>Configuration</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../guide/4%20General%20Usage.html"><strong>4</strong><span>General Usage</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../guide/5%20Groovy%20Changes.html"><strong>5</strong><span>Groovy Changes</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../guide/6%20Groovy%20Preconditions.html"><strong>6</strong><span>Groovy Preconditions</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../guide/7%20GORM%20Support.html"><strong>7</strong><span>GORM Support</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../guide/8%20DbDoc%20Controller.html"><strong>8</strong><span>DbDoc Controller</span></a>
+                    </div>
+                    
+                </div>
+            </div>
+        </li>
+        <li class="separator selected">
+            <a id="ref-button" onclick="localToggle(); return false;" href="#">Quick Reference</a>
+        </li>
+    </ul>
+</div>
+<div id="header">
+    <div class="images clearfix">
+        
+        
+    </div>
+    <p>Grails Database Migration Plugin</p>
+</div>
+
+
+<table id="colset" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td id="col1">
+            <div id="main" class="corner-all">
+
+                
+                    <div class="toc-item prev-left"><a href="../guide/3%20Configuration.html">&lt;&lt; <strong>3</strong><span>Configuration</span></a></div>
+                
+
+                <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
+
+                
+                    <div class="toc-item next-right"><a href="../guide/5%20Groovy%20Changes.html"><strong>5</strong><span>Groovy Changes</span> >></a></div>
+                
+
+
+                <div class="project">
+                    <h1>4 General Usage - Reference Documentation</h1>
+
+                    <p><strong>Authors:</strong> Burt Beckwith</p>
+
+                    <p><strong>Version:</strong> 1.0</p>
+                </div>
+
+                
+
+                
+
+<h1 id="4 General Usage">4 General Usage</h1>
+After creating the initial changelog, the typical workflow will be along the lines of:
 <ul class="star">
 <li>make domain class changes that affect the schema</li>
 <li>add changes to the changelog for them</li>
@@ -19,7 +108,156 @@ When running migration scripts on non-development databases, it's important that
 <li><code>dbm-gorm-diff</code> will dump to the console if no filename is specified, so you can copy/paste from there</li>
 <li>if you include the <code>--add</code> parameter when running the script with a filename it will register an include for the the filename in the main changelog for you</li>
 </ul><p class="paragraph"/>Regardless of which approach you use, be sure to inspect generated changes and adjust as necessary.<p class="paragraph"/><h4>Autorun on start</h4><p class="paragraph"/>Since Liquibase maintains a record of changes that have been applied, you can avoid manually updating the database by taking advantage of the plugin's auto-run feature. By default this is disabled, but you can enable it by adding<p class="paragraph"/><div class="code"><pre>grails.plugin.databasemigration.updateOnStart = <span class="java&#45;keyword">true</span></pre></div><p class="paragraph"/>to Config.groovy. In addition you must specify the file(s) containing changes; specify the name(s) using the <code>updateOnStartFileNames</code> property, e.g.:<p class="paragraph"/><div class="code"><pre>grails.plugin.databasemigration.updateOnStartFileNames = &#91;'changelog.groovy'&#93;</pre></div><p class="paragraph"/>Since changelogs can contain changelogs you'll most often just specify the root changelog, changelog.groovy by convention. Any changes that haven't been executed (in the specified file(s) or files included by them) will be run in the order specified.<p class="paragraph"/>
+
+
+                <div style="clear:both;margin-top:15px;"></div>
+                
+                    <div class="toc-item prev-left"><a href="../guide/3%20Configuration.html">&lt;&lt; <strong>3</strong><span>Configuration</span></a></div>
+                
+                    <div class="toc-item next-right"><a href="../guide/5%20Groovy%20Changes.html"><strong>5</strong><span>Groovy Changes</span> >></a></div>
+                
+                <div style="clear:both"></div>
+            </div>
+        </td>
+        <td id="col2">
+            <div class="local clearfix">
+                <div class="local-title">
+                    <a href="../guide/index.html" target="mainFrame">Quick Reference</a>
+                    <span class="toggle">(<a href="#" onclick="localToggle(); return false;">hide</a>)</span>
+                </div>
+                <div class="menu">
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Diff Scripts</h1><div class="menu-sub">
+                        
+                            
+                            <div class="menu-item"><a href="../ref/Diff%20Scripts/dbm-diff.html">dbm-diff</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../ref/Diff%20Scripts/dbm-gorm-diff.html">dbm-gorm-diff</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Documentation Scripts</h1><div class="menu-sub">
+                        
+                            
+                            <div class="menu-item"><a href="../ref/Documentation%20Scripts/dbm-db-doc.html">dbm-db-doc</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Maintenance Scripts</h1><div class="menu-sub">
+                        
+                            
+                            <div class="menu-item"><a href="../ref/Maintenance%20Scripts/dbm-changelog-sync-sql.html">dbm-changelog-sync-sql</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../ref/Maintenance%20Scripts/dbm-changelog-sync.html">dbm-changelog-sync</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../ref/Maintenance%20Scripts/dbm-changelog-to-groovy.html">dbm-changelog-to-groovy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../ref/Maintenance%20Scripts/dbm-clear-checksums.html">dbm-clear-checksums</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../ref/Maintenance%20Scripts/dbm-create-changelog.html">dbm-create-changelog</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../ref/Maintenance%20Scripts/dbm-drop-all.html">dbm-drop-all</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../ref/Maintenance%20Scripts/dbm-list-locks.html">dbm-list-locks</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../ref/Maintenance%20Scripts/dbm-mark-next-changeset-ran.html">dbm-mark-next-changeset-ran</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../ref/Maintenance%20Scripts/dbm-register-changelog.html">dbm-register-changelog</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../ref/Maintenance%20Scripts/dbm-release-locks.html">dbm-release-locks</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../ref/Maintenance%20Scripts/dbm-status.html">dbm-status</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../ref/Maintenance%20Scripts/dbm-tag.html">dbm-tag</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../ref/Maintenance%20Scripts/dbm-validate.html">dbm-validate</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Rollback Scripts</h1><div class="menu-sub">
+                        
+                            
+                            <div class="menu-item"><a href="../ref/Rollback%20Scripts/dbm-future-rollback-sql.html">dbm-future-rollback-sql</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../ref/Rollback%20Scripts/dbm-generate-changelog.html">dbm-generate-changelog</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../ref/Rollback%20Scripts/dbm-generate-gorm-changelog.html">dbm-generate-gorm-changelog</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../ref/Rollback%20Scripts/dbm-rollback-count-sql.html">dbm-rollback-count-sql</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../ref/Rollback%20Scripts/dbm-rollback-count.html">dbm-rollback-count</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../ref/Rollback%20Scripts/dbm-rollback-sql.html">dbm-rollback-sql</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../ref/Rollback%20Scripts/dbm-rollback-to-date-sql.html">dbm-rollback-to-date-sql</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../ref/Rollback%20Scripts/dbm-rollback-to-date.html">dbm-rollback-to-date</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../ref/Rollback%20Scripts/dbm-rollback.html">dbm-rollback</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Update Scripts</h1><div class="menu-sub">
+                        
+                            
+                            <div class="menu-item"><a href="../ref/Update%20Scripts/dbm-update-count-sql.html">dbm-update-count-sql</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../ref/Update%20Scripts/dbm-update-count.html">dbm-update-count</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../ref/Update%20Scripts/dbm-update-sql.html">dbm-update-sql</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../ref/Update%20Scripts/dbm-update.html">dbm-update</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<div id="footer">
     
+    
+</div>
+
+<script type="text/javascript" src="../js/docs.js"></script>
+
+
 <script type="text/javascript">
 	var _gaq = _gaq || [];
 	_gaq.push(['_setAccount', 'UA-16219500-1']);

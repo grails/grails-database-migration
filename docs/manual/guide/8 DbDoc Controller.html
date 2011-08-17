@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>7 GORM Support 1.0</title>
+    <title>8 DbDoc Controller 1.0</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -71,18 +71,16 @@ function addJsClass() {
             <div id="main" class="corner-all">
 
                 
-                    <div class="toc-item prev-left"><a href="../guide/6%20Groovy%20Preconditions.html">&lt;&lt; <strong>6</strong><span>Groovy Preconditions</span></a></div>
+                    <div class="toc-item prev-left"><a href="../guide/7%20GORM%20Support.html">&lt;&lt; <strong>7</strong><span>GORM Support</span></a></div>
                 
 
                 <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
 
                 
-                    <div class="toc-item next-right"><a href="../guide/8%20DbDoc%20Controller.html"><strong>8</strong><span>DbDoc Controller</span> >></a></div>
-                
 
 
                 <div class="project">
-                    <h1>7 GORM Support - Reference Documentation</h1>
+                    <h1>8 DbDoc Controller - Reference Documentation</h1>
 
                     <p><strong>Authors:</strong> Burt Beckwith</p>
 
@@ -93,24 +91,18 @@ function addJsClass() {
 
                 
 
-<h1 id="7 GORM Support">7 GORM Support</h1>
-The plugin's support for GORM is one feature that differentiates it from using Liquibase directly. Typically when using Liquibase you make changes to a database yourself, and then create changesets manually, or use a diff script to compare your updated database to one that hasn't been updated yet. This is a decent amount of work and is rather error-prone. It's easy to forget some changes that aren't required but help performance, for example creating an index on a foreign key when using MySQL.<p class="paragraph"/><h4>create-drop, create, and update</h4><p class="paragraph"/>On the other end of the spectrum, Hibernate's <code>create-drop</code> mode (or <code>create</code>) will create a database that matches your domain model, but it's destructive since all previous data is lost when it runs. This works well in the very early stages of development but gets frustrating quickly. Unfortunately Hibernate's <code>update</code> mode seems like a good compromise since it only makes changes to your existing schema, but it's very limited in what it will do. It's very pessimistic and won't make any changes that could lose data. So it will add new tables and columns, but won't drop anything. If you remove a not-null domain class property you'll find you can't insert anymore since the column is still there. And it will create not-null columns as nullable since otherwise existing data would be invalid. It won't even widen a column e.g. from <code>VARCHAR(100)</code> to <code>VARCHAR(200)</code>.<p class="paragraph"/><h4>dbm-gorm-diff</h4><p class="paragraph"/>The plugin provides a script that will compare your GORM current domain model with a database that you specify, and the result is a Liquibase changeset - <code>dbm-gorm-diff</code>. This is the same changeset you would get if you exported your domain model to a scratch database and diffed it with the other database, but it's more convenient.<p class="paragraph"/>So a good workflow would be:
-<ul class="star">
-<li>make whatever domain class changes you need (add new ones, delete unneeded ones, add/change/remove properties, etc.)</li>
-<li>once your tests pass and you're ready to commit your changes to source control, run the script to generate the changeset that will bring your database back in line with your code</li>
-<li>add the changeset to an existing changelog file, or use the <code>include</code> tag to include the whole file</li>
-<li>run the changeset on your functional test database</li>
-<li>assuming your functional tests pass, check everything in as one commit</li>
-<li>the other members of your team will get both the code and database changes when they next update, and will know to run the update script to sync their database with the latest code</li>
-<li>once you're ready to deploy to QA for testing (or staging or production), you can run all of the un-run changes since the last deployment</li>
-</ul><p class="paragraph"/><h4>dbm-generate-gorm-changelog</h4><p class="paragraph"/>The <a href="../ref/Rollback Scripts/dbm-generate-gorm-changelog.html" class="Rollback Scripts">dbm-generate-gorm-changelog</a> script is useful for when you want to switch from <code>create-drop</code> mode to doing proper migrations. It's not very useful if you already have a database that's in sync with your code, since you can just use the <a href="../ref/Rollback Scripts/dbm-generate-changelog.html" class="Rollback Scripts">dbm-generate-changelog</a> script that creates a changelog from your databse.<p class="paragraph"/>
+<h1 id="8 DbDoc Controller">8 DbDoc Controller</h1>
+You can use the <a href="../ref/Documentation Scripts/dbm-db-doc.html" class="Documentation Scripts">dbm-db-doc</a> script to generate static HTML files to view changelog information, but another option is to use the <code>DbDocController</code> at runtime. By default this controller is mapped to <code>/appname/dbdoc/</code> but this can be customized with <code>UrlMappings</code> like any controller.<p class="paragraph"/>You probably don't want to expose this information to all of your application's users so by default the controller is only enabled in the development environment. But you can enable or disable it for any environment in <code>Config.groovy</code> with the <code>dbDocController.enabled</code> config option. For example to enable for all environments (be sure to guard the URL with a security plugin in prod):<p class="paragraph"/><div class="code"><pre>grails.plugin.databasemigration.dbDocController.enabled = <span class="java&#45;keyword">true</span></pre></div><p class="paragraph"/>or to enable in the production environment:<p class="paragraph"/><div class="code"><pre>environments &#123;
+   production &#123;
+      grails.plugin.databasemigration.dbDocController.enabled = <span class="java&#45;keyword">true</span>
+   &#125;
+   &#8230;
+&#125;</pre></div><p class="paragraph"/>
 
 
                 <div style="clear:both;margin-top:15px;"></div>
                 
-                    <div class="toc-item prev-left"><a href="../guide/6%20Groovy%20Preconditions.html">&lt;&lt; <strong>6</strong><span>Groovy Preconditions</span></a></div>
-                
-                    <div class="toc-item next-right"><a href="../guide/8%20DbDoc%20Controller.html"><strong>8</strong><span>DbDoc Controller</span> >></a></div>
+                    <div class="toc-item prev-left"><a href="../guide/7%20GORM%20Support.html">&lt;&lt; <strong>7</strong><span>GORM Support</span></a></div>
                 
                 <div style="clear:both"></div>
             </div>

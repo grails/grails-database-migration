@@ -1,32 +1,114 @@
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
     <head>
-        <title>Database Migration Plugin 0.2.1 - Reference Documentation</title>
-        <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen" title="Style" charset="utf-8"/>
+        <title>Database Migration Plugin 1.0</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8" />
         <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8" />
+    <script type="text/javascript">
+function addJsClass(el) {
+    var classes = document.body.className.split(" ");
+    classes.push("js");
+    document.body.className = classes.join(" ");
+}
+    </script>
     </head>
-    <body class="body">
+
+    <body class="body" onload="addJsClass();">
+        <div id="navigation">
+            <ul>
+                <li>
+                    <div id="nav-summary" onmouseover="toggleNavSummary(false)" onmouseout="toggleNavSummary(true)">
+                        <a href="../guide/index.html" class="button">Table of contents</a>
+                        <div id="nav-summary-childs" style="display:none;">
+                            
+                            <div class="toc-item" style="margin-left:0"><a href="#1%20Introduction%20to%20the%20Database%20Migration%20Plugin"><strong>1</strong><span>Introduction to the Database Migration Plugin</span></a></div>
+                            
+                            <div class="toc-item" style="margin-left:0"><a href="#2%20Getting%20Started"><strong>2</strong><span>Getting Started</span></a></div>
+                            
+                            <div class="toc-item" style="margin-left:0"><a href="#3%20Configuration"><strong>3</strong><span>Configuration</span></a></div>
+                            
+                            <div class="toc-item" style="margin-left:0"><a href="#4%20General%20Usage"><strong>4</strong><span>General Usage</span></a></div>
+                            
+                            <div class="toc-item" style="margin-left:0"><a href="#5%20Groovy%20Changes"><strong>5</strong><span>Groovy Changes</span></a></div>
+                            
+                            <div class="toc-item" style="margin-left:0"><a href="#6%20Groovy%20Preconditions"><strong>6</strong><span>Groovy Preconditions</span></a></div>
+                            
+                            <div class="toc-item" style="margin-left:0"><a href="#7%20GORM%20Support"><strong>7</strong><span>GORM Support</span></a></div>
+                            
+                            <div class="toc-item" style="margin-left:0"><a href="#8%20DbDoc%20Controller"><strong>8</strong><span>DbDoc Controller</span></a></div>
+                            
+                        </div>
+                    </div>
+                </li>
+                <li class="separator selected">
+                    <a id="ref-button" onclick="localToggle(); return false;" href="#">Quick Reference</a>
+                </li>
+            </ul>
+        </div>
         <div id="header">
-            <div class="images"><br/><br/>
-                <a href="http://grails.org" target="_blank"><img alt="The Grails Framework" src="../img/grails.png" border="0"/></a>
-                <span style="right:30px; top:20px; position:absolute;">
-                    <a href="../index.html" target="_top">Frames</a> | <a href="index.html" target="_top">No Frames</a><br/><br/>
-                    <a href="http://springsource.com" target="_blank"><img alt="SpringSource - A Division of VMware" src="../img/springsource-logo.png" border="0"/></a>
-                </span>
+            <div class="images clearfix">
+                
+                
             </div>
-            <div class="message">grails-database-migration</div>
-            <h1>Database Migration Plugin - Reference Documentation</h1>
-            <p><strong>Authors:</strong> Burt Beckwith</p>
-            <p><strong>Version:</strong> 0.2.1</p>
-            <em></em>
+            <p>Grails Database Migration Plugin</p>
         </div>
 
-        <div id="toc">
-            <h2>Table of Contents</h2>
-            <div class="tocItem" style="margin-left:0px"><a href="#1 Introduction to the Database Migration Plugin">1 Introduction to the Database Migration Plugin</a></div><div class="tocItem" style="margin-left:10px"><a href="#1.1 History">1.1 History</a></div><div class="tocItem" style="margin-left:0px"><a href="#2 Getting Started">2 Getting Started</a></div><div class="tocItem" style="margin-left:0px"><a href="#3 Configuration">3 Configuration</a></div><div class="tocItem" style="margin-left:0px"><a href="#4 General Usage">4 General Usage</a></div><div class="tocItem" style="margin-left:0px"><a href="#5 Groovy Changes">5 Groovy Changes</a></div><div class="tocItem" style="margin-left:0px"><a href="#6 Groovy Preconditions">6 Groovy Preconditions</a></div><div class="tocItem" style="margin-left:0px"><a href="#7 GORM Support">7 GORM Support</a></div>
-        </div>
-        <div id="content">
-            <h1><a name="1 Introduction to the Database Migration Plugin">1 Introduction to the Database Migration Plugin</a></h1>The Database Migration plugin helps you manage database changes while developing Grails applications. The plugin uses the <a href="http://www.liquibase.org/" target="blank">Liquibase</a> library.<p class="paragraph"/>Using this plugin (and Liquibase in general) adds some structure and process to managing database changes. It will help avoid inconsistencies, communication issues, and other problems with ad-hoc approaches.<p class="paragraph"/>Database migrations are represented in text form, either using a Groovy DSL or native Liquibase XML, in one or more changelog files. This approach makes it natural to maintain the changelog files in source control and also works well with branches. Changelog files can include other changelog files, so often developers create hierarchical files organized with various schemes. One popular approach is to have a root changelog named changlog.groovy (or changelog.xml) and to include a changelog per feature/branch that includes multiple smaller changelogs. Once the feature is finished and merged into the main development tree/trunk the changelog files can either stay as they are or be merged into one large file. Use whatever approach makes sense for your applications, but keep in mind that there are many options available for changelog management.<p class="paragraph"/>Individual changes have an ID that should be globally unique, although they also include the username of the user making the change, making the combination of ID and username unique (although technically the ID, username, and changelog location are the "unique key").<p class="paragraph"/>As you make changes in your code (typically domain classes) that require changes in the database, you add a new change set to the changelog. Commit the code changes along with the changelog additions, and the other developers on your team will get both when they update from source control. Once they apply the new changes their code and development database will be in sync with your changes. Likewise when you deploy to a QA, a staging server, or production, you'll run the un-run changes that correspond to the code updates to being that environment's database in sync. Liquibase keeps track of previously executed changes so there's no need to think about what has and hasn't been run yet.<p class="paragraph"/><h4>Scripts</h4><p class="paragraph"/>Your primary interaction with the plugin will be using the provided scripts. For the most part these correspond to the many Liquibase commands that are typically executed directly from the commandline or with its Ant targets, but there are also a few Grails-specific scripts that take advantage of the information available from the GORM mappings.<p class="paragraph"/>All of the scripts start with <code>dbm-</code> to ensure that they're unique and don't clash with scripts from Grails or other plugins.<p class="paragraph"/><h2><a name="1.1 History">1.1 History</a></h2><h4>History</h4>
+
+        <table id="colset" border="0" cellpadding="0" cellspacing="0">
+            <tr>
+                <td id="col1">
+                    <div id="main" class="corner-all">
+
+                        <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
+
+                        <div class="project">
+                            <h1>Database Migration Plugin - Reference Documentation</h1>
+                            <p><strong>Authors:</strong> Burt Beckwith</p>
+                            <p><strong>Version:</strong> 1.0</p>
+                        </div>
+
+                        
+                        <div id="table-of-content">
+                            <h2>Table of Contents</h2>
+                            
+                            <div class="toc-item" style="margin-left:0px"><a href="#1%20Introduction%20to%20the%20Database%20Migration%20Plugin"><strong>1</strong><span>Introduction to the Database Migration Plugin</span></a></div>
+                            
+                            <div class="toc-item" style="margin-left:10px"><a href="#1.1%20History"><strong>1.1</strong><span>History</span></a></div>
+                            
+                            <div class="toc-item" style="margin-left:0px"><a href="#2%20Getting%20Started"><strong>2</strong><span>Getting Started</span></a></div>
+                            
+                            <div class="toc-item" style="margin-left:10px"><a href="#2.1%20Migration%20from%20Autobase"><strong>2.1</strong><span>Migration from Autobase</span></a></div>
+                            
+                            <div class="toc-item" style="margin-left:0px"><a href="#3%20Configuration"><strong>3</strong><span>Configuration</span></a></div>
+                            
+                            <div class="toc-item" style="margin-left:0px"><a href="#4%20General%20Usage"><strong>4</strong><span>General Usage</span></a></div>
+                            
+                            <div class="toc-item" style="margin-left:0px"><a href="#5%20Groovy%20Changes"><strong>5</strong><span>Groovy Changes</span></a></div>
+                            
+                            <div class="toc-item" style="margin-left:0px"><a href="#6%20Groovy%20Preconditions"><strong>6</strong><span>Groovy Preconditions</span></a></div>
+                            
+                            <div class="toc-item" style="margin-left:0px"><a href="#7%20GORM%20Support"><strong>7</strong><span>GORM Support</span></a></div>
+                            
+                            <div class="toc-item" style="margin-left:0px"><a href="#8%20DbDoc%20Controller"><strong>8</strong><span>DbDoc Controller</span></a></div>
+                            
+                            <div style="clear:both" ></div>
+                        </div>
+                        
+                        
+
+<h1 id="1 Introduction to the Database Migration Plugin">1 Introduction to the Database Migration Plugin</h1>
+The Database Migration plugin helps you manage database changes while developing Grails applications. The plugin uses the <a href="http://www.liquibase.org/" target="blank">Liquibase</a> library.<p class="paragraph"/>Using this plugin (and Liquibase in general) adds some structure and process to managing database changes. It will help avoid inconsistencies, communication issues, and other problems with ad-hoc approaches.<p class="paragraph"/>Database migrations are represented in text form, either using a Groovy DSL or native Liquibase XML, in one or more changelog files. This approach makes it natural to maintain the changelog files in source control and also works well with branches. Changelog files can include other changelog files, so often developers create hierarchical files organized with various schemes. One popular approach is to have a root changelog named changlog.groovy (or changelog.xml) and to include a changelog per feature/branch that includes multiple smaller changelogs. Once the feature is finished and merged into the main development tree/trunk the changelog files can either stay as they are or be merged into one large file. Use whatever approach makes sense for your applications, but keep in mind that there are many options available for changelog management.<p class="paragraph"/>Individual changes have an ID that should be globally unique, although they also include the username of the user making the change, making the combination of ID and username unique (although technically the ID, username, and changelog location are the "unique key").<p class="paragraph"/>As you make changes in your code (typically domain classes) that require changes in the database, you add a new change set to the changelog. Commit the code changes along with the changelog additions, and the other developers on your team will get both when they update from source control. Once they apply the new changes their code and development database will be in sync with your changes. Likewise when you deploy to a QA, a staging server, or production, you'll run the un-run changes that correspond to the code updates to being that environment's database in sync. Liquibase keeps track of previously executed changes so there's no need to think about what has and hasn't been run yet.<p class="paragraph"/><h4>Scripts</h4><p class="paragraph"/>Your primary interaction with the plugin will be using the provided scripts. For the most part these correspond to the many Liquibase commands that are typically executed directly from the commandline or with its Ant targets, but there are also a few Grails-specific scripts that take advantage of the information available from the GORM mappings.<p class="paragraph"/>All of the scripts start with <code>dbm-</code> to ensure that they're unique and don't clash with scripts from Grails or other plugins.<p class="paragraph"/>
+
+
+<h2 id="1.1 History">1.1 History</h2>
+<h4>History</h4>
 <ul class="star">
+<li>August 17, 2011</li>
+<ul class="star">
+<li>1.0 release</li>
+</ul>
 <li>April 19, 2011</li>
 <ul class="star">
 <li>0.2.1 release</li>
@@ -41,10 +123,52 @@
 <li>May 22, 2010</li>
 <ul class="star">
 <li>initial 0.1 release</li>
-</ul></ul><p class="paragraph"/><h1><a name="2 Getting Started">2 Getting Started</a></h1><h4>The first step is to install the plugin:</h4><p class="paragraph"/><div class="code"><pre>grails install&#45;plugin database&#45;migration</pre></div><p class="paragraph"/><h4>Typical initial workflow</h4><p class="paragraph"/>Next you'll need to create an initial changelog. You can use Liquibase XML or the plugin's Groovy DSL for individual files. You can even mix and match; Groovy files can include other Groovy files and Liquibase XML files (but XML files can't include Groovy files).<p class="paragraph"/>Depending on the state of your database and code, you have two options; either create a changelog from the database or create it from your domain classes. The decision tends to be based on whether you prefer to design the database and adjust the domain classes to work with it, or to design your domain classes and use Hibernate to create the corresponding database structure.<p class="paragraph"/>To create a changelog from the database, use the <a href="../ref/Rollback Scripts/dbm-generate-changelog.html" class="Rollback Scripts">dbm-generate-changelog</a> script:
+</ul></ul><p class="paragraph"/>
+
+
+<h1 id="2 Getting Started">2 Getting Started</h1>
+<h4>The first step is to install the plugin:</h4><p class="paragraph"/><div class="code"><pre>grails install&#45;plugin database&#45;migration</pre></div><p class="paragraph"/><h4>Typical initial workflow</h4><p class="paragraph"/>Next you'll need to create an initial changelog. You can use Liquibase XML or the plugin's Groovy DSL for individual files. You can even mix and match; Groovy files can include other Groovy files and Liquibase XML files (but XML files can't include Groovy files).<p class="paragraph"/>Depending on the state of your database and code, you have two options; either create a changelog from the database or create it from your domain classes. The decision tends to be based on whether you prefer to design the database and adjust the domain classes to work with it, or to design your domain classes and use Hibernate to create the corresponding database structure.<p class="paragraph"/>To create a changelog from the database, use the <a href="../ref/Rollback Scripts/dbm-generate-changelog.html" class="Rollback Scripts">dbm-generate-changelog</a> script:
 <div class="code"><pre>grails dbm&#45;generate&#45;changelog changelog.groovy</pre></div><p class="paragraph"/>or<p class="paragraph"/><div class="code"><pre>grails dbm&#45;generate&#45;changelog changelog.xml</pre></div><p class="paragraph"/>depending on whether you prefer the Groovy DSL or XML. The filename is relative to the changelog base folder, which defaults to <code>grails-app/migrations</code>.<p class="paragraph"/>Since the database is already correct, run the <a href="../ref/Maintenance Scripts/dbm-changelog-sync.html" class="Maintenance Scripts">dbm-changelog-sync</a> script to record that the changes have already been applied:
-<div class="code"><pre>grails dbm&#45;changelog&#45;sync</pre></div><p class="paragraph"/>Running this script is primarily a no-op except that it records the execution(s) in the Liquibase DATABASECHANGELOG table.<p class="paragraph"/>To create a changelog from your domain classes, use the <a href="../ref/Rollback Scripts/dbm-generate-gorm-changelog.html" class="Rollback Scripts">dbm-generate-gorm-changelog</a> script:<p class="paragraph"/><div class="code"><pre>grails dbm&#45;generate&#45;gorm&#45;changelog changelog.groovy</pre></div><p class="paragraph"/>or<p class="paragraph"/><div class="code"><pre>grails dbm&#45;generate&#45;gorm&#45;changelog changelog.xml</pre></div><p class="paragraph"/>If you haven't created the database yet, run the <a href="../ref/Update Scripts/dbm-update.html" class="Update Scripts">dbm-update</a> script to create the corresponding tables:<p class="paragraph"/><div class="code"><pre>grails dbm&#45;update</pre></div><p class="paragraph"/>or the <a href="../ref/Maintenance Scripts/dbm-changelog-sync.html" class="Maintenance Scripts">dbm-changelog-sync</a> script if the database is already in sync with your code:<p class="paragraph"/><div class="code"><pre>grails dbm&#45;changelog&#45;sync</pre></div><p class="paragraph"/><h4>Source control</h4><p class="paragraph"/>Now you can commit the changelog and the corresponding application code to source control. Other developers can then update and syncronize their databases, and start doing migrations themselves.<p class="paragraph"/><h1><a name="3 Configuration">3 Configuration</a></h1>There are a few configuration options for the plugin:<p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th><strong class="bold">Property</strong></th><th><strong class="bold">Default</strong></th><th><strong class="bold">Meaning</strong></th></tr><tr class="table-odd"><td>grails.plugin.databasemigration.changelogLocation</td><td><code>grails-app/migrations</code></td><td>the folder containing the main changelog file (which can include one or more other files)</td></tr><tr class="table-even"><td>grails.plugin.databasemigration.changelogFileName</td><td><code>changelog.groovy</code></td><td>the name of the main changelog file</td></tr><tr class="table-odd"><td>grails.plugin.databasemigration.changelogProperties</td><td>none</td><td>a map of properties to use for property substitution in Groovy DSL changelogs</td></tr><tr class="table-even"><td>grails.plugin.databasemigration.dbDocLocation</td><td><code>target/dbdoc</code></td><td>the directory where the output from the <a href="../ref/Documentation Scripts/dbm-db-doc.html" class="Documentation Scripts">dbm-db-doc</a> script is written</td></tr><tr class="table-odd"><td>grails.plugin.databasemigration.updateOnStart</td><td><code>false</code></td><td>if <code>true</code> then changesets from the specified list of names will be run at startup</td></tr><tr class="table-even"><td>grails.plugin.databasemigration.updateOnStartFileNames</td><td>none</td><td>one or more file names (relative to <code>changelogLocation</code>) to run at startup if <code>updateOnStart</code> is <code>true</code></td></tr><tr class="table-odd"><td>grails.plugin.databasemigration.updateOnStartDefaultSchema</td><td>none</td><td>the default schema to use when running auto-migrate on start</td></tr></table>
-<h1><a name="4 General Usage">4 General Usage</a></h1>After creating the initial changelog, the typical workflow will be along the lines of:
+<div class="code"><pre>grails dbm&#45;changelog&#45;sync</pre></div><p class="paragraph"/>Running this script is primarily a no-op except that it records the execution(s) in the Liquibase DATABASECHANGELOG table.<p class="paragraph"/>To create a changelog from your domain classes, use the <a href="../ref/Rollback Scripts/dbm-generate-gorm-changelog.html" class="Rollback Scripts">dbm-generate-gorm-changelog</a> script:<p class="paragraph"/><div class="code"><pre>grails dbm&#45;generate&#45;gorm&#45;changelog changelog.groovy</pre></div><p class="paragraph"/>or<p class="paragraph"/><div class="code"><pre>grails dbm&#45;generate&#45;gorm&#45;changelog changelog.xml</pre></div><p class="paragraph"/>If you haven't created the database yet, run the <a href="../ref/Update Scripts/dbm-update.html" class="Update Scripts">dbm-update</a> script to create the corresponding tables:<p class="paragraph"/><div class="code"><pre>grails dbm&#45;update</pre></div><p class="paragraph"/>or the <a href="../ref/Maintenance Scripts/dbm-changelog-sync.html" class="Maintenance Scripts">dbm-changelog-sync</a> script if the database is already in sync with your code:<p class="paragraph"/><div class="code"><pre>grails dbm&#45;changelog&#45;sync</pre></div><p class="paragraph"/><h4>Source control</h4><p class="paragraph"/>Now you can commit the changelog and the corresponding application code to source control. Other developers can then update and syncronize their databases, and start doing migrations themselves.<p class="paragraph"/>
+
+
+<h2 id="2.1 Migration from Autobase">2.1 Migration from Autobase</h2>
+Autobase is another plugin for managing database migrations. It uses Groovy migration scripts that have a similar syntax to this plugin's ones, but there are some differences that mean you will have to do a little bit of work to migrate your existing scripts. The following notes are applicable to Autobase 0.11 and earlier.<p class="paragraph"/><h4>Location of migration scripts</h4><p class="paragraph"/>Autobase defaulted to putting its migration scripts into a <code>./migrations</code> directory, whereas the Database Migration plugin uses <code>./grails-app/migrations</code> as the default. So, you can either move your scripts or add this setting to your <code>grails-app/conf/Config.groovy</code> file:
+<div class="code"><pre>grails.plugin.databasemigration.changelogLocation = <span class="java&#45;quote">"migrations"</span></pre></div><p class="paragraph"/><h4>New syntax for all scripts</h4><p class="paragraph"/>Autobase allowed you to write changelog files that just included the change sets one after the other. This isn't supported by the Database Migration plugin, so  <em class="italic">all</em>  changelogs must put their change set definitions inside a block like so:<p class="paragraph"/><div class="code"><pre>databaseChangeLog = &#123;
+    changeSet(...) &#123; &#8230; &#125;
+    changeSet(...) &#123; &#8230; &#125;
+    &#8230;
+&#125;</pre></div><p class="paragraph"/>In addition, if your main Autobase changelog specifies a logical file path (see next section), you will have to use the syntax:<p class="paragraph"/><div class="code"><pre>databaseChangeLog = &#123;
+    logicalFilePath <span class="java&#45;quote">"app&#45;autobase"</span>
+    &#8230;
+&#125;</pre></div><p class="paragraph"/>in all the changelog files. If you don't do this, the plugin won't recognise that existing migrations have already been applied to a database and all of them will be reapplied.<p class="paragraph"/>These changes also apply to the main changelog, but there are some other differences to cover for that.<p class="paragraph"/><h4>Parent changelog differences</h4><p class="paragraph"/>The syntax for the main (or parent) Autobase changelog file looks like:<p class="paragraph"/><div class="code"><pre>databaseChangeLog(logicalFilePath: <span class="java&#45;quote">"appName&#45;autobase"</span>) &#123;
+    include <span class="java&#45;quote">"./migrations/batch/SomeBigChanges.groovy"</span>
+    include <span class="java&#45;quote">"./migrations/changelog&#45;1.0.1.groovy"</span>
+    include <span class="java&#45;quote">"./migrations/changelog&#45;1.0.5.groovy"</span>
+&#125;</pre></div><p class="paragraph"/>The new format is noticeably different:<p class="paragraph"/><div class="code"><pre>databaseChangeLog = &#123;
+    logicalFilePath <span class="java&#45;quote">"site&#45;autobase"</span><p class="paragraph"/>    include file: <span class="java&#45;quote">"batch/SomeBigChanges.groovy"</span>
+    include file: <span class="java&#45;quote">"changelog&#45;1.0.1.groovy"</span>
+    include file: <span class="java&#45;quote">"changelog&#45;1.0.5.groovy"</span>
+&#125;</pre></div><p class="paragraph"/>In particular, note that:
+<ul class="star">
+<li>The <code>databaseChangeLog</code> line is different</li>
+<li>The logical file path must be defined inside the block</li>
+<li><code>include</code> takes a named <code>file</code> argument</li>
+<li>The file paths passed to <code>include</code> are relative to the configured migrations directory</li>
+</ul><p class="paragraph"/>Fortunately, these changes are highly localised and pretty trivial to implement.<p class="paragraph"/><h4>modifyColumn refactoring no longer available</h4><p class="paragraph"/>The <code>modifyColumn</code> refactoring has been removed in the version of Liquibase that comes with the Database Migration plugin. Instead you should use the new <code>modifyDataType</code> refactoring like so:<p class="paragraph"/><div class="code"><pre>&#8230;
+    changeSet(id:'IncreaseCommentBodySize', author:'someone') &#123;
+        modifyDataType tableName: 'comment', columnName: 'body', newDataType: 'TEXT'
+    &#125;</pre></div><p class="paragraph"/>The parameters are the same as for <code>modifyColumn</code>, but the syntax is somewhat different.
+
+
+
+<h1 id="3 Configuration">3 Configuration</h1>
+There are a few configuration options for the plugin:<p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th><strong class="bold">Property</strong></th><th><strong class="bold">Default</strong></th><th><strong class="bold">Meaning</strong></th></tr><tr class="table-odd"><td>grails.plugin.databasemigration.changelogLocation</td><td><code>grails-app/migrations</code></td><td>the folder containing the main changelog file (which can include one or more other files)</td></tr><tr class="table-even"><td>grails.plugin.databasemigration.changelogFileName</td><td><code>changelog.groovy</code></td><td>the name of the main changelog file</td></tr><tr class="table-odd"><td>grails.plugin.databasemigration.changelogProperties</td><td>none</td><td>a map of properties to use for property substitution in Groovy DSL changelogs</td></tr><tr class="table-even"><td>grails.plugin.databasemigration.dbDocLocation</td><td><code>target/dbdoc</code></td><td>the directory where the output from the <a href="../ref/Documentation Scripts/dbm-db-doc.html" class="Documentation Scripts">dbm-db-doc</a> script is written</td></tr><tr class="table-odd"><td>grails.plugin.databasemigration.dbDocController.enabled</td><td><code>true</code> in dev mode</td><td>whether the /dbdoc/ url is accessible at runtime</td></tr><tr class="table-even"><td>grails.plugin.databasemigration.updateOnStart</td><td><code>false</code></td><td>if <code>true</code> then changesets from the specified list of names will be run at startup</td></tr><tr class="table-odd"><td>grails.plugin.databasemigration.updateOnStartFileNames</td><td>none</td><td>one or more file names (relative to <code>changelogLocation</code>) to run at startup if <code>updateOnStart</code> is <code>true</code></td></tr><tr class="table-even"><td>grails.plugin.databasemigration.updateOnStartDefaultSchema</td><td>none</td><td>the default schema to use when running auto-migrate on start</td></tr></table>
+
+
+
+<h1 id="4 General Usage">4 General Usage</h1>
+After creating the initial changelog, the typical workflow will be along the lines of:
 <ul class="star">
 <li>make domain class changes that affect the schema</li>
 <li>add changes to the changelog for them</li>
@@ -57,7 +181,11 @@ When running migration scripts on non-development databases, it's important that
 <ul class="star">
 <li><code>dbm-gorm-diff</code> will dump to the console if no filename is specified, so you can copy/paste from there</li>
 <li>if you include the <code>--add</code> parameter when running the script with a filename it will register an include for the the filename in the main changelog for you</li>
-</ul><p class="paragraph"/>Regardless of which approach you use, be sure to inspect generated changes and adjust as necessary.<p class="paragraph"/><h4>Autorun on start</h4><p class="paragraph"/>Since Liquibase maintains a record of changes that have been applied, you can avoid manually updating the database by taking advantage of the plugin's auto-run feature. By default this is disabled, but you can enable it by adding<p class="paragraph"/><div class="code"><pre>grails.plugin.databasemigration.updateOnStart = <span class="java&#45;keyword">true</span></pre></div><p class="paragraph"/>to Config.groovy. In addition you must specify the file(s) containing changes; specify the name(s) using the <code>updateOnStartFileNames</code> property, e.g.:<p class="paragraph"/><div class="code"><pre>grails.plugin.databasemigration.updateOnStartFileNames = &#91;'changelog.groovy'&#93;</pre></div><p class="paragraph"/>Since changelogs can contain changelogs you'll most often just specify the root changelog, changelog.groovy by convention. Any changes that haven't been executed (in the specified file(s) or files included by them) will be run in the order specified.<p class="paragraph"/><h1><a name="5 Groovy Changes">5 Groovy Changes</a></h1>In addition to the built-in Liquibase changes (see <a href="http://www.liquibase.org/manual/home" target="blank">the documentation</a> for what's available) you can also make database changes using Groovy code (as long as you're using the Groovy DSL file format). These changes use the <code>grailsChange</code> tag name and are contained in a <code>changeSet</code> tag like standard built-in tags.<p class="paragraph"/>There are four supported inner tags and two callable methods (to override the default confirmation message and checksum value).<p class="paragraph"/><h4>General format</h4><p class="paragraph"/>This is the general format of a Groovy-based change; all inner tags and methods are optional:<p class="paragraph"/><div class="code"><pre>databaseChangeLog = &#123;<p class="paragraph"/>   changeSet(author: '...', id: '...') &#123;<p class="paragraph"/>      grailsChange &#123;
+</ul><p class="paragraph"/>Regardless of which approach you use, be sure to inspect generated changes and adjust as necessary.<p class="paragraph"/><h4>Autorun on start</h4><p class="paragraph"/>Since Liquibase maintains a record of changes that have been applied, you can avoid manually updating the database by taking advantage of the plugin's auto-run feature. By default this is disabled, but you can enable it by adding<p class="paragraph"/><div class="code"><pre>grails.plugin.databasemigration.updateOnStart = <span class="java&#45;keyword">true</span></pre></div><p class="paragraph"/>to Config.groovy. In addition you must specify the file(s) containing changes; specify the name(s) using the <code>updateOnStartFileNames</code> property, e.g.:<p class="paragraph"/><div class="code"><pre>grails.plugin.databasemigration.updateOnStartFileNames = &#91;'changelog.groovy'&#93;</pre></div><p class="paragraph"/>Since changelogs can contain changelogs you'll most often just specify the root changelog, changelog.groovy by convention. Any changes that haven't been executed (in the specified file(s) or files included by them) will be run in the order specified.<p class="paragraph"/>
+
+
+<h1 id="5 Groovy Changes">5 Groovy Changes</h1>
+In addition to the built-in Liquibase changes (see <a href="http://www.liquibase.org/manual/home" target="blank">the documentation</a> for what's available) you can also make database changes using Groovy code (as long as you're using the Groovy DSL file format). These changes use the <code>grailsChange</code> tag name and are contained in a <code>changeSet</code> tag like standard built-in tags.<p class="paragraph"/>There are four supported inner tags and two callable methods (to override the default confirmation message and checksum value).<p class="paragraph"/><h4>General format</h4><p class="paragraph"/>This is the general format of a Groovy-based change; all inner tags and methods are optional:<p class="paragraph"/><div class="code"><pre>databaseChangeLog = &#123;<p class="paragraph"/>   changeSet(author: '...', id: '...') &#123;<p class="paragraph"/>      grailsChange &#123;
          init &#123;
              // arbitrary initialization code; note that no database or connection is available
          &#125;<p class="paragraph"/>         validate &#123;
@@ -105,7 +233,11 @@ When running migration scripts on non-development databases, it's important that
 <ul class="star">
 <li>a <code>groovy.sql.Sql</code> instance which uses the current <code>connection</code> and can be used for arbitrary queries and updates</li>
 </ul></ul><p class="paragraph"/><h4>init</h4><p class="paragraph"/>This is where any optional initialization should happen. You can't access the database from this closure.<p class="paragraph"/><h4>validate</h4><p class="paragraph"/>If there are any necessary validation checks before executing changes or rollbacks they should be done here. You can log warnings by calling <code>warn(String message)</code> and stop processing by calling <code>error(String message)</code>. It may make more sense to use one or more <code>preCondition</code>s instead of directly validating here.<p class="paragraph"/><h4>change</h4><p class="paragraph"/>All migration changes are done in the <code>change</code> closure. You can make changes directly (using the <code>sql</code> instance or the <code>connection</code>) and/or return one or more <code>SqlStatement</code>s. You can call <code>sqlStatement(SqlStatement statement)</code> multiple times to register instances to be run. You can also call the <code>sqlStatements(statements)</code> method with an array or list of instances to be run.<p class="paragraph"/><h4>rollback</h4><p class="paragraph"/>All rollback changes are done in the <code>rollback</code> closure. You can make changes directly (using the <code>sql</code> instance or the <code>connection</code>) and/or return one or more <code>SqlStatement</code>s. You can call <code>sqlStatement(SqlStatement statement)</code> multiple times to register instances to be run. You can also call the <code>sqlStatements(statements)</code> method with an array or list of instances to be run.<p class="paragraph"/><h4>confirm</h4><p class="paragraph"/>The <code>confirm(String message)</code> method is used to specify the confirmation message to be shown. The default is "Executed GrailsChange" and it can be overridden in the <code>change</code> or <code>rollback</code> closures to allow phase-specific messages or outside of both closures to use the same message for the update and rollback phase.<p class="paragraph"/><h4>checkSum</h4><p class="paragraph"/>The checksum for the change will be generated automatically, but if you want to override the value that gets hashed you can specify it with the <code>checkSum(String value)</code> method.
-<h1><a name="6 Groovy Preconditions">6 Groovy Preconditions</a></h1>In addition to the built-in Liquibase preconditions (see <a href="http://www.liquibase.org/manual/preconditions" target="blank">the documentation</a> for what's available) you can also specify preconditions using Groovy code (as long as you're using the Groovy DSL file format). These changes use the <code>grailsPrecondition</code> tag name and are contained in the <code>databaseChangeLog</code> tag or in a <code>changeSet</code> tag like standard built-in tags.<p class="paragraph"/><h4>General format</h4><p class="paragraph"/>This is general format of a Groovy-based precondition:<p class="paragraph"/><div class="code"><pre>databaseChangeLog = &#123;<p class="paragraph"/>   changeSet(author: '...', id: '...') &#123;<p class="paragraph"/>      grailsPrecondition &#123;<p class="paragraph"/>         check &#123;<p class="paragraph"/>            // use an assertion
+
+
+
+<h1 id="6 Groovy Preconditions">6 Groovy Preconditions</h1>
+In addition to the built-in Liquibase preconditions (see <a href="http://www.liquibase.org/manual/preconditions" target="blank">the documentation</a> for what's available) you can also specify preconditions using Groovy code (as long as you're using the Groovy DSL file format). These changes use the <code>grailsPrecondition</code> tag name and are contained in the <code>databaseChangeLog</code> tag or in a <code>changeSet</code> tag like standard built-in tags.<p class="paragraph"/><h4>General format</h4><p class="paragraph"/>This is general format of a Groovy-based precondition:<p class="paragraph"/><div class="code"><pre>databaseChangeLog = &#123;<p class="paragraph"/>   changeSet(author: '...', id: '...') &#123;<p class="paragraph"/>      grailsPrecondition &#123;<p class="paragraph"/>         check &#123;<p class="paragraph"/>            // use an assertion
             assert x == x<p class="paragraph"/>            // use an assertion with an error message
             assert y == y : 'value cannot be 237'<p class="paragraph"/>            // call the fail method
             <span class="java&#45;keyword">if</span> (x != x) &#123;
@@ -168,7 +300,11 @@ When running migration scripts on non-development databases, it's important that
 <li><code>createDatabaseSnapshot(String schemaName = null)</code></li>
 <ul class="star">
 <li>creates a <code>DatabaseSnapshot</code> for the current <code>Database</code> (and schema if specified)</li>
-</ul></ul><p class="paragraph"/><h1><a name="7 GORM Support">7 GORM Support</a></h1>The plugin's support for GORM is one feature that differentiates it from using Liquibase directly. Typically when using Liquibase you make changes to a database yourself, and then create changesets manually, or use a diff script to compare your updated database to one that hasn't been updated yet. This is a decent amount of work and is rather error-prone. It's easy to forget some changes that aren't required but help performance, for example creating an index on a foreign key when using MySQL.<p class="paragraph"/><h4>create-drop, create, and update</h4><p class="paragraph"/>On the other end of the spectrum, Hibernate's <code>create-drop</code> mode (or <code>create</code>) will create a database that matches your domain model, but it's destructive since all previous data is lost when it runs. This works well in the very early stages of development but gets frustrating quickly. Unfortunately Hibernate's <code>update</code> mode seems like a good compromise since it only makes changes to your existing schema, but it's very limited in what it will do. It's very pessimistic and won't make any changes that could lose data. So it will add new tables and columns, but won't drop anything. If you remove a not-null domain class property you'll find you can't insert anymore since the column is still there. And it will create not-null columns as nullable since otherwise existing data would be invalid. It won't even widen a column e.g. from <code>VARCHAR(100)</code> to <code>VARCHAR(200)</code>.<p class="paragraph"/><h4>dbm-gorm-diff</h4><p class="paragraph"/>The plugin provides a script that will compare your GORM current domain model with a database that you specify, and the result is a Liquibase changeset - <code>dbm-gorm-diff</code>. This is the same changeset you would get if you exported your domain model to a scratch database and diffed it with the other database, but it's more convenient.<p class="paragraph"/>So a good workflow would be:
+</ul></ul><p class="paragraph"/>
+
+
+<h1 id="7 GORM Support">7 GORM Support</h1>
+The plugin's support for GORM is one feature that differentiates it from using Liquibase directly. Typically when using Liquibase you make changes to a database yourself, and then create changesets manually, or use a diff script to compare your updated database to one that hasn't been updated yet. This is a decent amount of work and is rather error-prone. It's easy to forget some changes that aren't required but help performance, for example creating an index on a foreign key when using MySQL.<p class="paragraph"/><h4>create-drop, create, and update</h4><p class="paragraph"/>On the other end of the spectrum, Hibernate's <code>create-drop</code> mode (or <code>create</code>) will create a database that matches your domain model, but it's destructive since all previous data is lost when it runs. This works well in the very early stages of development but gets frustrating quickly. Unfortunately Hibernate's <code>update</code> mode seems like a good compromise since it only makes changes to your existing schema, but it's very limited in what it will do. It's very pessimistic and won't make any changes that could lose data. So it will add new tables and columns, but won't drop anything. If you remove a not-null domain class property you'll find you can't insert anymore since the column is still there. And it will create not-null columns as nullable since otherwise existing data would be invalid. It won't even widen a column e.g. from <code>VARCHAR(100)</code> to <code>VARCHAR(200)</code>.<p class="paragraph"/><h4>dbm-gorm-diff</h4><p class="paragraph"/>The plugin provides a script that will compare your GORM current domain model with a database that you specify, and the result is a Liquibase changeset - <code>dbm-gorm-diff</code>. This is the same changeset you would get if you exported your domain model to a scratch database and diffed it with the other database, but it's more convenient.<p class="paragraph"/>So a good workflow would be:
 <ul class="star">
 <li>make whatever domain class changes you need (add new ones, delete unneeded ones, add/change/remove properties, etc.)</li>
 <li>once your tests pass and you're ready to commit your changes to source control, run the script to generate the changeset that will bring your database back in line with your code</li>
@@ -178,10 +314,158 @@ When running migration scripts on non-development databases, it's important that
 <li>the other members of your team will get both the code and database changes when they next update, and will know to run the update script to sync their database with the latest code</li>
 <li>once you're ready to deploy to QA for testing (or staging or production), you can run all of the un-run changes since the last deployment</li>
 </ul><p class="paragraph"/><h4>dbm-generate-gorm-changelog</h4><p class="paragraph"/>The <a href="../ref/Rollback Scripts/dbm-generate-gorm-changelog.html" class="Rollback Scripts">dbm-generate-gorm-changelog</a> script is useful for when you want to switch from <code>create-drop</code> mode to doing proper migrations. It's not very useful if you already have a database that's in sync with your code, since you can just use the <a href="../ref/Rollback Scripts/dbm-generate-changelog.html" class="Rollback Scripts">dbm-generate-changelog</a> script that creates a changelog from your databse.<p class="paragraph"/>
-        </div>
+
+
+<h1 id="8 DbDoc Controller">8 DbDoc Controller</h1>
+You can use the <a href="../ref/Documentation Scripts/dbm-db-doc.html" class="Documentation Scripts">dbm-db-doc</a> script to generate static HTML files to view changelog information, but another option is to use the <code>DbDocController</code> at runtime. By default this controller is mapped to <code>/appname/dbdoc/</code> but this can be customized with <code>UrlMappings</code> like any controller.<p class="paragraph"/>You probably don't want to expose this information to all of your application's users so by default the controller is only enabled in the development environment. But you can enable or disable it for any environment in <code>Config.groovy</code> with the <code>dbDocController.enabled</code> config option. For example to enable for all environments (be sure to guard the URL with a security plugin in prod):<p class="paragraph"/><div class="code"><pre>grails.plugin.databasemigration.dbDocController.enabled = <span class="java&#45;keyword">true</span></pre></div><p class="paragraph"/>or to enable in the production environment:<p class="paragraph"/><div class="code"><pre>environments &#123;
+   production &#123;
+      grails.plugin.databasemigration.dbDocController.enabled = <span class="java&#45;keyword">true</span>
+   &#125;
+   &#8230;
+&#125;</pre></div><p class="paragraph"/>
+
+                    </div>
+                </td>
+                <td id="col2">
+            <div class="local clearfix">
+                <div class="local-title">
+                    <a href="../guide/index.html" target="mainFrame">Quick Reference</a>
+                    <span class="toggle">(<a href="#" onclick="localToggle(); return false;">hide</a>)</span>
+                </div>
+                <div class="menu">
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Diff Scripts</h1><div class="menu-sub">
+                        
+                        
+                        <div class="menu-item"><a href="../ref/Diff%20Scripts/dbm-diff.html">dbm-diff</a>
+                        </div>
+                        
+                        <div class="menu-item"><a href="../ref/Diff%20Scripts/dbm-gorm-diff.html">dbm-gorm-diff</a>
+                        </div>
+                        
+                        </div>
+                    </div>
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Documentation Scripts</h1><div class="menu-sub">
+                        
+                        
+                        <div class="menu-item"><a href="../ref/Documentation%20Scripts/dbm-db-doc.html">dbm-db-doc</a>
+                        </div>
+                        
+                        </div>
+                    </div>
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Maintenance Scripts</h1><div class="menu-sub">
+                        
+                        
+                        <div class="menu-item"><a href="../ref/Maintenance%20Scripts/dbm-changelog-sync-sql.html">dbm-changelog-sync-sql</a>
+                        </div>
+                        
+                        <div class="menu-item"><a href="../ref/Maintenance%20Scripts/dbm-changelog-sync.html">dbm-changelog-sync</a>
+                        </div>
+                        
+                        <div class="menu-item"><a href="../ref/Maintenance%20Scripts/dbm-changelog-to-groovy.html">dbm-changelog-to-groovy</a>
+                        </div>
+                        
+                        <div class="menu-item"><a href="../ref/Maintenance%20Scripts/dbm-clear-checksums.html">dbm-clear-checksums</a>
+                        </div>
+                        
+                        <div class="menu-item"><a href="../ref/Maintenance%20Scripts/dbm-create-changelog.html">dbm-create-changelog</a>
+                        </div>
+                        
+                        <div class="menu-item"><a href="../ref/Maintenance%20Scripts/dbm-drop-all.html">dbm-drop-all</a>
+                        </div>
+                        
+                        <div class="menu-item"><a href="../ref/Maintenance%20Scripts/dbm-list-locks.html">dbm-list-locks</a>
+                        </div>
+                        
+                        <div class="menu-item"><a href="../ref/Maintenance%20Scripts/dbm-mark-next-changeset-ran.html">dbm-mark-next-changeset-ran</a>
+                        </div>
+                        
+                        <div class="menu-item"><a href="../ref/Maintenance%20Scripts/dbm-register-changelog.html">dbm-register-changelog</a>
+                        </div>
+                        
+                        <div class="menu-item"><a href="../ref/Maintenance%20Scripts/dbm-release-locks.html">dbm-release-locks</a>
+                        </div>
+                        
+                        <div class="menu-item"><a href="../ref/Maintenance%20Scripts/dbm-status.html">dbm-status</a>
+                        </div>
+                        
+                        <div class="menu-item"><a href="../ref/Maintenance%20Scripts/dbm-tag.html">dbm-tag</a>
+                        </div>
+                        
+                        <div class="menu-item"><a href="../ref/Maintenance%20Scripts/dbm-validate.html">dbm-validate</a>
+                        </div>
+                        
+                        </div>
+                    </div>
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Rollback Scripts</h1><div class="menu-sub">
+                        
+                        
+                        <div class="menu-item"><a href="../ref/Rollback%20Scripts/dbm-future-rollback-sql.html">dbm-future-rollback-sql</a>
+                        </div>
+                        
+                        <div class="menu-item"><a href="../ref/Rollback%20Scripts/dbm-generate-changelog.html">dbm-generate-changelog</a>
+                        </div>
+                        
+                        <div class="menu-item"><a href="../ref/Rollback%20Scripts/dbm-generate-gorm-changelog.html">dbm-generate-gorm-changelog</a>
+                        </div>
+                        
+                        <div class="menu-item"><a href="../ref/Rollback%20Scripts/dbm-rollback-count-sql.html">dbm-rollback-count-sql</a>
+                        </div>
+                        
+                        <div class="menu-item"><a href="../ref/Rollback%20Scripts/dbm-rollback-count.html">dbm-rollback-count</a>
+                        </div>
+                        
+                        <div class="menu-item"><a href="../ref/Rollback%20Scripts/dbm-rollback-sql.html">dbm-rollback-sql</a>
+                        </div>
+                        
+                        <div class="menu-item"><a href="../ref/Rollback%20Scripts/dbm-rollback-to-date-sql.html">dbm-rollback-to-date-sql</a>
+                        </div>
+                        
+                        <div class="menu-item"><a href="../ref/Rollback%20Scripts/dbm-rollback-to-date.html">dbm-rollback-to-date</a>
+                        </div>
+                        
+                        <div class="menu-item"><a href="../ref/Rollback%20Scripts/dbm-rollback.html">dbm-rollback</a>
+                        </div>
+                        
+                        </div>
+                    </div>
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Update Scripts</h1><div class="menu-sub">
+                        
+                        
+                        <div class="menu-item"><a href="../ref/Update%20Scripts/dbm-update-count-sql.html">dbm-update-count-sql</a>
+                        </div>
+                        
+                        <div class="menu-item"><a href="../ref/Update%20Scripts/dbm-update-count.html">dbm-update-count</a>
+                        </div>
+                        
+                        <div class="menu-item"><a href="../ref/Update%20Scripts/dbm-update-sql.html">dbm-update-sql</a>
+                        </div>
+                        
+                        <div class="menu-item"><a href="../ref/Update%20Scripts/dbm-update.html">dbm-update</a>
+                        </div>
+                        
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </td>
+            </tr>
+        </table>
+
         <div id="footer">
-             
+            
+            
         </div>
+
+
+
+<script type="text/javascript" src="../js/docs.js"></script>
+
     
 <script type="text/javascript">
 	var _gaq = _gaq || [];
