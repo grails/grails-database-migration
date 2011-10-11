@@ -19,7 +19,7 @@ grails.project.dependency.resolution = {
 
 	dependencies {
 
-		compile('org.liquibase:liquibase-core:2.0.1') {
+		compile('org.liquibase:liquibase-core:2.0.3') {
 			transitive = false
 		}
 
