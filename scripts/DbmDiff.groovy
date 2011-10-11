@@ -41,7 +41,7 @@ target(dbmDiff: 'Writes description of differences to standard out') {
 	def thisDatabase
 	def otherDatabase
 	try {
-		echo "Starting $hyphenatedScriptName against environment '$otherEnv'"
+		printMessage "Starting $hyphenatedScriptName against environment '$otherEnv'"
 
 		executeAndWrite argsList[1], { PrintStream out ->
 			MigrationUtils.executeInSession {
@@ -51,7 +51,7 @@ target(dbmDiff: 'Writes description of differences to standard out') {
 			}
 		}
 
-		echo "Finished $hyphenatedScriptName"
+		printMessage "Finished $hyphenatedScriptName"
 	}
 	catch (e) {
 		printStackTrace e

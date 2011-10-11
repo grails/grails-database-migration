@@ -84,9 +84,9 @@ doAndClose = { Closure c ->
 
 			def dsConfig = config.dataSource
 			String dbDesc = dsConfig.jndiName ? "JNDI $dsConfig.jndiName" : "$dsConfig.username @ $dsConfig.url"
-			echo "Starting $hyphenatedScriptName for database $dbDesc"
+			printMessage "Starting $hyphenatedScriptName for database $dbDesc"
 			c()
-			echo "Finished $hyphenatedScriptName"
+			printMessage "Finished $hyphenatedScriptName"
 		}
 	}
 	catch (e) {
@@ -172,12 +172,10 @@ appendToChangelog = { File sourceFile, String content ->
 	}
 }
 
-echo = { String message -> ant.echo message: message }
-
 closeConnection = { try { it?.close() } catch (ignored) {} }
 
 errorAndDie = { String message ->
-	echo "\nERROR: $message"
+	errorMessage "\nERROR: $message"
 	exit 1
 }
 
@@ -282,6 +280,9 @@ okToWrite = { destinationOrIndex = 0, boolean relativeToMigrationDir = false ->
 
 	true
 }
+
+printMessage = { String message -> event('StatusUpdate', [message]) }
+errorMessage = { String message -> event('StatusError', [message]) }
 
 target(enableExpandoMetaClass: "Calls ExpandoMetaClass.enableGlobally()") {
 	ExpandoMetaClass.enableGlobally()

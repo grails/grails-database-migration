@@ -37,7 +37,7 @@ target(dbmGormDiff: 'Diff GORM classes against database and generate a changelog
 
 	def realDatabase
 	try {
-		echo "Starting $hyphenatedScriptName"
+		printMessage "Starting $hyphenatedScriptName"
 
 		executeAndWrite argsList[0], { PrintStream out ->
 			MigrationUtils.executeInSession {
@@ -47,7 +47,7 @@ target(dbmGormDiff: 'Diff GORM classes against database and generate a changelog
 			}
 		}
 
-		echo "Finished $hyphenatedScriptName"
+		printMessage "Finished $hyphenatedScriptName"
 	}
 	catch (e) {
 		printStackTrace e
