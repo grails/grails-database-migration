@@ -28,7 +28,7 @@ Since the database is already correct, run the [dbm-changelog-sync|Maintenance S
 grails dbm-changelog-sync
 {code}
 
-Running this script is primarily a no-op except that it records the execution(s) in the Liquibase DATABASECHANGELOG table. 
+Running this script is primarily a no-op except that it records the execution(s) in the Liquibase DATABASECHANGELOG table.
 
 To create a changelog from your domain classes, use the [dbm-generate-gorm-changelog|Rollback Scripts] script:
 
