@@ -32,6 +32,7 @@ class DelayedSessionFactoryBean extends ConfigurableLocalSessionFactoryBean {
 
 	private boolean _initialized
 	private SessionFactory _realSessionFactory
+	private SessionFactory _proxied
 
 	@Override
 	void afterPropertiesSet() {
@@ -40,12 +41,20 @@ class DelayedSessionFactoryBean extends ConfigurableLocalSessionFactoryBean {
 
 	@Override
 	SessionFactory getObject() {
-		Proxy.newProxyInstance SessionFactory.classLoader, [SessionFactory] as Class[], new InvocationHandler() {
+		_proxied = Proxy.newProxyInstance(SessionFactory.classLoader, [SessionFactory] as Class[], new InvocationHandler() {
 			Object invoke(proxy, Method method, Object[] args) {
+				if ('hashCode'.equals(method.getName())) {
+					return 1
+				}
+				if ('equals'.equals(method.getName())) {
+					return _proxied.is(args[0])
+				}
+
 				initialize()
 				method.invoke _realSessionFactory, args
 			}
-		}
+		})
+		_proxied
 	}
 
 	SessionFactory getRealSessionFactory() {
