@@ -141,7 +141,7 @@ class MigrationUtils {
 	static boolean canAutoMigrate() {
 
 		// in a war
-		if (application.warDeployed) {
+		if (application.warDeployed || getConfig()?.forceAutoMigrate) {
 			return true
 		}
 
