@@ -9,25 +9,29 @@ databaseChangeLog = {
 
    changeSet(author: '...', id: '...') {
 
-      grailsPrecondition {
+      preConditions {
 
-         check {
+         grailsPrecondition {
 
-            // use an assertion
-            assert x == x
+            check {
 
-            // use an assertion with an error message
-            assert y == y : 'value cannot be 237'
+               // use an assertion
+               assert x == x
 
-            // call the fail method
-            if (x != x) {
-               fail 'x != x'
+               // use an assertion with an error message
+               assert y == y : 'value cannot be 237'
+
+               // call the fail method
+               if (x != x) {
+                  fail 'x != x'
+               }
+
+               // throw an exception (the fail method is preferred)
+               if (y != y) {
+                  throw new RuntimeException('y != y')
+               }
             }
 
-            // throw an exception (the fail method is preferred)
-            if (y != y) {
-               throw new RuntimeException('y != y')
-            }
          }
 
       }

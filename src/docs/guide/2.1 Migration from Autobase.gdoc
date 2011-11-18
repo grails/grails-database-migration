@@ -13,9 +13,9 @@ Autobase allowed you to write changelog files that just included the change sets
 
 {code}
 databaseChangeLog = {
-    changeSet(...) { ... }
-    changeSet(...) { ... }
-    ...
+   changeSet(...) { ... }
+   changeSet(...) { ... }
+   ...
 }
 {code}
 
@@ -23,8 +23,8 @@ In addition, if your main Autobase changelog specifies a logical file path (see 
 
 {code}
 databaseChangeLog = {
-    logicalFilePath "app-autobase"
-    ...
+   logicalFilePath "app-autobase"
+   ...
 }
 {code}
 
@@ -38,21 +38,21 @@ The syntax for the main (or parent) Autobase changelog file looks like:
 
 {code}
 databaseChangeLog(logicalFilePath: "appName-autobase") {
-    include "./migrations/batch/SomeBigChanges.groovy"
-    include "./migrations/changelog-1.0.1.groovy"
-    include "./migrations/changelog-1.0.5.groovy"
-}    
+   include "./migrations/batch/SomeBigChanges.groovy"
+   include "./migrations/changelog-1.0.1.groovy"
+   include "./migrations/changelog-1.0.5.groovy"
+}
 {code}
 
 The new format is noticeably different:
 
 {code}
 databaseChangeLog = {
-    logicalFilePath "site-autobase"
+   logicalFilePath "site-autobase"
 
-    include file: "batch/SomeBigChanges.groovy"
-    include file: "changelog-1.0.1.groovy"
-    include file: "changelog-1.0.5.groovy"
+   include file: "batch/SomeBigChanges.groovy"
+   include file: "changelog-1.0.1.groovy"
+   include file: "changelog-1.0.5.groovy"
 }
 {code}
 
@@ -71,10 +71,9 @@ The @modifyColumn@ refactoring has been removed in the version of Liquibase that
 
 {code}
 ...
-    changeSet(id:'IncreaseCommentBodySize', author:'someone') {
-        modifyDataType tableName: 'comment', columnName: 'body', newDataType: 'TEXT'
-    }
-
+changeSet(id:'IncreaseCommentBodySize', author:'someone') {
+   modifyDataType tableName: 'comment', columnName: 'body', newDataType: 'TEXT'
+}
 {code}
 
 The parameters are the same as for @modifyColumn@, but the syntax is somewhat different.

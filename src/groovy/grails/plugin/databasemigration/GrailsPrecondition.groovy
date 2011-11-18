@@ -1,4 +1,4 @@
-/* Copyright 2006-2010 the original author or authors.
+/* Copyright 2010-2011 SpringSource.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import liquibase.database.Database
 import liquibase.database.DatabaseConnection
 import liquibase.exception.DatabaseException
 import liquibase.exception.PreconditionErrorException
-import liquibase.exception.PreconditionFailedException;
+import liquibase.exception.PreconditionFailedException
 import liquibase.exception.ValidationErrors
 import liquibase.exception.Warnings
 import liquibase.precondition.Precondition
@@ -75,7 +75,7 @@ class GrailsPrecondition implements Precondition {
 				throw new PreconditionFailedException(e.message, changeLog, this)
 			}
 			catch (e) {
-				throw new PreconditionErrorException(e, changeLog, this);
+				throw new PreconditionErrorException(e, changeLog, this)
 			}
 		}
 	}

@@ -1,4 +1,4 @@
-/* Copyright 2006-2010 the original author or authors.
+/* Copyright 2010-2011 SpringSource.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,9 +56,8 @@ class DatabaseMigrationGrailsPlugin {
 
 	String license = 'APACHE'
 	def organization = [name: 'SpringSource', url: 'http://www.springsource.org/']
-	def developers = [[name: 'Burt Beckwith', email: 'beckwithb@vmware.com']]
 	def issueManagement = [system: 'JIRA', url: 'http://jira.grails.org/browse/GPDATABASEMIGRATION']
-	def scm = [url: 'https://github.com/grails-plugins/grails-spring-security-core']
+	def scm = [url: 'https://github.com/grails-plugins/grails-database-migration']
 
 	def doWithSpring = {
 

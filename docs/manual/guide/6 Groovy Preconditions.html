@@ -87,6 +87,8 @@ function addJsClass() {
                     <p><strong>Authors:</strong> Burt Beckwith</p>
 
                     <p><strong>Version:</strong> 1.0</p>
+
+                    
                 </div>
 
                 
@@ -94,16 +96,16 @@ function addJsClass() {
                 
 
 <h1 id="6 Groovy Preconditions">6 Groovy Preconditions</h1>
-In addition to the built-in Liquibase preconditions (see <a href="http://www.liquibase.org/manual/preconditions" target="blank">the documentation</a> for what's available) you can also specify preconditions using Groovy code (as long as you're using the Groovy DSL file format). These changes use the <code>grailsPrecondition</code> tag name and are contained in the <code>databaseChangeLog</code> tag or in a <code>changeSet</code> tag like standard built-in tags.<p class="paragraph"/><h4>General format</h4><p class="paragraph"/>This is general format of a Groovy-based precondition:<p class="paragraph"/><div class="code"><pre>databaseChangeLog = &#123;<p class="paragraph"/>   changeSet(author: '...', id: '...') &#123;<p class="paragraph"/>      grailsPrecondition &#123;<p class="paragraph"/>         check &#123;<p class="paragraph"/>            // use an assertion
-            assert x == x<p class="paragraph"/>            // use an assertion with an error message
-            assert y == y : 'value cannot be 237'<p class="paragraph"/>            // call the fail method
-            <span class="java&#45;keyword">if</span> (x != x) &#123;
-               fail 'x != x'
-            &#125;<p class="paragraph"/>            // <span class="java&#45;keyword">throw</span> an exception (the fail method is preferred)
-            <span class="java&#45;keyword">if</span> (y != y) &#123;
-               <span class="java&#45;keyword">throw</span> <span class="java&#45;keyword">new</span> RuntimeException('y != y')
-            &#125;
-         &#125;<p class="paragraph"/>      &#125;
+In addition to the built-in Liquibase preconditions (see <a href="http://www.liquibase.org/manual/preconditions" target="blank">the documentation</a> for what's available) you can also specify preconditions using Groovy code (as long as you're using the Groovy DSL file format). These changes use the <code>grailsPrecondition</code> tag name and are contained in the <code>databaseChangeLog</code> tag or in a <code>changeSet</code> tag like standard built-in tags.<p class="paragraph"/><h4>General format</h4><p class="paragraph"/>This is general format of a Groovy-based precondition:<p class="paragraph"/><div class="code"><pre>databaseChangeLog = &#123;<p class="paragraph"/>   changeSet(author: '...', id: '...') &#123;<p class="paragraph"/>      preConditions &#123;<p class="paragraph"/>         grailsPrecondition &#123;<p class="paragraph"/>            check &#123;<p class="paragraph"/>               // use an assertion
+               assert x == x<p class="paragraph"/>               // use an assertion with an error message
+               assert y == y : 'value cannot be 237'<p class="paragraph"/>               // call the fail method
+               <span class="java&#45;keyword">if</span> (x != x) &#123;
+                  fail 'x != x'
+               &#125;<p class="paragraph"/>               // <span class="java&#45;keyword">throw</span> an exception (the fail method is preferred)
+               <span class="java&#45;keyword">if</span> (y != y) &#123;
+                  <span class="java&#45;keyword">throw</span> <span class="java&#45;keyword">new</span> RuntimeException('y != y')
+               &#125;
+            &#125;<p class="paragraph"/>         &#125;<p class="paragraph"/>      &#125;
    &#125;
 &#125;</pre></div><p class="paragraph"/>As you can see there are a few ways to indicate that a precondition wasn't met:
 <ul class="star">

@@ -1,4 +1,4 @@
-/* Copyright 2006-2010 the original author or authors.
+/* Copyright 2010-2011 SpringSource.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ target(dbmCreateChangelog: 'Creates an empty changelog file') {
 		if (!okToWrite(file.path)) return
 
 		String user = (System.getProperty('user.name') ?: '').trim()
-		String author = user ? "$user (generated)" : 'diff-generated';
+		String author = user ? "$user (generated)" : 'diff-generated'
 
 		ant.copy(file: "$databaseMigrationPluginDir/src/resources/changelog.template",
 		         tofile: file.path, verbose: true, overwrite: true) {

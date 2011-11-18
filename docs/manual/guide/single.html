@@ -67,6 +67,7 @@ function addJsClass(el) {
                             <h1>Database Migration Plugin - Reference Documentation</h1>
                             <p><strong>Authors:</strong> Burt Beckwith</p>
                             <p><strong>Version:</strong> 1.0</p>
+                            
                         </div>
 
                         
@@ -135,20 +136,20 @@ The Database Migration plugin helps you manage database changes while developing
 <h2 id="2.1 Migration from Autobase">2.1 Migration from Autobase</h2>
 Autobase is another plugin for managing database migrations. It uses Groovy migration scripts that have a similar syntax to this plugin's ones, but there are some differences that mean you will have to do a little bit of work to migrate your existing scripts. The following notes are applicable to Autobase 0.11 and earlier.<p class="paragraph"/><h4>Location of migration scripts</h4><p class="paragraph"/>Autobase defaulted to putting its migration scripts into a <code>./migrations</code> directory, whereas the Database Migration plugin uses <code>./grails-app/migrations</code> as the default. So, you can either move your scripts or add this setting to your <code>grails-app/conf/Config.groovy</code> file:
 <div class="code"><pre>grails.plugin.databasemigration.changelogLocation = <span class="java&#45;quote">"migrations"</span></pre></div><p class="paragraph"/><h4>New syntax for all scripts</h4><p class="paragraph"/>Autobase allowed you to write changelog files that just included the change sets one after the other. This isn't supported by the Database Migration plugin, so  <em class="italic">all</em>  changelogs must put their change set definitions inside a block like so:<p class="paragraph"/><div class="code"><pre>databaseChangeLog = &#123;
-    changeSet(...) &#123; &#8230; &#125;
-    changeSet(...) &#123; &#8230; &#125;
-    &#8230;
+   changeSet(...) &#123; &#8230; &#125;
+   changeSet(...) &#123; &#8230; &#125;
+   &#8230;
 &#125;</pre></div><p class="paragraph"/>In addition, if your main Autobase changelog specifies a logical file path (see next section), you will have to use the syntax:<p class="paragraph"/><div class="code"><pre>databaseChangeLog = &#123;
-    logicalFilePath <span class="java&#45;quote">"app&#45;autobase"</span>
-    &#8230;
+   logicalFilePath <span class="java&#45;quote">"app&#45;autobase"</span>
+   &#8230;
 &#125;</pre></div><p class="paragraph"/>in all the changelog files. If you don't do this, the plugin won't recognise that existing migrations have already been applied to a database and all of them will be reapplied.<p class="paragraph"/>These changes also apply to the main changelog, but there are some other differences to cover for that.<p class="paragraph"/><h4>Parent changelog differences</h4><p class="paragraph"/>The syntax for the main (or parent) Autobase changelog file looks like:<p class="paragraph"/><div class="code"><pre>databaseChangeLog(logicalFilePath: <span class="java&#45;quote">"appName&#45;autobase"</span>) &#123;
-    include <span class="java&#45;quote">"./migrations/batch/SomeBigChanges.groovy"</span>
-    include <span class="java&#45;quote">"./migrations/changelog&#45;1.0.1.groovy"</span>
-    include <span class="java&#45;quote">"./migrations/changelog&#45;1.0.5.groovy"</span>
+   include <span class="java&#45;quote">"./migrations/batch/SomeBigChanges.groovy"</span>
+   include <span class="java&#45;quote">"./migrations/changelog&#45;1.0.1.groovy"</span>
+   include <span class="java&#45;quote">"./migrations/changelog&#45;1.0.5.groovy"</span>
 &#125;</pre></div><p class="paragraph"/>The new format is noticeably different:<p class="paragraph"/><div class="code"><pre>databaseChangeLog = &#123;
-    logicalFilePath <span class="java&#45;quote">"site&#45;autobase"</span><p class="paragraph"/>    include file: <span class="java&#45;quote">"batch/SomeBigChanges.groovy"</span>
-    include file: <span class="java&#45;quote">"changelog&#45;1.0.1.groovy"</span>
-    include file: <span class="java&#45;quote">"changelog&#45;1.0.5.groovy"</span>
+   logicalFilePath <span class="java&#45;quote">"site&#45;autobase"</span><p class="paragraph"/>   include file: <span class="java&#45;quote">"batch/SomeBigChanges.groovy"</span>
+   include file: <span class="java&#45;quote">"changelog&#45;1.0.1.groovy"</span>
+   include file: <span class="java&#45;quote">"changelog&#45;1.0.5.groovy"</span>
 &#125;</pre></div><p class="paragraph"/>In particular, note that:
 <ul class="star">
 <li>The <code>databaseChangeLog</code> line is different</li>
@@ -156,9 +157,9 @@ Autobase is another plugin for managing database migrations. It uses Groovy migr
 <li><code>include</code> takes a named <code>file</code> argument</li>
 <li>The file paths passed to <code>include</code> are relative to the configured migrations directory</li>
 </ul><p class="paragraph"/>Fortunately, these changes are highly localised and pretty trivial to implement.<p class="paragraph"/><h4>modifyColumn refactoring no longer available</h4><p class="paragraph"/>The <code>modifyColumn</code> refactoring has been removed in the version of Liquibase that comes with the Database Migration plugin. Instead you should use the new <code>modifyDataType</code> refactoring like so:<p class="paragraph"/><div class="code"><pre>&#8230;
-    changeSet(id:'IncreaseCommentBodySize', author:'someone') &#123;
-        modifyDataType tableName: 'comment', columnName: 'body', newDataType: 'TEXT'
-    &#125;</pre></div><p class="paragraph"/>The parameters are the same as for <code>modifyColumn</code>, but the syntax is somewhat different.
+changeSet(id:'IncreaseCommentBodySize', author:'someone') &#123;
+   modifyDataType tableName: 'comment', columnName: 'body', newDataType: 'TEXT'
+&#125;</pre></div><p class="paragraph"/>The parameters are the same as for <code>modifyColumn</code>, but the syntax is somewhat different.
 
 
 
@@ -237,16 +238,16 @@ In addition to the built-in Liquibase changes (see <a href="http://www.liquibase
 
 
 <h1 id="6 Groovy Preconditions">6 Groovy Preconditions</h1>
-In addition to the built-in Liquibase preconditions (see <a href="http://www.liquibase.org/manual/preconditions" target="blank">the documentation</a> for what's available) you can also specify preconditions using Groovy code (as long as you're using the Groovy DSL file format). These changes use the <code>grailsPrecondition</code> tag name and are contained in the <code>databaseChangeLog</code> tag or in a <code>changeSet</code> tag like standard built-in tags.<p class="paragraph"/><h4>General format</h4><p class="paragraph"/>This is general format of a Groovy-based precondition:<p class="paragraph"/><div class="code"><pre>databaseChangeLog = &#123;<p class="paragraph"/>   changeSet(author: '...', id: '...') &#123;<p class="paragraph"/>      grailsPrecondition &#123;<p class="paragraph"/>         check &#123;<p class="paragraph"/>            // use an assertion
-            assert x == x<p class="paragraph"/>            // use an assertion with an error message
-            assert y == y : 'value cannot be 237'<p class="paragraph"/>            // call the fail method
-            <span class="java&#45;keyword">if</span> (x != x) &#123;
-               fail 'x != x'
-            &#125;<p class="paragraph"/>            // <span class="java&#45;keyword">throw</span> an exception (the fail method is preferred)
-            <span class="java&#45;keyword">if</span> (y != y) &#123;
-               <span class="java&#45;keyword">throw</span> <span class="java&#45;keyword">new</span> RuntimeException('y != y')
-            &#125;
-         &#125;<p class="paragraph"/>      &#125;
+In addition to the built-in Liquibase preconditions (see <a href="http://www.liquibase.org/manual/preconditions" target="blank">the documentation</a> for what's available) you can also specify preconditions using Groovy code (as long as you're using the Groovy DSL file format). These changes use the <code>grailsPrecondition</code> tag name and are contained in the <code>databaseChangeLog</code> tag or in a <code>changeSet</code> tag like standard built-in tags.<p class="paragraph"/><h4>General format</h4><p class="paragraph"/>This is general format of a Groovy-based precondition:<p class="paragraph"/><div class="code"><pre>databaseChangeLog = &#123;<p class="paragraph"/>   changeSet(author: '...', id: '...') &#123;<p class="paragraph"/>      preConditions &#123;<p class="paragraph"/>         grailsPrecondition &#123;<p class="paragraph"/>            check &#123;<p class="paragraph"/>               // use an assertion
+               assert x == x<p class="paragraph"/>               // use an assertion with an error message
+               assert y == y : 'value cannot be 237'<p class="paragraph"/>               // call the fail method
+               <span class="java&#45;keyword">if</span> (x != x) &#123;
+                  fail 'x != x'
+               &#125;<p class="paragraph"/>               // <span class="java&#45;keyword">throw</span> an exception (the fail method is preferred)
+               <span class="java&#45;keyword">if</span> (y != y) &#123;
+                  <span class="java&#45;keyword">throw</span> <span class="java&#45;keyword">new</span> RuntimeException('y != y')
+               &#125;
+            &#125;<p class="paragraph"/>         &#125;<p class="paragraph"/>      &#125;
    &#125;
 &#125;</pre></div><p class="paragraph"/>As you can see there are a few ways to indicate that a precondition wasn't met:
 <ul class="star">

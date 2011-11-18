@@ -1,4 +1,4 @@
-/* Copyright 2006-2010 the original author or authors.
+/* Copyright 2010-2011 SpringSource.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ target(dbmGormDiff: 'Diff GORM classes against database and generate a changelog
 
 	def realDatabase
 	try {
-		echo "Starting $hyphenatedScriptName"
+		printMessage "Starting $hyphenatedScriptName"
 
 		executeAndWrite argsList[0], { PrintStream out ->
 			MigrationUtils.executeInSession {
@@ -47,7 +47,7 @@ target(dbmGormDiff: 'Diff GORM classes against database and generate a changelog
 			}
 		}
 
-		echo "Finished $hyphenatedScriptName"
+		printMessage "Finished $hyphenatedScriptName"
 	}
 	catch (e) {
 		printStackTrace e

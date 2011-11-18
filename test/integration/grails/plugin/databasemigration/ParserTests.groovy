@@ -1,4 +1,4 @@
-/* Copyright 2006-2010 the original author or authors.
+/* Copyright 2010-2011 SpringSource.
  *
  * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,13 @@
  */
 package grails.plugin.databasemigration
 
-import org.springframework.beans.PropertyAccessorFactory
-
 import liquibase.change.core.CreateTableChange
 import liquibase.changelog.ChangeLogParameters
+import liquibase.parser.core.xml.XMLChangeLogSAXParser
 import liquibase.resource.FileSystemResourceAccessor
 import liquibase.resource.ResourceAccessor
-import liquibase.parser.core.xml.XMLChangeLogSAXParser
+
+import org.springframework.beans.PropertyAccessorFactory
 
 /**
  * @author <a href='mailto:burt@burtbeckwith.com'>Burt Beckwith</a>

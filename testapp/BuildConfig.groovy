@@ -6,7 +6,6 @@ grails.project.test.reports.dir = 'target/test-reports'
 grails.project.dependency.resolution = {
 
 	inherits 'global'
-
 	log 'warn'
 
 	repositories {
@@ -14,11 +13,11 @@ grails.project.dependency.resolution = {
 		grailsHome()
 		grailsCentral()
 
+		mavenLocal()
 		mavenCentral()
 	}
 
 	dependencies {
-		runtime 'mysql:mysql-connector-java:5.1.5'
+		runtime 'mysql:mysql-connector-java:5.1.16'
 	}
 }
-

@@ -3,7 +3,7 @@
 	<classpathentry kind="src" path="src/groovy"/>
 	<classpathentry kind="src" path="src/docs"/>
 	<classpathentry kind="src" path="src/resources"/>
-	<classpathentry excluding="hibernate/|spring/|hibernate/|spring/" kind="src" path="grails-app/conf"/>
+	<classpathentry excluding="spring/" kind="src" path="grails-app/conf"/>
 	<classpathentry kind="src" path="grails-app/conf/spring"/>
 	<classpathentry kind="src" path="grails-app/controllers"/>
 	<classpathentry kind="src" path="grails-app/domain"/>
@@ -13,6 +13,5 @@
 	<classpathentry kind="src" path="test/integration"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="com.springsource.sts.grails.core.CLASSPATH_CONTAINER"/>
-	<classpathentry exported="true" kind="con" path="GROOVY_DSL_SUPPORT"/>
 	<classpathentry kind="output" path="target/eclipseclasses"/>
 </classpath>

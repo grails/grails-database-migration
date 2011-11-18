@@ -6,7 +6,6 @@ grails.project.docs.output.dir = 'docs/manual' // docs are checked into gh-pages
 grails.project.dependency.resolution = {
 
 	inherits 'global'
-
 	log 'warn'
 
 	repositories {
@@ -14,12 +13,13 @@ grails.project.dependency.resolution = {
 		grailsHome()
 		grailsCentral()
 
+		mavenLocal()
 		mavenCentral()
 	}
 
 	dependencies {
 
-		compile('org.liquibase:liquibase-core:2.0.1') {
+		compile('org.liquibase:liquibase-core:2.0.3') {
 			transitive = false
 		}
 

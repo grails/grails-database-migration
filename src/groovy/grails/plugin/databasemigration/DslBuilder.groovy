@@ -1,4 +1,4 @@
-/* Copyright 2006-2010 the original author or authors.
+/* Copyright 2010-2011 SpringSource.
  *
  * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,6 @@ package grails.plugin.databasemigration
 
 import java.lang.reflect.Method
 import java.util.jar.JarFile
-
-import org.apache.log4j.Logger
-import org.codehaus.groovy.runtime.InvokerHelper
-import org.springframework.context.ApplicationContext
 
 import liquibase.change.Change
 import liquibase.change.ChangeFactory
@@ -55,6 +51,10 @@ import liquibase.sql.visitor.SqlVisitorFactory
 import liquibase.util.ObjectUtil
 import liquibase.util.StringUtils
 import liquibase.util.file.FilenameUtils
+
+import org.apache.log4j.Logger
+import org.codehaus.groovy.runtime.InvokerHelper
+import org.springframework.context.ApplicationContext
 
 /**
  * Based on <code>liquibase.parser.core.xml.XMLChangeLogSAXHandler</code>.
@@ -732,7 +732,7 @@ class DslBuilder extends BuilderSupport {
 				fileName = tempFile
 			}
 			else {
-				fileName = FilenameUtils.getFullPath(relativeBaseFileName) + fileName;
+				fileName = FilenameUtils.getFullPath(relativeBaseFileName) + fileName
 			}
 		}
 

@@ -1,4 +1,4 @@
-/* Copyright 2006-2010 the original author or authors.
+/* Copyright 2010-2011 SpringSource.
  *
  * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
@@ -41,7 +41,7 @@ target(dbmDiff: 'Writes description of differences to standard out') {
 	def thisDatabase
 	def otherDatabase
 	try {
-		echo "Starting $hyphenatedScriptName against environment '$otherEnv'"
+		printMessage "Starting $hyphenatedScriptName against environment '$otherEnv'"
 
 		executeAndWrite argsList[1], { PrintStream out ->
 			MigrationUtils.executeInSession {
@@ -51,7 +51,7 @@ target(dbmDiff: 'Writes description of differences to standard out') {
 			}
 		}
 
-		echo "Finished $hyphenatedScriptName"
+		printMessage "Finished $hyphenatedScriptName"
 	}
 	catch (e) {
 		printStackTrace e
@@ -65,7 +65,7 @@ target(dbmDiff: 'Writes description of differences to standard out') {
 
 // TODO this will fail with JNDI or encryption codec
 buildOtherDatabase = { String otherEnv ->
-	
+
 	try {
 		// check if it's a full name
 		Environment.valueOf otherEnv
@@ -77,7 +77,7 @@ buildOtherDatabase = { String otherEnv ->
 			otherEnv = fullName
 		}
 	}
-	
+
 	def configSlurper = new ConfigSlurper(otherEnv)
 	configSlurper.binding = binding.variables
 	def otherDsConfig = configSlurper.parse(classLoader.loadClass('DataSource')).dataSource

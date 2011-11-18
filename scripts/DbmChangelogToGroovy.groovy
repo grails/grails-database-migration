@@ -1,4 +1,4 @@
-/* Copyright 2006-2010 the original author or authors.
+/* Copyright 2010-2011 SpringSource.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ target(dbmChangelogToGroovy: 'Creates a Groovy DSL changelog from a Liquibase XM
 
 	if (!okToWrite(groovy)) return
 
-	echo "Converting $xml to $groovy"
+	printMessage "Converting $xml to $groovy"
 
 	ChangelogXml2Groovy = classLoader.loadClass('grails.plugin.databasemigration.ChangelogXml2Groovy')
 	new File(groovy).withWriter { it.write ChangelogXml2Groovy.convert(new File(xml).text) }
