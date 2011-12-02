@@ -10,7 +10,7 @@ Generates the SQL statements for the Liquibase @DATABASECHANGELOG@ control table
 
 Usage:
 {code:java}
-grails [environment] dbm-changelog-sync --contexts=[contexts] --defaultSchema=[defaultSchema]
+grails [environment] dbm-changelog-sync-sql [filename] --contexts=[contexts] --defaultSchema=[defaultSchema]
 {code}
 
 Required arguments: _none_ .
