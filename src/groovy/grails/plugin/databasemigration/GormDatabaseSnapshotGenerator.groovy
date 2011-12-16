@@ -115,7 +115,7 @@ class GormDatabaseSnapshotGenerator implements DatabaseSnapshotGenerator {
 				}
 
 				for (hiberateUnique in hibernateTable.uniqueKeyIterator) {
-					Index index = new Index(table: table, name: hiberateUnique.name)
+					Index index = new Index(table: table, name: hiberateUnique.name.replaceAll('-','_') + '_' +System.currentTimeMillis(),unique: true)
 					for (hibernateColumn in hiberateUnique.columnIterator) {
 						index.columns << hibernateColumn.name
 					}
