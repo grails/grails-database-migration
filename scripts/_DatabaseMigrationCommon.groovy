@@ -235,6 +235,12 @@ createGormDatabase = { ->
 	def configuration = new GrailsAnnotationConfiguration(
 		grailsApplication: appCtx.grailsApplication,
 		properties: ['hibernate.dialect': dialect.toString()] as Properties)
+		
+  def hibernateCfgXml = classLoader.getResource('hibernate.cfg.xml')
+  if (hibernateCfgXml) {
+    configuration.configure(hibernateCfgXml)
+  }
+    
 	configuration.buildMappings()
 
 	GormDatabase = classLoader.loadClass('grails.plugin.databasemigration.GormDatabase')
