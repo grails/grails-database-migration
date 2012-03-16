@@ -146,7 +146,7 @@ class MigrationUtils {
 		}
 
 		// in run-app
-		if ('RunApp'.equals(scriptName)) {
+		if (autoMigrateScripts.contains(scriptName)) {
 			return true
 		}
 
@@ -163,6 +163,10 @@ class MigrationUtils {
 
 	static String getDbDocLocation() {
 		getConfig().dbDocLocation ?: 'target/dbdoc'
+	}
+
+	static String getAutoMigrateScripts() {
+		getConfig().autoMigrateScripts ?: ['RunApp']
 	}
 
 	static String getChangelogFileName() {
