@@ -17,6 +17,7 @@ package grails.plugin.databasemigration
 import grails.util.GrailsUtil
 
 import org.apache.log4j.Logger
+import liquibase.database.Database
 
 /**
  * Based on the class of the same name from Mike Hugo's liquibase-runner plugin.
@@ -41,14 +42,17 @@ class MigrationRunner {
 			return
 		}
 
-		def database
 		try {
-			MigrationUtils.executeInSession {
-				database = MigrationUtils.getDatabase(config.updateOnStartDefaultSchema ?: null)
-				for (name in config.updateOnStartFileNames) {
-					LOG.info "Running script '$name'"
-					MigrationUtils.getLiquibase(database, name).update null
-				}
+            Map databases = [:]
+            databases = MigrationUtils.getDatabases()
+            databases.each {String dsName, Database database ->
+                MigrationUtils.executeInSession(dsName) {
+                    List updateOnStartFileNames = dsName == "dataSource" ? config.updateOnStartFileNames : config."${dsName}".updateOnStartFileNames
+                    for (String name in updateOnStartFileNames) {
+                        LOG.info "Running script '$name'"
+                        MigrationUtils.getLiquibase(database, name).update null
+                    }
+                }
 			}
 		}
 		catch (e) {

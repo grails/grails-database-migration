@@ -65,13 +65,51 @@ class MigrationUtils {
 			database.metaClass = emc
 		}
 
+        println "getDatabase database: ${database}"
+
 		database
 	}
 
-	static Database getDatabase(String defaultSchema = null) {
-		def connection = findSessionFactory().currentSession.connection()
+    static Map<String, Database> getDatabases() {
+        Map<String, Database> databaseMap = [:]
 
-		def dialect = application.config.dataSource.dialect
+        databaseMap["dataSource"] = getDatabase(config.updateOnStartDefaultSchema ?: null)
+
+        getDataSourceConfigs().each{ dsName, dsConfig ->
+            String dataSourceSuffix = extractSuffix(dsName)
+            def connection = findSessionFactory(dataSourceSuffix).currentSession.connection()
+
+            def dialect = application.config."dataSource${dataSourceSuffix}".dialect
+            if (dialect && dialect instanceof Class) {
+                dialect = dialect.name
+            } else {
+                dialect = application.mainContext.dialectDetector
+            }
+
+            def defaultSchema = config."${dsName}".updateOnStartDefaultSchema ?: null
+            databaseMap[dsName] == getDatabase( connection, defaultSchema, dialect.toString() )
+        }
+
+        databaseMap
+    }
+
+    static Map<String, ConfigObject> getDataSourceConfigs() {
+        def dsConfigs = [:]
+        application.config.each { String name, value ->
+            if(name.startsWith('dataSource_') && value instanceof ConfigObject) {
+                dsConfigs[name] = value
+            }
+        }
+
+        dsConfigs
+    }
+
+
+	static Database getDatabase(String defaultSchema = null, String dsName = 'dataSource') {
+        def dataSourceSuffix = extractSuffix(dsName)
+		def connection = findSessionFactory(dataSourceSuffix).currentSession.connection()
+
+		def dialect = application.config."$dsName".dialect
 		if (dialect) {
 			if (dialect instanceof Class) {
 				dialect = dialect.name
@@ -93,20 +131,21 @@ class MigrationUtils {
 		new Liquibase(changelogFileName, resourceAccessor, database)
 	}
 
-	static void executeInSession(Closure c) {
-		boolean participate = initSession()
+	static void executeInSession(String dsName = 'dataSource', Closure c) {
+        String dataSourceSuffix = extractSuffix(dsName)
+		boolean participate = initSession(dataSourceSuffix)
 		try {
 			c()
 		}
 		finally {
 			if (!participate) {
-				flushAndClose()
+				flushAndClose(dataSourceSuffix)
 			}
 		}
 	}
 
-	private static boolean initSession() {
-		def sessionFactory = findSessionFactory()
+	private static boolean initSession(String dataSourceSuffix) {
+		def sessionFactory = findSessionFactory(dataSourceSuffix)
 		if (TransactionSynchronizationManager.hasResource(sessionFactory)) {
 			return true
 		}
@@ -117,8 +156,8 @@ class MigrationUtils {
 		false
 	}
 
-	private static void flushAndClose() {
-		def sessionFactory = findSessionFactory()
+	private static void flushAndClose(String dataSourceSuffix) {
+		def sessionFactory = findSessionFactory(dataSourceSuffix)
 		def session = TransactionSynchronizationManager.unbindResource(sessionFactory).session
 		if (!FlushMode.MANUAL == session.flushMode) {
 			session.flush()
@@ -126,17 +165,32 @@ class MigrationUtils {
 		SessionFactoryUtils.closeSession session
 	}
 
-	private static findSessionFactory() {
+	private static findSessionFactory(String dataSourceSuffix = '') {
 
-		def factoryBean = application.mainContext.getBean('&sessionFactory')
+        def testDataSourceSuffix = dataSourceSuffix
+		def factoryBean = application.mainContext.getBean("&sessionFactory${testDataSourceSuffix}")
 		if (factoryBean.getClass().simpleName == 'DelayedSessionFactoryBean') {
 			// get the un-proxied version since at this point it's ok to get a connection;
 			// only an issue during plugin tests
 			return factoryBean.realSessionFactory
 		}
 
-		application.mainContext.sessionFactory
+		application.mainContext."sessionFactory${dataSourceSuffix}"
 	}
+
+    private static extractSuffix(dataSourceName) {
+        boolean isDefault = dataSourceName == "dataSource"
+        String suffix = isDefault ? '' : dataSourceName[10..-1]
+        suffix
+    }
+
+    static String dataSourceNameWithSuffix( dataSourceSuffix = '') {
+        String dsName = 'dataSource'
+        if (dataSourceSuffix?.length() > 0) {
+            dsName += "_${dataSourceSuffix}"
+        }
+        dsName
+    }
 
 	static boolean canAutoMigrate() {
 

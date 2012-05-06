@@ -73,4 +73,24 @@ class DbmGenerateGormChangelogTests extends AbstractScriptTests {
 		assertTrue output.contains(
 			'Starting dbm-generate-gorm-changelog for database sa @ jdbc:h2:tcp://localhost/./target/testdb/testdb')
 	}
+
+
+    void testGenerateGormChangelogForSecondaryDataSource() {
+
+        executeAndCheck (['dbm-generate-gorm-changelog', '--dataSource=secondary', '--stacktrace'])
+
+        assertTrue output.contains('<databaseChangeLog')
+        assertTrue output.contains('<changeSet')
+        assertTrue output.contains('<createTable')
+
+        println output
+
+        assertTrue output.contains(
+            'Starting dbm-generate-gorm-changelog for database sa @ jdbc:h2:tcp://localhost/./target/testdb/testdb-secondary'
+        )
+
+        assertTrue output.contains('secondary_thing')
+
+        assertFalse output.contains('book')
+    }
 }

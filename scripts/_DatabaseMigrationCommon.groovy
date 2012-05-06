@@ -44,6 +44,7 @@ target(dbmInit: 'General initialization, also creates a Liquibase instance') {
 		contexts = argsMap.contexts
 		diffTypes = argsMap.diffTypes
 		defaultSchema = argsMap.defaultSchema
+        dataSourceSuffix = argsMap.dataSource
 	}
 	catch (e) {
 		printStackTrace e
@@ -78,11 +79,12 @@ newOutputStreamWriter = { Integer argIndex = 0, boolean relativeToMigrationDir =
 
 doAndClose = { Closure c ->
 	try {
-		MigrationUtils.executeInSession {
-			database = MigrationUtils.getDatabase(defaultSchema)
+        String dsName = MigrationUtils.dataSourceNameWithSuffix(dataSourceSuffix)
+		MigrationUtils.executeInSession(dsName) {
+			database = MigrationUtils.getDatabase(defaultSchema, dsName)
 			liquibase = MigrationUtils.getLiquibase(database)
 
-			def dsConfig = config.dataSource
+			def dsConfig = config."$dsName"
 			String dbDesc = dsConfig.jndiName ? "JNDI $dsConfig.jndiName" : "$dsConfig.username @ $dsConfig.url"
 			printMessage "Starting $hyphenatedScriptName for database $dbDesc"
 			c()
@@ -221,8 +223,9 @@ calculateDate = { ->
 	            'or as one strings with the format "yyyy-MM-dd"'
 }
 
-createGormDatabase = { ->
-	def dialect = config.dataSource.dialect
+createGormDatabase = {  ->
+    String dataSourceName = MigrationUtils.dataSourceNameWithSuffix(dataSourceSuffix)
+	def dialect = config."$dataSourceName".dialect
 	if (dialect) {
 		if (dialect instanceof Class) {
 			dialect = dialect.name
@@ -234,6 +237,7 @@ createGormDatabase = { ->
 
 	def configuration = new GrailsAnnotationConfiguration(
 		grailsApplication: appCtx.grailsApplication,
+        dataSourceName: dataSourceSuffix ?: 'DEFAULT',
 		properties: ['hibernate.dialect': dialect.toString()] as Properties)
 	configuration.buildMappings()
 

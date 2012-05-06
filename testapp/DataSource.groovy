@@ -17,6 +17,15 @@ environments {
 		dataSource {
 			url = 'jdbc:mysql://localhost/migrationtest'
 		}
+
+        dataSource_reports {
+			url = 'jdbc:mysql://localhost/migrationtest_reports'
+            pooled = true
+            driverClassName = 'com.mysql.jdbc.Driver'
+            username = 'migrationtest'
+            password = 'migrationtest'
+            dialect = org.hibernate.dialect.MySQL5InnoDBDialect
+		}
 	}
 	test {
 		dataSource {
