@@ -5,6 +5,7 @@ target(populateData: 'Insert data using GORM') {
 
 	def Product = grailsApp.getDomainClass('migrationtests.Product').clazz
 	def Order = grailsApp.getDomainClass('migrationtests.Order').clazz
+	def Report = grailsApp.getDomainClass('migrationtests.Report').clazz
 
 	Product.withTransaction { status ->
 		def p1 = Product.newInstance(name: 'p1', category: 'Electronics', prize: 100).save(failOnError: true)
@@ -23,6 +24,10 @@ target(populateData: 'Insert data using GORM') {
 		def o3 = Order.newInstance(customer: 'c2', orderDate: new Date() - 10)
 		o3.addToItems(product: p1, quantity: 5)
 		o3.save(failOnError: true)
+
+		Report.newInstance(name: 'r1', value: 'Foo').save(failOnError: true)
+		Report.newInstance(name: 'r2', value: 'Bar').save(failOnError: true)
+		Report.newInstance(name: 'r3', value: 'Baz').save(failOnError: true)
 	}
 }
 

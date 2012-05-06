@@ -33,6 +33,7 @@ target(dbmInit: 'General initialization, also creates a Liquibase instance') {
 		contexts = argsMap.contexts
 		diffTypes = argsMap.diffTypes
 		defaultSchema = argsMap.defaultSchema
+		dataSourceSuffix = argsMap.dataSource
 
 		mkdir dir: MigrationUtils.changelogLocation
 	}
@@ -44,11 +45,12 @@ target(dbmInit: 'General initialization, also creates a Liquibase instance') {
 
 doAndClose = { Closure c ->
 	try {
-		MigrationUtils.executeInSession {
-			database = MigrationUtils.getDatabase(defaultSchema)
+		String dsName = MigrationUtils.dataSourceNameWithSuffix(dataSourceSuffix)
+		MigrationUtils.executeInSession(dsName) {
+			database = MigrationUtils.getDatabase(defaultSchema, dsName)
 			liquibase = MigrationUtils.getLiquibase(database)
 
-			def dsConfig = config.dataSource
+			def dsConfig = config."$dsName"
 			String dbDesc = dsConfig.jndiName ? "JNDI $dsConfig.jndiName" : "$dsConfig.username @ $dsConfig.url"
 			printMessage "Starting $hyphenatedScriptName for database $dbDesc"
 			c()

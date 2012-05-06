@@ -18,6 +18,15 @@ environments {
 		dataSource {
 			url = 'jdbc:h2:tcp://localhost/./target/testdb/testdb'
 		}
+
+        dataSource_secondary {
+            url = 'jdbc:h2:tcp://localhost/./target/testdb/testdb-secondary'
+            pooled = true
+            driverClassName = 'org.h2.Driver'
+            username = 'sa'
+            password = ''
+            dialect = org.hibernate.dialect.H2Dialect
+        }
 	}
 	test {
 		dataSource {

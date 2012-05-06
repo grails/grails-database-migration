@@ -15,6 +15,7 @@
 package grails.plugin.databasemigration
 
 import grails.util.GrailsUtil
+import liquibase.database.Database
 
 import org.apache.log4j.Logger
 
@@ -41,17 +42,18 @@ class MigrationRunner {
 			return
 		}
 
-		def database
 		try {
-			MigrationUtils.executeInSession {
-				database = MigrationUtils.getDatabase(config.updateOnStartDefaultSchema ?: null)
-				if (config.dropOnStart) {
-					LOG.warn "Dropping tables..."
-					MigrationUtils.getLiquibase(database).dropAll()
-				}
-				for (name in config.updateOnStartFileNames) {
-					LOG.info "Running script '$name'"
-					MigrationUtils.getLiquibase(database, name).update null
+			MigrationUtils.databases.each { String dsName, Database database ->
+				MigrationUtils.executeInSession(dsName) {
+					if (config.dropOnStart) {
+						LOG.warn "Dropping tables..."
+						MigrationUtils.getLiquibase(database).dropAll()
+					}
+					List updateOnStartFileNames = dsName == 'dataSource' ? config.updateOnStartFileNames : config."$dsName".updateOnStartFileNames
+					for (String name in updateOnStartFileNames) {
+						LOG.info "Running script '$name'"
+						MigrationUtils.getLiquibase(database, name).update config.contexts
+					}
 				}
 			}
 		}

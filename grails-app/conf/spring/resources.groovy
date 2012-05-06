@@ -8,6 +8,7 @@ import java.lang.reflect.Proxy
 import org.codehaus.groovy.grails.orm.hibernate.ConfigurableLocalSessionFactoryBean
 import org.hibernate.SessionFactory
 import org.springframework.jdbc.support.lob.DefaultLobHandler
+import org.springframework.orm.hibernate3.HibernateTransactionManager
 import org.springframework.util.ReflectionUtils
 
 // for testing only; beans are used to delay SessionFactory/DataSource creation
@@ -25,6 +26,22 @@ beans = {
 
 	dataSource(DelayedDataSource) {
 		dataSourceConfig = application.config.dataSource
+	}
+
+	'sessionFactory_secondary'(DelayedSessionFactoryBean) {
+		dataSource = ref('dataSourceSecondary')
+		entityInterceptor = ref('entityInterceptor')
+		grailsApplication = application
+		hibernateProperties = ref('hibernateProperties')
+		lobHandler = ref('lobHandlerDetector')
+	}
+
+	'transactionManager_secondary'(HibernateTransactionManager) {
+		sessionFactory = ref('sessionFactory_secondary')
+	}
+
+	dataSourceSecondary(DelayedDataSource) {
+		dataSourceConfig = application.config.dataSource_secondary
 	}
 }
 
