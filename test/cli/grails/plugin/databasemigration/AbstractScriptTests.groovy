@@ -121,16 +121,20 @@ abstract class AbstractScriptTests extends AbstractCliTestCase {
 		tableNames
 	}
 
-	protected void assertTableCount(int count) {
-		assertEquals 'checking table count', count, findAllTableNames().size()
+	protected void assertTableCount(int count, String url = URL) {
+		assertEquals 'checking table count', count, findAllTableNames(url).size()
 	}
 
 	protected void generateChangelog() {
 		executeAndCheck(['dbm-generate-changelog', TEST_CHANGELOG])
 	}
 
-	protected void copyTestChangelog(String name = 'test.changelog') {
-		def file = new File(CHANGELOG_DIR, TEST_CHANGELOG)
+    protected void generateSecondaryChagelog() {
+        executeAndCheck(['dbm-generate-changelog', SECONDARY_TEST_CHANGELOG])
+    }
+
+	protected void copyTestChangelog(String name = 'test.changelog', String target = TEST_CHANGELOG) {
+		def file = new File(CHANGELOG_DIR, target)
 		file.deleteOnExit()
 		file.withWriter {
 			it.write getClass().getResourceAsStream(name).text
