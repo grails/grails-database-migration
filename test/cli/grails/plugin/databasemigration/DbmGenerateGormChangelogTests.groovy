@@ -83,8 +83,6 @@ class DbmGenerateGormChangelogTests extends AbstractScriptTests {
         assertTrue output.contains('<changeSet')
         assertTrue output.contains('<createTable')
 
-        println output
-
         assertTrue output.contains(
             'Starting dbm-generate-gorm-changelog for database sa @ jdbc:h2:tcp://localhost/./target/testdb/testdb-secondary'
         )

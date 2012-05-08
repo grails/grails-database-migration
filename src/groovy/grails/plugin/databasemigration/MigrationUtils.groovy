@@ -184,6 +184,12 @@ class MigrationUtils {
         suffix
     }
 
+    private static extractSuffixWithOutUnderbar(dataSourceName) {
+        boolean isDefault = dataSourceName == "dataSource"
+        String suffix = isDefault ? '' : dataSourceName[11..-1]
+        suffix
+    }
+
     static String dataSourceNameWithSuffix( dataSourceSuffix = '') {
         String dsName = 'dataSource'
         if (dataSourceSuffix?.length() > 0) {
@@ -223,8 +229,14 @@ class MigrationUtils {
 		getConfig().autoMigrateScripts ?: ['RunApp']
 	}
 
-	static String getChangelogFileName() {
-		getConfig().changelogFileName ?: 'changelog.groovy'
+	static String getChangelogFileName(String dsName = 'dataSource') {
+        boolean isDefault = dsName == "dataSource"
+        if( !isDefault ) {
+            String dataSourceSuffix = extractSuffixWithOutUnderbar(dsName)
+            println "dataSourceSuffix: $dataSourceSuffix"
+            return getConfig()."${dataSourceSuffix}".changelogFileName ?: "changelog-${dataSourceSuffix}.groovy"
+        }
+        return getConfig().changelogFileName ?: 'changelog.groovy'
 	}
 
 	static String getChangelogLocation() {
