@@ -186,6 +186,10 @@ class MigrationUtils {
 		dataSourceSuffix ? 'dataSource_' + dataSourceSuffix : 'dataSource'
 	}
 
+	private static extractSuffixWithOutUnderbar(dataSourceName) {
+		dataSourceName == 'dataSource' ? '' : dataSourceName[11..-1]
+	}
+
 	static boolean canAutoMigrate() {
 
 		// in a war
@@ -223,8 +227,14 @@ class MigrationUtils {
 		getConfig().autoMigrateScripts ?: ['RunApp']
 	}
 
-	static String getChangelogFileName() {
-		getConfig().changelogFileName ?: 'changelog.groovy'
+	static String getChangelogFileName(String dsName = 'dataSource') {
+		boolean isDefault = dsName == 'dataSource'
+		if (isDefault) {
+			return getConfig().changelogFileName ?: 'changelog.groovy'
+		}
+
+		String dataSourceSuffix = extractSuffixWithOutUnderbar(dsName)
+		return getConfig()."$dataSourceSuffix".changelogFileName ?: "changelog-${dataSourceSuffix}.groovy"
 	}
 
 	static String getChangelogLocation() {

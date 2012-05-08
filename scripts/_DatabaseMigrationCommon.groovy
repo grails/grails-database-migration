@@ -48,7 +48,8 @@ doAndClose = { Closure c ->
 		String dsName = MigrationUtils.dataSourceNameWithSuffix(dataSourceSuffix)
 		MigrationUtils.executeInSession(dsName) {
 			database = MigrationUtils.getDatabase(defaultSchema, dsName)
-			liquibase = MigrationUtils.getLiquibase(database)
+            String changeLogFileName = MigrationUtils.getChangelogFileName(dsName)
+			liquibase = MigrationUtils.getLiquibase(database, changeLogFileName)
 
 			def dsConfig = config."$dsName"
 			String dbDesc = dsConfig.jndiName ? "JNDI $dsConfig.jndiName" : "$dsConfig.username @ $dsConfig.url"
