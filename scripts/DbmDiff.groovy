@@ -44,8 +44,12 @@ target(dbmDiff: 'Writes description of differences to standard out') {
 		printMessage "Starting $hyphenatedScriptName against environment '$otherEnv'"
 
 		executeAndWrite argsList[1], { PrintStream out ->
-			MigrationUtils.executeInSession {
-				thisDatabase = MigrationUtils.getDatabase(defaultSchema)
+            String dsName = MigrationUtils.dataSourceNameWithSuffix(dataSourceSuffix)
+
+            println dsName
+
+			MigrationUtils.executeInSession(dsName) {
+				thisDatabase = MigrationUtils.getDatabase(defaultSchema, dsName)
 				otherDatabase = buildOtherDatabase(otherEnv)
 				createDiff(thisDatabase, otherDatabase).compare().printChangeLog(out, otherDatabase)
 			}
