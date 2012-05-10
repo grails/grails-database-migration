@@ -23,7 +23,7 @@ class DbmDbDocTests extends AbstractScriptTests {
 
 		generateChangelog()
 
-		executeUpdate 'drop table thing'
+		executeUpdate AbstractScriptTests.URL, 'drop table thing'
 
 		executeAndCheck(['dbm-update-count', '1'])
 
@@ -45,6 +45,37 @@ class DbmDbDocTests extends AbstractScriptTests {
 		assertTrue output.contains(
 			'Starting dbm-db-doc for database sa @ jdbc:h2:tcp://localhost/./target/testdb/testdb')
 	}
+
+    void testDbDocForSecondaryDatasource() {
+
+        generateSecondaryChagelog()
+
+   		executeUpdate AbstractScriptTests.SECONDARY_URL, 'drop table secondary_thing'
+
+   		executeAndCheck(['dbm-update-count', '1', '--dataSource=secondary'])
+
+   		executeAndCheck (['dbm-db-doc', '--dataSource=secondary'])
+
+   		['authors', 'changelogs', 'columns', 'pending', 'recent', 'tables'].each {
+   			assertTrue new File('target/dbdoc', it).exists()
+   			assertTrue new File('target/dbdoc', it).isDirectory()
+   		}
+
+   		assertTrue new File('target/dbdoc/changelogs/changelog.cli.secondary-test.groovy.xml').exists()
+
+        new File('target/dbdoc/tables/').eachFile {
+            println it.name
+        }
+
+   		assertTrue new File('target/dbdoc/tables/secondary_thing.html').exists()
+
+   		assertTrue new File('target/dbdoc/columns/secondary_thing.id.html').exists()
+   		assertTrue new File('target/dbdoc/columns/secondary_thing.name.html').exists()
+   		assertTrue new File('target/dbdoc/columns/secondary_thing.version.html').exists()
+
+   		assertTrue output.contains(
+   			'Starting dbm-db-doc for database sa @ jdbc:h2:tcp://localhost/./target/testdb/testdb-secondary')
+   	}
 
 	protected void tearDown() {
 		super.tearDown()

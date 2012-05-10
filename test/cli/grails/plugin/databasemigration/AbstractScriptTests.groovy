@@ -130,7 +130,7 @@ abstract class AbstractScriptTests extends AbstractCliTestCase {
 	}
 
     protected void generateSecondaryChagelog() {
-        executeAndCheck(['dbm-generate-changelog', SECONDARY_TEST_CHANGELOG])
+        executeAndCheck(['dbm-generate-changelog', SECONDARY_TEST_CHANGELOG, '--dataSource=secondary'])
     }
 
 	protected void copyTestChangelog(String name = 'test.changelog', String target = TEST_CHANGELOG) {
