@@ -46,8 +46,6 @@ target(dbmDiff: 'Writes description of differences to standard out') {
 		executeAndWrite argsList[1], { PrintStream out ->
             String dsName = MigrationUtils.dataSourceNameWithSuffix(dataSourceSuffix)
 
-            println dsName
-
 			MigrationUtils.executeInSession(dsName) {
 				thisDatabase = MigrationUtils.getDatabase(defaultSchema, dsName)
 				otherDatabase = buildOtherDatabase(otherEnv)
