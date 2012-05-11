@@ -177,6 +177,7 @@ class ScriptUtils {
 			catch (e) {
 				results.error = "Problem parsing '$dateString' as a Date: $e.message"
 			}
+			return results
 		}
 
 		results.error = 'Date must be specified as two strings with the format "yyyy-MM-dd HH:mm:ss"' +
