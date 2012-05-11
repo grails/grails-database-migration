@@ -1,7 +1,6 @@
-grails.project.class.dir = 'target/classes'
-grails.project.test.class.dir = 'target/test-classes'
-grails.project.test.reports.dir = 'target/test-reports'
+grails.project.work.dir = 'target'
 grails.project.docs.output.dir = 'docs/manual' // for backwards-compatibility, the docs are checked into gh-pages branch
+grails.project.source.level = 1.6
 
 grails.project.dependency.resolution = {
 
@@ -18,19 +17,16 @@ grails.project.dependency.resolution = {
 	}
 
 	dependencies {
-
 		compile('org.liquibase:liquibase-core:2.0.3') {
-			transitive = false
-		}
-
-		compile('com.h2database:h2:1.2.144') {
-			transitive = false
-			export = false
+			excludes 'junit', 'easymockclassextension', 'ant', 'servlet-api', 'spring'
 		}
 	}
 
 	plugins {
-		build(':release:1.0.0.RC3') {
+		build(':release:2.0.0', ':rest-client-builder:1.0.2') {
+			export = false
+		}
+		compile(":hibernate:$grailsVersion") {
 			export = false
 		}
 	}
