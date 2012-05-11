@@ -13,20 +13,28 @@ databaseChangeLog = {
 
       grailsChange {
          init {
-             // arbitrary initialization code; note that no database or connection is available
+             // arbitrary initialization code; note that no
+             // database or connection is available
          }
 
          validate {
-            // can call warn(String message) to log a warning or error(String message) to stop processing
+            // can call warn(String message) to log a warning
+            // or error(String message) to stop processing
          }
 
          change {
-            // arbitrary code; make changes directly and/or return a [SqlStatement|http://www.liquibase.org/api/liquibase/database/sql/SqlStatement.html] using the sqlStatement(SqlStatement sqlStatement) method or multiple with sqlStatements(List sqlStatements)
+            // arbitrary code; make changes directly and/or return a
+            // SqlStatement using the sqlStatement(SqlStatement sqlStatement)
+            // method or multiple with sqlStatements(List sqlStatements)
+
             confirm 'change confirmation message'
          }
 
          rollback {
-            // arbitrary code; make rollback changes directly and/or return a [SqlStatement|http://www.liquibase.org/api/liquibase/database/sql/SqlStatement.html] using the sqlStatement(SqlStatement sqlStatement) method or multiple with sqlStatements(List sqlStatements)
+            // arbitrary code; make rollback changes directly and/or
+            // return a SqlStatement using the sqlStatement(SqlStatement sqlStatement)
+            // method or multiple with sqlStatements(List sqlStatements)
+
             confirm 'rollback confirmation message'
          }
 
