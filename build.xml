@@ -20,12 +20,8 @@
 
 	<target name='clean' description='Cleans generated resources'>
 		<grails action='clean' />
-		<delete>
-			<fileset dir='.' includes='*.log*' />
-		</delete>
-		<delete>
-			<fileset dir='target' includes='*.log*' />
-		</delete>
+		<delete><fileset dir='.' includes='*.log*' /></delete>
+		<delete><fileset dir='target' includes='*.log*' /></delete>
 
 		<mkdir dir='grails-app/conf/spring' />
 	</target>
