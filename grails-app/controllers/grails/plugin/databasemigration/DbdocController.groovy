@@ -43,6 +43,12 @@ class DbdocController {
 			return
 		}
 
+		String changelogFileName = params.changelogFileName ?: MigrationUtils.changelogFileName
+		if (!new File(changelogFileName).exists()) {
+			render "Changelog $changelogFileName not found"
+			return
+		}
+
 		String section = params.section
 		String filename = params.filename
 		String table = params.table
@@ -67,8 +73,6 @@ class DbdocController {
 			render template: 'stylesheet', contentType: 'text/css', plugin: 'databaseMigration'
 			return
 		}
-
-		String changelogFileName = params.changelogFileName ?: MigrationUtils.changelogFileName
 
 		String sessionKey = '__DBDOC__' + changelogFileName
 		def files = session[sessionKey]

@@ -32,7 +32,7 @@ target(dbmRegisterChangelog: 'Adds an include for the specified changelog to the
 		errorAndDie "File $filename not found"
 	}
 
-	registerInclude filename
+	ScriptUtils.registerInclude filename
 }
 
 setDefaultTarget dbmRegisterChangelog

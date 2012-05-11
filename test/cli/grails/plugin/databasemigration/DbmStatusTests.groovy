@@ -51,7 +51,5 @@ class DbmStatusTests extends AbstractScriptTests {
 
 		assertTrue output.contains(
 			'1 change sets have not been applied to SA@jdbc:h2:tcp://localhost/./target/testdb/testdb')
-
-		assertFalse output.contains('changelog.cli.test.groovy::')
 	}
 }

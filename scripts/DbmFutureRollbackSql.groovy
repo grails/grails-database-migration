@@ -25,7 +25,7 @@ target(dbmFutureRollbackSql: 'Writes SQL to roll back the database to the curren
 	if (!okToWrite()) return
 
 	doAndClose {
-		liquibase.futureRollbackSQL contexts, newPrintWriter()
+		liquibase.futureRollbackSQL contexts, ScriptUtils.newPrintWriter(argsList)
 	}
 }
 

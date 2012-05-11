@@ -25,7 +25,7 @@ target(dbmListLocks: 'Lists who currently has locks on the database changelog') 
 	if (!okToWrite()) return
 
 	doAndClose {
-		liquibase.reportLocks calculateDestination()
+		liquibase.reportLocks ScriptUtils.calculateDestination(argsList)
 	}
 }
 

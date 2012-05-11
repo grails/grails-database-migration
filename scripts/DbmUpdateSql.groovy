@@ -25,7 +25,7 @@ target(dbmUpdateSql: 'Writes SQL to update database to current version to STDOUT
 	if (!okToWrite()) return
 
 	doAndClose {
-		liquibase.update contexts, newPrintWriter()
+		liquibase.update contexts, ScriptUtils.newPrintWriter(argsList)
 	}
 }
 

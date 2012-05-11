@@ -45,7 +45,7 @@ target(dbmCreateChangelog: 'Creates an empty changelog file') {
 		}
 	}
 	catch (e) {
-		printStackTrace e
+		ScriptUtils.printStackTrace e
 		exit 1
 	}
 }
