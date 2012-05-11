@@ -134,6 +134,7 @@ class DbmUpdateTests extends AbstractScriptTests {
 
 		def checkFile = new File('target/created_in_check')
 		checkFile.deleteOnExit()
+		checkFile.delete()
 		assertFalse checkFile.exists()
 
 		def dataFile = new File('target/check_data')
