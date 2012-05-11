@@ -1,4 +1,13 @@
-h4. The first step is to install the plugin:
+h4. The first step is to add a dependency for the plugin in @BuildConfig.groovy@:
+
+{code}
+plugins {
+   ...
+   runtime ':database-migration:1.1'
+}
+{code}
+
+or install with @install-plugin@:
 
 {code}
 grails install-plugin database-migration
@@ -22,6 +31,13 @@ grails dbm-generate-changelog changelog.xml
 {code}
 
 depending on whether you prefer the Groovy DSL or XML. The filename is relative to the changelog base folder, which defaults to @grails-app/migrations@.
+
+{note}
+If you use the XML format (or use a non-default Groovy filename), be sure to change the name of the file in @Config.groovy@ so @dbm-update@ and other scripts find the file:
+{code}
+grails.plugin.databasemigration.changelogFileName = 'changelog.xml'
+{code}
+{note}
 
 Since the database is already correct, run the [dbm-changelog-sync|Maintenance Scripts] script to record that the changes have already been applied:
 {code}
