@@ -17,7 +17,7 @@ grails.project.dependency.resolution = {
 	}
 
 	dependencies {
-		compile('org.liquibase:liquibase-core:2.0.3') {
+		compile('org.liquibase:liquibase-core:2.0.5') {
 			excludes 'junit', 'easymockclassextension', 'ant', 'servlet-api', 'spring'
 		}
 	}
