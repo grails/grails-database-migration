@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
     <head>
-        <title>Database Migration Plugin 1.0</title>
+        <title>Database Migration Plugin 1.1</title>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8" />
         <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8" />
@@ -66,7 +66,7 @@ function addJsClass(el) {
                         <div class="project">
                             <h1>Database Migration Plugin - Reference Documentation</h1>
                             <p><strong>Authors:</strong> Burt Beckwith</p>
-                            <p><strong>Version:</strong> 1.0</p>
+                            <p><strong>Version:</strong> 1.1</p>
                             
                         </div>
 
@@ -106,9 +106,15 @@ The Database Migration plugin helps you manage database changes while developing
 <h2 id="1.1 History">1.1 History</h2>
 <h4>History</h4>
 <ul class="star">
+<li>May 11, 2012</li>
+<ul class="star">
+<li>1.1 release</li>
+<li><a href="http://jira.grails.org/secure/ReleaseNote.jspa?projectId=10092&amp;version=13112" target="blank">JIRA Issues</a></li>
+</ul>
 <li>August 17, 2011</li>
 <ul class="star">
 <li>1.0 release</li>
+<li><a href="http://jira.grails.org/secure/ReleaseNote.jspa?projectId=10092&amp;version=12701" target="blank">JIRA Issues</a></li>
 </ul>
 <li>April 19, 2011</li>
 <ul class="star">
@@ -128,8 +134,14 @@ The Database Migration plugin helps you manage database changes while developing
 
 
 <h1 id="2 Getting Started">2 Getting Started</h1>
-<h4>The first step is to install the plugin:</h4><p class="paragraph"/><div class="code"><pre>grails install&#45;plugin database&#45;migration</pre></div><p class="paragraph"/><h4>Typical initial workflow</h4><p class="paragraph"/>Next you'll need to create an initial changelog. You can use Liquibase XML or the plugin's Groovy DSL for individual files. You can even mix and match; Groovy files can include other Groovy files and Liquibase XML files (but XML files can't include Groovy files).<p class="paragraph"/>Depending on the state of your database and code, you have two options; either create a changelog from the database or create it from your domain classes. The decision tends to be based on whether you prefer to design the database and adjust the domain classes to work with it, or to design your domain classes and use Hibernate to create the corresponding database structure.<p class="paragraph"/>To create a changelog from the database, use the <a href="../ref/Rollback Scripts/dbm-generate-changelog.html" class="Rollback Scripts">dbm-generate-changelog</a> script:
-<div class="code"><pre>grails dbm&#45;generate&#45;changelog changelog.groovy</pre></div><p class="paragraph"/>or<p class="paragraph"/><div class="code"><pre>grails dbm&#45;generate&#45;changelog changelog.xml</pre></div><p class="paragraph"/>depending on whether you prefer the Groovy DSL or XML. The filename is relative to the changelog base folder, which defaults to <code>grails-app/migrations</code>.<p class="paragraph"/>Since the database is already correct, run the <a href="../ref/Maintenance Scripts/dbm-changelog-sync.html" class="Maintenance Scripts">dbm-changelog-sync</a> script to record that the changes have already been applied:
+<h4>The first step is to add a dependency for the plugin in <code>BuildConfig.groovy</code>:</h4><p class="paragraph"/><div class="code"><pre>plugins &#123;
+   &#8230;
+   runtime ':database&#45;migration:1.1'
+&#125;</pre></div><p class="paragraph"/>or install with <code>install-plugin</code>:<p class="paragraph"/><div class="code"><pre>grails install&#45;plugin database&#45;migration</pre></div><p class="paragraph"/><h4>Typical initial workflow</h4><p class="paragraph"/>Next you'll need to create an initial changelog. You can use Liquibase XML or the plugin's Groovy DSL for individual files. You can even mix and match; Groovy files can include other Groovy files and Liquibase XML files (but XML files can't include Groovy files).<p class="paragraph"/>Depending on the state of your database and code, you have two options; either create a changelog from the database or create it from your domain classes. The decision tends to be based on whether you prefer to design the database and adjust the domain classes to work with it, or to design your domain classes and use Hibernate to create the corresponding database structure.<p class="paragraph"/>To create a changelog from the database, use the <a href="../ref/Rollback Scripts/dbm-generate-changelog.html" class="Rollback Scripts">dbm-generate-changelog</a> script:
+<div class="code"><pre>grails dbm&#45;generate&#45;changelog changelog.groovy</pre></div><p class="paragraph"/>or<p class="paragraph"/><div class="code"><pre>grails dbm&#45;generate&#45;changelog changelog.xml</pre></div><p class="paragraph"/>depending on whether you prefer the Groovy DSL or XML. The filename is relative to the changelog base folder, which defaults to <code>grails-app/migrations</code>.<p class="paragraph"/><blockquote class="note">
+If you use the XML format (or use a non-default Groovy filename), be sure to change the name of the file in <code>Config.groovy</code> so <code>dbm-update</code> and other scripts find the file:
+<div class="code"><pre>grails.plugin.databasemigration.changelogFileName = 'changelog.xml'</pre></div>
+</blockquote><p class="paragraph"/>Since the database is already correct, run the <a href="../ref/Maintenance Scripts/dbm-changelog-sync.html" class="Maintenance Scripts">dbm-changelog-sync</a> script to record that the changes have already been applied:
 <div class="code"><pre>grails dbm&#45;changelog&#45;sync</pre></div><p class="paragraph"/>Running this script is primarily a no-op except that it records the execution(s) in the Liquibase DATABASECHANGELOG table.<p class="paragraph"/>To create a changelog from your domain classes, use the <a href="../ref/Rollback Scripts/dbm-generate-gorm-changelog.html" class="Rollback Scripts">dbm-generate-gorm-changelog</a> script:<p class="paragraph"/><div class="code"><pre>grails dbm&#45;generate&#45;gorm&#45;changelog changelog.groovy</pre></div><p class="paragraph"/>or<p class="paragraph"/><div class="code"><pre>grails dbm&#45;generate&#45;gorm&#45;changelog changelog.xml</pre></div><p class="paragraph"/>If you haven't created the database yet, run the <a href="../ref/Update Scripts/dbm-update.html" class="Update Scripts">dbm-update</a> script to create the corresponding tables:<p class="paragraph"/><div class="code"><pre>grails dbm&#45;update</pre></div><p class="paragraph"/>or the <a href="../ref/Maintenance Scripts/dbm-changelog-sync.html" class="Maintenance Scripts">dbm-changelog-sync</a> script if the database is already in sync with your code:<p class="paragraph"/><div class="code"><pre>grails dbm&#45;changelog&#45;sync</pre></div><p class="paragraph"/><h4>Source control</h4><p class="paragraph"/>Now you can commit the changelog and the corresponding application code to source control. Other developers can then update and syncronize their databases, and start doing migrations themselves.<p class="paragraph"/>
 
 
@@ -164,7 +176,7 @@ changeSet(id:'IncreaseCommentBodySize', author:'someone') &#123;
 
 
 <h1 id="3 Configuration">3 Configuration</h1>
-There are a few configuration options for the plugin:<p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th><strong class="bold">Property</strong></th><th><strong class="bold">Default</strong></th><th><strong class="bold">Meaning</strong></th></tr><tr class="table-odd"><td>grails.plugin.databasemigration.changelogLocation</td><td><code>grails-app/migrations</code></td><td>the folder containing the main changelog file (which can include one or more other files)</td></tr><tr class="table-even"><td>grails.plugin.databasemigration.changelogFileName</td><td><code>changelog.groovy</code></td><td>the name of the main changelog file</td></tr><tr class="table-odd"><td>grails.plugin.databasemigration.changelogProperties</td><td>none</td><td>a map of properties to use for property substitution in Groovy DSL changelogs</td></tr><tr class="table-even"><td>grails.plugin.databasemigration.dbDocLocation</td><td><code>target/dbdoc</code></td><td>the directory where the output from the <a href="../ref/Documentation Scripts/dbm-db-doc.html" class="Documentation Scripts">dbm-db-doc</a> script is written</td></tr><tr class="table-odd"><td>grails.plugin.databasemigration.dbDocController.enabled</td><td><code>true</code> in dev mode</td><td>whether the /dbdoc/ url is accessible at runtime</td></tr><tr class="table-even"><td>grails.plugin.databasemigration.updateOnStart</td><td><code>false</code></td><td>if <code>true</code> then changesets from the specified list of names will be run at startup</td></tr><tr class="table-odd"><td>grails.plugin.databasemigration.updateOnStartFileNames</td><td>none</td><td>one or more file names (relative to <code>changelogLocation</code>) to run at startup if <code>updateOnStart</code> is <code>true</code></td></tr><tr class="table-even"><td>grails.plugin.databasemigration.updateOnStartDefaultSchema</td><td>none</td><td>the default schema to use when running auto-migrate on start</td></tr></table>
+There are a few configuration options for the plugin:<p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th><strong class="bold">Property</strong></th><th><strong class="bold">Default</strong></th><th><strong class="bold">Meaning</strong></th></tr><tr class="table-odd"><td>grails.plugin.databasemigration.changelogLocation</td><td><code>grails-app/migrations</code></td><td>the folder containing the main changelog file (which can include one or more other files)</td></tr><tr class="table-even"><td>grails.plugin.databasemigration.changelogFileName</td><td><code>changelog.groovy</code></td><td>the name of the main changelog file</td></tr><tr class="table-odd"><td>grails.plugin.databasemigration.changelogProperties</td><td>none</td><td>a map of properties to use for property substitution in Groovy DSL changelogs</td></tr><tr class="table-even"><td>grails.plugin.databasemigration.dbDocLocation</td><td><code>target/dbdoc</code></td><td>the directory where the output from the <a href="../ref/Documentation Scripts/dbm-db-doc.html" class="Documentation Scripts">dbm-db-doc</a> script is written</td></tr><tr class="table-odd"><td>grails.plugin.databasemigration.dbDocController.enabled</td><td><code>true</code> in dev mode</td><td>whether the /dbdoc/ url is accessible at runtime</td></tr><tr class="table-even"><td>grails.plugin.databasemigration.updateOnStart</td><td><code>false</code></td><td>if <code>true</code> then changesets from the specified list of names will be run at startup</td></tr><tr class="table-odd"><td>grails.plugin.databasemigration.updateOnStartFileNames</td><td>none</td><td>one or more file names (relative to <code>changelogLocation</code>) to run at startup if <code>updateOnStart</code> is <code>true</code></td></tr><tr class="table-even"><td>grails.plugin.databasemigration.updateOnStartDefaultSchema</td><td>none</td><td>the default schema to use when running auto-migrate on start</td></tr><tr class="table-odd"><td>grails.plugin.databasemigration.autoMigrateScripts</td><td>'RunApp'</td><td>the scripts when running auto-migrate. Useful to run auto-migrate during test phase with: 'RunApp', 'TestApp'</td></tr></table>
 
 
 
