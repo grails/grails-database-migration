@@ -34,7 +34,7 @@ target(dbmUpdateCountSql: 'Applies the next <value> change sets') {
 	if (!okToWrite(1)) return
 
 	doAndClose {
-		liquibase.update count.toInteger(), contexts, newPrintWriter(1)
+		liquibase.update count.toInteger(), contexts, ScriptUtils.newPrintWriter(argsList, 1)
 	}
 }
 

@@ -25,9 +25,10 @@ target(dbmGenerateGormChangelog: 'Generates an initial changelog XML file based 
 	if (!okToWrite(0, true)) return
 
 	doAndClose {
-		executeAndWrite argsList[0], { PrintStream out ->
-			def gormDatabase = createGormDatabase()
-			MigrationUtils.fixDiffResult(createDiff(gormDatabase, null).compare()).printChangeLog out, gormDatabase
+		ScriptUtils.executeAndWrite argsList[0], booleanArg('add'), { PrintStream out ->
+			def gormDatabase = ScriptUtils.createGormDatabase(config, appCtx)
+			MigrationUtils.fixDiffResult(
+				ScriptUtils.createDiff(gormDatabase, null, appCtx, diffTypes).compare()).printChangeLog out, gormDatabase
 		}
 	}
 }

@@ -25,7 +25,7 @@ target(dbmChangelogSyncSql: 'Writes SQL to mark all changes as executed in the d
 	if (!okToWrite()) return
 
 	doAndClose {
-		liquibase.changeLogSync contexts, newPrintWriter()
+		liquibase.changeLogSync contexts, ScriptUtils.newPrintWriter(argsList)
 	}
 }
 

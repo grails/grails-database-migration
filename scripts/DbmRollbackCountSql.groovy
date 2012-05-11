@@ -34,7 +34,7 @@ target(dbmRollbackCountSql: 'Writes SQL to roll back the last <value> change set
 	if (!okToWrite(1)) return
 
 	doAndClose {
-		liquibase.rollback count.toInteger(), contexts, newOutputStreamWriter(1)
+		liquibase.rollback count.toInteger(), contexts, ScriptUtils.newOutputStreamWriter(argsList, 1)
 	}
 }
 
