@@ -17,4 +17,8 @@ package grails.plugin.databasemigration.test
 class Author {
 	String name
 	static hasMany = [books: Book]
+
+    static mapping = {
+        datasources(['secondary', 'DEFAULT'])
+    }
 }
