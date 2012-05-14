@@ -26,8 +26,8 @@ import org.h2.tools.Server
  */
 abstract class AbstractScriptTests extends AbstractCliTestCase {
 
-	private static final String TEST_CHANGELOG = 'changelog.cli.test.groovy'
-	private static final String SECONDARY_TEST_CHANGELOG = 'changelog.cli.secondary-test.groovy'
+	protected static final String TEST_CHANGELOG = 'changelog.cli.test.groovy'
+	protected static final String SECONDARY_TEST_CHANGELOG = 'changelog.cli.secondary-test.groovy'
 	protected static final String CHANGELOG_DIR = 'target/changelogs'
 
 	protected static final String URL = 'jdbc:h2:tcp://localhost/./target/testdb/testdb'
@@ -100,7 +100,7 @@ abstract class AbstractScriptTests extends AbstractCliTestCase {
 		assertFalse file.exists()
 	}
 
-	protected Sql newSql(String url) { Sql.newInstance(url, 'sa', '', 'org.h2.Driver') }
+	protected Sql newSql(String url = URL) { Sql.newInstance(url, 'sa', '', 'org.h2.Driver') }
 
 	protected void executeUpdate(String url, String sql, List values = null) {
 		if (values) {
@@ -115,7 +115,7 @@ abstract class AbstractScriptTests extends AbstractCliTestCase {
 		newSql().executeInsert sql, values
 	}
 
-	protected List<String> findAllTableNames(String url) {
+	protected List<String> findAllTableNames(String url = URL) {
 		def tableNames = []
 		newSql(url).eachRow('show tables') { tableNames << it.TABLE_NAME.toLowerCase() }
 		tableNames
