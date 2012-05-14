@@ -23,9 +23,9 @@ class DbmListLocksTests extends AbstractScriptTests {
 
 		generateChangelog()
 
-		executeUpdate 'drop table thing'
+		executeUpdate AbstractScriptTests.URL, 'drop table thing'
 
-		executeAndCheck(['dbm-update-count', '1'])
+        executeAndCheck(['dbm-update-count', '1'])
 
 		executeAndCheck 'dbm-list-locks'
 
@@ -33,11 +33,34 @@ class DbmListLocksTests extends AbstractScriptTests {
 		assertTrue output.contains('Database change log locks for SA@jdbc:h2:tcp://localhost/./target/testdb/testdb')
 		assertTrue output.contains('No locks')
 
-		executeUpdate('update databasechangeloglock set locked=?, lockgranted=?, lockedby=?',
+		executeUpdate(AbstractScriptTests.URL, 'update databasechangeloglock set locked=?, lockgranted=?, lockedby=?',
 		              [true, new java.sql.Timestamp(System.currentTimeMillis()), 'cli_test'])
 		executeAndCheck 'dbm-list-locks'
 
 		assertFalse output.contains('No locks')
 		assertTrue output.contains('- cli_test at')
 	}
+
+
+    void testListLocksForSecondaryDataSource() {
+
+        generateSecondaryChagelog()
+
+   		executeUpdate AbstractScriptTests.SECONDARY_URL, 'drop table secondary_thing'
+
+        executeAndCheck(['dbm-update-count', '1', '--dataSource=secondary'])
+
+   		executeAndCheck (['dbm-list-locks', '--dataSource=secondary'])
+
+   		assertTrue output.contains('Starting dbm-list-locks for database sa @ jdbc:h2:tcp://localhost/./target/testdb/testdb-secondary')
+   		assertTrue output.contains('Database change log locks for SA@jdbc:h2:tcp://localhost/./target/testdb/testdb-secondary')
+   		assertTrue output.contains('No locks')
+
+   		executeUpdate(AbstractScriptTests.SECONDARY_URL, 'update databasechangeloglock set locked=?, lockgranted=?, lockedby=?',
+   		              [true, new java.sql.Timestamp(System.currentTimeMillis()), 'cli_test'])
+   		executeAndCheck (['dbm-list-locks', '--dataSource=secondary'])
+
+   		assertFalse output.contains('No locks')
+   		assertTrue output.contains('- cli_test at')
+   	}
 }
