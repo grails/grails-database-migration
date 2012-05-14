@@ -40,8 +40,9 @@ target(dbmGormDiff: 'Diff GORM classes against database and generate a changelog
 		printMessage "Starting $hyphenatedScriptName"
 
 		executeAndWrite argsList[0], { PrintStream out ->
-			MigrationUtils.executeInSession {
-				realDatabase = MigrationUtils.getDatabase(defaultSchema)
+            String dsName = MigrationUtils.dataSourceNameWithSuffix(dataSourceSuffix)
+			MigrationUtils.executeInSession(dsName) {
+				realDatabase = MigrationUtils.getDatabase(defaultSchema, dsName)
 				def gormDatabase = createGormDatabase()
 				MigrationUtils.fixDiffResult(createDiff(gormDatabase, realDatabase).compare()).printChangeLog(out, gormDatabase)
 			}
