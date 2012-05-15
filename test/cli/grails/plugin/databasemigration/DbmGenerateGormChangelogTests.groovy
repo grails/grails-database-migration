@@ -89,6 +89,5 @@ class DbmGenerateGormChangelogTests extends AbstractScriptTests {
 
         assertTrue output.contains('secondary_thing')
 
-        assertFalse output.contains('book')
     }
 }
