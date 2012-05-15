@@ -44,4 +44,31 @@ class DbmRollbackCountSqlTests extends AbstractScriptTests {
 		assertTrue output.contains(
 			"DELETE FROM DATABASECHANGELOG  WHERE ID='test-3' AND AUTHOR='burt' AND FILENAME='changelog.cli.test.groovy';")
 	}
+
+    void testRollbackCountSqlForSecondaryDataSource() {
+
+        assertTableCount 1, SECONDARY_URL
+
+        copyTestChangelog('test.changelog', SECONDARY_TEST_CHANGELOG)
+
+        executeAndCheck (['dbm-update', '--dataSource=secondary'])
+        assertTableCount 4, SECONDARY_URL
+
+        // test parameter check
+        executeAndCheck(['dbm-rollback-count-sql', '--dataSource=secondary'], false)
+        assertTrue output.contains('ERROR: The dbm-rollback-count-sql script requires a change set count argument')
+
+        executeAndCheck(['dbm-rollback-count-sql', '1', '--dataSource=secondary'])
+
+        // no db changes
+        assertTableCount 4, SECONDARY_URL
+
+        assertTrue output.contains(
+                'Starting dbm-rollback-count-sql for database sa @ jdbc:h2:tcp://localhost/./target/testdb/testdb-secondary')
+
+        assertTrue output.contains(
+                'ALTER TABLE PERSON DROP COLUMN ZIPCODE')
+        assertTrue output.contains(
+                "DELETE FROM DATABASECHANGELOG  WHERE ID='test-3' AND AUTHOR='burt' AND FILENAME='changelog.cli.secondary-test.groovy';")
+    }
 }
