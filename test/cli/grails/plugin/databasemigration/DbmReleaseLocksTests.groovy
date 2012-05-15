@@ -26,12 +26,13 @@ class DbmReleaseLocksTests extends AbstractScriptTests {
 		generateChangelog()
 
 		// auto-created by hbm2ddl
-		executeUpdate 'drop table thing'
+        def url = AbstractScriptTests.URL
+        executeUpdate url, 'drop table thing'
 
 		executeAndCheck(['dbm-update-count', '1'])
 
 		// force a lock
-		executeUpdate('update databasechangeloglock set locked=?, lockgranted=?, lockedby=?',
+		executeUpdate(url, 'update databasechangeloglock set locked=?, lockgranted=?, lockedby=?',
 		              [true, new Timestamp(System.currentTimeMillis()), 'cli_test'])
 		executeAndCheck 'dbm-list-locks'
 
@@ -41,4 +42,28 @@ class DbmReleaseLocksTests extends AbstractScriptTests {
 
 		assertTrue output.contains('Successfully released change log lock')
 	}
+
+    void testReleaseLocksForSecondaryDataSource() {
+
+   		generateChangelog()
+        generateSecondaryChagelog()
+
+   		// auto-created by hbm2ddl
+        def url = AbstractScriptTests.SECONDARY_URL
+        executeUpdate url, 'drop table secondary_thing'
+
+   		executeAndCheck(['dbm-update-count', '1', '--dataSource=secondary'])
+
+   		// force a lock
+   		executeUpdate(url, 'update databasechangeloglock set locked=?, lockgranted=?, lockedby=?',
+   		              [true, new Timestamp(System.currentTimeMillis()), 'cli_test'])
+   		executeAndCheck (['dbm-list-locks', '--dataSource=secondary'])
+
+   		assertFalse output.contains('No locks')
+
+   		executeAndCheck (['dbm-release-locks', '--dataSource=secondary'])
+
+   		assertTrue output.contains('Successfully released change log lock')
+   	}
+
 }
