@@ -23,19 +23,21 @@ class DbmRollbackTests extends AbstractScriptTests {
 
 	void testRollback() {
 
+        def url = AbstractScriptTests.URL
+
 		// run all the updates
 		copyTestChangelog()
 		executeAndCheck 'dbm-update'
 
 		// test that person table exists
-		executeUpdate '''
+        executeUpdate url, '''
 			insert into person(version, name, street1, street2, zipcode)
 			values (0, 'test.name', 'test.street1', 'test.street2', '12345')
 		'''
 
 		// manually tag the first two updates
 		String tagName = 'THE_TAG'
-		executeUpdate "update databasechangelog set tag=? where id='test-1' or id='test-2'", [tagName]
+		executeUpdate url, "update databasechangelog set tag=? where id='test-1' or id='test-2'", [tagName]
 
 		// test parameter check
 		executeAndCheck(['dbm-rollback'], false)
@@ -45,7 +47,7 @@ class DbmRollbackTests extends AbstractScriptTests {
 
 		// can't do full insert since the 3rd change was rolled back
 		String message = shouldFail(SQLException) {
-			executeUpdate '''
+			executeUpdate url, '''
 				insert into person(version, name, street1, street2, zipcode)
 				values (0, 'test.name2', 'test.street1.2', 'test.street2.2', '123456')
 			'''
@@ -53,9 +55,50 @@ class DbmRollbackTests extends AbstractScriptTests {
 		assertTrue message.contains('Column "ZIPCODE" not found')
 
 		// can do partial insert
-		executeUpdate '''
+		executeUpdate url, '''
 			insert into person(version, name, street1, street2)
 			values (1, 'test.name2', 'test.street1.2', 'test.street2.2')
 		'''
 	}
+
+
+    void testRollbackForSecondaryDataSource() {
+
+        def url = AbstractScriptTests.SECONDARY_URL
+
+   		// run all the updates
+   		copyTestChangelog('test.changelog', SECONDARY_TEST_CHANGELOG)
+   		executeAndCheck (['dbm-update', '--dataSource=secondary'])
+
+   		// test that person table exists
+           executeUpdate url, '''
+   			insert into person(version, name, street1, street2, zipcode)
+   			values (0, 'test.name', 'test.street1', 'test.street2', '12345')
+   		'''
+
+   		// manually tag the first two updates
+   		String tagName = 'THE_TAG'
+   		executeUpdate url, "update databasechangelog set tag=? where id='test-1' or id='test-2'", [tagName]
+
+   		// test parameter check
+   		executeAndCheck(['dbm-rollback', '--dataSource=secondary'], false)
+   		assertTrue output.contains('ERROR: The dbm-rollback script requires a tag')
+
+   		executeAndCheck(['dbm-rollback', tagName, '--dataSource=secondary'])
+
+   		// can't do full insert since the 3rd change was rolled back
+   		String message = shouldFail(SQLException) {
+   			executeUpdate url, '''
+   				insert into person(version, name, street1, street2, zipcode)
+   				values (0, 'test.name2', 'test.street1.2', 'test.street2.2', '123456')
+   			'''
+   		}
+   		assertTrue message.contains('Column "ZIPCODE" not found')
+
+   		// can do partial insert
+   		executeUpdate url, '''
+   			insert into person(version, name, street1, street2)
+   			values (1, 'test.name2', 'test.street1.2', 'test.street2.2')
+   		'''
+   	}
 }
