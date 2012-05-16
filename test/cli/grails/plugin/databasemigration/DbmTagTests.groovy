@@ -21,13 +21,15 @@ class DbmTagTests extends AbstractScriptTests {
 
 	void testTag() {
 
+        def url = AbstractScriptTests.URL
+
 		generateChangelog()
 
-		executeUpdate 'drop table thing'
+        executeUpdate url, 'drop table thing'
 
 		executeAndCheck(['dbm-update-count', '1'])
 
-		newSql().eachRow('select * from DATABASECHANGELOG') { assertNull it.TAG }
+		newSql(url).eachRow('select * from DATABASECHANGELOG') { assertNull it.TAG }
 
 		// test parameter check
 		executeAndCheck(['dbm-tag'], false)
@@ -35,6 +37,28 @@ class DbmTagTests extends AbstractScriptTests {
 
 		executeAndCheck(['dbm-tag', 'tag123'])
 
-		newSql().eachRow('select * from DATABASECHANGELOG') { assertEquals 'tag123', it.TAG }
+		newSql(url).eachRow('select * from DATABASECHANGELOG') { assertEquals 'tag123', it.TAG }
 	}
+
+
+    void testTagForSecondaryDataSource() {
+
+        def url = AbstractScriptTests.SECONDARY_URL
+
+        generateSecondaryChagelog()
+
+        executeUpdate url, 'drop table secondary_thing'
+
+   		executeAndCheck(['dbm-update-count', '1', '--dataSource=secondary'])
+
+   		newSql(url).eachRow('select * from DATABASECHANGELOG') { assertNull it.TAG }
+
+   		// test parameter check
+   		executeAndCheck(['dbm-tag', '--dataSource=secondary'], false)
+   		assertTrue output.contains('ERROR: The dbm-tag script requires a tag')
+
+   		executeAndCheck(['dbm-tag', 'tag123', '--dataSource=secondary'])
+
+   		newSql(url).eachRow('select * from DATABASECHANGELOG') { assertEquals 'tag123', it.TAG }
+   	}
 }
