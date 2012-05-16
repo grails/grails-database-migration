@@ -54,7 +54,7 @@ class GormDatabaseSnapshotGenerator implements DatabaseSnapshotGenerator {
 			throws DatabaseException {
 
 		DatabaseSnapshot snapshot = new DatabaseSnapshot(db, requestedSchema)
-
+        
 		try {
 			def cfg = db.configuration
 			String dialectName = cfg.getProperty('hibernate.dialect')
@@ -64,6 +64,7 @@ class GormDatabaseSnapshotGenerator implements DatabaseSnapshotGenerator {
 			def mapping = cfg.buildMapping()
 
 			for (hibernateTable in cfg.tableMappings) {
+//				if (!hibernateTable.physicalTable || (db.schema && hibernateTable.schema != db.schema)) {
 				if (!hibernateTable.physicalTable) {
 					continue
 				}
@@ -124,6 +125,7 @@ class GormDatabaseSnapshotGenerator implements DatabaseSnapshotGenerator {
 			}
 
 			for (hibernateTable in cfg.tableMappings) {
+//				if (!hibernateTable.physicalTable || (db.schema && hibernateTable.schema != db.schema)) {
 				if (!hibernateTable.physicalTable) {
 					continue
 				}
@@ -154,6 +156,7 @@ class GormDatabaseSnapshotGenerator implements DatabaseSnapshotGenerator {
 			if (db.supportsSequences()) {
 				Map generators = [:]
 				for (PersistentClass pc in cfg.classes.values()) {
+//					if (pc.isInherited() || (db.schema && pc.table.schema != db.schema)) {
 					if (pc.isInherited()) {
 						continue
 					}
@@ -176,7 +179,52 @@ class GormDatabaseSnapshotGenerator implements DatabaseSnapshotGenerator {
 			throw new DatabaseException(e)
 		}
 
+		if (db.schema) {
+			depurateSnapshot(snapshot, db.schema)
+		}
 		snapshot
+	}
+
+	private void depurateSnapshot(DatabaseSnapshot snapshot, String schema) {
+		List<PrimaryKey> lpk = new ArrayList<PrimaryKey>()
+		for (PrimaryKey pk: snapshot.primaryKeys) {
+			if ( pk.table.schema != schema ) {
+				lpk << pk
+			}
+		}
+		for (PrimaryKey pk: lpk) {
+			snapshot.primaryKeys.remove(pk)
+		}
+		// Indexes
+		List<Index> lindex = new ArrayList<Index>()
+		for (Index index: snapshot.indexes) {
+			if ( index.table.schema != schema ) {
+				lindex << index
+			}
+		}
+		for (Index index: lindex) {
+			snapshot.indexes.remove(index)
+		}
+		// Foreign Keys
+		List<ForeignKey> lfk = new ArrayList<ForeignKey>()
+		for (ForeignKey fk: snapshot.foreignKeys) {
+			if ( fk.foreignKeyTable.schema != schema ) {
+				lfk << fk
+			}
+		}
+		for (ForeignKey fk: lfk) {
+			snapshot.foreignKeys.remove(fk)
+		}
+		// Tables
+		List<Table> ltable = new ArrayList<Table>()
+		for (Table table: snapshot.tables) {
+			if (table.schema != schema) {
+				ltable << table
+			}
+		}
+		for (Table table: ltable) {
+			snapshot.tables.remove(table)
+		}
 	}
 
 	// workaround for changed method signature without backwards compatibility

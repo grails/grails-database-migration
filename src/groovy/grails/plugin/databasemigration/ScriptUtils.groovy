@@ -186,7 +186,7 @@ class ScriptUtils {
 		results
 	}
 
-	static GormDatabase createGormDatabase(config, appCtx) {
+	static GormDatabase createGormDatabase(config, appCtx, schema) {
 		def dialect = config.dataSource.dialect
 		if (dialect) {
 			if (dialect instanceof Class) {
@@ -202,7 +202,7 @@ class ScriptUtils {
 			properties: ['hibernate.dialect': dialect.toString()] as Properties)
 		configuration.buildMappings()
 
-		new GormDatabase(configuration)
+		new GormDatabase(configuration, schema)
 	}
 
 	static Diff createDiff(Database referenceDatabase, Database targetDatabase,
