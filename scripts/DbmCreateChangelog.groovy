@@ -22,7 +22,8 @@ includeTargets << new File("$databaseMigrationPluginDir/scripts/_DatabaseMigrati
 target(dbmCreateChangelog: 'Creates an empty changelog file') {
 	depends dbmInit
 
-	String name = argsList[0] ?: MigrationUtils.changelogFileName
+    String dsName = MigrationUtils.dataSourceNameWithSuffix(dataSourceSuffix)
+	String name = argsList[0] ?: MigrationUtils.getChangelogFileName(dsName)
 	if (!name.toLowerCase().endsWith('.groovy')) {
 		name += '.groovy'
 	}
