@@ -70,6 +70,8 @@ class GormDatabaseSnapshotGenerator implements DatabaseSnapshotGenerator {
 				}
 
 				Table table = new Table(hibernateTable.name)
+				table.setSchema(hibernateTable.schema)
+				table.setRawSchemaName(hibernateTable.schema)
 				snapshot.tables << table
 
 				def hibernatePrimaryKey = hibernateTable.primaryKey
