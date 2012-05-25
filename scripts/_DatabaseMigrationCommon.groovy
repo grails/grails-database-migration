@@ -71,6 +71,7 @@ booleanArg = { String name ->
 	argsMap[name] instanceof Boolean ? argsMap[name] : false
 }
 
+
 errorAndDie = { String message ->
 	errorMessage "\nERROR: $message"
 	exit 1

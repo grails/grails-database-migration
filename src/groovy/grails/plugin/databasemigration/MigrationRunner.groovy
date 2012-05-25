@@ -31,35 +31,40 @@ class MigrationRunner {
 
 	static void autoRun() {
 
-		if (!MigrationUtils.canAutoMigrate()) {
-			return
-		}
+		for (dsNameConfig in MigrationUtils.dataSourceConfigs) {
+			String dsConfigName = dsNameConfig.key
+			ConfigObject configObject = dsNameConfig.value
 
-		def config = MigrationUtils.config
+			if (!MigrationUtils.canAutoMigrate(dsConfigName)) {
+				LOG.warn "cannot auto migrate for ${dsConfigName}"
+				continue
+			}
 
-		if (!config.updateOnStart) {
-			LOG.info "updateOnStart disabled; not running migrations"
-			return
-		}
+			def config = MigrationUtils.getConfig(dsConfigName)
 
-		try {
-			MigrationUtils.databases.each { String dsName, Database database ->
-				MigrationUtils.executeInSession(dsName) {
+			if (!config.updateOnStart) {
+				LOG.info "updateOnStart disabled for ${dsConfigName}; not running migrations"
+				continue
+			}
+
+			try {
+				MigrationUtils.executeInSession(dsConfigName) {
+					def database = MigrationUtils.getDatabase(MigrationUtils.getConfig(dsConfigName).updateOnStartDefaultSchema ?: null, dsConfigName)
 					if (config.dropOnStart) {
 						LOG.warn "Dropping tables..."
 						MigrationUtils.getLiquibase(database).dropAll()
 					}
-					List updateOnStartFileNames = dsName == 'dataSource' ? config.updateOnStartFileNames : config."$dsName".updateOnStartFileNames
+					List updateOnStartFileNames = config.updateOnStartFileNames
 					for (String name in updateOnStartFileNames) {
 						LOG.info "Running script '$name'"
 						MigrationUtils.getLiquibase(database, name).update config.contexts
 					}
 				}
 			}
-		}
-		catch (e) {
-			GrailsUtil.deepSanitize e
-			throw e
+			catch (e) {
+				GrailsUtil.deepSanitize e
+				throw e
+			}
 		}
 	}
 }
