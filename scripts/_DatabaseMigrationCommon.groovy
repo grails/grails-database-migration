@@ -145,7 +145,8 @@ registerInclude = { String filename ->
 
 appendToChangelog = { File sourceFile, String content ->
 
-	def changelog = new File(MigrationUtils.changelogLocation, MigrationUtils.changelogFileName)
+    String dsName = MigrationUtils.dataSourceNameWithSuffix(dataSourceSuffix)
+	def changelog = new File(MigrationUtils.getChangelogLocation(dsName), MigrationUtils.getChangelogFileName(dsName))
 	if (changelog.absolutePath.equals(sourceFile.absolutePath)) {
 		return
 	}

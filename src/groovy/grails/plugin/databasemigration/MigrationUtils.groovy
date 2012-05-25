@@ -70,33 +70,10 @@ class MigrationUtils {
 		database
 	}
 
-    static Map<String, Database> getDatabases() {
-        Map<String, Database> databaseMap = [:]
-
-        databaseMap["dataSource"] = getDatabase(config.updateOnStartDefaultSchema ?: null)
-
-        getDataSourceConfigs().each{ dsName, dsConfig ->
-            String dataSourceSuffix = extractSuffix(dsName)
-            def connection = findSessionFactory(dataSourceSuffix).currentSession.connection()
-
-            def dialect = application.config."dataSource${dataSourceSuffix}".dialect
-            if (dialect && dialect instanceof Class) {
-                dialect = dialect.name
-            } else {
-                dialect = application.mainContext.dialectDetector
-            }
-
-            def defaultSchema = config."${dsName}".updateOnStartDefaultSchema ?: null
-            databaseMap[dsName] == getDatabase( connection, defaultSchema, dialect.toString() )
-        }
-
-        databaseMap
-    }
-
     static Map<String, ConfigObject> getDataSourceConfigs() {
         def dsConfigs = [:]
         application.config.each { String name, value ->
-            if(name.startsWith('dataSource_') && value instanceof ConfigObject) {
+            if(name.startsWith('dataSource') && value instanceof ConfigObject) {
                 dsConfigs[name] = value
             }
         }
@@ -107,7 +84,7 @@ class MigrationUtils {
 
 	static Database getDatabase(String defaultSchema = null, String dsName = 'dataSource') {
         def dataSourceSuffix = extractSuffix(dsName)
-		def connection = findSessionFactory(dataSourceSuffix).currentSession.connection()
+		def connection = findSessionFactory(dataSourceSuffix).getCurrentSession().connection()
 
 		def dialect = application.config."$dsName".dialect
 		if (dialect) {
@@ -198,7 +175,7 @@ class MigrationUtils {
         dsName
     }
 
-	static boolean canAutoMigrate() {
+	static boolean canAutoMigrate(String dsName = 'dataSource') {
 
 		// in a war
 		if (application.warDeployed) {
@@ -206,7 +183,7 @@ class MigrationUtils {
 		}
 
 		// in run-app
-		if (autoMigrateScripts.contains(scriptName)) {
+		if (getAutoMigrateScripts(dsName).contains(scriptName)) {
 			return true
 		}
 
@@ -217,34 +194,38 @@ class MigrationUtils {
 		application.classLoader.loadClass(className).newInstance()
 	}
 
-	static ConfigObject getConfig() {
-		application.config.grails.plugin.databasemigration
+	static ConfigObject getConfig(String dsName = 'dataSource') {
+        boolean isDefault = dsName == 'dataSource'
+        if (!isDefault) {
+            String dataSourceSuffix = extractSuffixWithOutUnderbar(dsName)
+            return application.config.grails.plugin.databasemigration."$dataSourceSuffix"
+        }
+        return application.config.grails.plugin.databasemigration
 	}
 
-	static String getDbDocLocation() {
-		getConfig().dbDocLocation ?: 'target/dbdoc'
+	static String getDbDocLocation(String dsName = 'dataSource') {
+		getConfig(dsName).dbDocLocation ?: 'target/dbdoc'
 	}
 
-	static String getAutoMigrateScripts() {
-		getConfig().autoMigrateScripts ?: ['RunApp']
+	static String getAutoMigrateScripts(String dsName = 'dataSource') {
+		getConfig(dsName).autoMigrateScripts ?: ['RunApp']
 	}
 
 	static String getChangelogFileName(String dsName = 'dataSource') {
         boolean isDefault = dsName == "dataSource"
         if( !isDefault ) {
             String dataSourceSuffix = extractSuffixWithOutUnderbar(dsName)
-            println "dataSourceSuffix: $dataSourceSuffix"
-            return getConfig()."${dataSourceSuffix}".changelogFileName ?: "changelog-${dataSourceSuffix}.groovy"
+            return getConfig(dsName).changelogFileName ?: "changelog-${dataSourceSuffix}.groovy"
         }
-        return getConfig().changelogFileName ?: 'changelog.groovy'
+        return getConfig(dsName).changelogFileName ?: 'changelog.groovy'
 	}
 
-	static String getChangelogLocation() {
-		getConfig().changelogLocation ?: 'grails-app/migrations'
+	static String getChangelogLocation(String dsName = 'dataSource') {
+		getConfig(dsName).changelogLocation ?: 'grails-app/migrations'
 	}
 
-	static ConfigObject getChangelogProperties() {
-		getConfig().changelogProperties ?: [:]
+	static ConfigObject getChangelogProperties(String dsName = 'dataSource') {
+		getConfig(dsName).changelogProperties ?: [:]
 	}
 
 	static DiffResult fixDiffResult(DiffResult diffResult) {

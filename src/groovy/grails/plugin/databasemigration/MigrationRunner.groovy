@@ -31,33 +31,40 @@ class MigrationRunner {
 
 	static void autoRun() {
 
-		if (!MigrationUtils.canAutoMigrate()) {
-			return
-		}
+        Map dataSourceConfigMap = MigrationUtils.getDataSourceConfigs()
 
-		def config = MigrationUtils.config
+        for (dsNameConfig in dataSourceConfigMap) {
+            String dsConfigName = dsNameConfig.key
+            ConfigObject configObject = dsNameConfig.value
 
-		if (!config.updateOnStart) {
-			LOG.info "updateOnStart disabled; not running migrations"
-			return
-		}
+            if (!MigrationUtils.canAutoMigrate(dsConfigName)) {
+                LOG.warn "cannot auto migrate for ${dsConfigName}"
+                continue
+            }
 
-		try {
-            Map databases = [:]
-            databases = MigrationUtils.getDatabases()
-            databases.each {String dsName, Database database ->
-                MigrationUtils.executeInSession(dsName) {
-                    List updateOnStartFileNames = dsName == "dataSource" ? config.updateOnStartFileNames : config."${dsName}".updateOnStartFileNames
+            def config = MigrationUtils.getConfig(dsConfigName)
+
+            if (!config.updateOnStart) {
+                LOG.info "updateOnStart disabled for ${dsConfigName}; not running migrations"
+                continue
+            }
+
+            def database
+            try {
+                MigrationUtils.executeInSession(dsConfigName) {
+                    database = MigrationUtils.getDatabase(MigrationUtils.getConfig(dsConfigName).updateOnStartDefaultSchema ?: null, dsConfigName)
+                    List updateOnStartFileNames = config.updateOnStartFileNames
                     for (String name in updateOnStartFileNames) {
                         LOG.info "Running script '$name'"
                         MigrationUtils.getLiquibase(database, name).update null
                     }
                 }
-			}
-		}
-		catch (e) {
-			GrailsUtil.deepSanitize e
-			throw e
-		}
+            }
+            catch (e) {
+                GrailsUtil.deepSanitize e
+                throw e
+            }
+        }
+
 	}
 }

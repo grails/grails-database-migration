@@ -23,7 +23,8 @@ target(dbmDbDoc: 'Generates Javadoc-like documentation based on current database
 	depends dbmInit
 
 	doAndClose {
-		liquibase.generateDocumentation argsList[0] ?: MigrationUtils.dbDocLocation, contexts
+        String dsName = MigrationUtils.dataSourceNameWithSuffix(dataSourceSuffix)
+		liquibase.generateDocumentation argsList[0] ?: MigrationUtils.getDbDocLocation(dsName), contexts
 	}
 }
 
