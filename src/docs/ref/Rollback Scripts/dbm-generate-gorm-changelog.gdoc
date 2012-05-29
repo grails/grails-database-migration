@@ -14,7 +14,7 @@ Executes against the database configured in @DataSource.groovy@ for the current 
 
 Usage:
 {code:java}
-grails [environment] dbm-generate-gorm-changelog [filename] --add
+grails [environment] dbm-generate-gorm-changelog [filename] --dataSource=[dataSource] --add
 {code}
 
 Required arguments: _none_ .
@@ -22,4 +22,20 @@ Required arguments: _none_ .
 Optional arguments:
 
 * @filename@ - The path to the output file to write to. If not specified output is written to the console
+* @dataSource@ - if provided will run the script for the specified dataSource.  Not needed for the default dataSource.
 * @add@ - if specified add an include in the root changelog file referencing the new file
+
+{note}
+Note that the @dataSource@ parameter name and value must be quoted if executed in Windows, e.g.
+{code}
+grails dbm-generate-gorm-changelog  "--dataSource=[dataSource]"
+{code}
+{note}
+
+{note}
+For the @dataSource@ parameter if the data source is configured as @dataSource_reports@ in DataSource.groovy
+the suffix of @reports@ will be used as the parameter value.
+{code}
+--dataSource=reports
+{code}
+{note}
