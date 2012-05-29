@@ -25,9 +25,9 @@ target(populateData: 'Insert data using GORM') {
 		o3.addToItems(product: p1, quantity: 5)
 		o3.save()
 
-        def r1 = Report.newInstance(name:'r1', value:'Foo').save()
-        def r2 = Report.newInstance(name:'r2', value:'Bar').save()
-        def r3 = Report.newInstance(name:'r3', value:'Baz').save()
+        def r1 = Report.newInstance(name:'r1', value:'Foo').reports.save()
+        def r2 = Report.newInstance(name:'r2', value:'Bar').reports.save()
+        def r3 = Report.newInstance(name:'r3', value:'Baz').reports.save()
 	}
 }
 
