@@ -27,7 +27,7 @@ target(dbmRegisterChangelog: 'Adds an include for the specified changelog to the
 		errorAndDie "The $hyphenatedScriptName script requires a changelog name argument"
 	}
 
-	filename = MigrationUtils.changelogLocation + '/' + filename
+	filename = MigrationUtils.getChangelogLocation(dsName) + '/' + filename
 	if (!new File(filename).exists()) {
 		errorAndDie "File $filename not found"
 	}

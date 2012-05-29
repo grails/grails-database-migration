@@ -45,6 +45,7 @@ target(dbmInit: 'General initialization, also creates a Liquibase instance') {
 		diffTypes = argsMap.diffTypes
 		defaultSchema = argsMap.defaultSchema
         dataSourceSuffix = argsMap.dataSource
+        dsName = MigrationUtils.dataSourceNameWithSuffix(dataSourceSuffix)
 	}
 	catch (e) {
 		printStackTrace e
@@ -64,7 +65,7 @@ calculateDestination = { Integer argIndex = 0, boolean relativeToMigrationDir = 
 
 	String destination = argsList[argIndex]
 	if (relativeToMigrationDir) {
-		destination = MigrationUtils.changelogLocation + '/' + destination
+		destination = MigrationUtils.getChangelogLocation(dsName) + '/' + destination
 	}
 	new PrintStream(destination)
 }
@@ -79,7 +80,6 @@ newOutputStreamWriter = { Integer argIndex = 0, boolean relativeToMigrationDir =
 
 doAndClose = { Closure c ->
 	try {
-        String dsName = MigrationUtils.dataSourceNameWithSuffix(dataSourceSuffix)
 		MigrationUtils.executeInSession(dsName) {
 			database = MigrationUtils.getDatabase(defaultSchema, dsName)
             String changeLogFileName = MigrationUtils.getChangelogFileName(dsName)
@@ -109,7 +109,7 @@ executeAndWrite = { String filename, Closure c ->
 	PrintStream out
 	ByteArrayOutputStream baos
 	if (filename) {
-		filename = MigrationUtils.changelogLocation + '/' + filename
+		filename = MigrationUtils.getChangelogLocation(dsName) + '/' + filename
 		if (filename.toLowerCase().endsWith('groovy')) {
 			baos = new ByteArrayOutputStream()
 			out = new PrintStream(baos)
@@ -138,7 +138,7 @@ executeAndWrite = { String filename, Closure c ->
 
 registerInclude = { String filename ->
 	def fullPath = new File(filename).absolutePath
-	def fullMigrationFolderPath = new File(MigrationUtils.changelogLocation).absolutePath
+	def fullMigrationFolderPath = new File(MigrationUtils.getChangelogLocation(dsName)).absolutePath
 	String relativePath = (fullPath - fullMigrationFolderPath).substring(1)
 	appendToChangelog new File(filename), "\n\tinclude file: '$relativePath'"
 }
@@ -268,7 +268,7 @@ okToWrite = { destinationOrIndex = 0, boolean relativeToMigrationDir = false ->
 	}
 
 	if (relativeToMigrationDir) {
-		destination = MigrationUtils.changelogLocation + '/' + destination
+		destination = MigrationUtils.getChangelogLocation(dsName) + '/' + destination
 	}
 
 	def file = new File(destination)
