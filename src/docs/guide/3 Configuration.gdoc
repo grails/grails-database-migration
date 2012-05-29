@@ -29,10 +29,8 @@ dataSource_reports {
 }
 {code}
 
-The configuration for this datasource would be:
+The configuration for this data source would be:
 {code}
-grails.plugin.databasemigration.reports {
-    updateOnStart = true
-    changelogFileName = changelog-reports.groovy
-}
+grails.plugin.databasemigration.reports.updateOntart = true
+grails.plugin.databasemigration.reports.changelogFileName = changelog-reports.groovy
 {code}
