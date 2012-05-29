@@ -28,7 +28,7 @@ target(dbmCreateChangelog: 'Creates an empty changelog file') {
 	}
 
 	try {
-		def file = new File(MigrationUtils.changelogLocation + '/' + name)
+		def file = new File(MigrationUtils.getChangelogLocation(dsName) + '/' + name)
 		file.parentFile?.mkdirs()
 
 		if (!okToWrite(file.path)) return

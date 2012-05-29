@@ -34,6 +34,7 @@ target(dbmInit: 'General initialization, also creates a Liquibase instance') {
 		diffTypes = argsMap.diffTypes
 		defaultSchema = argsMap.defaultSchema
 		dataSourceSuffix = argsMap.dataSource
+		dsName = MigrationUtils.dataSourceNameWithSuffix(dataSourceSuffix)
 
 		mkdir dir: MigrationUtils.changelogLocation
 	}
@@ -45,7 +46,6 @@ target(dbmInit: 'General initialization, also creates a Liquibase instance') {
 
 doAndClose = { Closure c ->
 	try {
-		String dsName = MigrationUtils.dataSourceNameWithSuffix(dataSourceSuffix)
 		MigrationUtils.executeInSession(dsName) {
 			database = MigrationUtils.getDatabase(defaultSchema, dsName)
             String changeLogFileName = MigrationUtils.getChangelogFileName(dsName)
@@ -71,7 +71,6 @@ booleanArg = { String name ->
 	argsMap[name] instanceof Boolean ? argsMap[name] : false
 }
 
-
 errorAndDie = { String message ->
 	errorMessage "\nERROR: $message"
 	exit 1
@@ -91,7 +90,7 @@ okToWrite = { destinationOrIndex = 0, boolean relativeToMigrationDir = false ->
 	}
 
 	if (relativeToMigrationDir) {
-		destination = MigrationUtils.changelogLocation + '/' + destination
+		destination = MigrationUtils.getChangelogLocation(dsName) + '/' + destination
 	}
 
 	def file = new File(destination)
