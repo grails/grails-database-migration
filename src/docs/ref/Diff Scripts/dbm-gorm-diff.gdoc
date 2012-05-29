@@ -14,7 +14,9 @@ Similar to [dbm-diff|Diff Scripts] but diffs the current configuration based on 
 
 Doesn't modify any existing files - you need to manually merge the output into the changeset along with any necessary modifications.
 
-You can configure database objects to be ignored by this script - either in the GORM classes or in the target database. For example, you may have domain objects that are entirely transient, or you may have tables, views, etc. that are managed externally.
+You can configure database objects to be ignored by this script - either in the GORM classes or in the target database. 
+For example, you may have domain objects that are entirely transient, or you may have tables, views, etc. that are managed externally.  
+The configuration name for these ignored objects is grails.plugin.databasemigration.ignoredObjects, whose value is a list of strings.
 
 Usage:
 {code:java}
