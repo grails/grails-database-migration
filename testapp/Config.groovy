@@ -50,4 +50,6 @@ log4j = {
 
 grails.plugin.databasemigration.updateOnStart = true
 grails.plugin.databasemigration.updateOnStartFileNames = ['changelog.groovy']
+grails.plugin.databasemigration.reports.updateOnStart = true
+grails.plugin.databasemigration.reports.updateOnStartFileNames = ['changelog-reports.groovy']
 
