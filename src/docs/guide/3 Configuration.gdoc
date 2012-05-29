@@ -14,3 +14,25 @@ grails.plugin.databasemigration. updateOnStartDefaultSchema | none | the default
 grails.plugin.databasemigration. autoMigrateScripts | ['RunApp'] | the scripts when running auto-migrate. Useful to run auto-migrate during test phase with: ['RunApp', 'TestApp']
 grails.plugin.databasemigration. ignoredObjects | none | one or more database object names to ignore while performing a dbm-gorm-diff or dbm-generate-gorm-changelog
 {table}
+
+{note}
+All of the above configs can be used for a multiple datasources in Grails 2.0.x.
+{note}
+
+h4. Multiple DataSource Example:
+If a reports dataSource is configured in DataSource.groovy
+{code}
+dataSource_reports {
+   url = ...
+   driverClassName = ...
+   ...
+}
+{code}
+
+The configuration for this datasource would be:
+{code}
+grails.plugin.databasemigration.reports {
+    updateOnStart = true
+    changelogFileName = changelog-reports.groovy
+}
+{code}
