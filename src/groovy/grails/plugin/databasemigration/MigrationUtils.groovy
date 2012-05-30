@@ -184,6 +184,7 @@ class MigrationUtils {
 	static DiffResult fixDiffResult(DiffResult diffResult) {
 		removeRedundantUnexpectedUnique diffResult
 		removeEquivalentIndexes diffResult
+		removeIgnoredObjects diffResult
 
 		for (Iterator iter = diffResult.unexpectedIndexes.iterator(); iter.hasNext(); ) {
 			Index index = iter.next()
@@ -242,4 +243,21 @@ class MigrationUtils {
 			}
 		}
 	}
+	
+	static void removeIgnoredObjects(DiffResult diffResult) {
+        def ignoredObjects = application.config.grails.plugin.databasemigration.ignoredObjects
+        if (!ignoredObjects) return
+
+        diffResult.missingTables.removeAll(diffResult.missingTables.findAll { ignoredObjects.contains(it.name) })
+        diffResult.missingPrimaryKeys.removeAll(diffResult.missingPrimaryKeys.findAll { ignoredObjects.contains(it.name) })
+        // convenience to automatically ignore ignored tables' generated primary keys
+        diffResult.missingPrimaryKeys.removeAll(diffResult.missingPrimaryKeys.findAll { ignoredObjects.contains(it.table.name) })
+        diffResult.unexpectedTables.removeAll(diffResult.unexpectedTables.findAll { ignoredObjects.contains(it.name) })
+        diffResult.unexpectedViews.removeAll(diffResult.unexpectedViews.findAll { ignoredObjects.contains(it.name) })
+        diffResult.unexpectedForeignKeys.removeAll(diffResult.unexpectedForeignKeys.findAll { ignoredObjects.contains(it.name) })
+        diffResult.unexpectedIndexes.removeAll(diffResult.unexpectedIndexes.findAll { ignoredObjects.contains(it.name) })
+        diffResult.unexpectedPrimaryKeys.removeAll(diffResult.unexpectedPrimaryKeys.findAll { ignoredObjects.contains(it.name) })
+        diffResult.unexpectedUniqueConstraints.removeAll(diffResult.unexpectedUniqueConstraints.findAll { ignoredObjects.contains(it.name) })
+        diffResult.unexpectedSequences.removeAll(diffResult.unexpectedSequences.findAll { ignoredObjects.contains(it.name) })
+	}	
 }
