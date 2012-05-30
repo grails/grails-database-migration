@@ -10,5 +10,6 @@ grails.plugin.databasemigration. dbDocController.enabled | @true@ in dev mode | 
 grails.plugin.databasemigration. updateOnStart | @false@ | if @true@ then changesets from the specified list of names will be run at startup
 grails.plugin.databasemigration. updateOnStartFileNames | none | one or more file names (relative to @changelogLocation@) to run at startup if @updateOnStart@ is @true@
 grails.plugin.databasemigration. updateOnStartDefaultSchema | none | the default schema to use when running auto-migrate on start
+grails.plugin.databasemigration. updateOnStartContexts | none | A comma-delimited list of [context|http://www.liquibase.org/manual/contexts] names. If specified, only changesets tagged with one of the context names will be run
 grails.plugin.databasemigration. autoMigrateScripts | ['RunApp'] | the scripts when running auto-migrate. Useful to run auto-migrate during test phase with: ['RunApp', 'TestApp']
 {table}
