@@ -33,3 +33,9 @@ grails.plugin.databasemigration.updateOnStartFileNames = ['changelog.groovy']
 
 Since changelogs can contain changelogs you'll most often just specify the root changelog, changelog.groovy by convention. Any changes that haven't been executed (in the specified file(s) or files included by them) will be run in the order specified.
 
+You may optionally limit the plugin's auto-run feature to run only specific contexts. If this configuration parameter is empty or omitted, all contexts will be run.
+
+{code}
+grails.plugin.databasemigration.updateOnStartContexts = ['context1,context2']
+{code}
+
