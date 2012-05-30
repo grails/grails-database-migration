@@ -11,4 +11,5 @@ grails.plugin.databasemigration. updateOnStart | @false@ | if @true@ then change
 grails.plugin.databasemigration. updateOnStartFileNames | none | one or more file names (relative to @changelogLocation@) to run at startup if @updateOnStart@ is @true@
 grails.plugin.databasemigration. updateOnStartDefaultSchema | none | the default schema to use when running auto-migrate on start
 grails.plugin.databasemigration. autoMigrateScripts | ['RunApp'] | the scripts when running auto-migrate. Useful to run auto-migrate during test phase with: ['RunApp', 'TestApp']
+grails.plugin.databasemigration. ignoredObjects | none | one or more database objects names to ignore while performing a dbm-gorm-diff or dbm-generate-gorm-changelog
 {table}
