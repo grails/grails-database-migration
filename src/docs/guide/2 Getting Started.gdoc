@@ -94,6 +94,7 @@ class BootStrap {
     }
 }
 {code}
+{warn}
 
 h4. Source control
 
