@@ -70,6 +70,31 @@ or the [dbm-changelog-sync|Maintenance Scripts] script if the database is alread
 grails dbm-changelog-sync
 {code}
 
+{warn}
+If you're also using the searchable plugin, then you need to configure it to run after the database migrations have run.  e.g. 
+In Searchable.groovy or in your Config.groovy if that's where you're configuring Searchable:
+{code}
+// disable the plugin's operations here.  we'll re-enable them in the Bootstrap to avoid conflicts with database-migration
+mirrorChanges = false
+bulkIndexOnStartup = false
+{code}
+
+In Bootstrap.groovy:
+{code}
+class BootStrap {
+    def searchableService
+    def init = { servletContext ->
+        // do any data loading you would normally do
+        
+        // Manually start the mirroring process to ensure that it comes after the automated migrations.
+        println "Performing bulk index"
+        searchableService.reindex()
+        println "Starting mirror service"
+        searchableService.startMirroring()
+    }
+}
+{code}
+
 h4. Source control
 
 Now you can commit the changelog and the corresponding application code to source control. Other developers can then update and syncronize their databases, and start doing migrations themselves.
