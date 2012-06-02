@@ -252,6 +252,8 @@ class MigrationUtils {
         diffResult.missingPrimaryKeys.removeAll(diffResult.missingPrimaryKeys.findAll { ignoredObjects.contains(it.name) })
         // convenience to automatically ignore ignored tables' generated primary keys
         diffResult.missingPrimaryKeys.removeAll(diffResult.missingPrimaryKeys.findAll { ignoredObjects.contains(it.table.name) })
+        // ignore missing foreign keys that are for ignored tables
+        diffResult.missingForeignKeys.removeAll(diffResult.missingForeignKeys.findAll { ignoredObjects.contains(it.foreignKeyTable.name) })        
         diffResult.unexpectedTables.removeAll(diffResult.unexpectedTables.findAll { ignoredObjects.contains(it.name) })
         diffResult.unexpectedViews.removeAll(diffResult.unexpectedViews.findAll { ignoredObjects.contains(it.name) })
         diffResult.unexpectedForeignKeys.removeAll(diffResult.unexpectedForeignKeys.findAll { ignoredObjects.contains(it.name) })
