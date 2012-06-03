@@ -70,7 +70,7 @@ or the [dbm-changelog-sync|Maintenance Scripts] script if the database is alread
 grails dbm-changelog-sync
 {code}
 
-{warn}
+{note}
 If you're also using the searchable plugin, then you need to configure it to run after the database migrations have run.  e.g. 
 In Searchable.groovy or in your Config.groovy if that's where you're configuring Searchable:
 {code}
@@ -94,7 +94,7 @@ class BootStrap {
     }
 }
 {code}
-{warn}
+{note}
 
 h4. Source control
 
