@@ -62,16 +62,17 @@ class GormDatabaseSnapshotGenerator implements DatabaseSnapshotGenerator {
 //			def dialect = new HibernateGenericDialect(dialectName) // TODO
 
 			def mapping = cfg.buildMapping()
+            def defaultSchema = cfg.properties.default_schema
 
 			for (hibernateTable in cfg.tableMappings) {
-//				if (!hibernateTable.physicalTable || (db.schema && hibernateTable.schema != db.schema)) {
 				if (!hibernateTable.physicalTable) {
 					continue
 				}
 
+                def tableSchema = hibernateTable.schema == null || hibernateTable.schema == '' ? defaultSchema : hibernateTable.schema  
 				Table table = new Table(hibernateTable.name)
-				table.setSchema(hibernateTable.schema)
-				table.setRawSchemaName(hibernateTable.schema)
+				table.setSchema(tableSchema)
+				table.setRawSchemaName(tableSchema)
 				snapshot.tables << table
 
 				def hibernatePrimaryKey = hibernateTable.primaryKey
@@ -127,7 +128,6 @@ class GormDatabaseSnapshotGenerator implements DatabaseSnapshotGenerator {
 			}
 
 			for (hibernateTable in cfg.tableMappings) {
-//				if (!hibernateTable.physicalTable || (db.schema && hibernateTable.schema != db.schema)) {
 				if (!hibernateTable.physicalTable) {
 					continue
 				}
@@ -158,7 +158,6 @@ class GormDatabaseSnapshotGenerator implements DatabaseSnapshotGenerator {
 			if (db.supportsSequences()) {
 				Map generators = [:]
 				for (PersistentClass pc in cfg.classes.values()) {
-//					if (pc.isInherited() || (db.schema && pc.table.schema != db.schema)) {
 					if (pc.isInherited()) {
 						continue
 					}
@@ -187,6 +186,10 @@ class GormDatabaseSnapshotGenerator implements DatabaseSnapshotGenerator {
 		snapshot
 	}
 
+     
+    /**
+     * Filters snapshot removing objects not belonging to schema or referencing objects outside schema 
+     */
 	private void depurateSnapshot(DatabaseSnapshot snapshot, String schema) {
 		List<PrimaryKey> lpk = new ArrayList<PrimaryKey>()
 		for (PrimaryKey pk: snapshot.primaryKeys) {
