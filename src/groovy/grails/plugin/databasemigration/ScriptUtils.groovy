@@ -199,7 +199,8 @@ class ScriptUtils {
 
 		def configuration = new GrailsAnnotationConfiguration(
 			grailsApplication: appCtx.grailsApplication,
-			properties: ['hibernate.dialect': dialect.toString()] as Properties)
+			properties: ['hibernate.dialect': dialect.toString(),
+				         'hibernate.default_schema': config.hibernate.default_schema.toString()] as Properties)
 		configuration.buildMappings()
 
 		new GormDatabase(configuration, schema)

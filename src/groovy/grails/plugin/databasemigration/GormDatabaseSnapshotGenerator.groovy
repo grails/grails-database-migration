@@ -62,14 +62,14 @@ class GormDatabaseSnapshotGenerator implements DatabaseSnapshotGenerator {
 //			def dialect = new HibernateGenericDialect(dialectName) // TODO
 
 			def mapping = cfg.buildMapping()
-            def defaultSchema = cfg.properties.default_schema
+            def defaultSchema = cfg.getProperty('hibernate.default_schema')
 
 			for (hibernateTable in cfg.tableMappings) {
 				if (!hibernateTable.physicalTable) {
 					continue
 				}
 
-                def tableSchema = hibernateTable.schema == null || hibernateTable.schema == '' ? defaultSchema : hibernateTable.schema  
+                def tableSchema = hibernateTable.schema == null || hibernateTable.schema == '' ? defaultSchema : hibernateTable.schema
 				Table table = new Table(hibernateTable.name)
 				table.setSchema(tableSchema)
 				table.setRawSchemaName(tableSchema)
