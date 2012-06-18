@@ -27,9 +27,11 @@ import org.hibernate.cfg.Configuration
 class GormDatabase extends AbstractDatabase {
 
 	Configuration configuration
+    String schema
 
-	GormDatabase(Configuration configuration) {
+	GormDatabase(Configuration configuration, schema) {
 		this.configuration = configuration
+        this.schema = schema
 	}
 
 	String getDatabaseProductName() { 'GORM Mapping' }

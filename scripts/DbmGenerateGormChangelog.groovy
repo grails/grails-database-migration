@@ -24,9 +24,13 @@ target(dbmGenerateGormChangelog: 'Generates an initial changelog XML file based 
 
 	if (!okToWrite(0, true)) return
 
+	def configuredSchema = config.grails.plugin.databasemigration.schema
+	def argSchema = argsMap.schema
+	def effectiveSchema = argSchema  ? argSchema : (configuredSchema ?  configuredSchema : null)
+
 	doAndClose {
 		ScriptUtils.executeAndWrite argsList[0], booleanArg('add'), { PrintStream out ->
-			def gormDatabase = ScriptUtils.createGormDatabase(config, appCtx)
+			def gormDatabase = ScriptUtils.createGormDatabase(config, appCtx, effectiveSchema)
 			MigrationUtils.fixDiffResult(
 				ScriptUtils.createDiff(gormDatabase, null, appCtx, diffTypes).compare()).printChangeLog out, gormDatabase
 		}

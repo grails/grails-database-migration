@@ -186,7 +186,7 @@ class ScriptUtils {
 		results
 	}
 
-	static GormDatabase createGormDatabase(config, appCtx) {
+	static GormDatabase createGormDatabase(config, appCtx, schema) {
 		def dialect = config.dataSource.dialect
 		if (dialect) {
 			if (dialect instanceof Class) {
@@ -199,10 +199,11 @@ class ScriptUtils {
 
 		def configuration = new GrailsAnnotationConfiguration(
 			grailsApplication: appCtx.grailsApplication,
-			properties: ['hibernate.dialect': dialect.toString()] as Properties)
+			properties: ['hibernate.dialect': dialect.toString(),
+				         'hibernate.default_schema': config.hibernate.default_schema.toString()] as Properties)
 		configuration.buildMappings()
 
-		new GormDatabase(configuration)
+		new GormDatabase(configuration, schema)
 	}
 
 	static Diff createDiff(Database referenceDatabase, Database targetDatabase,
