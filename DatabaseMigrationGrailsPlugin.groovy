@@ -24,14 +24,16 @@ import grails.plugin.databasemigration.Log4jLogger
 import grails.plugin.databasemigration.MigrationRunner
 import grails.plugin.databasemigration.MigrationUtils
 import grails.plugin.databasemigration.MysqlAwareCreateTableGenerator
-
 import liquibase.change.ChangeFactory
 import liquibase.database.typeconversion.TypeConverterFactory
-import liquibase.logging.Logger
 import liquibase.logging.LogFactory
+import liquibase.logging.Logger
 import liquibase.parser.ChangeLogParserFactory
 import liquibase.precondition.PreconditionFactory
+import liquibase.resource.ClassLoaderResourceAccessor
+import liquibase.resource.CompositeResourceAccessor
 import liquibase.resource.FileSystemResourceAccessor
+import liquibase.resource.ResourceAccessor
 import liquibase.servicelocator.ServiceLocator
 import liquibase.snapshot.DatabaseSnapshotGeneratorFactory
 import liquibase.sqlgenerator.SqlGeneratorFactory
@@ -63,13 +65,15 @@ class DatabaseMigrationGrailsPlugin {
 
 		MigrationUtils.application = application
 
+		ResourceAccessor classLoaderResourceAccessor = new ClassLoaderResourceAccessor()
+
 		if (application.warDeployed) {
-			migrationResourceAccessor(GrailsClassLoaderResourceAccessor)
+			migrationResourceAccessor(CompositeResourceAccessor, [new GrailsClassLoaderResourceAccessor(), classLoaderResourceAccessor])
 		}
 		else {
 			String changelogLocation = MigrationUtils.changelogLocation
 			String changelogLocationPath = new File(changelogLocation).path
-			migrationResourceAccessor(FileSystemResourceAccessor, changelogLocationPath)
+			migrationResourceAccessor(CompositeResourceAccessor, [new FileSystemResourceAccessor(changelogLocationPath), classLoaderResourceAccessor])
 		}
 
 		diffStatusListener(GrailsDiffStatusListener)
