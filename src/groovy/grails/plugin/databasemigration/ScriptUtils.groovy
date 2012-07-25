@@ -99,21 +99,24 @@ class ScriptUtils {
 		String fullPath = new File(filename).absolutePath
 		String fullMigrationFolderPath = new File(MigrationUtils.changelogLocation).absolutePath
 		String relativePath = (fullPath - fullMigrationFolderPath).substring(1)
-		appendToChangelog new File(filename), "\n\tinclude file: '$relativePath'"
+		appendToChangelog new File(filename), relativePath
 	}
 
-	static void appendToChangelog(File sourceFile, String content) {
+	static void appendToChangelog(File sourceFile, String includeName) {
 
 		File changelog = new File(MigrationUtils.changelogLocation, MigrationUtils.changelogFileName)
 		if (changelog.absolutePath.equals(sourceFile.absolutePath)) {
 			return
 		}
 
+		boolean xml = changelog.name.toLowerCase().endsWith('.xml')
+		String includeStatement = xml ? "\n    <include file='$includeName'/>\n" : "\n\tinclude file: '$includeName'"
+
 		def asLines = changelog.text.readLines()
 		int count = asLines.size()
 		int index = -1
 		for (int i = count - 1; i > -1; i--) {
-			if (asLines[i].trim() == '}') {
+			if ((xml && asLines[i].trim() == '</databaseChangeLog>') || asLines[i].trim() == '}') {
 				index = i
 				break
 			}
@@ -128,7 +131,7 @@ class ScriptUtils {
 		changelog.withWriter {
 			index.times { i -> it.write asLines[i]; it.newLine() }
 
-			it.write content; it.newLine()
+			it.write includeStatement; it.newLine()
 
 			(count - index).times { i -> it.write asLines[index + i]; it.newLine() }
 		}
