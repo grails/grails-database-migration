@@ -7,6 +7,7 @@ grails.plugin.databasemigration. changelogFileName | @changelog.groovy@ | the na
 grails.plugin.databasemigration. changelogProperties | none | a map of properties to use for property substitution in Groovy DSL changelogs
 grails.plugin.databasemigration. dbDocLocation | @target/dbdoc@ | the directory where the output from the [dbm-db-doc|Documentation Scripts] script is written
 grails.plugin.databasemigration. dbDocController.enabled | @true@ in dev mode | whether the /dbdoc/ url is accessible at runtime
+grails.plugin.databasemigration. dropOnStart | @false@ | if @true@ then drops all tables before auto-running migrations (if updateOnStart is true)
 grails.plugin.databasemigration. updateOnStart | @false@ | if @true@ then changesets from the specified list of names will be run at startup
 grails.plugin.databasemigration. updateOnStartFileNames | none | one or more file names (relative to @changelogLocation@) to run at startup if @updateOnStart@ is @true@
 grails.plugin.databasemigration. updateOnStartDefaultSchema | none | the default schema to use when running auto-migrate on start

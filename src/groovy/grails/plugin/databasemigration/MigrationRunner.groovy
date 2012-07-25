@@ -45,10 +45,10 @@ class MigrationRunner {
 		try {
 			MigrationUtils.executeInSession {
 				database = MigrationUtils.getDatabase(config.updateOnStartDefaultSchema ?: null)
-                if (config.dropOnStart) {
-                    LOG.warn "Dropping tables..."
-                    MigrationUtils.getLiquibase(database).dropAll()
-                }
+				if (config.dropOnStart) {
+					LOG.warn "Dropping tables..."
+					MigrationUtils.getLiquibase(database).dropAll()
+				}
 				for (name in config.updateOnStartFileNames) {
 					LOG.info "Running script '$name'"
 					MigrationUtils.getLiquibase(database, name).update null
