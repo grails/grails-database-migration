@@ -14,6 +14,7 @@
  */
 package grails.plugin.databasemigration
 
+import grails.util.GrailsUtil
 import liquibase.changelog.ChangeLogParameters
 import liquibase.changelog.DatabaseChangeLog
 import liquibase.exception.ChangeLogParseException
@@ -52,27 +53,33 @@ class GrailsChangeLogParser implements ChangeLogParser {
 			ChangeLogParameters changeLogParameters,
 			ResourceAccessor resourceAccessor) throws ChangeLogParseException {
 
-		log.debug "parsing $physicalChangeLogLocation"
+		try {
+			log.debug "parsing $physicalChangeLogLocation"
 
-		def inputStream = resourceAccessor.getResourceAsStream(physicalChangeLogLocation)
-		if (!inputStream) {
-			throw new ChangeLogParseException("$physicalChangeLogLocation not found")
+			def inputStream = resourceAccessor.getResourceAsStream(physicalChangeLogLocation)
+			if (!inputStream) {
+				throw new ChangeLogParseException("$physicalChangeLogLocation not found")
+			}
+
+			Script script = new GroovyShell(Thread.currentThread().contextClassLoader,
+				new Binding(MigrationUtils.changelogProperties)).parse(inputStream.text)
+			script.run()
+
+			setChangelogProperties changeLogParameters
+
+			def builder = new DslBuilder(changeLogParameters, resourceAccessor,
+				physicalChangeLogLocation, ctx)
+
+			def root = script.databaseChangeLog
+			root.delegate = builder
+			root()
+
+			builder.databaseChangeLog
 		}
-
-		Script script = new GroovyShell(Thread.currentThread().contextClassLoader,
-			new Binding(MigrationUtils.changelogProperties)).parse(inputStream.text)
-		script.run()
-
-		setChangelogProperties changeLogParameters
-
-		def builder = new DslBuilder(changeLogParameters, resourceAccessor,
-			physicalChangeLogLocation, ctx)
-
-		def root = script.databaseChangeLog
-		root.delegate = builder
-		root()
-
-		builder.databaseChangeLog
+		catch(e) {
+			println "problem parsing $physicalChangeLogLocation: $e.message (re-run with --verbose to see the stacktrace)"
+			throw GrailsUtil.deepSanitize(e)
+		}
 	}
 
 	boolean supports(String changeLogFile, ResourceAccessor resourceAccessor) {
