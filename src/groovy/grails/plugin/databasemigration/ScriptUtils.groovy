@@ -203,6 +203,12 @@ class ScriptUtils {
 		def configuration = new GrailsAnnotationConfiguration(
 			grailsApplication: appCtx.grailsApplication,
 			properties: ['hibernate.dialect': dialect.toString()] as Properties)
+
+		def hibernateCfgXml = Thread.currentThread().contextClassLoader.getResource('hibernate.cfg.xml')
+		if (hibernateCfgXml) {
+			configuration.configure hibernateCfgXml
+		}
+
 		configuration.buildMappings()
 
 		new GormDatabase(configuration)
