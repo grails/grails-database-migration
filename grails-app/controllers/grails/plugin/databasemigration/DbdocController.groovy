@@ -44,7 +44,7 @@ class DbdocController {
 		}
 
 		String changelogFileName = params.changelogFileName ?: MigrationUtils.changelogFileName
-		if (!new File(changelogFileName).exists()) {
+		if (!new File(MigrationUtils.changelogLocation, changelogFileName).exists()) {
 			render "Changelog $changelogFileName not found"
 			return
 		}
