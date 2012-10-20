@@ -19,7 +19,7 @@
 
 includeTargets << new File("$databaseMigrationPluginDir/scripts/_DatabaseMigrationCommon.groovy")
 
-target(dbmUpdateCountSql: 'Applies the next <value> change sets') {
+target(dbmUpdateCountSql: 'Generates the SQL to apply the next <value> change sets') {
 	depends dbmInit
 
 	def count = argsList[0]
