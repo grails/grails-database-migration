@@ -17,8 +17,6 @@ package grails.plugin.databasemigration
 import liquibase.database.AbstractDatabase
 import liquibase.database.DatabaseConnection
 
-import org.hibernate.cfg.Configuration
-
 /**
  * Used by the gorm-diff script. Doesn't do much - it's mostly a holder for the configuration.
  *
@@ -26,9 +24,9 @@ import org.hibernate.cfg.Configuration
  */
 class GormDatabase extends AbstractDatabase {
 
-	Configuration configuration
+	/*org.hibernate.cfg.Configuration*/ def configuration
 
-	GormDatabase(Configuration configuration) {
+	GormDatabase(/*org.hibernate.cfg.Configuration*/ configuration) {
 		this.configuration = configuration
 	}
 

@@ -120,6 +120,14 @@ calculateDate = {
 	results.date
 }
 
+isHibernateInstalled = { ->
+	if (!pluginManager.hasGrailsPlugin('hibernate')) {
+		errorMessage "Hibernate plugin isn't installed; GORM-based scripts are not available"
+		return false
+	}
+	true
+}
+
 target(enableExpandoMetaClass: "Calls ExpandoMetaClass.enableGlobally()") {
 	ExpandoMetaClass.enableGlobally()
 }

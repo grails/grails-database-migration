@@ -91,9 +91,6 @@ class DatabaseMigrationGrailsPlugin {
 		// adds support for .groovy extension
 		ChangeLogParserFactory.instance.register new GrailsChangeLogParser(ctx)
 
-		// used by gorm-diff and generate-gorm-changelog
-		DatabaseSnapshotGeneratorFactory.instance.register new GormDatabaseSnapshotGenerator()
-
 		// adds support for Groovy-based changes in DSL changelogs
 		ChangeFactory.instance.register GrailsChange
 
@@ -103,6 +100,16 @@ class DatabaseMigrationGrailsPlugin {
 		// appends 'ENGINE=InnoDB' to 'create table ...' statements in MySQL if using InnoDB
 		SqlGeneratorFactory.instance.unregister CreateTableGenerator
 		SqlGeneratorFactory.instance.register new MysqlAwareCreateTableGenerator()
+
+		if (MigrationUtils.hibernateAvailable()) {
+			registerHibernate ctx
+		}
+	}
+
+	private void registerHibernate(ctx) {
+
+		// used by gorm-diff and generate-gorm-changelog
+		DatabaseSnapshotGeneratorFactory.instance.register new GormDatabaseSnapshotGenerator()
 
 		// fixes changelog errors generated from the GORM scripts
 		TypeConverterFactory.instance.register GormDatabaseTypeConverter

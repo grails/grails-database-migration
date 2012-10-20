@@ -28,14 +28,6 @@ import liquibase.exception.DatabaseException
 import liquibase.snapshot.DatabaseSnapshot
 import liquibase.snapshot.DatabaseSnapshotGenerator
 
-import org.hibernate.cfg.Configuration
-import org.hibernate.dialect.Dialect
-import org.hibernate.dialect.MySQLDialect
-import org.hibernate.id.IdentifierGenerator
-import org.hibernate.id.SequenceGenerator
-import org.hibernate.mapping.PersistentClass
-import org.hibernate.mapping.Value
-
 /**
  * Used by the gorm-diff script. Registered in DatabaseMigrationGrailsPlugin.doWithApplicationContext().
  *
@@ -80,7 +72,7 @@ class GormDatabaseSnapshotGenerator implements DatabaseSnapshotGenerator {
 					snapshot.primaryKeys << pk
 				}
 
-				for (hibernateColumn in hibernateTable.columnIterator) {
+				for (/*org.hibernate.mapping.Column*/ hibernateColumn in hibernateTable.columnIterator) {
 					Column column = new Column(
 						name: hibernateColumn.name,
 						dataType: hibernateColumn.getSqlTypeCode(mapping),
@@ -145,7 +137,7 @@ class GormDatabaseSnapshotGenerator implements DatabaseSnapshotGenerator {
 
 					fk.primaryKeyColumns = fkColumns.join(', ')
 					snapshot.foreignKeys << fk
-					if (dialect instanceof MySQLDialect) {
+					if (MigrationUtils.instanceOf(dialect, 'org.hibernate.dialect.MySQLDialect')) {
 						addMysqlFkIndex snapshot, fk.foreignKeyTable, hibernateForeignKey
 					}
 				}
@@ -153,18 +145,18 @@ class GormDatabaseSnapshotGenerator implements DatabaseSnapshotGenerator {
 
 			if (db.supportsSequences()) {
 				Map generators = [:]
-				for (PersistentClass pc in cfg.classes.values()) {
+				for (/*org.hibernate.mapping.PersistentClass*/ pc in cfg.classes.values()) {
 					if (pc.isInherited()) {
 						continue
 					}
 
 					def identifierGenerator = createIdentifierGenerator(dialect, pc, cfg)
-					if (identifierGenerator instanceof SequenceGenerator) {
+					if (MigrationUtils.instanceOf(identifierGenerator, 'org.hibernate.id.SequenceGenerator')) {
 						generators.put(identifierGenerator.generatorKey(), identifierGenerator)
 					}
 				}
 
-				for (SequenceGenerator generator in generators.values()) {
+				for (/*org.hibernate.id.SequenceGenerator*/ generator in generators.values()) {
 					String schema = requestedSchema ?: ''
 					snapshot.sequences << new Sequence(
 						name: generator.sequenceName,
@@ -180,7 +172,7 @@ class GormDatabaseSnapshotGenerator implements DatabaseSnapshotGenerator {
 	}
 
 	// workaround for changed method signature without backwards compatibility
-	private boolean isIdentityColumn(Value value, Dialect dialect, Configuration cfg) {
+	private boolean isIdentityColumn(/*org.hibernate.mapping.Value*/ value, /*org.hibernate.dialect.Dialect*/ dialect, /*org.hibernate.cfg.Configuration*/ cfg) {
 		Method method = value.getClass().getMethods().find { it.name == 'isIdentityColumn' }
 		if (method.getParameterTypes().length == 1) {
 			// pre-3.6 Hibernate
@@ -191,7 +183,9 @@ class GormDatabaseSnapshotGenerator implements DatabaseSnapshotGenerator {
 	}
 
 	// another workaround for changed method signature without backwards compatibility
-	private IdentifierGenerator createIdentifierGenerator(Dialect dialect, PersistentClass pc, Configuration cfg) {
+	private /*org.hibernate.id.IdentifierGenerator*/ createIdentifierGenerator(/*org.hibernate.dialect.Dialect*/ dialect,
+				/*org.hibernate.mapping.PersistentClass*/ pc, /*org.hibernate.cfg.Configuration*/ cfg) {
+
 		Method method = pc.identifier.getClass().getMethods().find { it.name == 'createIdentifierGenerator' }
 		if (method.getParameterTypes().length == 4) {
 			// pre-3.6 Hibernate

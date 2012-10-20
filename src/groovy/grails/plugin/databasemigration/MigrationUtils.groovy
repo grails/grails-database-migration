@@ -25,10 +25,6 @@ import liquibase.database.structure.UniqueConstraint
 import liquibase.diff.DiffResult
 
 import org.codehaus.groovy.grails.commons.GrailsApplication
-import org.hibernate.FlushMode
-import org.hibernate.Session
-import org.springframework.orm.hibernate3.SessionFactoryUtils
-import org.springframework.orm.hibernate3.SessionHolder
 import org.springframework.transaction.support.TransactionSynchronizationManager
 
 /**
@@ -111,13 +107,20 @@ class MigrationUtils {
 			return true
 		}
 
-		Session session = SessionFactoryUtils.getSession(sessionFactory, true)
+		def SessionFactoryUtils = MigrationUtils.classForName('org.springframework.orm.hibernate3.SessionFactoryUtils')
+		def FlushMode = MigrationUtils.classForName('org.hibernate.FlushMode')
+		def SessionHolder = MigrationUtils.classForName('org.springframework.orm.hibernate3.SessionHolder')
+
+		/*org.hibernate.Session*/ def session = SessionFactoryUtils.getSession(sessionFactory, true)
 		session.flushMode = FlushMode.AUTO
-		TransactionSynchronizationManager.bindResource sessionFactory, new SessionHolder(session)
+		TransactionSynchronizationManager.bindResource sessionFactory, SessionHolder.newInstance(session)
 		false
 	}
 
 	private static void flushAndClose() {
+		def SessionFactoryUtils = MigrationUtils.classForName('org.springframework.orm.hibernate3.SessionFactoryUtils')
+		def FlushMode = MigrationUtils.classForName('org.hibernate.FlushMode')
+
 		def sessionFactory = findSessionFactory()
 		def session = TransactionSynchronizationManager.unbindResource(sessionFactory).session
 		if (!FlushMode.MANUAL == session.flushMode) {
@@ -269,5 +272,22 @@ class MigrationUtils {
 		diffResult.unexpectedPrimaryKeys.removeAll(diffResult.unexpectedPrimaryKeys.findAll { ignoredObjects.contains(it.table.name) })
 		diffResult.unexpectedUniqueConstraints.removeAll(diffResult.unexpectedUniqueConstraints.findAll { ignoredObjects.contains(it.name) })
 		diffResult.unexpectedSequences.removeAll(diffResult.unexpectedSequences.findAll { ignoredObjects.contains(it.name) })
+	}
+
+	static boolean hibernateAvailable() {
+		null != classForName('org.hibernate.cfg.Configuration')
+	}
+
+	static Class<?> classForName(String name) {
+		try {
+			return Class.forName(name, false, Thread.currentThread().contextClassLoader)
+		}
+		catch (ClassNotFoundException e) {
+			return null
+		}
+	}
+
+	static boolean instanceOf(o, String className) {
+		classForName(className).isAssignableFrom(o.getClass())
 	}
 }

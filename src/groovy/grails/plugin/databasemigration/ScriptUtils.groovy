@@ -34,7 +34,6 @@ import liquibase.parser.ChangeLogParserFactory
 import liquibase.util.StringUtils
 
 import org.apache.log4j.Logger
-import org.codehaus.groovy.grails.orm.hibernate.cfg.GrailsAnnotationConfiguration
 import org.springframework.context.ApplicationContext
 
 /**
@@ -212,7 +211,9 @@ class ScriptUtils {
 			dialect = appCtx.dialectDetector
 		}
 
-		def configuration = new GrailsAnnotationConfiguration(
+		def GrailsAnnotationConfiguration = MigrationUtils.classForName('org.codehaus.groovy.grails.orm.hibernate.cfg.GrailsAnnotationConfiguration')
+
+		def configuration = GrailsAnnotationConfiguration.newInstance(
 			grailsApplication: appCtx.grailsApplication,
 			properties: ['hibernate.dialect': dialect.toString()] as Properties)
 
