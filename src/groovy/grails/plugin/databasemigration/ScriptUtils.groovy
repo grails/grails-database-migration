@@ -18,8 +18,20 @@ import grails.util.GrailsUtil
 
 import java.text.SimpleDateFormat
 
+import liquibase.Liquibase
+import liquibase.changelog.ChangeLogIterator
+import liquibase.changelog.DatabaseChangeLog
+import liquibase.changelog.filter.ContextChangeSetFilter
+import liquibase.changelog.filter.CountChangeSetFilter
+import liquibase.changelog.filter.DbmsChangeSetFilter
 import liquibase.database.Database
 import liquibase.diff.Diff
+import liquibase.executor.Executor
+import liquibase.executor.ExecutorService
+import liquibase.executor.LoggingExecutor
+import liquibase.lockservice.LockService
+import liquibase.parser.ChangeLogParserFactory
+import liquibase.util.StringUtils
 
 import org.apache.log4j.Logger
 import org.codehaus.groovy.grails.orm.hibernate.cfg.GrailsAnnotationConfiguration
@@ -220,5 +232,41 @@ class ScriptUtils {
 		diff.diffTypes = diffTypes
 		diff.addStatusListener appCtx.diffStatusListener
 		diff
+	}
+
+	static void generatePreviousChangesetSql(Database database, Liquibase liquibase, Writer output, int changesetCount, int skip, String contexts) {
+		def changeLogFile = liquibase.changeLogFile
+
+		liquibase.changeLogParameters.contexts = StringUtils.splitAndTrim(contexts, ",")
+
+		Executor oldTemplate = ExecutorService.instance.getExecutor(database)
+		LoggingExecutor loggingExecutor = new LoggingExecutor(ExecutorService.instance.getExecutor(database), output, database)
+		ExecutorService.instance.setExecutor database, loggingExecutor
+
+		LockService lockService = LockService.getInstance(database)
+		lockService.waitForLock()
+
+		try {
+			DatabaseChangeLog changeLog = ChangeLogParserFactory.instance.getParser(changeLogFile, liquibase.resourceAccessor).parse(
+				changeLogFile, liquibase.changeLogParameters, liquibase.resourceAccessor)
+			changeLog.changeSets.reverse true
+			skip.times { changeLog.changeSets.remove(0) }
+
+			liquibase.checkDatabaseChangeLogTable true, changeLog, contexts
+			changeLog.validate liquibase.database, contexts
+
+			ChangeLogIterator logIterator = new ChangeLogIterator(changeLog,
+				new ContextChangeSetFilter(contexts),
+				new DbmsChangeSetFilter(database),
+				new CountChangeSetFilter(changesetCount))
+
+			logIterator.run new NoopVisitor(database), database
+
+			output.flush()
+		}
+		finally {
+			lockService.releaseLock()
+			ExecutorService.instance.setExecutor database, oldTemplate
+		}
 	}
 }
