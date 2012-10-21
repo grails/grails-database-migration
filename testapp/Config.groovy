@@ -1,5 +1,5 @@
 grails.project.groupId = appName
-grails.mime.file.extensions = true
+grails.mime.file.extensions = false
 grails.mime.use.accept.header = false
 grails.mime.types = [
 	html: ['text/html','application/xhtml+xml'],
@@ -16,38 +16,38 @@ grails.mime.types = [
 	multipartForm: 'multipart/form-data'
 ]
 
-grails.views.default.codec = 'none'
+grails.resources.adhoc.patterns = ['/images/*', '/css/*', '/js/*', '/plugins/*']
+grails.views.default.codec = 'html'
 grails.views.gsp.encoding = 'UTF-8'
 grails.converters.encoding = 'UTF-8'
 grails.views.gsp.sitemesh.preprocess = true
-grails.scaffolding.templates.domainSuffix = 'Instance'
-
+grails.scaffolding.templates.domainSuffix = ''
 grails.json.legacy.builder = false
 grails.enable.native2ascii = true
-grails.logging.jul.usebridge = true
 grails.spring.bean.packages = []
+grails.web.disable.multipart=false
+grails.exceptionresolver.params.exclude = ['password']
+grails.hibernate.cache.queries = false
+
+grails.dbconsole.enabled = true
 
 environments {
-	production {
-		grails.serverURL = 'http://www.changeme.com'
-	}
 	development {
-		grails.serverURL = "http://localhost:8080/${appName}"
+		grails.logging.jul.usebridge = true
 	}
-	test {
-		grails.serverURL = "http://localhost:8080/${appName}"
+	production {
+		grails.logging.jul.usebridge = false
 	}
 }
 
 log4j = {
-	error  'org.codehaus.groovy.grails',
-	       'org.springframework',
-	       'org.hibernate',
-	       'net.sf.ehcache.hibernate'
+	error 'org.codehaus.groovy.grails',
+	      'org.springframework',
+	      'org.hibernate',
+	      'net.sf.ehcache.hibernate'
 
-	debug   'liquibase', 'grails.plugin.databasemigration'
+	debug 'liquibase', 'grails.plugin.databasemigration'
 }
 
 grails.plugin.databasemigration.updateOnStart = true
 grails.plugin.databasemigration.updateOnStartFileNames = ['changelog.groovy']
-

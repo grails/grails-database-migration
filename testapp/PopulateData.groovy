@@ -7,22 +7,22 @@ target(populateData: 'Insert data using GORM') {
 	def Order = grailsApp.getDomainClass('migrationtests.Order').clazz
 
 	Product.withTransaction { status ->
-		def p1 = Product.newInstance(name: 'p1', category: 'Electronics', prize: 100).save()
-		def p2 = Product.newInstance(name: 'p2', category: 'Food', prize: 5).save()
-		def p3 = Product.newInstance(name: 'p3', category: 'Automobiles', prize: 30000).save()
+		def p1 = Product.newInstance(name: 'p1', category: 'Electronics', prize: 100).save(failOnError: true)
+		def p2 = Product.newInstance(name: 'p2', category: 'Food', prize: 5).save(failOnError: true)
+		def p3 = Product.newInstance(name: 'p3', category: 'Automobiles', prize: 30000).save(failOnError: true)
 
 		def o1 = Order.newInstance(customer: 'c1', orderDate: new Date())
 		o1.addToItems(product: p1, quantity: 1)
-		o1.save()
+		o1.save(failOnError: true)
 
 		def o2 = Order.newInstance(customer: 'c1', orderDate: new Date() - 1)
 		o2.addToItems(product: p2, quantity: 2)
 		o2.addToItems(product: p3, quantity: 1)
-		o2.save()
+		o2.save(failOnError: true)
 
 		def o3 = Order.newInstance(customer: 'c2', orderDate: new Date() - 10)
 		o3.addToItems(product: p1, quantity: 5)
-		o3.save()
+		o3.save(failOnError: true)
 	}
 }
 
@@ -30,4 +30,4 @@ target(enableExpandoMetaClass: "Calls ExpandoMetaClass.enableGlobally()") {
 	ExpandoMetaClass.enableGlobally()
 }
 
-setDefaultTarget(populateData)
+setDefaultTarget populateData
