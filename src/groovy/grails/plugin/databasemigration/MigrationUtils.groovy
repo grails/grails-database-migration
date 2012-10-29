@@ -148,6 +148,12 @@ class MigrationUtils {
 			return true
 		}
 
+		if (Boolean.getBoolean('grails.fork.active') && !scriptName) {
+			// scriptName gets set in the initial JVM and not this one,
+			// so infer that it's run-app based on being in forked mode
+			scriptName = 'RunApp'
+		}
+
 		// in run-app
 		if (autoMigrateScripts.contains(scriptName)) {
 			return true
