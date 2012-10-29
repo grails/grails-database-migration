@@ -73,11 +73,8 @@ function addJsClass(el) {
 
                 <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
 
-                <h1>dbm-tag</h1><p class="paragraph"/><h2>Purpose</h2><p class="paragraph"/>Adds a tag to mark the current database state.<p class="paragraph"/><h2>Description</h2><p class="paragraph"/>Useful for future rollbacks to a specific tag (e.g. using the <a href="../../ref/Rollback Scripts/dbm-rollback.html" class="Rollback Scripts">dbm-rollback</a> script).<p class="paragraph"/>Usage:
-<div class="code"><pre>grails &#91;environment&#93; dbm&#45;tag &#91;tagName&#93; &#45;&#45;defaultSchema=&#91;defaultSchema&#93;</pre></div><p class="paragraph"/>Required arguments:
-<ul class="star">
-<li><code>tagName</code> - The name of the tag to use</li>
-</ul><p class="paragraph"/>Optional arguments:
+                <h1>dbm-list-tags</h1><p class="paragraph"/><h2>Purpose</h2><p class="paragraph"/>Lists the tags in the current database.<p class="paragraph"/><h2>Description</h2><p class="paragraph"/>Usage:
+<div class="code"><pre>grails &#91;environment&#93; dbm&#45;list&#45;tags &#45;&#45;defaultSchema=&#91;defaultSchema&#93;</pre></div><p class="paragraph"/>Required arguments:<p class="paragraph"/>Required arguments:  <em class="italic">none</em>  .<p class="paragraph"/>Optional arguments:
 <ul class="star">
 <li><code>defaultSchema</code> - The default schema name to use</li>
 </ul><p class="paragraph"/><blockquote class="note">

@@ -73,16 +73,19 @@ function addJsClass(el) {
 
                 <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
 
-                <h1>dbm-tag</h1><p class="paragraph"/><h2>Purpose</h2><p class="paragraph"/>Adds a tag to mark the current database state.<p class="paragraph"/><h2>Description</h2><p class="paragraph"/>Useful for future rollbacks to a specific tag (e.g. using the <a href="../../ref/Rollback Scripts/dbm-rollback.html" class="Rollback Scripts">dbm-rollback</a> script).<p class="paragraph"/>Usage:
-<div class="code"><pre>grails &#91;environment&#93; dbm&#45;tag &#91;tagName&#93; &#45;&#45;defaultSchema=&#91;defaultSchema&#93;</pre></div><p class="paragraph"/>Required arguments:
+                <h1>dbm-previous-changeset-sql</h1><p class="paragraph"/><h2>Purpose</h2><p class="paragraph"/>Writes the SQL to STDOUT or a file for the specified number of previous changesets whether they have run or not.<p class="paragraph"/><h2>Description</h2><p class="paragraph"/>Generates SQL for the specifed number of changeSets from the changelog. Executes against the database configured in <code>DataSource.groovy</code> for the current environment (defaults to <code>dev</code>).<p class="paragraph"/>Usage:
+<div class="code"><pre>grails &#91;environment&#93; dbm&#45;previous&#45;changeset&#45;sql &#91;number&#93; &#91;filename&#93; &#45;&#45;skip=&#91;skip&#93; &#45;&#45;contexts=&#91;contexts&#93; &#45;&#45;defaultSchema=&#91;defaultSchema&#93;</pre></div><p class="paragraph"/>Required arguments:
 <ul class="star">
-<li><code>tagName</code> - The name of the tag to use</li>
+<li><code>number</code> - The number of un-run changesets to run</li>
 </ul><p class="paragraph"/>Optional arguments:
 <ul class="star">
+<li><code>filename</code> - The path to the output file to write to. If not specified output is written to the console</li>
+<li><code>skip</code> - The number of changesets to skip if you want to exclude recent ones</li>
+<li><code>contexts</code> - A comma-delimited list of <a href="http://www.liquibase.org/manual/contexts" target="blank">context</a> names. If specified, only changesets tagged with one of the context names will be run</li>
 <li><code>defaultSchema</code> - The default schema name to use</li>
 </ul><p class="paragraph"/><blockquote class="note">
-Note that the <code>defaultSchema</code> parameter name and value must be quoted if executed in Windows, e.g.
-<div class="code"><pre>grails dbm&#45;tag <span class="java&#45;quote">"&#45;&#45;defaultSchema=&#91;defaultSchema&#93;"</span></pre></div>
+Note that the <code>contexts</code> and <code>defaultSchema</code> parameter name and value must be quoted if executed in Windows, e.g.
+<div class="code"><pre>grails dbm&#45;update&#45;count&#45;sql <span class="java&#45;quote">"&#45;&#45;contexts=&#91;contexts&#93;"</span> <span class="java&#45;quote">"&#45;&#45;defaultSchema=&#91;defaultSchema&#93;"</span></pre></div>
 </blockquote>
 
             </div>
@@ -122,7 +125,7 @@ Note that the <code>defaultSchema</code> parameter name and value must be quoted
                     
                     <div class="menu-block">
                         <h1 class="menu-title" onclick="toggleRef(nextElement(this))">Maintenance Scripts</h1>
-                        <div class="menu-sub selected">
+                        <div class="menu-sub">
                             
                             
                             <div class="menu-item"><a href="../../ref/Maintenance%20Scripts/dbm-changelog-sync-sql.html">dbm-changelog-sync-sql</a>
@@ -207,7 +210,7 @@ Note that the <code>defaultSchema</code> parameter name and value must be quoted
                     
                     <div class="menu-block">
                         <h1 class="menu-title" onclick="toggleRef(nextElement(this))">Update Scripts</h1>
-                        <div class="menu-sub">
+                        <div class="menu-sub selected">
                             
                             
                             <div class="menu-item"><a href="../../ref/Update%20Scripts/dbm-previous-changeset-sql.html">dbm-previous-changeset-sql</a>

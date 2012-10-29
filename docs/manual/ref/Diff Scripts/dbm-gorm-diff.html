@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>Database Migration Plugin 1.1</title>
+    <title>Database Migration Plugin 1.2</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -73,7 +73,7 @@ function addJsClass(el) {
 
                 <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
 
-                <h1>dbm-gorm-diff</h1><p class="paragraph"/><h2>Purpose</h2><p class="paragraph"/>Diffs GORM classes against a database and generates a changelog XML or Groovy DSL file.<p class="paragraph"/><h2>Description</h2><p class="paragraph"/>Creates a Groovy DSL file if the filename is specified and it ends with .groovy. If another extension is specified it creates a standard Liquibase XML file, and if no filename is specified it writes to the console.<p class="paragraph"/>File are written to the migrations folder, so specify the filename relative to the migrations folder (<code>grails-app/migrations</code> by default).<p class="paragraph"/>Similar to <a href="../../ref/Diff Scripts/dbm-diff.html" class="Diff Scripts">dbm-diff</a> but diffs the current configuration based on the application's domain classes with the database configured in <code>DataSource.groovy</code> for the current environment (defaults to <code>dev</code>).<p class="paragraph"/>Doesn't modify any existing files - you need to manually merge the output into the changeset along with any necessary modifications.<p class="paragraph"/>Usage:
+                <h1>dbm-gorm-diff</h1><p class="paragraph"/><h2>Purpose</h2><p class="paragraph"/>Diffs GORM classes against a database and generates a changelog XML or Groovy DSL file.<p class="paragraph"/><h2>Description</h2><p class="paragraph"/>Creates a Groovy DSL file if the filename is specified and it ends with .groovy. If another extension is specified it creates a standard Liquibase XML file, and if no filename is specified it writes to the console.<p class="paragraph"/>File are written to the migrations folder, so specify the filename relative to the migrations folder (<code>grails-app/migrations</code> by default).<p class="paragraph"/>Similar to <a href="../../ref/Diff Scripts/dbm-diff.html" class="Diff Scripts">dbm-diff</a> but diffs the current configuration based on the application's domain classes with the database configured in <code>DataSource.groovy</code> for the current environment (defaults to <code>dev</code>).<p class="paragraph"/>Doesn't modify any existing files - you need to manually merge the output into the changeset along with any necessary modifications.<p class="paragraph"/>You can configure database objects to be ignored by this script - either in the GORM classes or in the target database. For example you may want domain objects that are transient, or you may have externally-managed tables, keys, etc. that you want left alone by the diff script. The configuration name for these ignored objects is <code>grails.plugin.databasemigration.ignoredObjects</code>, whose value is a list of strings.<p class="paragraph"/>Usage:
 <div class="code"><pre>grails &#91;environment&#93; dbm&#45;gorm&#45;diff &#91;filename&#93; &#45;&#45;defaultSchema=&#91;defaultSchema&#93; &#45;&#45;add</pre></div><p class="paragraph"/>Required arguments:  <em class="italic">none</em>  .<p class="paragraph"/>Optional arguments:
 <ul class="star">
 <li><code>filename</code> - The path to the output file to write to. If not specified output is written to the console</li>
@@ -145,6 +145,9 @@ Note that the <code>defaultSchema</code> parameter name and value must be quoted
                             <div class="menu-item"><a href="../../ref/Maintenance%20Scripts/dbm-list-locks.html">dbm-list-locks</a>
                             </div>
                             
+                            <div class="menu-item"><a href="../../ref/Maintenance%20Scripts/dbm-list-tags.html">dbm-list-tags</a>
+                            </div>
+                            
                             <div class="menu-item"><a href="../../ref/Maintenance%20Scripts/dbm-mark-next-changeset-ran.html">dbm-mark-next-changeset-ran</a>
                             </div>
                             
@@ -205,6 +208,9 @@ Note that the <code>defaultSchema</code> parameter name and value must be quoted
                         <h1 class="menu-title" onclick="toggleRef(nextElement(this))">Update Scripts</h1>
                         <div class="menu-sub">
                             
+                            
+                            <div class="menu-item"><a href="../../ref/Update%20Scripts/dbm-previous-changeset-sql.html">dbm-previous-changeset-sql</a>
+                            </div>
                             
                             <div class="menu-item"><a href="../../ref/Update%20Scripts/dbm-update-count-sql.html">dbm-update-count-sql</a>
                             </div>

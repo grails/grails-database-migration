@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>2 Getting Started 1.1</title>
+    <title>2 Getting Started 1.2</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -86,7 +86,7 @@ function addJsClass() {
 
                     <p><strong>Authors:</strong> Burt Beckwith</p>
 
-                    <p><strong>Version:</strong> 1.1</p>
+                    <p><strong>Version:</strong> 1.2</p>
 
                     
                 </div>
@@ -112,7 +112,20 @@ function addJsClass() {
 If you use the XML format (or use a non-default Groovy filename), be sure to change the name of the file in <code>Config.groovy</code> so <code>dbm-update</code> and other scripts find the file:
 <div class="code"><pre>grails.plugin.databasemigration.changelogFileName = 'changelog.xml'</pre></div>
 </blockquote><p class="paragraph"/>Since the database is already correct, run the <a href="../ref/Maintenance Scripts/dbm-changelog-sync.html" class="Maintenance Scripts">dbm-changelog-sync</a> script to record that the changes have already been applied:
-<div class="code"><pre>grails dbm&#45;changelog&#45;sync</pre></div><p class="paragraph"/>Running this script is primarily a no-op except that it records the execution(s) in the Liquibase DATABASECHANGELOG table.<p class="paragraph"/>To create a changelog from your domain classes, use the <a href="../ref/Rollback Scripts/dbm-generate-gorm-changelog.html" class="Rollback Scripts">dbm-generate-gorm-changelog</a> script:<p class="paragraph"/><div class="code"><pre>grails dbm&#45;generate&#45;gorm&#45;changelog changelog.groovy</pre></div><p class="paragraph"/>or<p class="paragraph"/><div class="code"><pre>grails dbm&#45;generate&#45;gorm&#45;changelog changelog.xml</pre></div><p class="paragraph"/>If you haven't created the database yet, run the <a href="../ref/Update Scripts/dbm-update.html" class="Update Scripts">dbm-update</a> script to create the corresponding tables:<p class="paragraph"/><div class="code"><pre>grails dbm&#45;update</pre></div><p class="paragraph"/>or the <a href="../ref/Maintenance Scripts/dbm-changelog-sync.html" class="Maintenance Scripts">dbm-changelog-sync</a> script if the database is already in sync with your code:<p class="paragraph"/><div class="code"><pre>grails dbm&#45;changelog&#45;sync</pre></div><p class="paragraph"/><h4>Source control</h4><p class="paragraph"/>Now you can commit the changelog and the corresponding application code to source control. Other developers can then update and syncronize their databases, and start doing migrations themselves.<p class="paragraph"/>
+<div class="code"><pre>grails dbm&#45;changelog&#45;sync</pre></div><p class="paragraph"/>Running this script is primarily a no-op except that it records the execution(s) in the Liquibase DATABASECHANGELOG table.<p class="paragraph"/>To create a changelog from your domain classes, use the <a href="../ref/Rollback Scripts/dbm-generate-gorm-changelog.html" class="Rollback Scripts">dbm-generate-gorm-changelog</a> script:<p class="paragraph"/><div class="code"><pre>grails dbm&#45;generate&#45;gorm&#45;changelog changelog.groovy</pre></div><p class="paragraph"/>or<p class="paragraph"/><div class="code"><pre>grails dbm&#45;generate&#45;gorm&#45;changelog changelog.xml</pre></div><p class="paragraph"/>If you haven't created the database yet, run the <a href="../ref/Update Scripts/dbm-update.html" class="Update Scripts">dbm-update</a> script to create the corresponding tables:<p class="paragraph"/><div class="code"><pre>grails dbm&#45;update</pre></div><p class="paragraph"/>or the <a href="../ref/Maintenance Scripts/dbm-changelog-sync.html" class="Maintenance Scripts">dbm-changelog-sync</a> script if the database is already in sync with your code:<p class="paragraph"/><div class="code"><pre>grails dbm&#45;changelog&#45;sync</pre></div><p class="paragraph"/><blockquote class="note">
+If you use the searchable plugin you need to configure it to run after the database migrations have run. Either in <code>Searchable.groovy</code> or in <code>Config.groovy</code> (if that's where you configure Searchable):
+<div class="code"><pre>// disable the plugin's operations here.  we'll re&#45;enable them in the Bootstrap to avoid conflicts with database&#45;migration
+mirrorChanges = <span class="java&#45;keyword">false</span>
+bulkIndexOnStartup = <span class="java&#45;keyword">false</span></pre></div><p class="paragraph"/>In Bootstrap.groovy:<p class="paragraph"/><div class="code"><pre>class BootStrap &#123;<p class="paragraph"/>   def searchableService<p class="paragraph"/>   def init = &#123; servletContext &#45;&#62;
+      // <span class="java&#45;keyword">do</span> any data loading you would normally <span class="java&#45;keyword">do</span><p class="paragraph"/>      // Manually start the mirroring process to ensure that it comes after the automated migrations.
+      println <span class="java&#45;quote">"Performing bulk index"</span>
+      searchableService.reindex()
+      println <span class="java&#45;quote">"Starting mirror service"</span>
+      searchableService.startMirroring()
+   &#125;
+&#125;</pre></div>
+</blockquote><p class="paragraph"/><h4>Source control</h4><p class="paragraph"/>Now you can commit the changelog and the corresponding application code to source control. Other developers can then update and synchronize their databases, and start doing migrations themselves.
+
 
 
 <h2 id="2.1 Migration from Autobase">2.1 Migration from Autobase</h2>
@@ -207,6 +220,9 @@ changeSet(id:'IncreaseCommentBodySize', author:'someone') &#123;
                             <div class="menu-item"><a href="../ref/Maintenance%20Scripts/dbm-list-locks.html">dbm-list-locks</a>
                             </div>
                             
+                            <div class="menu-item"><a href="../ref/Maintenance%20Scripts/dbm-list-tags.html">dbm-list-tags</a>
+                            </div>
+                            
                             <div class="menu-item"><a href="../ref/Maintenance%20Scripts/dbm-mark-next-changeset-ran.html">dbm-mark-next-changeset-ran</a>
                             </div>
                             
@@ -263,6 +279,9 @@ changeSet(id:'IncreaseCommentBodySize', author:'someone') &#123;
                     
                     <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Update Scripts</h1><div class="menu-sub">
                         
+                            
+                            <div class="menu-item"><a href="../ref/Update%20Scripts/dbm-previous-changeset-sql.html">dbm-previous-changeset-sql</a>
+                            </div>
                             
                             <div class="menu-item"><a href="../ref/Update%20Scripts/dbm-update-count-sql.html">dbm-update-count-sql</a>
                             </div>
