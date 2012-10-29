@@ -1,6 +1,6 @@
 includeTargets << grailsScript('_GrailsBootstrap')
 
-target(populateData: 'Insert data using GORM') {
+target(verifyData: 'Verifies data') {
 	depends(classpath, enableExpandoMetaClass, bootstrap, loadApp)
 
 	def Product = grailsApp.getDomainClass('migrationtests.Product').clazz
@@ -57,4 +57,4 @@ target(enableExpandoMetaClass: "Calls ExpandoMetaClass.enableGlobally()") {
 	ExpandoMetaClass.enableGlobally()
 }
 
-setDefaultTarget(populateData)
+setDefaultTarget verifyData

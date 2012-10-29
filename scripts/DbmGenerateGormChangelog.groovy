@@ -22,6 +22,8 @@ includeTargets << new File("$databaseMigrationPluginDir/scripts/_DatabaseMigrati
 target(dbmGenerateGormChangelog: 'Generates an initial changelog XML file based on the current GORM classes') {
 	depends dbmInit
 
+	if (!isHibernateInstalled()) return
+
 	if (!okToWrite(0, true)) return
 
 	doAndClose {

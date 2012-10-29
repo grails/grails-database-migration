@@ -13,29 +13,42 @@
  * limitations under the License.
  */
 
+import liquibase.executor.ExecutorService
+import liquibase.statement.core.SelectFromDatabaseChangeLogStatement
+
 /**
  * @author <a href='mailto:burt@burtbeckwith.com'>Burt Beckwith</a>
  */
 
 includeTargets << new File("$databaseMigrationPluginDir/scripts/_DatabaseMigrationCommon.groovy")
 
-target(dbmUpdateCountSql: 'Generates the SQL to apply the next <value> change sets') {
+target(dbmListTags: "Lists the tags in the current database") {
 	depends dbmInit
 
-	def count = argsList[0]
-	if (!count) {
-		errorAndDie "The $hyphenatedScriptName script requires a change set count argument"
-	}
-
-	if (!count.isNumber()) {
-		errorAndDie "The change set count argument '$count' isn't a number"
-	}
-
-	if (!okToWrite(1)) return
-
 	doAndClose {
-		liquibase.update count.toInteger(), contexts, ScriptUtils.newPrintWriter(argsList, 1)
+
+		def database = MigrationUtils.getDatabase()
+
+		def tags = []
+		def rows = ExecutorService.instance.getExecutor(database).queryForList(new SelectFromDatabaseChangeLogStatement("tag"))
+		for (row in rows) {
+			row.each { key, tag ->
+				if ('tag'.equalsIgnoreCase(key) && tag) {
+					tags << tag
+				}
+			}
+		}
+
+		if (tags) {
+			println "\nFound the following tags:"
+			for (tag in tags) {
+				println "   $tag"
+			}
+		}
+		else {
+			println "\nNo tags found"
+		}
 	}
 }
 
-setDefaultTarget dbmUpdateCountSql
+setDefaultTarget dbmListTags

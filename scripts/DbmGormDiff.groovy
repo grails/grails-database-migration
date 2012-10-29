@@ -33,6 +33,8 @@ includeTargets << new File("$databaseMigrationPluginDir/scripts/_DatabaseMigrati
 target(dbmGormDiff: 'Diff GORM classes against database and generate a changelog') {
 	depends dbmInit
 
+	if (!isHibernateInstalled()) return
+
 	if (!okToWrite(0, true)) return
 
 	def realDatabase
@@ -44,7 +46,7 @@ target(dbmGormDiff: 'Diff GORM classes against database and generate a changelog
 				realDatabase = MigrationUtils.getDatabase(defaultSchema)
 				def gormDatabase = ScriptUtils.createGormDatabase(config, appCtx)
 				MigrationUtils.fixDiffResult(
-					ScriptUtils.createDiff(gormDatabase, realDatabase, appCtx, diffTypes).compare()).printChangeLog(out, gormDatabase)
+					ScriptUtils.createDiff(gormDatabase, realDatabase, appCtx, diffTypes).compare()).printChangeLog(out, realDatabase)
 			}
 		}
 

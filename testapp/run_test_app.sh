@@ -6,16 +6,12 @@
 
 PLUGIN_DIR="/home/burt/workspace/grails/plugins/grails-database-migration"
 TESTAPP_DIR="/home/burt/workspace/testapps/migration"
-HOME_DIR="/home/burt"
 APP_NAME="migrationtests"
 DB_NAME="migrationtest"
-PLUGIN_VERSION="1.0"
+PLUGIN_VERSION="1.2"
 
-#GRAILS_VERSION="1.3.3"
-#GRAILS_HOME="/home/burt/dev/javalib/grails-$GRAILS_VERSION"
-
-GRAILS_VERSION="2.0.0.BUILD-SNAPSHOT"
-GRAILS_HOME="/home/burt/workspace.grails"
+GRAILS_VERSION="2.0.4"
+GRAILS_HOME="/usr/local/javalib/grails-2.0.4"
 
 PATH=$GRAILS_HOME/bin:$PATH
 
@@ -33,7 +29,6 @@ mkdir -p $TESTAPP_DIR
 cd $TESTAPP_DIR
 
 rm -rf "$APP_NAME"
-rm -rf "$HOME_DIR/.grails/$GRAILS_VERSION/projects/$APP_NAME"
 grails create-app "$APP_NAME" --stacktrace
 verifyExitCode $? "create-app"
 
@@ -63,11 +58,6 @@ cd $APP_DIR
 grails compile --stacktrace
 
 # install plugin
-
-grails install-plugin hibernate $GRAILS_VERSION --force --stacktrace
-
-#2.0 hack
-cp "$PLUGIN_DIR/grails-database-migration-$PLUGIN_VERSION.zip" "$TESTAPP_DIR/$APP_NAME/lib/database-migration-$PLUGIN_VERSION.zip"
 
 grails install-plugin "$PLUGIN_DIR/grails-database-migration-$PLUGIN_VERSION.zip" --stacktrace
 verifyExitCode $? "install-plugin"
@@ -117,3 +107,38 @@ verifyExitCode $? "verify-data"
 
 echo "SUCCESS!"
 
+
+
+#cd /home/burt/workspace/testapps/migration
+#rm -rf migrationtests
+#grails create-app migrationtests
+#mkdir migrationtests/grails-app/domain/migrationtests
+#cp /home/burt/workspace/grails/plugins/grails-database-migration/testapp/Product.v1.groovy migrationtests/grails-app/domain/migrationtests/Product.groovy
+#cp /home/burt/workspace/grails/plugins/grails-database-migration/testapp/Order.v1.groovy migrationtests/grails-app/domain/migrationtests/Order.groovy
+#cp /home/burt/workspace/grails/plugins/grails-database-migration/testapp/OrderItem.v1.groovy migrationtests/grails-app/domain/migrationtests/OrderItem.groovy
+#cp /home/burt/workspace/grails/plugins/grails-database-migration/testapp/BuildConfig.groovy migrationtests/grails-app/conf/
+#cp /home/burt/workspace/grails/plugins/grails-database-migration/testapp/Config.groovy migrationtests/grails-app/conf/
+#cp /home/burt/workspace/grails/plugins/grails-database-migration/testapp/DataSource.groovy migrationtests/grails-app/conf/
+#cp /home/burt/workspace/grails/plugins/grails-database-migration/testapp/PopulateData.groovy migrationtests/scripts/
+#cp /home/burt/workspace/grails/plugins/grails-database-migration/testapp/VerifyData.groovy migrationtests/scripts/
+#mysql -u migrationtest -pmigrationtest -D migrationtest -e "drop database if exists migrationtest; create database migrationtest"
+#cd migrationtests/
+#grails install-plugin /home/burt/workspace/grails/plugins/grails-database-migration/grails-database-migration-1.2.zip 
+#grails compile --stacktrace
+#grails dbm-create-changelog --stacktrace
+#grails dbm-generate-gorm-changelog initial.groovy --add --stacktrace
+
+# remove createIndex changes in initial.groovy
+#grails dbm-update --stacktrace
+
+#grails populate-data --stacktrace
+#cp /home/burt/workspace/grails/plugins/grails-database-migration/testapp/Customer.groovy grails-app/domain/migrationtests/
+#cp /home/burt/workspace/grails/plugins/grails-database-migration/testapp/Order.v2.groovy grails-app/domain/migrationtests/Order.groovy
+#cp /home/burt/workspace/grails/plugins/grails-database-migration/testapp/customer.changelog.groovy grails-app/migrations/
+#grails dbm-register-changelog customer.changelog.groovy --stacktrace
+#grails dbm-update --stacktrace
+#cp /home/burt/workspace/grails/plugins/grails-database-migration/testapp/Product.v2.groovy grails-app/domain/migrationtests/Product.groovy 
+#cp /home/burt/workspace/grails/plugins/grails-database-migration/testapp/price.changelog.groovy grails-app/migrations/
+#grails dbm-register-changelog price.changelog.groovy --stacktrace
+#grails dbm-update --stacktrace
+#grails verify-data --stacktrace

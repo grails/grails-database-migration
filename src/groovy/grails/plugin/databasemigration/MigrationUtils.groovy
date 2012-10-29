@@ -25,10 +25,6 @@ import liquibase.database.structure.UniqueConstraint
 import liquibase.diff.DiffResult
 
 import org.codehaus.groovy.grails.commons.GrailsApplication
-import org.hibernate.FlushMode
-import org.hibernate.Session
-import org.springframework.orm.hibernate3.SessionFactoryUtils
-import org.springframework.orm.hibernate3.SessionHolder
 import org.springframework.transaction.support.TransactionSynchronizationManager
 
 /**
@@ -111,13 +107,20 @@ class MigrationUtils {
 			return true
 		}
 
-		Session session = SessionFactoryUtils.getSession(sessionFactory, true)
+		def SessionFactoryUtils = MigrationUtils.classForName('org.springframework.orm.hibernate3.SessionFactoryUtils')
+		def FlushMode = MigrationUtils.classForName('org.hibernate.FlushMode')
+		def SessionHolder = MigrationUtils.classForName('org.springframework.orm.hibernate3.SessionHolder')
+
+		/*org.hibernate.Session*/ def session = SessionFactoryUtils.getSession(sessionFactory, true)
 		session.flushMode = FlushMode.AUTO
-		TransactionSynchronizationManager.bindResource sessionFactory, new SessionHolder(session)
+		TransactionSynchronizationManager.bindResource sessionFactory, SessionHolder.newInstance(session)
 		false
 	}
 
 	private static void flushAndClose() {
+		def SessionFactoryUtils = MigrationUtils.classForName('org.springframework.orm.hibernate3.SessionFactoryUtils')
+		def FlushMode = MigrationUtils.classForName('org.hibernate.FlushMode')
+
 		def sessionFactory = findSessionFactory()
 		def session = TransactionSynchronizationManager.unbindResource(sessionFactory).session
 		if (!FlushMode.MANUAL == session.flushMode) {
@@ -143,6 +146,12 @@ class MigrationUtils {
 		// in a war
 		if (application.warDeployed) {
 			return true
+		}
+
+		if (Boolean.getBoolean('grails.fork.active') && !scriptName) {
+			// scriptName gets set in the initial JVM and not this one,
+			// so infer that it's run-app based on being in forked mode
+			scriptName = 'RunApp'
 		}
 
 		// in run-app
@@ -184,6 +193,7 @@ class MigrationUtils {
 	static DiffResult fixDiffResult(DiffResult diffResult) {
 		removeRedundantUnexpectedUnique diffResult
 		removeEquivalentIndexes diffResult
+		removeIgnoredObjects diffResult
 
 		for (Iterator iter = diffResult.unexpectedIndexes.iterator(); iter.hasNext(); ) {
 			Index index = iter.next()
@@ -241,5 +251,49 @@ class MigrationUtils {
 				}
 			}
 		}
+	}
+
+	static void removeIgnoredObjects(DiffResult diffResult) {
+		def ignoredObjects = application.config.grails.plugin.databasemigration.ignoredObjects
+		if (!ignoredObjects) return
+
+		diffResult.missingTables.removeAll(diffResult.missingTables.findAll { ignoredObjects.contains(it.name) })
+		diffResult.missingPrimaryKeys.removeAll(diffResult.missingPrimaryKeys.findAll { ignoredObjects.contains(it.name) })
+
+		// convenience to automatically ignore ignored tables' generated primary keys
+		diffResult.missingPrimaryKeys.removeAll(diffResult.missingPrimaryKeys.findAll { ignoredObjects.contains(it.table.name) })
+
+		// ignore missing foreign keys that are for ignored tables
+		diffResult.missingForeignKeys.removeAll(diffResult.missingForeignKeys.findAll { ignoredObjects.contains(it.foreignKeyTable.name) })
+		diffResult.unexpectedTables.removeAll(diffResult.unexpectedTables.findAll { ignoredObjects.contains(it.name) })
+		diffResult.unexpectedViews.removeAll(diffResult.unexpectedViews.findAll { ignoredObjects.contains(it.name) })
+		diffResult.unexpectedForeignKeys.removeAll(diffResult.unexpectedForeignKeys.findAll { ignoredObjects.contains(it.name) })
+
+		// ignore unexpected foreign keys that are for ignored tables
+		diffResult.unexpectedForeignKeys.removeAll(diffResult.unexpectedForeignKeys.findAll { ignoredObjects.contains(it.foreignKeyTable.name) })
+		diffResult.unexpectedIndexes.removeAll(diffResult.unexpectedIndexes.findAll { ignoredObjects.contains(it.name) })
+		diffResult.unexpectedPrimaryKeys.removeAll(diffResult.unexpectedPrimaryKeys.findAll { ignoredObjects.contains(it.name) })
+
+		// ignore unexpected primary keys that are for ignored tables
+		diffResult.unexpectedPrimaryKeys.removeAll(diffResult.unexpectedPrimaryKeys.findAll { ignoredObjects.contains(it.table.name) })
+		diffResult.unexpectedUniqueConstraints.removeAll(diffResult.unexpectedUniqueConstraints.findAll { ignoredObjects.contains(it.name) })
+		diffResult.unexpectedSequences.removeAll(diffResult.unexpectedSequences.findAll { ignoredObjects.contains(it.name) })
+	}
+
+	static boolean hibernateAvailable() {
+		null != classForName('org.hibernate.cfg.Configuration')
+	}
+
+	static Class<?> classForName(String name) {
+		try {
+			return Class.forName(name, false, Thread.currentThread().contextClassLoader)
+		}
+		catch (ClassNotFoundException e) {
+			return null
+		}
+	}
+
+	static boolean instanceOf(o, String className) {
+		classForName(className).isAssignableFrom(o.getClass())
 	}
 }

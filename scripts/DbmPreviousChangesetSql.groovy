@@ -19,7 +19,7 @@
 
 includeTargets << new File("$databaseMigrationPluginDir/scripts/_DatabaseMigrationCommon.groovy")
 
-target(dbmUpdateCountSql: 'Generates the SQL to apply the next <value> change sets') {
+target(dbmPreviousChangesetSql: 'Generates the SQL to apply the previous <value> change sets') {
 	depends dbmInit
 
 	def count = argsList[0]
@@ -33,9 +33,15 @@ target(dbmUpdateCountSql: 'Generates the SQL to apply the next <value> change se
 
 	if (!okToWrite(1)) return
 
+	def skip = argsMap.skip ?: '0'
+	if (!skip.isNumber()) {
+		errorAndDie "The skip argument '$skip' isn't a number"
+	}
+
 	doAndClose {
-		liquibase.update count.toInteger(), contexts, ScriptUtils.newPrintWriter(argsList, 1)
+		ScriptUtils.generatePreviousChangesetSql(
+			database, liquibase, ScriptUtils.newPrintWriter(argsList, 1), count.toInteger(), skip.toInteger(), contexts)
 	}
 }
 
-setDefaultTarget dbmUpdateCountSql
+setDefaultTarget dbmPreviousChangesetSql

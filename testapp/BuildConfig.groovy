@@ -1,23 +1,19 @@
 grails.servlet.version = '2.5'
-grails.project.class.dir = 'target/classes'
-grails.project.test.class.dir = 'target/test-classes'
-grails.project.test.reports.dir = 'target/test-reports'
-grails.project.source.level = 1.6
+grails.project.work.dir = 'target'
 grails.project.target.level = 1.6
+grails.project.source.level = 1.6
 
 grails.project.dependency.resolution = {
 
 	inherits 'global'
 	log 'warn'
-	checksums
+	checksums true
 
 	repositories {
 		inherits true
-
 		grailsPlugins()
 		grailsHome()
 		grailsCentral()
-
 		mavenLocal()
 		mavenCentral()
 	}
@@ -27,12 +23,9 @@ grails.project.dependency.resolution = {
 	}
 
 	plugins {
-		compile ":hibernate:$grailsVersion"
-		compile ":jquery:1.6.1.1"
-		compile ":resources:1.1.1"
-
+		runtime ":hibernate:$grailsVersion"
+		runtime ':jquery:1.7.1'
+		runtime ':resources:1.1.6'
 		build ":tomcat:$grailsVersion"
-
-		runtime ":database-migration:1.0"
 	}
 }

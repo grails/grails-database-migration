@@ -24,14 +24,16 @@ import grails.plugin.databasemigration.Log4jLogger
 import grails.plugin.databasemigration.MigrationRunner
 import grails.plugin.databasemigration.MigrationUtils
 import grails.plugin.databasemigration.MysqlAwareCreateTableGenerator
-
 import liquibase.change.ChangeFactory
 import liquibase.database.typeconversion.TypeConverterFactory
-import liquibase.logging.Logger
 import liquibase.logging.LogFactory
+import liquibase.logging.Logger
 import liquibase.parser.ChangeLogParserFactory
 import liquibase.precondition.PreconditionFactory
+import liquibase.resource.ClassLoaderResourceAccessor
+import liquibase.resource.CompositeResourceAccessor
 import liquibase.resource.FileSystemResourceAccessor
+import liquibase.resource.ResourceAccessor
 import liquibase.servicelocator.ServiceLocator
 import liquibase.snapshot.DatabaseSnapshotGeneratorFactory
 import liquibase.sqlgenerator.SqlGeneratorFactory
@@ -39,7 +41,7 @@ import liquibase.sqlgenerator.core.CreateTableGenerator
 
 class DatabaseMigrationGrailsPlugin {
 
-	String version = '1.1'
+	String version = '1.2'
 	String grailsVersion = '1.3.0 > *'
 	String author = 'Burt Beckwith'
 	String authorEmail = 'beckwithb@vmware.com'
@@ -63,13 +65,15 @@ class DatabaseMigrationGrailsPlugin {
 
 		MigrationUtils.application = application
 
+		ResourceAccessor classLoaderResourceAccessor = new ClassLoaderResourceAccessor()
+
 		if (application.warDeployed) {
-			migrationResourceAccessor(GrailsClassLoaderResourceAccessor)
+			migrationResourceAccessor(CompositeResourceAccessor, [new GrailsClassLoaderResourceAccessor(), classLoaderResourceAccessor])
 		}
 		else {
 			String changelogLocation = MigrationUtils.changelogLocation
 			String changelogLocationPath = new File(changelogLocation).path
-			migrationResourceAccessor(FileSystemResourceAccessor, changelogLocationPath)
+			migrationResourceAccessor(CompositeResourceAccessor, [new FileSystemResourceAccessor(changelogLocationPath), classLoaderResourceAccessor])
 		}
 
 		diffStatusListener(GrailsDiffStatusListener)
@@ -87,9 +91,6 @@ class DatabaseMigrationGrailsPlugin {
 		// adds support for .groovy extension
 		ChangeLogParserFactory.instance.register new GrailsChangeLogParser(ctx)
 
-		// used by gorm-diff and generate-gorm-changelog
-		DatabaseSnapshotGeneratorFactory.instance.register new GormDatabaseSnapshotGenerator()
-
 		// adds support for Groovy-based changes in DSL changelogs
 		ChangeFactory.instance.register GrailsChange
 
@@ -99,6 +100,16 @@ class DatabaseMigrationGrailsPlugin {
 		// appends 'ENGINE=InnoDB' to 'create table ...' statements in MySQL if using InnoDB
 		SqlGeneratorFactory.instance.unregister CreateTableGenerator
 		SqlGeneratorFactory.instance.register new MysqlAwareCreateTableGenerator()
+
+		if (MigrationUtils.hibernateAvailable()) {
+			registerHibernate ctx
+		}
+	}
+
+	private void registerHibernate(ctx) {
+
+		// used by gorm-diff and generate-gorm-changelog
+		DatabaseSnapshotGeneratorFactory.instance.register new GormDatabaseSnapshotGenerator()
 
 		// fixes changelog errors generated from the GORM scripts
 		TypeConverterFactory.instance.register GormDatabaseTypeConverter
