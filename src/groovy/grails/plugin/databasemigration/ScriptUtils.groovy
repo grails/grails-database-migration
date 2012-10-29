@@ -200,32 +200,9 @@ class ScriptUtils {
 		results
 	}
 
-	static GormDatabase createGormDatabase(config, appCtx) {
-		def dialect = config.dataSource.dialect
-		if (dialect) {
-			if (dialect instanceof Class) {
-				dialect = dialect.name
-			}
-		}
-		else {
-			dialect = appCtx.dialectDetector
-		}
-
-		def GrailsAnnotationConfiguration = MigrationUtils.classForName('org.codehaus.groovy.grails.orm.hibernate.cfg.GrailsAnnotationConfiguration')
-
-		def configuration = GrailsAnnotationConfiguration.newInstance(
-			grailsApplication: appCtx.grailsApplication,
-			properties: ['hibernate.dialect': dialect.toString()] as Properties)
-
-		def hibernateCfgXml = Thread.currentThread().contextClassLoader.getResource('hibernate.cfg.xml')
-		if (hibernateCfgXml) {
-			configuration.configure hibernateCfgXml
-		}
-
-		configuration.buildMappings()
-
-		new GormDatabase(configuration)
-	}
+    static GormDatabase createGormDatabase(config, appCtx) {
+        new GormDatabase(appCtx.getBean('&sessionFactory').configuration)
+    }
 
 	static Diff createDiff(Database referenceDatabase, Database targetDatabase,
 	                       ApplicationContext appCtx, String diffTypes) {
