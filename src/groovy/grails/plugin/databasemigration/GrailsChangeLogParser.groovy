@@ -22,6 +22,7 @@ import liquibase.parser.ChangeLogParser
 import liquibase.resource.ResourceAccessor
 
 import org.apache.log4j.Logger
+import org.codehaus.groovy.control.CompilerConfiguration
 import org.springframework.context.ApplicationContext
 
 /**
@@ -61,8 +62,15 @@ class GrailsChangeLogParser implements ChangeLogParser {
 				throw new ChangeLogParseException("$physicalChangeLogLocation not found")
 			}
 
-			Script script = new GroovyShell(Thread.currentThread().contextClassLoader,
-				new Binding(MigrationUtils.changelogProperties)).parse(inputStream.text)
+			CompilerConfiguration config = new CompilerConfiguration(CompilerConfiguration.DEFAULT)
+			if (config.metaClass.respondsTo(config, 'setDisabledGlobalASTTransformations')) {
+				Set disabled = config.disabledGlobalASTTransformations ?: []
+				disabled << 'org.grails.datastore.gorm.query.transform.GlobalDetachedCriteriaASTTransformation'
+				config.disabledGlobalASTTransformations = disabled
+			}
+
+			GroovyClassLoader cl = new GroovyClassLoader(Thread.currentThread().contextClassLoader, config, false)
+			Script script = new GroovyShell(cl, new Binding(MigrationUtils.changelogProperties), config).parse(inputStream.text)
 			script.run()
 
 			setChangelogProperties changeLogParameters
