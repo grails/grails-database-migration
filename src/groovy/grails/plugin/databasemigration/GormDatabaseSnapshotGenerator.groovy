@@ -28,6 +28,8 @@ import liquibase.exception.DatabaseException
 import liquibase.snapshot.DatabaseSnapshot
 import liquibase.snapshot.DatabaseSnapshotGenerator
 
+import java.sql.Types
+
 /**
  * Used by the gorm-diff script. Registered in DatabaseMigrationGrailsPlugin.doWithApplicationContext().
  *
@@ -85,7 +87,7 @@ class GormDatabaseSnapshotGenerator implements DatabaseSnapshotGenerator {
 						unique: hibernateColumn.unique,
 						autoIncrement: isIdentityColumn(hibernateColumn.value, dialect, cfg),
 						certainDataType: hibernateColumn.sqlType != null)
-					column.columnSize = column.numeric ? hibernateColumn.precision : hibernateColumn.length
+					setColumnSize(column, hibernateColumn, dialect)
 
 					table.columns << column
 
@@ -170,6 +172,22 @@ class GormDatabaseSnapshotGenerator implements DatabaseSnapshotGenerator {
 
 		snapshot
 	}
+
+    private void setColumnSize(Column column, def hibernateColumn, def dialect) {
+        if (column.numeric) {
+            column.columnSize = hibernateColumn.precision
+        }
+        else {
+            if (dialect instanceof org.hibernate.dialect.MySQLDialect) {
+                // this will remove the invalid column size (ie: TEXT(255) -> TEXT)
+                if (column.typeName in ['blob', 'longblob', 'text', 'longtext']) {
+                    column.dataType = Types.BLOB
+                    return
+                }
+            }
+            column.columnSize = hibernateColumn.length
+        }
+    }
 
 	// workaround for changed method signature without backwards compatibility
 	private boolean isIdentityColumn(/*org.hibernate.mapping.Value*/ value, /*org.hibernate.dialect.Dialect*/ dialect, /*org.hibernate.cfg.Configuration*/ cfg) {
