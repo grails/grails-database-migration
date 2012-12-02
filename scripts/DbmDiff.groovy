@@ -17,6 +17,7 @@
  * @author <a href='mailto:burt@burtbeckwith.com'>Burt Beckwith</a>
  */
 
+import grails.plugin.databasemigration.ScriptUtils
 import grails.util.Environment
 
 import java.sql.DriverManager
@@ -47,7 +48,7 @@ target(dbmDiff: 'Writes description of differences to standard out') {
 			MigrationUtils.executeInSession {
 				thisDatabase = MigrationUtils.getDatabase(defaultSchema)
 				otherDatabase = buildOtherDatabase(otherEnv)
-				ScriptUtils.createDiff(thisDatabase, otherDatabase, appCtx, diffTypes).compare().printChangeLog(out, otherDatabase)
+                ScriptUtils.createAndPrintDiff(thisDatabase, otherDatabase, otherDatabase, appCtx, diffTypes, out)
 			}
 		}
 

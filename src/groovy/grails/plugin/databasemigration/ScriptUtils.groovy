@@ -26,6 +26,7 @@ import liquibase.changelog.filter.CountChangeSetFilter
 import liquibase.changelog.filter.DbmsChangeSetFilter
 import liquibase.database.Database
 import liquibase.diff.Diff
+import liquibase.diff.DiffResult
 import liquibase.executor.Executor
 import liquibase.executor.ExecutorService
 import liquibase.executor.LoggingExecutor
@@ -235,7 +236,17 @@ class ScriptUtils {
 		diff
 	}
 
-	static void generatePreviousChangesetSql(Database database, Liquibase liquibase, Writer output, int changesetCount, int skip, String contexts) {
+    static def createAndPrintDiff(Database referenceDatabase, Database targetDatabase, Database printDatabase, ApplicationContext appCtx, String diffTypes, PrintStream out) {
+        DiffResult diffResult = ScriptUtils.createDiff(referenceDatabase, targetDatabase, appCtx, diffTypes).compare()
+        diffResult.printChangeLog(out, printDatabase, MySQLCompatibleChangeLogSerializer.create())
+    }
+
+    static def createAndPrintFixedDiff(Database referenceDatabase, Database targetDatabase, Database printDatabase, ApplicationContext appCtx, String diffTypes, PrintStream out) {
+        DiffResult diffResult = MigrationUtils.fixDiffResult(ScriptUtils.createDiff(referenceDatabase, targetDatabase, appCtx, diffTypes).compare())
+        diffResult.printChangeLog(out, printDatabase, MySQLCompatibleChangeLogSerializer.create())
+    }
+
+    static void generatePreviousChangesetSql(Database database, Liquibase liquibase, Writer output, int changesetCount, int skip, String contexts) {
 		def changeLogFile = liquibase.changeLogFile
 
 		liquibase.changeLogParameters.contexts = StringUtils.splitAndTrim(contexts, ",")
