@@ -193,7 +193,7 @@ class DslBuilder extends BuilderSupport {
 		else if ('param' == name) {
 			processParam attributes
 		}
-		else if ('where' == name) {
+		else if ('where' == name || 'whereLazy' == name) {
 			setText value
 		}
 		else if ('property' == name) {
@@ -636,7 +636,7 @@ class DslBuilder extends BuilderSupport {
 			currentChange.setComments currentText
 			currentText = null
 		}
-		else if (currentChange && 'where' == name) {
+		else if (currentChange && ('where' == name || 'whereLazy' == name)) {
 			if (currentChange instanceof UpdateDataChange) {
 				currentChange.setWhereClause currentText
 			}
