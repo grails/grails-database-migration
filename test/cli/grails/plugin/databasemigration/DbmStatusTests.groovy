@@ -20,7 +20,7 @@ package grails.plugin.databasemigration
 class DbmStatusTests extends AbstractScriptTests {
 
 	void testStatusList() {
-        def url = AbstractScriptTests.URL
+		String url = AbstractScriptTests.URL
 
 		generateChangelog()
 
@@ -32,7 +32,7 @@ class DbmStatusTests extends AbstractScriptTests {
 		assertTrue output.contains(
 			'changelog.cli.test.groovy::')
 
-        executeUpdate url, 'drop table thing'
+		executeUpdate url, 'drop table thing'
 
 		// update one change
 		executeAndCheck(['dbm-update-count', '1'])
@@ -54,39 +54,45 @@ class DbmStatusTests extends AbstractScriptTests {
 			'1 change sets have not been applied to SA@jdbc:h2:tcp://localhost/./target/testdb/testdb')
 	}
 
-    void testStatusListForSecondaryDataSource() {
-        def url = AbstractScriptTests.SECONDARY_URL
+	void testStatusListForSecondaryDataSource() {
+		String url = AbstractScriptTests.SECONDARY_URL
 
-        generateSecondaryChagelog()
+		generateSecondaryChagelog()
 
-   		executeAndCheck (['dbm-status', '--dataSource=secondary'])
+		executeAndCheck (['dbm-status', '--dataSource=secondary'])
 
-   		assertTrue output.contains(
-   			'1 change sets have not been applied to SA@jdbc:h2:tcp://localhost/./target/testdb/testdb-secondary')
+		assertTrue output.contains(
+			'1 change sets have not been applied to SA@jdbc:h2:tcp://localhost/./target/testdb/testdb-secondary')
 
-   		assertTrue output.contains('changelog.cli.secondary-test.groovy::')
+		assertTrue output.contains('changelog.cli.secondary-test.groovy::')
 
-        executeUpdate url, 'drop table secondary_thing'
+		executeUpdate url, 'drop table secondary_thing'
 
-   		// update one change
-   		executeAndCheck(['dbm-update-count', '1', '--dataSource=secondary'])
+		// update one change
+		executeAndCheck(['dbm-update-count', '1', '--dataSource=secondary'])
 
-   		assertTrue output.contains('ChangeSet changelog.cli.secondary-test.groovy::')
-   		assertTrue output.contains('ran successfully in ')
+		assertTrue output.contains('ChangeSet changelog.cli.secondary-test.groovy::')
+		assertTrue output.contains('ran successfully in ')
 
-   		executeAndCheck (['dbm-status', '--dataSource=secondary'])
-   		assertTrue output.contains('SA@jdbc:h2:tcp://localhost/./target/testdb/testdb-secondary is up to date')
-   	}
+		executeAndCheck (['dbm-status', '--dataSource=secondary'])
+		assertTrue output.contains('SA@jdbc:h2:tcp://localhost/./target/testdb/testdb-secondary is up to date')
+	}
 
-    void testStatusCountForSecondaryDataSource() {
+	void testStatusCountForSecondaryDataSource() {
 
-        generateSecondaryChagelog()
+		generateSecondaryChagelog()
 
-   		executeAndCheck(['dbm-status', '--verbose=false', '--dataSource=secondary'])
+		executeAndCheck(['dbm-status', '--verbose=false', '--dataSource=secondary'])
 
-   		assertTrue output.contains(
-   			'1 change sets have not been applied to SA@jdbc:h2:tcp://localhost/./target/testdb/testdb-secondary')
+		int index = 0
+		def lines = output.readLines()
+		lines.eachWithIndex { String line, int i ->
+			if (line.trim() == '1 change sets have not been applied to SA@jdbc:h2:tcp://localhost/./target/testdb/testdb-secondary') {
+				index = i
+			}
+		}
+		assertTrue index > 0
 
-   		assertFalse output.contains('changelog.cli.secondary-test.groovy::')
-   	}
+		assertTrue lines[index + 1].trim().startsWith('changelog.cli.secondary-test.groovy::')
+	}
 }
