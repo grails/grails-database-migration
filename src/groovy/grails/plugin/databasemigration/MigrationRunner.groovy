@@ -17,7 +17,8 @@ package grails.plugin.databasemigration
 import grails.util.GrailsUtil
 import liquibase.database.Database
 
-import org.apache.log4j.Logger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 /**
  * Based on the class of the same name from Mike Hugo's liquibase-runner plugin.
@@ -27,7 +28,7 @@ import org.apache.log4j.Logger
  */
 class MigrationRunner {
 
-	private static Logger LOG = Logger.getLogger(this)
+	private static Logger LOG = LoggerFactory.getLogger(this)
 
 	static void autoRun() {
 

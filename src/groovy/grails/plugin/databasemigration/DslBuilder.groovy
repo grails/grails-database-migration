@@ -52,8 +52,9 @@ import liquibase.util.ObjectUtil
 import liquibase.util.StringUtils
 import liquibase.util.file.FilenameUtils
 
-import org.apache.log4j.Logger
 import org.codehaus.groovy.runtime.InvokerHelper
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationContext
 
 /**
@@ -63,7 +64,7 @@ import org.springframework.context.ApplicationContext
  */
 class DslBuilder extends BuilderSupport {
 
-	private Logger log = Logger.getLogger(getClass())
+	private Logger log = LoggerFactory.getLogger(getClass())
 
 	private Change currentChange
 	private String currentText

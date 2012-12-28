@@ -20,10 +20,10 @@ import grails.plugin.databasemigration.GrailsChangeLogParser
 import grails.plugin.databasemigration.GrailsClassLoaderResourceAccessor
 import grails.plugin.databasemigration.GrailsDiffStatusListener
 import grails.plugin.databasemigration.GrailsPrecondition
-import grails.plugin.databasemigration.Log4jLogger
 import grails.plugin.databasemigration.MigrationRunner
 import grails.plugin.databasemigration.MigrationUtils
 import grails.plugin.databasemigration.MysqlAwareCreateTableGenerator
+import grails.plugin.databasemigration.Slf4jLogger
 import liquibase.change.ChangeFactory
 import liquibase.database.typeconversion.TypeConverterFactory
 import liquibase.logging.LogFactory
@@ -121,7 +121,7 @@ class DatabaseMigrationGrailsPlugin {
 
 		try {
 			// register the plugin's logger
-			ServiceLocator.instance.classesBySuperclass[Logger] << Log4jLogger
+			ServiceLocator.instance.classesBySuperclass[Logger] << Slf4jLogger
 		}
 		catch (Throwable t) {
 			// ignored, fall back to default logging

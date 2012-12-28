@@ -16,14 +16,15 @@ package grails.plugin.databasemigration
 
 import liquibase.logging.LogLevel
 
-import org.apache.log4j.Logger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 /**
- * Logger that uses Grails Log4j loggers and configuration.
+ * Logger that uses Grails Slf4j loggers and configuration.
  *
  * @author <a href='mailto:burt@burtbeckwith.com'>Burt Beckwith</a>
  */
-class Log4jLogger implements liquibase.logging.Logger {
+class Slf4jLogger implements liquibase.logging.Logger {
 
 	private Logger log
 
@@ -46,7 +47,7 @@ class Log4jLogger implements liquibase.logging.Logger {
 	int getPriority() { 10 }
 
 	void setName(String name) {
-		log = Logger.getLogger(name)
+		log = LoggerFactory.getLogger(name)
 	}
 
 	void setLogLevel(String logLevel, String logFile) {

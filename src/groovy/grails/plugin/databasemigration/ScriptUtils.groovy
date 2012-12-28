@@ -33,7 +33,8 @@ import liquibase.lockservice.LockService
 import liquibase.parser.ChangeLogParserFactory
 import liquibase.util.StringUtils
 
-import org.apache.log4j.Logger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationContext
 
 /**
@@ -44,7 +45,7 @@ class ScriptUtils {
 	static final String DAY_DATE_FORMAT = 'yyyy-MM-dd'
 	static final String FULL_DATE_FORMAT = DAY_DATE_FORMAT + ' HH:mm:ss'
 
-	private Logger log = Logger.getLogger('grails.plugin.databasemigration.Scripts')
+	private Logger log = LoggerFactory.getLogger('grails.plugin.databasemigration.Scripts')
 
 	static void printStackTrace(Throwable e) {
 		GrailsUtil.deepSanitize e
