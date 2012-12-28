@@ -5,6 +5,7 @@ There are a few configuration options for the plugin:
 grails.plugin.databasemigration. changelogLocation | @grails-app/migrations@ | the folder containing the main changelog file (which can include one or more other files)
 grails.plugin.databasemigration. changelogFileName | @changelog.groovy@ | the name of the main changelog file
 grails.plugin.databasemigration. changelogProperties | none | a map of properties to use for property substitution in Groovy DSL changelogs
+grails.plugin.databasemigration. contexts | none | A comma-delimited list of [context|http://www.liquibase.org/manual/contexts] names. If specified, only changesets tagged with one of the context names will be run
 grails.plugin.databasemigration. dbDocLocation | @target/dbdoc@ | the directory where the output from the [dbm-db-doc|Documentation Scripts] script is written
 grails.plugin.databasemigration. dbDocController.enabled | @true@ in dev mode | whether the /dbdoc/ url is accessible at runtime
 grails.plugin.databasemigration. dropOnStart | @false@ | if @true@ then drops all tables before auto-running migrations (if updateOnStart is true)
