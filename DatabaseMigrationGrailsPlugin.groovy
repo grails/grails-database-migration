@@ -24,6 +24,7 @@ import grails.plugin.databasemigration.MigrationRunner
 import grails.plugin.databasemigration.MigrationUtils
 import grails.plugin.databasemigration.MysqlAwareCreateTableGenerator
 import grails.plugin.databasemigration.Slf4jLogger
+import grails.plugin.databasemigration.jaxb.JaxbChangeLogParser
 import liquibase.change.ChangeFactory
 import liquibase.database.typeconversion.TypeConverterFactory
 import liquibase.logging.LogFactory
@@ -89,7 +90,11 @@ class DatabaseMigrationGrailsPlugin {
 
 	private void register(ctx) {
 		// adds support for .groovy extension
-		ChangeLogParserFactory.instance.register new GrailsChangeLogParser(ctx)
+		GrailsChangeLogParser grailsChangeLogParser = new GrailsChangeLogParser(ctx)
+		ChangeLogParserFactory.instance.register grailsChangeLogParser
+
+		// adds support for compiled JAXB .class files
+		ChangeLogParserFactory.instance.register new JaxbChangeLogParser(grailsChangeLogParser)
 
 		// adds support for Groovy-based changes in DSL changelogs
 		ChangeFactory.instance.register GrailsChange
