@@ -51,7 +51,7 @@ class MigrationRunner {
 				}
 				for (name in config.updateOnStartFileNames) {
 					LOG.info "Running script '$name'"
-					MigrationUtils.getLiquibase(database, name).update null
+					MigrationUtils.getLiquibase(database, name).update(config.updateOnStartContexts ?: null)
 				}
 			}
 		}
