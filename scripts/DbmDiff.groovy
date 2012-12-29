@@ -47,7 +47,7 @@ target(dbmDiff: 'Writes description of differences to standard out') {
 			MigrationUtils.executeInSession(dsName) {
 				thisDatabase = MigrationUtils.getDatabase(defaultSchema, dsName)
 				otherDatabase = buildOtherDatabase(otherEnv)
-				ScriptUtils.createDiff(thisDatabase, otherDatabase, appCtx, diffTypes).compare().printChangeLog(out, otherDatabase)
+				ScriptUtils.createAndPrintDiff thisDatabase, otherDatabase, otherDatabase, appCtx, diffTypes, out
 			}
 		}
 

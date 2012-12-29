@@ -237,8 +237,22 @@ class ScriptUtils {
 		diff
 	}
 
+	static void createAndPrintDiff(Database referenceDatabase, Database targetDatabase, Database printDatabase,
+			ApplicationContext appCtx, String diffTypes, PrintStream out) {
+
+		createDiff(referenceDatabase, targetDatabase, appCtx, diffTypes).compare().printChangeLog(
+			out, printDatabase, new MySQLCompatibleChangeLogSerializer())
+	}
+
+	static void createAndPrintFixedDiff(Database referenceDatabase, Database targetDatabase, Database printDatabase,
+			ApplicationContext appCtx, String diffTypes, PrintStream out) {
+
+		MigrationUtils.fixDiffResult(createDiff(referenceDatabase, targetDatabase, appCtx, diffTypes).compare()).printChangeLog(
+			out, printDatabase, new MySQLCompatibleChangeLogSerializer())
+	}
+
 	static void generatePreviousChangesetSql(Database database, Liquibase liquibase, Writer output, int changesetCount, int skip, String contexts) {
-		def changeLogFile = liquibase.changeLogFile
+		String changeLogFile = liquibase.changeLogFile
 
 		liquibase.changeLogParameters.contexts = StringUtils.splitAndTrim(contexts, ",")
 
