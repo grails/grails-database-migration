@@ -140,7 +140,7 @@ echo "SUCCESS!"
 #cp /home/burt/workspace/grails/plugins/grails-database-migration/testapp/VerifyData.groovy migrationtests/scripts/
 #mysql -u migrationtest -pmigrationtest -D migrationtest -e "drop database if exists migrationtest; create database migrationtest"
 #cd migrationtests/
-#grails install-plugin /home/burt/workspace/grails/plugins/grails-database-migration/grails-database-migration-1.2.zip 
+#grails install-plugin /home/burt/workspace/grails/plugins/grails-database-migration/grails-database-migration-1.2.zip
 #grails compile --stacktrace
 #grails dbm-create-changelog --stacktrace
 #grails dbm-generate-gorm-changelog initial.groovy --add --stacktrace
@@ -154,7 +154,7 @@ echo "SUCCESS!"
 #cp /home/burt/workspace/grails/plugins/grails-database-migration/testapp/customer.changelog.groovy grails-app/migrations/
 #grails dbm-register-changelog customer.changelog.groovy --stacktrace
 #grails dbm-update --stacktrace
-#cp /home/burt/workspace/grails/plugins/grails-database-migration/testapp/Product.v2.groovy grails-app/domain/migrationtests/Product.groovy 
+#cp /home/burt/workspace/grails/plugins/grails-database-migration/testapp/Product.v2.groovy grails-app/domain/migrationtests/Product.groovy
 #cp /home/burt/workspace/grails/plugins/grails-database-migration/testapp/price.changelog.groovy grails-app/migrations/
 #grails dbm-register-changelog price.changelog.groovy --stacktrace
 #grails dbm-update --stacktrace

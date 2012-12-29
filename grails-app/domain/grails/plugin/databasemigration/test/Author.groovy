@@ -18,7 +18,7 @@ class Author {
 	String name
 	static hasMany = [books: Book]
 
-    static mapping = {
-        datasources(['secondary', 'DEFAULT'])
-    }
+	static mapping = {
+		datasource 'ALL'
+	}
 }

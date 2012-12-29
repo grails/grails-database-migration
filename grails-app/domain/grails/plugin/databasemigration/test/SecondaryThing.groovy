@@ -2,10 +2,9 @@ package grails.plugin.databasemigration.test
 
 class SecondaryThing {
 
-    String name
+	String name
 
-    static mapping = {
-        datasources(['secondary'])
-    }
-
+	static mapping = {
+		datasource 'secondary'
+	}
 }

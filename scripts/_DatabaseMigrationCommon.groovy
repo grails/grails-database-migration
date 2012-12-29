@@ -48,7 +48,7 @@ doAndClose = { Closure c ->
 	try {
 		MigrationUtils.executeInSession(dsName) {
 			database = MigrationUtils.getDatabase(defaultSchema, dsName)
-            String changeLogFileName = MigrationUtils.getChangelogFileName(dsName)
+			String changeLogFileName = MigrationUtils.getChangelogFileName(dsName)
 			liquibase = MigrationUtils.getLiquibase(database, changeLogFileName)
 
 			def dsConfig = config."$dsName"

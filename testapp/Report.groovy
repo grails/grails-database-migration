@@ -2,12 +2,10 @@ package migrationtests
 
 class Report {
 	String name
-    String value
-    Date dateCreated
+	String value
+	Date dateCreated
 
-    static mapping = {
-        datasource 'reports'
-    }
+	static mapping = {
+		datasource 'reports'
+	}
 }
-
-

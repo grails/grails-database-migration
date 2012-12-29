@@ -404,7 +404,6 @@ class DatabaseChangeLog {
 			@XmlAttribute(name='applyToRollback')
 			String applyToRollback
 
-
 			/**
 			 * <p>The following schema fragment specifies the expected content contained within this class.
 			 *

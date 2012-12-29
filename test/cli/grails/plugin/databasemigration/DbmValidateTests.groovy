@@ -29,14 +29,13 @@ class DbmValidateTests extends AbstractScriptTests {
 			'Starting dbm-validate for database sa @ jdbc:h2:tcp://localhost/./target/testdb/testdb')
 	}
 
-    void testValidateForSecondaryDataSource() {
+	void testValidateForSecondaryDataSource() {
 
-        generateSecondaryChagelog()
+		generateSecondaryChagelog()
 
-   		executeAndCheck (['dbm-validate', '--dataSource=secondary'])
+		executeAndCheck (['dbm-validate', '--dataSource=secondary'])
 
-   		assertTrue output.contains(
-   			'Starting dbm-validate for database sa @ jdbc:h2:tcp://localhost/./target/testdb/testdb-secondary')
-   	}
-
+		assertTrue output.contains(
+			'Starting dbm-validate for database sa @ jdbc:h2:tcp://localhost/./target/testdb/testdb-secondary')
+	}
 }

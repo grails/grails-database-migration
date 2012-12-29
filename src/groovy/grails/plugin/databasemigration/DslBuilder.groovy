@@ -397,7 +397,7 @@ class DslBuilder extends BuilderSupport {
 		new JarFile(zipfile).entries().each { new File(tempDir, it.name).mkdirs() }
 
 		tempDir
-  }
+	}
 
 	private void processChangeSet(Map attributes) {
 		boolean alwaysRun = 'true'.equalsIgnoreCase(attributes.runAlways)

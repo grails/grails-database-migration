@@ -38,5 +38,3 @@ the suffix of @reports@ will be used as the parameter value.
 --dataSource=reports
 {code}
 {note}
-
-

@@ -26,14 +26,14 @@ class DbmReleaseLocksTests extends AbstractScriptTests {
 		generateChangelog()
 
 		// auto-created by hbm2ddl
-        def url = AbstractScriptTests.URL
-        executeUpdate url, 'drop table thing'
+		String url = AbstractScriptTests.URL
+		executeUpdate url, 'drop table thing'
 
 		executeAndCheck(['dbm-update-count', '1'])
 
 		// force a lock
 		executeUpdate(url, 'update databasechangeloglock set locked=?, lockgranted=?, lockedby=?',
-		              [true, new Timestamp(System.currentTimeMillis()), 'cli_test'])
+			[true, new Timestamp(System.currentTimeMillis()), 'cli_test'])
 		executeAndCheck 'dbm-list-locks'
 
 		assertFalse output.contains('No locks')
@@ -43,27 +43,26 @@ class DbmReleaseLocksTests extends AbstractScriptTests {
 		assertTrue output.contains('Successfully released change log lock')
 	}
 
-    void testReleaseLocksForSecondaryDataSource() {
+	void testReleaseLocksForSecondaryDataSource() {
 
-   		generateChangelog()
-        generateSecondaryChagelog()
+		generateChangelog()
+		generateSecondaryChagelog()
 
-   		// auto-created by hbm2ddl
-        def url = AbstractScriptTests.SECONDARY_URL
-        executeUpdate url, 'drop table secondary_thing'
+		// auto-created by hbm2ddl
+		String url = AbstractScriptTests.SECONDARY_URL
+		executeUpdate url, 'drop table secondary_thing'
 
-   		executeAndCheck(['dbm-update-count', '1', '--dataSource=secondary'])
+		executeAndCheck(['dbm-update-count', '1', '--dataSource=secondary'])
 
-   		// force a lock
-   		executeUpdate(url, 'update databasechangeloglock set locked=?, lockgranted=?, lockedby=?',
-   		              [true, new Timestamp(System.currentTimeMillis()), 'cli_test'])
-   		executeAndCheck (['dbm-list-locks', '--dataSource=secondary'])
+		// force a lock
+		executeUpdate(url, 'update databasechangeloglock set locked=?, lockgranted=?, lockedby=?',
+			[true, new Timestamp(System.currentTimeMillis()), 'cli_test'])
+		executeAndCheck (['dbm-list-locks', '--dataSource=secondary'])
 
-   		assertFalse output.contains('No locks')
+		assertFalse output.contains('No locks')
 
-   		executeAndCheck (['dbm-release-locks', '--dataSource=secondary'])
+		executeAndCheck (['dbm-release-locks', '--dataSource=secondary'])
 
-   		assertTrue output.contains('Successfully released change log lock')
-   	}
-
+		assertTrue output.contains('Successfully released change log lock')
+	}
 }

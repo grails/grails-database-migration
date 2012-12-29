@@ -22,7 +22,7 @@ import java.sql.SQLException
 class DbmRollbackCountTests extends AbstractScriptTests {
 
 	void testRollbackCount() {
-        def url = AbstractScriptTests.URL
+		String url = AbstractScriptTests.URL
 
 		assertTableCount 1
 
@@ -43,7 +43,7 @@ class DbmRollbackCountTests extends AbstractScriptTests {
 		assertTableCount 4
 
 		// test that we can do full insert
-        executeUpdate url, '''
+		executeUpdate url, '''
 			insert into person(version, name, street1, street2, zipcode)
 			values (0, 'test.name', 'test.street1', 'test.street2', '12345')
 		'''
@@ -73,55 +73,55 @@ class DbmRollbackCountTests extends AbstractScriptTests {
 		'''
 	}
 
-    void testRollbackCountForSecondaryDataSource() {
-        def url = AbstractScriptTests.SECONDARY_URL
+	void testRollbackCountForSecondaryDataSource() {
+		String url = AbstractScriptTests.SECONDARY_URL
 
-   		assertTableCount 1, url
+		assertTableCount 1, url
 
-   		// should fail since the table isn't there yet
-   		String message = shouldFail(SQLException) {
-   			executeUpdate url, '''
-   				insert into person(version, name, street1, street2, zipcode)
-   				values (0, 'test.name', 'test.street1', 'test.street2', '12345')
-   			'''
-   		}
-   		assertTrue message.contains('Table "PERSON" not found')
+		// should fail since the table isn't there yet
+		String message = shouldFail(SQLException) {
+			executeUpdate url, '''
+				insert into person(version, name, street1, street2, zipcode)
+				values (0, 'test.name', 'test.street1', 'test.street2', '12345')
+			'''
+		}
+		assertTrue message.contains('Table "PERSON" not found')
 
-   		copyTestChangelog('test.changelog', SECONDARY_TEST_CHANGELOG)
+		copyTestChangelog('test.changelog', SECONDARY_TEST_CHANGELOG)
 
-   		executeAndCheck (['dbm-update', '--dataSource=secondary'])
+		executeAndCheck (['dbm-update', '--dataSource=secondary'])
 
-   		// original + 2 Liquibase + new person table
-   		assertTableCount 4, url
+		// original + 2 Liquibase + new person table
+		assertTableCount 4, url
 
-   		// test that we can do full insert
-           executeUpdate url, '''
-   			insert into person(version, name, street1, street2, zipcode)
-   			values (0, 'test.name', 'test.street1', 'test.street2', '12345')
-   		'''
+		// test that we can do full insert
+		executeUpdate url, '''
+			insert into person(version, name, street1, street2, zipcode)
+			values (0, 'test.name', 'test.street1', 'test.street2', '12345')
+		'''
 
-   		// test parameter check
-   		executeAndCheck(['dbm-rollback-count', '--dataSource=secondary'], false)
-   		assertTrue output.contains('ERROR: The dbm-rollback-count script requires a change set count argument')
+		// test parameter check
+		executeAndCheck(['dbm-rollback-count', '--dataSource=secondary'], false)
+		assertTrue output.contains('ERROR: The dbm-rollback-count script requires a change set count argument')
 
-   		executeAndCheck(['dbm-rollback-count', '1', '--dataSource=secondary'])
+		executeAndCheck(['dbm-rollback-count', '1', '--dataSource=secondary'])
 
-   		// still 4 tables
-   		assertTableCount 4, url
+		// still 4 tables
+		assertTableCount 4, url
 
-   		// can't do full insert since the 3rd change was rolled back
-   		message = shouldFail(SQLException) {
-   			executeUpdate url,'''
-   				insert into person(version, name, street1, street2, zipcode)
-   				values (1, 'test.name2', 'test.street1.2', 'test.street2.2', '123456')
-   			'''
-   		}
-   		assertTrue message.contains('Column "ZIPCODE" not found')
+		// can't do full insert since the 3rd change was rolled back
+		message = shouldFail(SQLException) {
+			executeUpdate url,'''
+				insert into person(version, name, street1, street2, zipcode)
+				values (1, 'test.name2', 'test.street1.2', 'test.street2.2', '123456')
+			'''
+		}
+		assertTrue message.contains('Column "ZIPCODE" not found')
 
-   		// can do partial insert
-   		executeUpdate url, '''
-   			insert into person(version, name, street1, street2)
-   			values (1, 'test.name2', 'test.street1.2', 'test.street2.2')
-   		'''
-   	}
+		// can do partial insert
+		executeUpdate url, '''
+			insert into person(version, name, street1, street2)
+			values (1, 'test.name2', 'test.street1.2', 'test.street2.2')
+		'''
+	}
 }

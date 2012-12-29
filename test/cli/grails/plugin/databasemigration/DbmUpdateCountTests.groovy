@@ -65,48 +65,47 @@ class DbmUpdateCountTests extends AbstractScriptTests {
 		'''
 	}
 
+	void testUpdateCountForSecondaryDataSource() {
 
-    void testUpdateCountForSecondaryDataSource() {
+		assertTableCount 1, AbstractScriptTests.SECONDARY_URL
 
-   		assertTableCount 1, AbstractScriptTests.SECONDARY_URL
+		// should fail since the table isn't there yet
+		String message = shouldFail(SQLException) {
+			executeUpdate AbstractScriptTests.SECONDARY_URL, '''
+				insert into person(version, name, street1, street2, zipcode)
+				values (0, 'test.name', 'test.street1', 'test.street2', '12345')
+			'''
+		}
+		assertTrue message.contains('Table "PERSON" not found')
 
-   		// should fail since the table isn't there yet
-   		String message = shouldFail(SQLException) {
-   			executeUpdate AbstractScriptTests.SECONDARY_URL, '''
-   				insert into person(version, name, street1, street2, zipcode)
-   				values (0, 'test.name', 'test.street1', 'test.street2', '12345')
-   			'''
-   		}
-   		assertTrue message.contains('Table "PERSON" not found')
+		copyTestChangelog('test.changelog', AbstractScriptTests.SECONDARY_TEST_CHANGELOG)
 
-   		copyTestChangelog('test.changelog', AbstractScriptTests.SECONDARY_TEST_CHANGELOG)
+		// test parameter check
+		executeAndCheck(['dbm-update-count', '--dataSource=secondary'], false)
+		assertTrue output.contains('ERROR: The dbm-update-count script requires a change set count argument')
 
-   		// test parameter check
-   		executeAndCheck(['dbm-update-count', '--dataSource=secondary'], false)
-   		assertTrue output.contains('ERROR: The dbm-update-count script requires a change set count argument')
+		executeAndCheck(['dbm-update-count', '2', '--dataSource=secondary'])
 
-   		executeAndCheck(['dbm-update-count', '2', '--dataSource=secondary'])
+		// original + 2 Liquibase + new person table
+		assertTableCount 4, AbstractScriptTests.SECONDARY_URL
 
-   		// original + 2 Liquibase + new person table
-   		assertTableCount 4, AbstractScriptTests.SECONDARY_URL
+		assertTrue output.contains(
+			'Starting dbm-update-count for database sa @ jdbc:h2:tcp://localhost/./target/testdb/testdb-secondary')
 
-   		assertTrue output.contains(
-   			'Starting dbm-update-count for database sa @ jdbc:h2:tcp://localhost/./target/testdb/testdb-secondary')
+		// can't do full insert since the 3rd change wasn't applied
+		message = shouldFail(SQLException) {
+			executeUpdate AbstractScriptTests.SECONDARY_URL, '''
+				insert into person(version, name, street1, street2, zipcode)
+				values (0, 'test.name', 'test.street1', 'test.street2', '12345')
+			'''
+		}
 
-   		// can't do full insert since the 3rd change wasn't applied
-   		message = shouldFail(SQLException) {
-   			executeUpdate AbstractScriptTests.SECONDARY_URL, '''
-   				insert into person(version, name, street1, street2, zipcode)
-   				values (0, 'test.name', 'test.street1', 'test.street2', '12345')
-   			'''
-   		}
+		assertTrue message.contains('Column "ZIPCODE" not found')
 
-   		assertTrue message.contains('Column "ZIPCODE" not found')
-
-   		// can do partial insert
-   		executeUpdate AbstractScriptTests.SECONDARY_URL, '''
-   			insert into person(version, name, street1, street2)
-   			values (0, 'test.name', 'test.street1', 'test.street2')
-   		'''
-   	}
+		// can do partial insert
+		executeUpdate AbstractScriptTests.SECONDARY_URL, '''
+			insert into person(version, name, street1, street2)
+			values (0, 'test.name', 'test.street1', 'test.street2')
+		'''
+	}
 }

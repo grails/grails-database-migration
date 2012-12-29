@@ -52,38 +52,38 @@ class DbmCreateChangelogTests extends AbstractScriptTests {
 		verifyFile file
 	}
 
-    void testCreateChangelogDefaultForSecondaryDataSource() {
+	void testCreateChangelogDefaultForSecondaryDataSource() {
 
-   		def file = new File(CHANGELOG_DIR, '/changelog.cli.secondary-test.groovy')
-   		file.delete()
-   		assertFalse file.exists()
+		def file = new File(CHANGELOG_DIR, '/changelog.cli.secondary-test.groovy')
+		file.delete()
+		assertFalse file.exists()
 
-   		executeAndCheck(['dbm-create-changelog', '--dataSource=secondary'])
+		executeAndCheck(['dbm-create-changelog', '--dataSource=secondary'])
 
-   		verifyFile file
-   	}
+		verifyFile file
+	}
 
-    void testCreateChangelogForSecondaryDataSource() {
+	void testCreateChangelogForSecondaryDataSource() {
 
-   		def file = new File(CHANGELOG_DIR, '/newSecondaryChangeLog.groovy')
-   		file.delete()
-   		assertFalse file.exists()
+		def file = new File(CHANGELOG_DIR, '/newSecondaryChangeLog.groovy')
+		file.delete()
+		assertFalse file.exists()
 
-   		executeAndCheck(['dbm-create-changelog', 'newSecondaryChangeLog', '--dataSource=secondary'])
+		executeAndCheck(['dbm-create-changelog', 'newSecondaryChangeLog', '--dataSource=secondary'])
 
-   		verifyFile file
-   	}
+		verifyFile file
+	}
 
-    void testCreateChangelogInSubdirectoryForSecondaryDataSource() {
+	void testCreateChangelogInSubdirectoryForSecondaryDataSource() {
 
-   		def file = new File(CHANGELOG_DIR, '/foo/bar/otherSecondaryChangeLog.groovy')
-   		file.delete()
-   		assertFalse file.exists()
+		def file = new File(CHANGELOG_DIR, '/foo/bar/otherSecondaryChangeLog.groovy')
+		file.delete()
+		assertFalse file.exists()
 
-   		executeAndCheck(['dbm-create-changelog', 'foo/bar/otherSecondaryChangeLog', '--dataSource=secondary'])
+		executeAndCheck(['dbm-create-changelog', 'foo/bar/otherSecondaryChangeLog', '--dataSource=secondary'])
 
-   		verifyFile file
-   	}
+		verifyFile file
+	}
 
 	private void verifyFile(file) {
 		assertTrue file.exists()

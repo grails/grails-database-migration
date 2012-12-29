@@ -103,76 +103,75 @@ class DbmDiffTests extends AbstractScriptTests {
 		assertTrue groovy.contains('dropColumn(columnName: "NEW_INT_COL", tableName: "THING")')
 	}
 
-    void testBadParamsForSecondaryDataSource() {
-   		// test missing parameter check
-   		executeAndCheck(['dbm-diff', '--dataSource=secondary'], false)
-   		assertTrue output.contains('ERROR: You must specify the environment to diff against')
+	void testBadParamsForSecondaryDataSource() {
+		// test missing parameter check
+		executeAndCheck(['dbm-diff', '--dataSource=secondary'], false)
+		assertTrue output.contains('ERROR: You must specify the environment to diff against')
 
-   		// test same env parameter check
-   		executeAndCheck(['dbm-diff', 'dev', '--dataSource=secondary'], false)
-   		assertTrue output.contains('ERROR: You must specify a different environment than the one the script is running in')
+		// test same env parameter check
+		executeAndCheck(['dbm-diff', 'dev', '--dataSource=secondary'], false)
+		assertTrue output.contains('ERROR: You must specify a different environment than the one the script is running in')
 
-   		// test same env parameter check
-   		executeAndCheck(['dbm-diff', 'development', '--dataSource=secondary'], false)
-   		assertTrue output.contains('ERROR: You must specify a different environment than the one the script is running in')
-   	}
+		// test same env parameter check
+		executeAndCheck(['dbm-diff', 'development', '--dataSource=secondary'], false)
+		assertTrue output.contains('ERROR: You must specify a different environment than the one the script is running in')
+	}
 
-    void testDbmDiffForSecondaryDataSource_STDOUT() {
+	void testDbmDiffForSecondaryDataSource_STDOUT() {
 
-   		createSecondaryTables()
+		createSecondaryTables()
 
-   		executeAndCheck(['dbm-diff', 'dbdiff', '--dataSource=secondary'])
+		executeAndCheck(['dbm-diff', 'dbdiff', '--dataSource=secondary'])
 
-   		assertTrue output.contains('<changeSet ')
-   		assertTrue output.contains('<createTable tableName="NEW_TABLE">')
-   		assertTrue output.contains('<addColumn tableName="SECONDARY_THING">')
-   		assertTrue output.contains('<dropColumn columnName="NEW_COL" tableName="SECONDARY_THING"/>')
-   		assertTrue output.contains('<dropColumn columnName="NEW_INT_COL" tableName="SECONDARY_THING"/>')
-   	}
+		assertTrue output.contains('<changeSet ')
+		assertTrue output.contains('<createTable tableName="NEW_TABLE">')
+		assertTrue output.contains('<addColumn tableName="SECONDARY_THING">')
+		assertTrue output.contains('<dropColumn columnName="NEW_COL" tableName="SECONDARY_THING"/>')
+		assertTrue output.contains('<dropColumn columnName="NEW_INT_COL" tableName="SECONDARY_THING"/>')
+	}
 
+	void testDbmDiffForSecondaryDataSource_XML() {
 
-    void testDbmDiffForSecondaryDataSource_XML() {
+		createSecondaryTables()
 
-        createSecondaryTables()
+		def file = new File(CHANGELOG_DIR, '/cl.xml')
+		assertFalse file.exists()
 
-   		def file = new File(CHANGELOG_DIR, '/cl.xml')
-   		assertFalse file.exists()
+		executeAndCheck(['dbm-diff', 'dbdiff', 'cl.xml', '--dataSource=secondary'])
 
-   		executeAndCheck(['dbm-diff', 'dbdiff', 'cl.xml', '--dataSource=secondary'])
+		assertTrue file.exists()
+		file.deleteOnExit()
 
-   		assertTrue file.exists()
-   		file.deleteOnExit()
+		String xml = file.text
 
-   		String xml = file.text
+		assertTrue xml.contains('<changeSet ')
+		assertTrue xml.contains('<createTable tableName="NEW_TABLE">')
+		assertTrue xml.contains('<addColumn tableName="SECONDARY_THING">')
+		assertTrue xml.contains('<dropColumn columnName="NEW_COL" tableName="SECONDARY_THING"/>')
+		assertTrue xml.contains('<dropColumn columnName="NEW_INT_COL" tableName="SECONDARY_THING"/>')
+	}
 
-   		assertTrue xml.contains('<changeSet ')
-   		assertTrue xml.contains('<createTable tableName="NEW_TABLE">')
-   		assertTrue xml.contains('<addColumn tableName="SECONDARY_THING">')
-   		assertTrue xml.contains('<dropColumn columnName="NEW_COL" tableName="SECONDARY_THING"/>')
-   		assertTrue xml.contains('<dropColumn columnName="NEW_INT_COL" tableName="SECONDARY_THING"/>')
-   	}
+	void testDbmDiffForSecondaryDataSource_Groovy() {
 
-    void testDbmDiffForSecondaryDataSource_Groovy() {
+		createSecondaryTables()
 
-        createSecondaryTables()
+		def file = new File(CHANGELOG_DIR, '/cl.groovy')
+		file.delete()
+		assertFalse file.exists()
 
-   		def file = new File(CHANGELOG_DIR, '/cl.groovy')
-   		file.delete()
-   		assertFalse file.exists()
+		executeAndCheck(['dbm-diff', 'dbdiff', 'cl.groovy', '--dataSource=secondary'])
 
-   		executeAndCheck(['dbm-diff', 'dbdiff', 'cl.groovy', '--dataSource=secondary'])
+		assertTrue file.exists()
+		file.deleteOnExit()
 
-   		assertTrue file.exists()
-   		file.deleteOnExit()
+		String groovy = file.text
 
-   		String groovy = file.text
-
-   		assertTrue groovy.contains('changeSet(')
-   		assertTrue groovy.contains('createTable(tableName: "NEW_TABLE") {')
-   		assertTrue groovy.contains('addColumn(tableName: "SECONDARY_THING") {')
-   		assertTrue groovy.contains('dropColumn(columnName: "NEW_COL", tableName: "SECONDARY_THING")')
-   		assertTrue groovy.contains('dropColumn(columnName: "NEW_INT_COL", tableName: "SECONDARY_THING")')
-   	}
+		assertTrue groovy.contains('changeSet(')
+		assertTrue groovy.contains('createTable(tableName: "NEW_TABLE") {')
+		assertTrue groovy.contains('addColumn(tableName: "SECONDARY_THING") {')
+		assertTrue groovy.contains('dropColumn(columnName: "NEW_COL", tableName: "SECONDARY_THING")')
+		assertTrue groovy.contains('dropColumn(columnName: "NEW_INT_COL", tableName: "SECONDARY_THING")')
+	}
 
 	private void createTables(String url = AbstractScriptTests.URL, String tableName = 'thing' ) {
 
@@ -188,7 +187,7 @@ class DbmDiffTests extends AbstractScriptTests {
 		def diffSql = Sql.newInstance('jdbc:h2:file:target/dbdiff/dbdiff', 'sa', '', 'org.h2.Driver')
 
 		// create a modified 'thing' table in the comparison db
-        def createTableSql = """
+		def createTableSql = """
 			create table ${tableName} (
 				id bigint generated by default as identity (start with 1),
 				version bigint not null,
@@ -197,12 +196,12 @@ class DbmDiffTests extends AbstractScriptTests {
 				primary key (id)
 			)"""
 
-        diffSql.executeUpdate createTableSql.toString()
+		diffSql.executeUpdate createTableSql.toString()
 
 		diffSql.executeUpdate 'SHUTDOWN'
 	}
 
-    private void createSecondaryTables() {
-        createTables(AbstractScriptTests.SECONDARY_URL, '   secondary_thing')
-    }
+	private void createSecondaryTables() {
+		createTables(AbstractScriptTests.SECONDARY_URL, '   secondary_thing')
+	}
 }

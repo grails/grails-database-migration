@@ -32,21 +32,19 @@ class DbmFutureRollbackSqlTests extends AbstractScriptTests {
 		assertTrue output.contains("DELETE FROM DATABASECHANGELOG  WHERE ID='test-3'")
 	}
 
-    void testFutureRollbackSqlForSecondaryDataSource() {
-   		assertTableCount 1, AbstractScriptTests.SECONDARY_URL
-   		copyTestChangelog('test.changelog', AbstractScriptTests.SECONDARY_TEST_CHANGELOG)
-   		executeAndCheck(['dbm-update-count', '2', '--dataSource=secondary'])
-   		assertTableCount 4, AbstractScriptTests.SECONDARY_URL
+	void testFutureRollbackSqlForSecondaryDataSource() {
+		assertTableCount 1, AbstractScriptTests.SECONDARY_URL
+		copyTestChangelog('test.changelog', AbstractScriptTests.SECONDARY_TEST_CHANGELOG)
+		executeAndCheck(['dbm-update-count', '2', '--dataSource=secondary'])
+		assertTableCount 4, AbstractScriptTests.SECONDARY_URL
 
-   		executeAndCheck (['dbm-future-rollback-sql', '--dataSource=secondary'])
+		executeAndCheck (['dbm-future-rollback-sql', '--dataSource=secondary'])
 
-        println output
+		assertTrue output.contains('Starting dbm-future-rollback-sql')
+		assertTrue output.contains('ALTER TABLE PERSON DROP COLUMN ZIPCODE')
+		assertTrue output.contains("DELETE FROM DATABASECHANGELOG  WHERE ID='test-3'")
 
-   		assertTrue output.contains('Starting dbm-future-rollback-sql')
-   		assertTrue output.contains('ALTER TABLE PERSON DROP COLUMN ZIPCODE')
-   		assertTrue output.contains("DELETE FROM DATABASECHANGELOG  WHERE ID='test-3'")
-
-        assertTrue output.contains(
-                "Starting dbm-future-rollback-sql for database sa @ jdbc:h2:tcp://localhost/./target/testdb/testdb-secondary")
-   	}
+		assertTrue output.contains(
+			"Starting dbm-future-rollback-sql for database sa @ jdbc:h2:tcp://localhost/./target/testdb/testdb-secondary")
+	}
 }

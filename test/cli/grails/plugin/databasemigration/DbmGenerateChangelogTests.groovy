@@ -74,56 +74,54 @@ class DbmGenerateChangelogTests extends AbstractScriptTests {
 			'Starting dbm-generate-changelog for database sa @ jdbc:h2:tcp://localhost/./target/testdb/testdb')
 	}
 
-    /**
-   	 * Test generating a changelog from a standard XML file.
-   	 */
-   	void testGenerateChangelogForSecondaryDataSource_XML() {
+	/**
+	 * Test generating a changelog from a standard XML file.
+	 */
+	void testGenerateChangelogForSecondaryDataSource_XML() {
 
-   		initFile false
+		initFile false
 
-   		executeAndCheck(['dbm-generate-changelog', file.name, '--dataSource=secondary'])
+		executeAndCheck(['dbm-generate-changelog', file.name, '--dataSource=secondary'])
 
-   		assertTrue file.exists()
-   		String xml = file.text
+		assertTrue file.exists()
+		String xml = file.text
 
-   		assertTrue xml.contains('<databaseChangeLog ')
-   		assertTrue xml.contains('<changeSet ')
-   		assertTrue xml.contains('<createTable ')
+		assertTrue xml.contains('<databaseChangeLog ')
+		assertTrue xml.contains('<changeSet ')
+		assertTrue xml.contains('<createTable ')
 
-   		assertTrue output.contains(
-   			'Starting dbm-generate-changelog for database sa @ jdbc:h2:tcp://localhost/./target/testdb/testdb-secondary')
-   	}
+		assertTrue output.contains(
+			'Starting dbm-generate-changelog for database sa @ jdbc:h2:tcp://localhost/./target/testdb/testdb-secondary')
+	}
 
-   	/**
-   	 * Test generating a changelog from a Groovy file generated from a standard XML file.
-   	 */
-   	void testGenerateChangelogForSecondaryDataSource_Groovy() {
+	/**
+	 * Test generating a changelog from a Groovy file generated from a standard XML file.
+	 */
+	void testGenerateChangelogForSecondaryDataSource_Groovy() {
 
-   		initFile true
+		initFile true
 
-   		executeAndCheck(['dbm-generate-changelog', file.name, '--dataSource=secondary'])
+		executeAndCheck(['dbm-generate-changelog', file.name, '--dataSource=secondary'])
 
-   		assertTrue file.exists()
-   		String groovy = file.text
+		assertTrue file.exists()
+		String groovy = file.text
 
-   		assertTrue groovy.contains('databaseChangeLog = {')
-   		assertTrue groovy.contains('changeSet(')
-   		assertTrue groovy.contains('createTable(')
+		assertTrue groovy.contains('databaseChangeLog = {')
+		assertTrue groovy.contains('changeSet(')
+		assertTrue groovy.contains('createTable(')
 
-   		assertTrue output.contains(
-   			'Starting dbm-generate-changelog for database sa @ jdbc:h2:tcp://localhost/./target/testdb/testdb-secondary')
-   	}
+		assertTrue output.contains(
+			'Starting dbm-generate-changelog for database sa @ jdbc:h2:tcp://localhost/./target/testdb/testdb-secondary')
+	}
 
+	void testGenerateChangeLogForSecondaryDataSource_Stdout() {
 
-    void testGenerateChangeLogForSecondaryDataSource_Stdout() {
+		executeAndCheck(['dbm-generate-changelog', '--dataSource=secondary'])
 
-        executeAndCheck(['dbm-generate-changelog', '--dataSource=secondary'])
-
-        assertTrue output.contains('<databaseChangeLog')
-        assertTrue output.contains('<changeSet')
-        assertTrue output.contains('<createTable')
-        assertTrue output.contains(
-                'Starting dbm-generate-changelog for database sa @ jdbc:h2:tcp://localhost/./target/testdb/testdb-secondary')
-
-    }
+		assertTrue output.contains('<databaseChangeLog')
+		assertTrue output.contains('<changeSet')
+		assertTrue output.contains('<createTable')
+		assertTrue output.contains(
+			'Starting dbm-generate-changelog for database sa @ jdbc:h2:tcp://localhost/./target/testdb/testdb-secondary')
+	}
 }

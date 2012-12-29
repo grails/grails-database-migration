@@ -216,12 +216,13 @@ class MigrationUtils {
 	}
 
 	static ConfigObject getConfig(String dsName = 'dataSource') {
-        boolean isDefault = dsName == 'dataSource'
-        if (!isDefault) {
-            String dataSourceSuffix = extractSuffixWithOutUnderbar(dsName)
-            return application.config.grails.plugin.databasemigration."$dataSourceSuffix"
-        }
-        return application.config.grails.plugin.databasemigration
+		boolean isDefault = dsName == 'dataSource'
+		if (isDefault) {
+			return application.config.grails.plugin.databasemigration
+		}
+
+		String dataSourceSuffix = extractSuffixWithOutUnderbar(dsName)
+		return application.config.grails.plugin.databasemigration."$dataSourceSuffix"
 	}
 
 	static String getDbDocLocation(String dsName = 'dataSource') {

@@ -18,7 +18,7 @@ class Book {
 	String title
 	static belongsTo = [author: Author]
 
-    static mapping = {
-        datasources(['secondary', 'DEFAULT'])
-    }
+	static mapping = {
+		datasource 'ALL'
+	}
 }

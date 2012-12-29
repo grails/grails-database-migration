@@ -25,7 +25,6 @@ target(populateData: 'Insert data using GORM') {
 		o3.addToItems(product: p1, quantity: 5)
 		o3.save(failOnError: true)
 
-
 		Report.newInstance(name: 'r1', value: 'Foo').save(failOnError: true)
 		Report.newInstance(name: 'r2', value: 'Bar').save(failOnError: true)
 		Report.newInstance(name: 'r3', value: 'Baz').save(failOnError: true)

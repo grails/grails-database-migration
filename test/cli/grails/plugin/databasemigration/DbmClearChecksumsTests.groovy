@@ -52,36 +52,36 @@ class DbmClearChecksumsTests extends AbstractScriptTests {
 			'Starting dbm-clear-checksums for database sa @ jdbc:h2:tcp://localhost/./target/testdb/testdb')
 	}
 
-    void testClearChecksumsForSecondaryDataSource() {
+	void testClearChecksumsForSecondaryDataSource() {
 
-   		generateSecondaryChagelog()
+		generateSecondaryChagelog()
 
-   		executeUpdate AbstractScriptTests.SECONDARY_URL, 'drop table secondary_thing'
+		executeUpdate AbstractScriptTests.SECONDARY_URL, 'drop table secondary_thing'
 
-   		executeAndCheck(['dbm-update-count', '1', '--dataSource=secondary'])
+		executeAndCheck(['dbm-update-count', '1', '--dataSource=secondary'])
 
-   		// should have checksums after running update
-   		newSql(AbstractScriptTests.SECONDARY_URL).eachRow('select * from databasechangelog') {
-   			assertNotNull it.md5sum
-   			assertEquals 34, it.md5sum.length()
-   			assertEquals 'changelog.cli.secondary-test.groovy', it.filename
-   			assertEquals 'EXECUTED', it.exectype
-   			assertEquals 'Create Table', it.description
-   			assertNull it.tag
-   		}
+		// should have checksums after running update
+		newSql(AbstractScriptTests.SECONDARY_URL).eachRow('select * from databasechangelog') {
+			assertNotNull it.md5sum
+			assertEquals 34, it.md5sum.length()
+			assertEquals 'changelog.cli.secondary-test.groovy', it.filename
+			assertEquals 'EXECUTED', it.exectype
+			assertEquals 'Create Table', it.description
+			assertNull it.tag
+		}
 
-   		executeAndCheck (['dbm-clear-checksums', '--dataSource=secondary'])
+		executeAndCheck (['dbm-clear-checksums', '--dataSource=secondary'])
 
-   		// should have null checksums but otherwise unchanged
-   		newSql(AbstractScriptTests.SECONDARY_URL).eachRow('select * from databasechangelog') {
-   			assertNull it.md5sum
-   			assertEquals 'changelog.cli.secondary-test.groovy', it.filename
-   			assertEquals 'EXECUTED', it.exectype
-   			assertEquals 'Create Table', it.description
-   			assertNull it.tag
-   		}
+		// should have null checksums but otherwise unchanged
+		newSql(AbstractScriptTests.SECONDARY_URL).eachRow('select * from databasechangelog') {
+			assertNull it.md5sum
+			assertEquals 'changelog.cli.secondary-test.groovy', it.filename
+			assertEquals 'EXECUTED', it.exectype
+			assertEquals 'Create Table', it.description
+			assertNull it.tag
+		}
 
-   		assertTrue output.contains(
-   			'Starting dbm-clear-checksums for database sa @ jdbc:h2:tcp://localhost/./target/testdb/testdb-secondary')
-   	}
+		assertTrue output.contains(
+			'Starting dbm-clear-checksums for database sa @ jdbc:h2:tcp://localhost/./target/testdb/testdb-secondary')
+	}
 }

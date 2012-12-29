@@ -39,22 +39,22 @@ class DbmChangelogSyncTests extends AbstractScriptTests {
 			'Starting dbm-changelog-sync for database sa @ jdbc:h2:tcp://localhost/./target/testdb/testdb')
 	}
 
-    void testChangelogSyncSecondaryDataSource() {
-        def tableNames = findAllTableNames(AbstractScriptTests.SECONDARY_URL)
-        assertEquals 1, tableNames.size()
-        assertTrue tableNames.contains('secondary_thing')
+	void testChangelogSyncSecondaryDataSource() {
+		def tableNames = findAllTableNames(AbstractScriptTests.SECONDARY_URL)
+		assertEquals 1, tableNames.size()
+		assertTrue tableNames.contains('secondary_thing')
 
-        executeAndCheck(['dbm-generate-changelog', 'changelog.cli.secondary-test.groovy', '--dataSource=secondary'])
+		executeAndCheck(['dbm-generate-changelog', 'changelog.cli.secondary-test.groovy', '--dataSource=secondary'])
 
-        executeAndCheck(['dbm-changelog-sync', '--dataSource=secondary'])
+		executeAndCheck(['dbm-changelog-sync', '--dataSource=secondary'])
 
-        tableNames = findAllTableNames(AbstractScriptTests.SECONDARY_URL)
-        assertEquals 3, tableNames.size()
-        assertTrue tableNames.contains('secondary_thing')
-        assertTrue tableNames.contains('databasechangelog')
-        assertTrue tableNames.contains('databasechangeloglock')
+		tableNames = findAllTableNames(AbstractScriptTests.SECONDARY_URL)
+		assertEquals 3, tableNames.size()
+		assertTrue tableNames.contains('secondary_thing')
+		assertTrue tableNames.contains('databasechangelog')
+		assertTrue tableNames.contains('databasechangeloglock')
 
-        assertTrue output.contains(
-                'Starting dbm-changelog-sync for database sa @ jdbc:h2:tcp://localhost/./target/testdb/testdb-secondary')
-    }
+		assertTrue output.contains(
+			'Starting dbm-changelog-sync for database sa @ jdbc:h2:tcp://localhost/./target/testdb/testdb-secondary')
+	}
 }
