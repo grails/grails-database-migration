@@ -37,15 +37,19 @@ target(dbmGormDiff: 'Diff GORM classes against database and generate a changelog
 
 	if (!okToWrite(0, true)) return
 
+	def configuredSchema = config.grails.plugin.databasemigration.schema
+	String argSchema = argsMap.schema
+	String effectiveSchema = argSchema ?: configuredSchema ?: defaultSchema
+
 	def realDatabase
+
 	try {
 		printMessage "Starting $hyphenatedScriptName"
 
-
 		ScriptUtils.executeAndWrite argsList[0], booleanArg('add'), { PrintStream out ->
 			MigrationUtils.executeInSession(dsName) {
-				realDatabase = MigrationUtils.getDatabase(defaultSchema, dsName)
-				def gormDatabase = ScriptUtils.createGormDatabase(config, appCtx)
+				realDatabase = MigrationUtils.getDatabase(effectiveSchema, dsName)
+				def gormDatabase = ScriptUtils.createGormDatabase(config, appCtx, effectiveSchema)
 				MigrationUtils.fixDiffResult(
 					ScriptUtils.createDiff(gormDatabase, realDatabase, appCtx, diffTypes).compare()).printChangeLog(out, realDatabase)
 			}

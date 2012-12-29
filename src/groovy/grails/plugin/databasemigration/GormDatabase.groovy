@@ -25,9 +25,11 @@ import liquibase.database.DatabaseConnection
 class GormDatabase extends AbstractDatabase {
 
 	/*org.hibernate.cfg.Configuration*/ def configuration
+	String schema
 
-	GormDatabase(/*org.hibernate.cfg.Configuration*/ configuration) {
+	GormDatabase(/*org.hibernate.cfg.Configuration*/ configuration, String schema = null) {
 		this.configuration = configuration
+		this.schema = schema
 	}
 
 	String getDatabaseProductName() { 'GORM Mapping' }

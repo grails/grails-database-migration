@@ -54,13 +54,17 @@ class GormDatabaseSnapshotGenerator implements DatabaseSnapshotGenerator {
 //			def dialect = new HibernateGenericDialect(dialectName) // TODO
 
 			def mapping = cfg.buildMapping()
+			String defaultSchema = cfg.getProperty('hibernate.default_schema')
 
 			for (hibernateTable in cfg.tableMappings) {
 				if (!hibernateTable.physicalTable) {
 					continue
 				}
 
+				String tableSchema = hibernateTable.schema ?: defaultSchema
 				Table table = new Table(hibernateTable.name)
+				table.schema = tableSchema
+				table.rawSchemaName = tableSchema
 				snapshot.tables << table
 
 				def hibernatePrimaryKey = hibernateTable.primaryKey
@@ -168,7 +172,29 @@ class GormDatabaseSnapshotGenerator implements DatabaseSnapshotGenerator {
 			throw new DatabaseException(e)
 		}
 
+		if (db.schema) {
+			filterSnapshot(snapshot, db.schema)
+		}
+
 		snapshot
+	}
+
+	/**
+	 * Filters snapshot removing objects not belonging to schema or referencing objects outside schema.
+	 */
+	protected void filterSnapshot(DatabaseSnapshot snapshot, String schema) {
+
+		def removeNotInSchema = { Collection things, Closure getSchema ->
+			things.removeAll things.findAll { getSchema(it) != schema }
+		}
+
+		removeNotInSchema snapshot.primaryKeys, { PrimaryKey pk -> pk.table.schema }
+
+		removeNotInSchema snapshot.indexes, { Index index -> index.table.schema }
+
+		removeNotInSchema snapshot.foreignKeys, { ForeignKey fk -> fk.foreignKeyTable.schema }
+
+		removeNotInSchema snapshot.tables, { Table table -> table.schema }
 	}
 
 	// workaround for changed method signature without backwards compatibility
