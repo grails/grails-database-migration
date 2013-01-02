@@ -73,7 +73,7 @@ class MigrationUtils {
 			String dataSourceSuffix = extractSuffix(dsName)
 			def connection = findSessionFactory(dataSourceSuffix).currentSession.connection()
 
-			def dialect = application.config."dataSource${dataSourceSuffix}".dialect
+			def dialect = application.config."dataSource$dataSourceSuffix".dialect
 			if (dialect && dialect instanceof Class) {
 				dialect = dialect.name
 			}
