@@ -33,19 +33,24 @@ class MigrationRunner {
 
 	static void autoRun(migrationCallbacks = null) {
 
-		for (dsNameConfig in MigrationUtils.dataSourceConfigs) {
-			String dsConfigName = dsNameConfig.key
-			ConfigObject configObject = dsNameConfig.value
+		def dataSourceConfigs = MigrationUtils.getDataSourceConfigs()
+		dataSourceConfigs.dataSource = MigrationUtils.application.config.dataSource
+
+		boolean atLeastOne = false
+
+		for (configAndName in dataSourceConfigs) {
+			String dsConfigName = configAndName.key
+			ConfigObject configObject = configAndName.value
 
 			if (!MigrationUtils.canAutoMigrate(dsConfigName)) {
-				LOG.warn "cannot auto migrate for $dsConfigName"
+				LOG.warn "Not running auto migrate for DataSource '$dsConfigName'"
 				continue
 			}
 
 			def config = MigrationUtils.getConfig(dsConfigName)
 
 			if (!config.updateOnStart) {
-				LOG.info "updateOnStart disabled for ${dsConfigName}; not running migrations"
+				LOG.info "updateOnStart disabled for $dsConfigName; not running migrations"
 				continue
 			}
 
@@ -58,27 +63,17 @@ class MigrationRunner {
 						MigrationUtils.getLiquibase(database).dropAll()
 					}
 
-					Map<String, Liquibase> liquibases = [:]
-					for (String name in config.updateOnStartFileNames) {
-						Liquibase liquibase = MigrationUtils.getLiquibase(database, name)
+					for (String changelogName in config.updateOnStartFileNames) {
+						Liquibase liquibase = MigrationUtils.getLiquibase(database, changelogName)
 						if (liquibase.listUnrunChangeSets()) {
-							liquibases[name] = liquibase
-						}
-					}
-
-					if (liquibases) {
-						liquibases.each { String changelogName, Liquibase liquibase ->
 							LOG.info "Running script '$changelogName'"
-							try {
-								migrationCallbacks?.onStartMigration database, liquibase, changelogName
-							}
+
+							try { migrationCallbacks?.onStartMigration database, liquibase, changelogName }
 							catch (MissingMethodException ignored) {}
 
 							liquibase.update config.updateOnStartContexts ?: config.contexts ?: null
+							atLeastOne = true
 						}
-					}
-					else {
-						LOG.info "No migrations to run"
 					}
 				}
 			}
@@ -86,6 +81,10 @@ class MigrationRunner {
 				GrailsUtil.deepSanitize e
 				throw e
 			}
+		}
+
+		if (!atLeastOne) {
+			LOG.info "No migrations to run"
 		}
 	}
 }
