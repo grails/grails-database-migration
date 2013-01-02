@@ -85,7 +85,7 @@ class DatabaseMigrationGrailsPlugin {
 
 		fixLogging()
 
-		MigrationRunner.autoRun()
+		MigrationRunner.autoRun ctx.migrationCallbacks
 	}
 
 	private void register(ctx) {

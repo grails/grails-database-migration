@@ -15,6 +15,7 @@
 package grails.plugin.databasemigration
 
 import grails.util.GrailsUtil
+import liquibase.Liquibase
 import liquibase.database.Database
 
 import org.slf4j.Logger
@@ -30,14 +31,14 @@ class MigrationRunner {
 
 	private static Logger LOG = LoggerFactory.getLogger(this)
 
-	static void autoRun() {
+	static void autoRun(migrationCallbacks = null) {
 
 		for (dsNameConfig in MigrationUtils.dataSourceConfigs) {
 			String dsConfigName = dsNameConfig.key
 			ConfigObject configObject = dsNameConfig.value
 
 			if (!MigrationUtils.canAutoMigrate(dsConfigName)) {
-				LOG.warn "cannot auto migrate for ${dsConfigName}"
+				LOG.warn "cannot auto migrate for $dsConfigName"
 				continue
 			}
 
@@ -50,15 +51,34 @@ class MigrationRunner {
 
 			try {
 				MigrationUtils.executeInSession(dsConfigName) {
-					def database = MigrationUtils.getDatabase(MigrationUtils.getConfig(dsConfigName).updateOnStartDefaultSchema ?: null, dsConfigName)
+					Database database = MigrationUtils.getDatabase(MigrationUtils.getConfig(dsConfigName).updateOnStartDefaultSchema ?: null, dsConfigName)
+
 					if (config.dropOnStart) {
 						LOG.warn "Dropping tables..."
 						MigrationUtils.getLiquibase(database).dropAll()
 					}
-					List updateOnStartFileNames = config.updateOnStartFileNames
-					for (String name in updateOnStartFileNames) {
-						LOG.info "Running script '$name'"
-						MigrationUtils.getLiquibase(database, name).update config.updateOnStartContexts ?: config.contexts ?: null
+
+					Map<String, Liquibase> liquibases = [:]
+					for (String name in config.updateOnStartFileNames) {
+						Liquibase liquibase = MigrationUtils.getLiquibase(database, name)
+						if (liquibase.listUnrunChangeSets()) {
+							liquibases[name] = liquibase
+						}
+					}
+
+					if (liquibases) {
+						liquibases.each { String changelogName, Liquibase liquibase ->
+							LOG.info "Running script '$changelogName'"
+							try {
+								migrationCallbacks?.onStartMigration database, liquibase, changelogName
+							}
+							catch (MissingMethodException ignored) {}
+
+							liquibase.update config.updateOnStartContexts ?: config.contexts ?: null
+						}
+					}
+					else {
+						LOG.info "No migrations to run"
 					}
 				}
 			}
