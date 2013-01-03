@@ -203,7 +203,7 @@ class ScriptUtils {
 		results
 	}
 
-	static GormDatabase createGormDatabase(config, appCtx, Database realDatabase, String schema = null) {
+	static GormDatabase createGormDatabase(String dataSourceSuffix, config, appCtx, Database realDatabase, String schema = null) {
 
 		if (realDatabase) {
 			// register a HibernateAwareTypeConverter with the real converter as its delegate
@@ -211,7 +211,8 @@ class ScriptUtils {
 			TypeConverterFactory.getInstance().register new HibernateAwareTypeConverter(realConverter)
 		}
 
-		new GormDatabase(appCtx.getBean('&sessionFactory').configuration, schema)
+		String name = dataSourceSuffix ? '&sessionFactory_' + dataSourceSuffix : '&sessionFactory'
+		new GormDatabase(appCtx.getBean(name).configuration, schema)
 	}
 
 	static Diff createDiff(Database referenceDatabase, Database targetDatabase,

@@ -76,7 +76,7 @@ class DbmGenerateGormChangelogTests extends AbstractScriptTests {
 
 	void testGenerateGormChangelogForSecondaryDataSource() {
 
-		executeAndCheck (['dbm-generate-gorm-changelog', '--dataSource=secondary', '--stacktrace'])
+		executeAndCheck (['dbm-generate-gorm-changelog', '--dataSource=secondary'])
 
 		assertTrue output.contains('<databaseChangeLog')
 		assertTrue output.contains('<changeSet')

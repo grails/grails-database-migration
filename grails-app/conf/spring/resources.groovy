@@ -17,9 +17,9 @@ beans = {
 	lobHandlerDetector(DefaultLobHandler)
 
 	sessionFactory(DelayedSessionFactoryBean) {
+		grailsApplication = application
 		dataSource = ref('dataSource')
 		entityInterceptor = ref('entityInterceptor')
-		grailsApplication = application
 		hibernateProperties = ref('hibernateProperties')
 		lobHandler = ref('lobHandlerDetector')
 	}
@@ -29,18 +29,20 @@ beans = {
 	}
 
 	'sessionFactory_secondary'(DelayedSessionFactoryBean) {
-		dataSource = ref('dataSourceSecondary')
-		entityInterceptor = ref('entityInterceptor')
 		grailsApplication = application
+		dataSource = ref('dataSource_secondary')
+		entityInterceptor = ref('entityInterceptor')
 		hibernateProperties = ref('hibernateProperties')
 		lobHandler = ref('lobHandlerDetector')
+		dataSourceName = 'secondary'
+		sessionFactoryBeanName = 'sessionFactory_secondary'
 	}
 
 	'transactionManager_secondary'(HibernateTransactionManager) {
 		sessionFactory = ref('sessionFactory_secondary')
 	}
 
-	dataSourceSecondary(DelayedDataSource) {
+	dataSource_secondary(DelayedDataSource) {
 		dataSourceConfig = application.config.dataSource_secondary
 	}
 }

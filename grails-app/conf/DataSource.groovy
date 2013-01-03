@@ -20,7 +20,12 @@ environments {
 		}
 
 		dataSource_secondary {
+			pooled = true
+			driverClassName = 'org.h2.Driver'
+			username = 'sa'
+			password = ''
 			url = 'jdbc:h2:tcp://localhost/./target/testdb/testdb-secondary'
+			dialect = org.hibernate.dialect.H2Dialect
 		}
 	}
 	test {

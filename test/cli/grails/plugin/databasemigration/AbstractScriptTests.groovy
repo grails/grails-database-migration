@@ -70,6 +70,7 @@ abstract class AbstractScriptTests extends AbstractCliTestCase {
 	}
 
 	protected void executeAndCheck(List<String> command, boolean shouldSucceed = true) {
+		command << '--stacktrace'
 		execute command
 		int exitCode = waitForProcess()
 		if (shouldSucceed) {
