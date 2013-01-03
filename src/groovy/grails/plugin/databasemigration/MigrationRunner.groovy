@@ -36,8 +36,6 @@ class MigrationRunner {
 		def dataSourceConfigs = MigrationUtils.getDataSourceConfigs()
 		dataSourceConfigs.dataSource = MigrationUtils.application.config.dataSource
 
-		boolean atLeastOne = false
-
 		for (configAndName in dataSourceConfigs) {
 			String dsConfigName = configAndName.key
 			ConfigObject configObject = configAndName.value
@@ -63,17 +61,35 @@ class MigrationRunner {
 						MigrationUtils.getLiquibase(database).dropAll()
 					}
 
+					Map<String, Liquibase> liquibases = [:]
 					for (String changelogName in config.updateOnStartFileNames) {
 						Liquibase liquibase = MigrationUtils.getLiquibase(database, changelogName)
 						if (liquibase.listUnrunChangeSets()) {
+							liquibases[changelogName] = liquibase
+						}
+					}
+
+					if (liquibases) {
+
+						LOG.info "Outstanding migrations detected for DataSource '$dsConfigName': ${liquibases.keySet()}"
+
+						try { migrationCallbacks?.beforeStartMigration database }
+						catch (MissingMethodException ignored) {}
+
+						liquibases.each { String changelogName, Liquibase liquibase ->
 							LOG.info "Running script '$changelogName'"
 
 							try { migrationCallbacks?.onStartMigration database, liquibase, changelogName }
 							catch (MissingMethodException ignored) {}
 
 							liquibase.update config.updateOnStartContexts ?: config.contexts ?: null
-							atLeastOne = true
 						}
+
+						try { migrationCallbacks?.afterMigrations database }
+						catch (MissingMethodException ignored) {}
+					}
+					else {
+						LOG.info "No migrations to run for DataSource '$dsConfigName'"
 					}
 				}
 			}
@@ -81,10 +97,6 @@ class MigrationRunner {
 				GrailsUtil.deepSanitize e
 				throw e
 			}
-		}
-
-		if (!atLeastOne) {
-			LOG.info "No migrations to run"
 		}
 	}
 }
