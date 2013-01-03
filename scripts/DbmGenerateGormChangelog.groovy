@@ -32,7 +32,7 @@ target(dbmGenerateGormChangelog: 'Generates an initial changelog XML file based 
 
 	doAndClose {
 		ScriptUtils.executeAndWrite argsList[0], booleanArg('add'), { PrintStream out ->
-			def gormDatabase = ScriptUtils.createGormDatabase(config, appCtx, effectiveSchema)
+			def gormDatabase = ScriptUtils.createGormDatabase(config, appCtx, null, effectiveSchema)
 			ScriptUtils.createAndPrintFixedDiff gormDatabase, null, gormDatabase, appCtx, diffTypes, out
 		}
 	}

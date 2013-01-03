@@ -25,6 +25,8 @@ import liquibase.changelog.filter.ContextChangeSetFilter
 import liquibase.changelog.filter.CountChangeSetFilter
 import liquibase.changelog.filter.DbmsChangeSetFilter
 import liquibase.database.Database
+import liquibase.database.typeconversion.TypeConverter
+import liquibase.database.typeconversion.TypeConverterFactory
 import liquibase.diff.Diff
 import liquibase.executor.Executor
 import liquibase.executor.ExecutorService
@@ -201,13 +203,23 @@ class ScriptUtils {
 		results
 	}
 
-	static GormDatabase createGormDatabase(config, appCtx, String schema = null) {
+	static GormDatabase createGormDatabase(config, appCtx, Database realDatabase, String schema = null) {
+
+		if (realDatabase) {
+			// register a HibernateAwareTypeConverter with the real converter as its delegate
+			TypeConverter realConverter = TypeConverterFactory.getInstance().findTypeConverter(realDatabase)
+			TypeConverterFactory.getInstance().register new HibernateAwareTypeConverter(realConverter)
+		}
+
 		new GormDatabase(appCtx.getBean('&sessionFactory').configuration, schema)
 	}
 
 	static Diff createDiff(Database referenceDatabase, Database targetDatabase,
 	                       ApplicationContext appCtx, String diffTypes) {
-		Diff diff = new Diff(referenceDatabase, targetDatabase)
+
+		Diff diff = (referenceDatabase instanceof GormDatabase) ?
+			new GormDiff(referenceDatabase, targetDatabase) :
+			new Diff(referenceDatabase, targetDatabase)
 		diff.diffTypes = diffTypes
 		diff.addStatusListener appCtx.diffStatusListener
 		diff

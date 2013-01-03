@@ -15,7 +15,6 @@
 package grails.plugin.databasemigration
 
 import java.lang.reflect.Method
-import java.sql.Types
 
 import liquibase.database.Database
 import liquibase.database.structure.Column
@@ -37,8 +36,6 @@ import liquibase.snapshot.DatabaseSnapshotGenerator
  * @author <a href='mailto:burt@burtbeckwith.com'>Burt Beckwith</a>
  */
 class GormDatabaseSnapshotGenerator implements DatabaseSnapshotGenerator {
-
-	private static final List DECIMAL_TYPES = [Types.FLOAT, Types.REAL, Types.DOUBLE, Types.NUMERIC, Types.DECIMAL]
 
 	/**
 	 * {@inheritDoc}
@@ -80,31 +77,8 @@ class GormDatabaseSnapshotGenerator implements DatabaseSnapshotGenerator {
 				}
 
 				for (/*org.hibernate.mapping.Column*/ hibernateColumn in hibernateTable.columnIterator) {
-					int decimalDigits = hibernateColumn.scale
-					int dataType = hibernateColumn.getSqlTypeCode(mapping)
-					if (!(dataType in DECIMAL_TYPES)) {
-//						decimalDigits = 0
-					}
 
-					if (!hibernateColumn.sqlType) {
-						hibernateColumn.sqlType = hibernateColumn.getSqlType(dialect, mapping)
-					}
-
-					Column column = new Column(
-						name: hibernateColumn.name,
-						dataType: dataType,
-						decimalDigits: decimalDigits,
-						defaultValue: hibernateColumn.defaultValue,
-						nullable: hibernateColumn.nullable,
-						primaryKey: hibernatePrimaryKey == null ? false : hibernatePrimaryKey.columns.contains(hibernateColumn),
-						table: table,
-						typeName: hibernateColumn.getSqlType(dialect, mapping).replaceFirst('\\(.*\\)', ''),
-						unique: hibernateColumn.unique,
-						autoIncrement: isIdentityColumn(hibernateColumn.value, dialect, cfg),
-						certainDataType: hibernateColumn.sqlType != null)
-					column.columnSize = column.numeric ? hibernateColumn.precision : hibernateColumn.length
-
-					table.columns << column
+					table.columns << new GormColumn(table, hibernateColumn, hibernateTable, mapping, dialect, cfg)
 
 					if (hibernateColumn.unique) {
 						// GrailsDomainBinder doesn't register a unique key for single-column unique
@@ -208,17 +182,6 @@ class GormDatabaseSnapshotGenerator implements DatabaseSnapshotGenerator {
 		removeNotInSchema snapshot.foreignKeys, { ForeignKey fk -> fk.foreignKeyTable.schema }
 
 		removeNotInSchema snapshot.tables, { Table table -> table.schema }
-	}
-
-	// workaround for changed method signature without backwards compatibility
-	private boolean isIdentityColumn(/*org.hibernate.mapping.Value*/ value, /*org.hibernate.dialect.Dialect*/ dialect, /*org.hibernate.cfg.Configuration*/ cfg) {
-		Method method = value.getClass().getMethods().find { it.name == 'isIdentityColumn' }
-		if (method.getParameterTypes().length == 1) {
-			// pre-3.6 Hibernate
-			return value.isIdentityColumn(dialect)
-		}
-
-		value.isIdentityColumn cfg.identifierGeneratorFactory, dialect
 	}
 
 	// another workaround for changed method signature without backwards compatibility

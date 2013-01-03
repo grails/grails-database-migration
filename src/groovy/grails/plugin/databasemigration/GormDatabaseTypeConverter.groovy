@@ -32,6 +32,10 @@ class GormDatabaseTypeConverter extends DefaultTypeConverter {
 	@Override
 	String convertToDatabaseTypeString(Column referenceColumn, Database database) {
 
+		if (referenceColumn instanceof GormColumn) {
+			return referenceColumn.hibernateColumn.sqlType
+		}
+
 		String referenceColumnTypeName = referenceColumn.typeName.toLowerCase()
 		for (name in NAMES) {
 			if (referenceColumnTypeName.startsWith(name)) {
