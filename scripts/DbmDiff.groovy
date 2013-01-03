@@ -31,8 +31,7 @@ target(dbmDiff: 'Writes description of differences to standard out') {
 		errorAndDie 'You must specify the environment to diff against'
 	}
 
-	if (Environment.getEnvironment(otherEnv) == Environment.current ||
-			otherEnv == Environment.current.name) {
+	if (Environment.getEnvironment(otherEnv) == Environment.current || otherEnv == Environment.current.name) {
 		errorAndDie 'You must specify a different environment than the one the script is running in'
 	}
 

@@ -1,6 +1,5 @@
-/cobertura.ser
-stacktrace.log
+*.log
 /target
 /docs
-/grails-database-migration-*.zip
+/grails-*.zip
 /plugin.xml
