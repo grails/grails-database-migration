@@ -25,7 +25,7 @@ target(dbmGenerateChangelog: 'Generates an initial changelog XML file') {
 	if (!okToWrite(0, true)) return
 
 	doAndClose {
-		ScriptUtils.executeAndWrite argsList[0], booleanArg('add'), { PrintStream out ->
+		ScriptUtils.executeAndWrite argsList[0], booleanArg('add'), dsName, { PrintStream out ->
 			ScriptUtils.createAndPrintDiff(database, null, database, appCtx, diffTypes, out)
 		}
 	}

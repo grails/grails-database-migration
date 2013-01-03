@@ -31,7 +31,7 @@ target(dbmGenerateGormChangelog: 'Generates an initial changelog XML file based 
 	String effectiveSchema = argSchema ?: configuredSchema ?: null
 
 	doAndClose {
-		ScriptUtils.executeAndWrite argsList[0], booleanArg('add'), { PrintStream out ->
+		ScriptUtils.executeAndWrite argsList[0], booleanArg('add'), dsName, { PrintStream out ->
 			def gormDatabase = ScriptUtils.createGormDatabase(dataSourceSuffix, config, appCtx, null, effectiveSchema)
 			ScriptUtils.createAndPrintFixedDiff gormDatabase, null, gormDatabase, appCtx, diffTypes, out
 		}

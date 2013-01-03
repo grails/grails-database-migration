@@ -79,7 +79,7 @@ class ScriptUtils {
 	// write it to STDOUT if no filename was specified, to an XML file if the
 	// extension is .xml, and convert to the Groovy DSL and write to a Groovy
 	// file if the extension is .groovy
-	static void executeAndWrite(String filename, boolean add, Closure c) {
+	static void executeAndWrite(String filename, boolean add, String dsName, Closure c) {
 		PrintStream out
 		ByteArrayOutputStream baos
 		if (filename) {
@@ -105,20 +105,20 @@ class ScriptUtils {
 		}
 
 		if (add) {
-			registerInclude filename
+			registerInclude filename, dsName
 		}
 	}
 
-	static void registerInclude(String filename) {
+	static void registerInclude(String filename, String dsName) {
 		String fullPath = new File(filename).absolutePath
 		String fullMigrationFolderPath = new File(MigrationUtils.changelogLocation).absolutePath
 		String relativePath = (fullPath - fullMigrationFolderPath).substring(1)
-		appendToChangelog new File(filename), relativePath
+		appendToChangelog new File(filename), relativePath, dsName
 	}
 
-	static void appendToChangelog(File sourceFile, String includeName) {
+	static void appendToChangelog(File sourceFile, String includeName, String dsName) {
 
-		File changelog = new File(MigrationUtils.changelogLocation, MigrationUtils.changelogFileName)
+		File changelog = new File(MigrationUtils.changelogLocation, MigrationUtils.getChangelogFileName(dsName))
 		if (changelog.absolutePath.equals(sourceFile.absolutePath)) {
 			return
 		}
