@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>Database Migration Plugin 1.2.2</title>
+    <title>Database Migration Plugin 1.3</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -74,10 +74,20 @@ function addJsClass(el) {
                 <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
 
                 <h1>dbm-create-changelog</h1><p class="paragraph"/><h2>Purpose</h2><p class="paragraph"/>Creates an empty changelog file.<p class="paragraph"/><h2>Description</h2><p class="paragraph"/>Creates a new empty file instead of generating the file from the database (using <a href="../../ref/Rollback Scripts/dbm-generate-changelog.html" class="Rollback Scripts">dbm-generate-changelog</a>) or your GORM classes (using <a href="../../ref/Rollback Scripts/dbm-generate-gorm-changelog.html" class="Rollback Scripts">dbm-generate-gorm-changelog</a>).<p class="paragraph"/>Usage:
-<div class="code"><pre>grails &#91;environment&#93; dbm&#45;create&#45;changelog &#91;filename&#93;</pre></div><p class="paragraph"/>Required arguments:
+<div class="code"><pre>grails &#91;environment&#93; dbm&#45;create&#45;changelog &#91;filename&#93; &#45;&#45;dataSource=&#91;dataSource&#93;</pre></div><p class="paragraph"/>Required arguments:
 <ul class="star">
 <li><code>filename</code> - The path to the output file to write to</li>
-</ul><p class="paragraph"/>Optional arguments:  <em class="italic">none</em>  .<p class="paragraph"/>
+</ul><p class="paragraph"/>Optional arguments:
+<ul class="star">
+<li><code>dataSource</code> - if provided will run the script for the specified dataSource creating a file named <code>changelog-dataSource.groovy</code> if a <code>filename</code> is not given. Not needed for the default dataSource.</li>
+</ul><p class="paragraph"/><blockquote class="note">
+Note that the <code>dataSource</code> parameter name and value must be quoted if executed in Windows, e.g.
+<div class="code"><pre>grails dbm&#45;create&#45;changelog <span class="java&#45;quote">"&#45;&#45;dataSource=&#91;dataSource&#93;"</span></pre></div>
+</blockquote><p class="paragraph"/><blockquote class="note">
+For the <code>dataSource</code> parameter if the data source is configured as <code>dataSource_reports</code> in DataSource.groovy
+the suffix of <code>reports</code> will be used as the parameter value.
+<div class="code"><pre>&#45;&#45;dataSource=reports</pre></div>
+</blockquote>
             </div>
         </td>
         <td id="col2">

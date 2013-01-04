@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>Database Migration Plugin 1.2.2</title>
+    <title>Database Migration Plugin 1.3</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -74,7 +74,7 @@ function addJsClass(el) {
                 <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
 
                 <h1>dbm-diff</h1><p class="paragraph"/><h2>Purpose</h2><p class="paragraph"/>Compares two databases and creates a changelog that will make the changes required to bring them into sync.<p class="paragraph"/><h2>Description</h2><p class="paragraph"/>Executes against the database configured in <code>DataSource.groovy</code> for the current environment (defaults to <code>dev</code>) and another configured datasource in <code>DataSource.groovy</code>.<p class="paragraph"/>If a filename parameter is specified then the output will be written to the named file, otherwise it will write to the console. If the filename ends with .groovy a Groovy DSL file will be created, otherwise a standard XML file will be created.<p class="paragraph"/>File are written to the migrations folder, so specify the filename relative to the migrations folder (<code>grails-app/migrations</code> by default).<p class="paragraph"/>Usage:
-<div class="code"><pre>grails &#91;environment&#93; dbm&#45;diff &#91;otherEnv&#93; &#91;filename&#93; &#45;&#45;defaultSchema=&#91;defaultSchema&#93; &#45;&#45;add</pre></div><p class="paragraph"/>Required arguments:
+<div class="code"><pre>grails &#91;environment&#93; dbm&#45;diff &#91;otherEnv&#93; &#91;filename&#93; &#45;&#45;defaultSchema=&#91;defaultSchema&#93; &#45;&#45;dataSource=&#91;dataSource&#93; &#45;&#45;add</pre></div><p class="paragraph"/>Required arguments:
 <ul class="star">
 <li><code>otherEnv</code> - The name of the environment to compare to</li>
 </ul><p class="paragraph"/>Optional arguments:
@@ -82,9 +82,14 @@ function addJsClass(el) {
 <li><code>filename</code> - The path to the output file to write to. If not specified output is written to the console</li>
 <li><code>defaultSchema</code> - The default schema name to use</li>
 <li><code>add</code> - if specified add an include in the root changelog file referencing the new file</li>
+<li><code>dataSource</code> - if provided will run the script for the specified dataSource.  Not needed for the default dataSource.</li>
 </ul><p class="paragraph"/><blockquote class="note">
-Note that the <code>defaultSchema</code> parameter name and value must be quoted if executed in Windows, e.g.
-<div class="code"><pre>grails dbm&#45;diff <span class="java&#45;quote">"&#45;&#45;defaultSchema=&#91;defaultSchema&#93;"</span></pre></div>
+Note that the <code>defaultSchema</code> and <code>dataSource</code> parameter name and value must be quoted if executed in Windows, e.g.
+<div class="code"><pre>grails dbm&#45;diff <span class="java&#45;quote">"&#45;&#45;defaultSchema=&#91;defaultSchema&#93;"</span> <span class="java&#45;quote">"&#45;&#45;dataSource=&#91;dataSource&#93;"</span></pre></div>
+</blockquote><p class="paragraph"/><blockquote class="note">
+For the <code>dataSource</code> parameter if the data source is configured as <code>dataSource_reports</code> in DataSource.groovy
+the suffix of <code>reports</code> will be used as the parameter value.
+<div class="code"><pre>&#45;&#45;dataSource=reports</pre></div>
 </blockquote>
 
             </div>
