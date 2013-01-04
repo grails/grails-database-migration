@@ -1,4 +1,4 @@
-/* Copyright 2010-2012 SpringSource.
+/* Copyright 2010-2013 SpringSource.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,8 @@ import liquibase.changelog.filter.ContextChangeSetFilter
 import liquibase.changelog.filter.CountChangeSetFilter
 import liquibase.changelog.filter.DbmsChangeSetFilter
 import liquibase.database.Database
+import liquibase.database.typeconversion.TypeConverter
+import liquibase.database.typeconversion.TypeConverterFactory
 import liquibase.diff.Diff
 import liquibase.executor.Executor
 import liquibase.executor.ExecutorService
@@ -33,7 +35,8 @@ import liquibase.lockservice.LockService
 import liquibase.parser.ChangeLogParserFactory
 import liquibase.util.StringUtils
 
-import org.apache.log4j.Logger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationContext
 
 /**
@@ -44,7 +47,7 @@ class ScriptUtils {
 	static final String DAY_DATE_FORMAT = 'yyyy-MM-dd'
 	static final String FULL_DATE_FORMAT = DAY_DATE_FORMAT + ' HH:mm:ss'
 
-	private Logger log = Logger.getLogger('grails.plugin.databasemigration.Scripts')
+	private Logger log = LoggerFactory.getLogger('grails.plugin.databasemigration.Scripts')
 
 	static void printStackTrace(Throwable e) {
 		GrailsUtil.deepSanitize e
@@ -76,7 +79,7 @@ class ScriptUtils {
 	// write it to STDOUT if no filename was specified, to an XML file if the
 	// extension is .xml, and convert to the Groovy DSL and write to a Groovy
 	// file if the extension is .groovy
-	static void executeAndWrite(String filename, boolean add, Closure c) {
+	static void executeAndWrite(String filename, boolean add, String dsName, Closure c) {
 		PrintStream out
 		ByteArrayOutputStream baos
 		if (filename) {
@@ -102,20 +105,20 @@ class ScriptUtils {
 		}
 
 		if (add) {
-			registerInclude filename
+			registerInclude filename, dsName
 		}
 	}
 
-	static void registerInclude(String filename) {
+	static void registerInclude(String filename, String dsName) {
 		String fullPath = new File(filename).absolutePath
 		String fullMigrationFolderPath = new File(MigrationUtils.changelogLocation).absolutePath
 		String relativePath = (fullPath - fullMigrationFolderPath).substring(1)
-		appendToChangelog new File(filename), relativePath
+		appendToChangelog new File(filename), relativePath, dsName
 	}
 
-	static void appendToChangelog(File sourceFile, String includeName) {
+	static void appendToChangelog(File sourceFile, String includeName, String dsName) {
 
-		File changelog = new File(MigrationUtils.changelogLocation, MigrationUtils.changelogFileName)
+		File changelog = new File(MigrationUtils.changelogLocation, MigrationUtils.getChangelogFileName(dsName))
 		if (changelog.absolutePath.equals(sourceFile.absolutePath)) {
 			return
 		}
@@ -200,43 +203,45 @@ class ScriptUtils {
 		results
 	}
 
-	static GormDatabase createGormDatabase(config, appCtx) {
-		def dialect = config.dataSource.dialect
-		if (dialect) {
-			if (dialect instanceof Class) {
-				dialect = dialect.name
-			}
-		}
-		else {
-			dialect = appCtx.dialectDetector
+	static GormDatabase createGormDatabase(String dataSourceSuffix, config, appCtx, Database realDatabase, String schema = null) {
+
+		if (realDatabase) {
+			// register a HibernateAwareTypeConverter with the real converter as its delegate
+			TypeConverter realConverter = TypeConverterFactory.getInstance().findTypeConverter(realDatabase)
+			TypeConverterFactory.getInstance().register new HibernateAwareTypeConverter(realConverter)
 		}
 
-		def GrailsAnnotationConfiguration = MigrationUtils.classForName('org.codehaus.groovy.grails.orm.hibernate.cfg.GrailsAnnotationConfiguration')
-
-		def configuration = GrailsAnnotationConfiguration.newInstance(
-			grailsApplication: appCtx.grailsApplication,
-			properties: ['hibernate.dialect': dialect.toString()] as Properties)
-
-		def hibernateCfgXml = Thread.currentThread().contextClassLoader.getResource('hibernate.cfg.xml')
-		if (hibernateCfgXml) {
-			configuration.configure hibernateCfgXml
-		}
-
-		configuration.buildMappings()
-
-		new GormDatabase(configuration)
+		String name = dataSourceSuffix ? '&sessionFactory_' + dataSourceSuffix : '&sessionFactory'
+		new GormDatabase(appCtx.getBean(name).configuration, schema)
 	}
 
 	static Diff createDiff(Database referenceDatabase, Database targetDatabase,
 	                       ApplicationContext appCtx, String diffTypes) {
-		Diff diff = new Diff(referenceDatabase, targetDatabase)
+
+		Diff diff = (referenceDatabase instanceof GormDatabase) ?
+			new GormDiff(referenceDatabase, targetDatabase) :
+			new Diff(referenceDatabase, targetDatabase)
 		diff.diffTypes = diffTypes
 		diff.addStatusListener appCtx.diffStatusListener
 		diff
 	}
 
+	static void createAndPrintDiff(Database referenceDatabase, Database targetDatabase, Database printDatabase,
+			ApplicationContext appCtx, String diffTypes, PrintStream out) {
+
+		createDiff(referenceDatabase, targetDatabase, appCtx, diffTypes).compare().printChangeLog(
+			out, printDatabase, new MySQLCompatibleChangeLogSerializer())
+	}
+
+	static void createAndPrintFixedDiff(Database referenceDatabase, Database targetDatabase, Database printDatabase,
+			ApplicationContext appCtx, String diffTypes, PrintStream out) {
+
+		MigrationUtils.fixDiffResult(createDiff(referenceDatabase, targetDatabase, appCtx, diffTypes).compare()).printChangeLog(
+			out, printDatabase, new MySQLCompatibleChangeLogSerializer())
+	}
+
 	static void generatePreviousChangesetSql(Database database, Liquibase liquibase, Writer output, int changesetCount, int skip, String contexts) {
-		def changeLogFile = liquibase.changeLogFile
+		String changeLogFile = liquibase.changeLogFile
 
 		liquibase.changeLogParameters.contexts = StringUtils.splitAndTrim(contexts, ",")
 

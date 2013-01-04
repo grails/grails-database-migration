@@ -1,4 +1,4 @@
-/* Copyright 2010-2012 SpringSource.
+/* Copyright 2010-2013 SpringSource.
  *
  * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
@@ -37,6 +37,33 @@ class DbmUpdateSqlTests extends AbstractScriptTests {
 		assertTrue output.contains('-- Changeset changelog.cli.test.groovy::test-1::burt::')
 		assertTrue output.contains('-- Changeset changelog.cli.test.groovy::test-2::burt::')
 		assertTrue output.contains('-- Changeset changelog.cli.test.groovy::test-3::burt::')
+		assertTrue output.contains('INSERT INTO DATABASECHANGELOG')
+		assertTrue output.contains('CREATE TABLE PERSON')
+		assertTrue output.contains('ALTER TABLE PERSON ADD STREET1 VARCHAR(100) NOT NULL')
+		assertTrue output.contains('ALTER TABLE PERSON ADD STREET2 VARCHAR(100)')
+		assertTrue output.contains('ALTER TABLE PERSON ADD ZIPCODE VARCHAR(10) NOT NULL')
+	}
+
+	void testUpdateSqlForSecondaryDataSource() {
+
+		String url = AbstractScriptTests.SECONDARY_URL
+
+		assertTableCount 1, url
+
+		copyTestChangelog('test.changelog', SECONDARY_TEST_CHANGELOG)
+
+		executeAndCheck (['dbm-update-sql','--dataSource=secondary'])
+
+		assertTableCount 1, url
+
+		assertTrue output.contains(
+			'Starting dbm-update-sql for database sa @ jdbc:h2:tcp://localhost/./target/testdb/testdb-secondary')
+
+		assertTrue output.contains('CREATE TABLE DATABASECHANGELOGLOCK')
+		assertTrue output.contains('CREATE TABLE DATABASECHANGELOG')
+		assertTrue output.contains('-- Changeset changelog.cli.secondary-test.groovy::test-1::burt::')
+		assertTrue output.contains('-- Changeset changelog.cli.secondary-test.groovy::test-2::burt::')
+		assertTrue output.contains('-- Changeset changelog.cli.secondary-test.groovy::test-3::burt::')
 		assertTrue output.contains('INSERT INTO DATABASECHANGELOG')
 		assertTrue output.contains('CREATE TABLE PERSON')
 		assertTrue output.contains('ALTER TABLE PERSON ADD STREET1 VARCHAR(100) NOT NULL')

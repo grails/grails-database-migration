@@ -1,4 +1,4 @@
-/* Copyright 2010-2012 SpringSource.
+/* Copyright 2010-2013 SpringSource.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,16 +37,20 @@ target(dbmGormDiff: 'Diff GORM classes against database and generate a changelog
 
 	if (!okToWrite(0, true)) return
 
+	def configuredSchema = config.grails.plugin.databasemigration.schema
+	String argSchema = argsMap.schema
+	String effectiveSchema = argSchema ?: configuredSchema ?: defaultSchema
+
 	def realDatabase
+
 	try {
 		printMessage "Starting $hyphenatedScriptName"
 
-		ScriptUtils.executeAndWrite argsList[0], booleanArg('add'), { PrintStream out ->
-			MigrationUtils.executeInSession {
-				realDatabase = MigrationUtils.getDatabase(defaultSchema)
-				def gormDatabase = ScriptUtils.createGormDatabase(config, appCtx)
-				MigrationUtils.fixDiffResult(
-					ScriptUtils.createDiff(gormDatabase, realDatabase, appCtx, diffTypes).compare()).printChangeLog(out, realDatabase)
+		ScriptUtils.executeAndWrite argsList[0], booleanArg('add'), dsName, { PrintStream out ->
+			MigrationUtils.executeInSession(dsName) {
+				realDatabase = MigrationUtils.getDatabase(effectiveSchema, dsName)
+				def gormDatabase = ScriptUtils.createGormDatabase(dataSourceSuffix, config, appCtx, realDatabase, effectiveSchema)
+				ScriptUtils.createAndPrintFixedDiff(gormDatabase, realDatabase, realDatabase, appCtx, diffTypes, out)
 			}
 		}
 

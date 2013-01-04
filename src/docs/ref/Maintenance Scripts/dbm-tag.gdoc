@@ -10,7 +10,7 @@ Useful for future rollbacks to a specific tag (e.g. using the [dbm-rollback|Roll
 
 Usage:
 {code:java}
-grails [environment] dbm-tag [tagName] --defaultSchema=[defaultSchema]
+grails [environment] dbm-tag [tagName] --defaultSchema=[defaultSchema] --dataSource=[dataSource]
 {code}
 
 Required arguments:
@@ -20,10 +20,19 @@ Required arguments:
 Optional arguments:
 
 * @defaultSchema@ - The default schema name to use
+* @dataSource@ - if provided will run the script for the specified dataSource.  Not needed for the default dataSource.
 
 {note}
-Note that the @defaultSchema@ parameter name and value must be quoted if executed in Windows, e.g.
+Note that the @defaultSchema@ and @dataSource@ parameter name and value must be quoted if executed in Windows, e.g.
 {code}
-grails dbm-tag "--defaultSchema=[defaultSchema]"
+grails dbm-tag "--defaultSchema=[defaultSchema]" "--dataSource=[dataSource]"
+{code}
+{note}
+
+{note}
+For the @dataSource@ parameter if the data source is configured as @dataSource_reports@ in DataSource.groovy
+the suffix of @reports@ will be used as the parameter value.
+{code}
+--dataSource=reports
 {code}
 {note}

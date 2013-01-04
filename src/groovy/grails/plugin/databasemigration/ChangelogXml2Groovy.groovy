@@ -1,4 +1,4 @@
-/* Copyright 2010-2012 SpringSource.
+/* Copyright 2010-2013 SpringSource.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -76,16 +76,16 @@ class ChangelogXml2Groovy {
 		String delimiter = ''
 
 		if (text) {
-			local.append '"'
-			local.append text.replaceAll('\n', '\\\\n')
-			local.append '"'
+			local.append '"""'
+			local.append text.replaceAll(/(\$|\\)/, /\\$1/)
+			local.append '"""'
 			delimiter = ', '
 		}
 
 		node.attributes().each { name, value ->
 			local.append delimiter
 			local.append name
-			local.append(': "').append(value).append('"')
+			local.append(': "').append(value.replaceAll(/(\$|\\|\\n)/, /\\$1/)).append('"')
 			delimiter = ', '
 		}
 

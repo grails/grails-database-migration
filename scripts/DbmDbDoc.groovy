@@ -1,4 +1,4 @@
-/* Copyright 2010-2012 SpringSource.
+/* Copyright 2010-2013 SpringSource.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +22,9 @@ includeTargets << new File("$databaseMigrationPluginDir/scripts/_DatabaseMigrati
 target(dbmDbDoc: 'Generates Javadoc-like documentation based on current database and change log') {
 	depends dbmInit
 
+
 	doAndClose {
-		liquibase.generateDocumentation argsList[0] ?: MigrationUtils.dbDocLocation, contexts
+		liquibase.generateDocumentation argsList[0] ?: MigrationUtils.getDbDocLocation(dsName), contexts
 	}
 }
 

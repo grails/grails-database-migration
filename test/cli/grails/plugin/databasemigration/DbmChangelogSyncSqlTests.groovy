@@ -1,4 +1,4 @@
-/* Copyright 2010-2012 SpringSource.
+/* Copyright 2010-2013 SpringSource.
  *
  * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
@@ -33,5 +33,21 @@ class DbmChangelogSyncSqlTests extends AbstractScriptTests {
 
 		assertTrue output.contains(
 			'Starting dbm-changelog-sync-sql for database sa @ jdbc:h2:tcp://localhost/./target/testdb/testdb')
+	}
+
+	void testChangelogSyncSqlForSecondaryDataSource() {
+
+		executeAndCheck(['dbm-generate-changelog', AbstractScriptTests.SECONDARY_TEST_CHANGELOG, '--dataSource=secondary'])
+
+		executeAndCheck(['dbm-changelog-sync-sql', '--dataSource=secondary'])
+
+		assertTrue output.contains('CREATE TABLE DATABASECHANGELOGLOCK')
+		assertTrue output.contains('INSERT INTO DATABASECHANGELOGLOCK')
+
+		assertTrue output.contains('CREATE TABLE DATABASECHANGELOG')
+		assertTrue output.contains('INSERT INTO DATABASECHANGELOG')
+
+		assertTrue output.contains(
+			'Starting dbm-changelog-sync-sql for database sa @ jdbc:h2:tcp://localhost/./target/testdb/testdb-secondary')
 	}
 }

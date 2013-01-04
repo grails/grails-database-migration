@@ -1,4 +1,4 @@
-/* Copyright 2010-2012 SpringSource.
+/* Copyright 2010-2013 SpringSource.
  *
  * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
@@ -17,4 +17,8 @@ package grails.plugin.databasemigration.test
 class Book {
 	String title
 	static belongsTo = [author: Author]
+
+	static mapping = {
+		datasource 'ALL'
+	}
 }

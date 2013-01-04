@@ -1,4 +1,4 @@
-/* Copyright 2010-2012 SpringSource.
+/* Copyright 2010-2013 SpringSource.
  *
  * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
@@ -52,8 +52,9 @@ import liquibase.util.ObjectUtil
 import liquibase.util.StringUtils
 import liquibase.util.file.FilenameUtils
 
-import org.apache.log4j.Logger
 import org.codehaus.groovy.runtime.InvokerHelper
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationContext
 
 /**
@@ -63,7 +64,7 @@ import org.springframework.context.ApplicationContext
  */
 class DslBuilder extends BuilderSupport {
 
-	private Logger log = Logger.getLogger(getClass())
+	private Logger log = LoggerFactory.getLogger(getClass())
 
 	private Change currentChange
 	private String currentText
@@ -396,7 +397,7 @@ class DslBuilder extends BuilderSupport {
 		new JarFile(zipfile).entries().each { new File(tempDir, it.name).mkdirs() }
 
 		tempDir
-  }
+	}
 
 	private void processChangeSet(Map attributes) {
 		boolean alwaysRun = 'true'.equalsIgnoreCase(attributes.runAlways)

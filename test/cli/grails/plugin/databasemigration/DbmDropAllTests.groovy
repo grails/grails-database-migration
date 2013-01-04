@@ -1,4 +1,4 @@
-/* Copyright 2010-2012 SpringSource.
+/* Copyright 2010-2013 SpringSource.
  *
  * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ class DbmDropAllTests extends AbstractScriptTests {
 		assertTableCount 1
 
 		// drop the one created by hbm2ddl
-		executeUpdate 'drop table thing'
+		executeUpdate AbstractScriptTests.URL, 'drop table thing'
 		assertTableCount 0
 
 		executeAndCheck(['dbm-update-count', '1'])
@@ -38,5 +38,27 @@ class DbmDropAllTests extends AbstractScriptTests {
 
 		assertTrue output.contains(
 			'Starting dbm-drop-all for database sa @ jdbc:h2:tcp://localhost/./target/testdb/testdb')
+	}
+
+	void testDropAllForSecondaryDataSource() {
+		String secondary_url = AbstractScriptTests.SECONDARY_URL
+
+		generateSecondaryChagelog()
+		assertTableCount 1, secondary_url
+
+		// drop the one created by hbm2ddl
+		executeUpdate secondary_url, 'drop table secondary_thing'
+		assertTableCount 0, secondary_url
+
+		executeAndCheck(['dbm-update-count', '1', '--dataSource=secondary'])
+		// 2 Liquibase + person
+		assertTableCount 3, secondary_url
+
+		executeAndCheck (['dbm-drop-all', '--dataSource=secondary'])
+		// now just 2 Liquibase
+		assertTableCount 2, secondary_url
+
+		assertTrue output.contains(
+			'Starting dbm-drop-all for database sa @ jdbc:h2:tcp://localhost/./target/testdb/testdb-secondary')
 	}
 }

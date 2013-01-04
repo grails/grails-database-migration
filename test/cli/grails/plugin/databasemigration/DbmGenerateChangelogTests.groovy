@@ -1,4 +1,4 @@
-/* Copyright 2010-2012 SpringSource.
+/* Copyright 2010-2013 SpringSource.
  *
  * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
@@ -72,5 +72,56 @@ class DbmGenerateChangelogTests extends AbstractScriptTests {
 
 		assertTrue output.contains(
 			'Starting dbm-generate-changelog for database sa @ jdbc:h2:tcp://localhost/./target/testdb/testdb')
+	}
+
+	/**
+	 * Test generating a changelog from a standard XML file.
+	 */
+	void testGenerateChangelogForSecondaryDataSource_XML() {
+
+		initFile false
+
+		executeAndCheck(['dbm-generate-changelog', file.name, '--dataSource=secondary'])
+
+		assertTrue file.exists()
+		String xml = file.text
+
+		assertTrue xml.contains('<databaseChangeLog ')
+		assertTrue xml.contains('<changeSet ')
+		assertTrue xml.contains('<createTable ')
+
+		assertTrue output.contains(
+			'Starting dbm-generate-changelog for database sa @ jdbc:h2:tcp://localhost/./target/testdb/testdb-secondary')
+	}
+
+	/**
+	 * Test generating a changelog from a Groovy file generated from a standard XML file.
+	 */
+	void testGenerateChangelogForSecondaryDataSource_Groovy() {
+
+		initFile true
+
+		executeAndCheck(['dbm-generate-changelog', file.name, '--dataSource=secondary'])
+
+		assertTrue file.exists()
+		String groovy = file.text
+
+		assertTrue groovy.contains('databaseChangeLog = {')
+		assertTrue groovy.contains('changeSet(')
+		assertTrue groovy.contains('createTable(')
+
+		assertTrue output.contains(
+			'Starting dbm-generate-changelog for database sa @ jdbc:h2:tcp://localhost/./target/testdb/testdb-secondary')
+	}
+
+	void testGenerateChangeLogForSecondaryDataSource_Stdout() {
+
+		executeAndCheck(['dbm-generate-changelog', '--dataSource=secondary'])
+
+		assertTrue output.contains('<databaseChangeLog')
+		assertTrue output.contains('<changeSet')
+		assertTrue output.contains('<createTable')
+		assertTrue output.contains(
+			'Starting dbm-generate-changelog for database sa @ jdbc:h2:tcp://localhost/./target/testdb/testdb-secondary')
 	}
 }

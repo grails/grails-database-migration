@@ -1,4 +1,4 @@
-/* Copyright 2010-2012 SpringSource.
+/* Copyright 2010-2013 SpringSource.
  *
  * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
@@ -25,9 +25,14 @@ import liquibase.database.DatabaseConnection
 class GormDatabase extends AbstractDatabase {
 
 	/*org.hibernate.cfg.Configuration*/ def configuration
+	/*org.hibernate.dialect.Dialect*/ def dialect
+	String schema
 
-	GormDatabase(/*org.hibernate.cfg.Configuration*/ configuration) {
+	GormDatabase(/*org.hibernate.cfg.Configuration*/ configuration, String schema = null) {
 		this.configuration = configuration
+		this.schema = schema
+
+		dialect = MigrationUtils.createInstance(configuration.getProperty('hibernate.dialect'))
 	}
 
 	String getDatabaseProductName() { 'GORM Mapping' }

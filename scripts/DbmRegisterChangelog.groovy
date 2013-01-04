@@ -1,4 +1,4 @@
-/* Copyright 2010-2012 SpringSource.
+/* Copyright 2010-2013 SpringSource.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,12 +27,12 @@ target(dbmRegisterChangelog: 'Adds an include for the specified changelog to the
 		errorAndDie "The $hyphenatedScriptName script requires a changelog name argument"
 	}
 
-	filename = MigrationUtils.changelogLocation + '/' + filename
+	filename = MigrationUtils.getChangelogLocation(dsName) + '/' + filename
 	if (!new File(filename).exists()) {
 		errorAndDie "File $filename not found"
 	}
 
-	ScriptUtils.registerInclude filename
+	ScriptUtils.registerInclude filename, dsName
 }
 
 setDefaultTarget dbmRegisterChangelog

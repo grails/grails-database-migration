@@ -1,4 +1,4 @@
-/* Copyright 2010-2012 SpringSource.
+/* Copyright 2010-2013 SpringSource.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,11 @@
 package grails.plugin.databasemigration
 
 import grails.util.GrailsUtil
+import liquibase.Liquibase
+import liquibase.database.Database
 
-import org.apache.log4j.Logger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 /**
  * Based on the class of the same name from Mike Hugo's liquibase-runner plugin.
@@ -26,38 +29,74 @@ import org.apache.log4j.Logger
  */
 class MigrationRunner {
 
-	private static Logger LOG = Logger.getLogger(this)
+	private static Logger LOG = LoggerFactory.getLogger(this)
 
-	static void autoRun() {
+	static void autoRun(migrationCallbacks = null) {
 
-		if (!MigrationUtils.canAutoMigrate()) {
-			return
-		}
+		def dataSourceConfigs = MigrationUtils.getDataSourceConfigs()
+		dataSourceConfigs.dataSource = MigrationUtils.application.config.dataSource
 
-		def config = MigrationUtils.config
+		for (configAndName in dataSourceConfigs) {
+			String dsConfigName = configAndName.key
+			ConfigObject configObject = configAndName.value
 
-		if (!config.updateOnStart) {
-			LOG.info "updateOnStart disabled; not running migrations"
-			return
-		}
+			if (!MigrationUtils.canAutoMigrate(dsConfigName)) {
+				LOG.warn "Not running auto migrate for DataSource '$dsConfigName'"
+				continue
+			}
 
-		def database
-		try {
-			MigrationUtils.executeInSession {
-				database = MigrationUtils.getDatabase(config.updateOnStartDefaultSchema ?: null)
-				if (config.dropOnStart) {
-					LOG.warn "Dropping tables..."
-					MigrationUtils.getLiquibase(database).dropAll()
-				}
-				for (name in config.updateOnStartFileNames) {
-					LOG.info "Running script '$name'"
-					MigrationUtils.getLiquibase(database, name).update null
+			def config = MigrationUtils.getConfig(dsConfigName)
+
+			if (!config.updateOnStart) {
+				LOG.info "updateOnStart disabled for $dsConfigName; not running migrations"
+				continue
+			}
+
+			try {
+				MigrationUtils.executeInSession(dsConfigName) {
+					Database database = MigrationUtils.getDatabase(MigrationUtils.getConfig(dsConfigName).updateOnStartDefaultSchema ?: null, dsConfigName)
+
+					if (config.dropOnStart) {
+						LOG.warn "Dropping tables..."
+						MigrationUtils.getLiquibase(database).dropAll()
+					}
+
+					Map<String, Liquibase> liquibases = [:]
+					for (String changelogName in config.updateOnStartFileNames) {
+						Liquibase liquibase = MigrationUtils.getLiquibase(database, changelogName)
+						if (liquibase.listUnrunChangeSets()) {
+							liquibases[changelogName] = liquibase
+						}
+					}
+
+					if (liquibases) {
+
+						LOG.info "Outstanding migrations detected for DataSource '$dsConfigName': ${liquibases.keySet()}"
+
+						try { migrationCallbacks?.beforeStartMigration database }
+						catch (MissingMethodException ignored) {}
+
+						liquibases.each { String changelogName, Liquibase liquibase ->
+							LOG.info "Running script '$changelogName'"
+
+							try { migrationCallbacks?.onStartMigration database, liquibase, changelogName }
+							catch (MissingMethodException ignored) {}
+
+							liquibase.update config.updateOnStartContexts ?: config.contexts ?: null
+						}
+
+						try { migrationCallbacks?.afterMigrations database }
+						catch (MissingMethodException ignored) {}
+					}
+					else {
+						LOG.info "No migrations to run for DataSource '$dsConfigName'"
+					}
 				}
 			}
-		}
-		catch (e) {
-			GrailsUtil.deepSanitize e
-			throw e
+			catch (e) {
+				GrailsUtil.deepSanitize e
+				throw e
+			}
 		}
 	}
 }

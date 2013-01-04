@@ -1,4 +1,4 @@
-/* Copyright 2010-2012 SpringSource.
+/* Copyright 2010-2013 SpringSource.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,8 +25,8 @@ target(dbmGenerateChangelog: 'Generates an initial changelog XML file') {
 	if (!okToWrite(0, true)) return
 
 	doAndClose {
-		ScriptUtils.executeAndWrite argsList[0], booleanArg('add'), { PrintStream out ->
-			ScriptUtils.createDiff(database, null, appCtx, diffTypes).compare().printChangeLog out, database
+		ScriptUtils.executeAndWrite argsList[0], booleanArg('add'), dsName, { PrintStream out ->
+			ScriptUtils.createAndPrintDiff(database, null, database, appCtx, diffTypes, out)
 		}
 	}
 }

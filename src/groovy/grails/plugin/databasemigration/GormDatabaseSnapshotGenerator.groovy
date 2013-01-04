@@ -1,4 +1,4 @@
-/* Copyright 2010-2012 SpringSource.
+/* Copyright 2010-2013 SpringSource.
  *
  * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
@@ -54,13 +54,17 @@ class GormDatabaseSnapshotGenerator implements DatabaseSnapshotGenerator {
 //			def dialect = new HibernateGenericDialect(dialectName) // TODO
 
 			def mapping = cfg.buildMapping()
+			String defaultSchema = cfg.getProperty('hibernate.default_schema')
 
 			for (hibernateTable in cfg.tableMappings) {
 				if (!hibernateTable.physicalTable) {
 					continue
 				}
 
+				String tableSchema = hibernateTable.schema ?: defaultSchema
 				Table table = new Table(hibernateTable.name)
+				table.schema = tableSchema
+				table.rawSchemaName = tableSchema
 				snapshot.tables << table
 
 				def hibernatePrimaryKey = hibernateTable.primaryKey
@@ -73,26 +77,13 @@ class GormDatabaseSnapshotGenerator implements DatabaseSnapshotGenerator {
 				}
 
 				for (/*org.hibernate.mapping.Column*/ hibernateColumn in hibernateTable.columnIterator) {
-					Column column = new Column(
-						name: hibernateColumn.name,
-						dataType: hibernateColumn.getSqlTypeCode(mapping),
-						decimalDigits: hibernateColumn.scale,
-						defaultValue: hibernateColumn.defaultValue,
-						nullable: hibernateColumn.nullable,
-						primaryKey: hibernatePrimaryKey == null ? false : hibernatePrimaryKey.columns.contains(hibernateColumn),
-						table: table,
-						typeName: hibernateColumn.getSqlType(dialect, mapping).replaceFirst('\\(.*\\)', ''),
-						unique: hibernateColumn.unique,
-						autoIncrement: isIdentityColumn(hibernateColumn.value, dialect, cfg),
-						certainDataType: hibernateColumn.sqlType != null)
-					column.columnSize = column.numeric ? hibernateColumn.precision : hibernateColumn.length
 
-					table.columns << column
+					table.columns << new GormColumn(table, hibernateColumn, hibernateTable, mapping, dialect, cfg)
 
 					if (hibernateColumn.unique) {
 						// GrailsDomainBinder doesn't register a unique key for single-column unique
 						Index index = new Index(table: table, unique: true,
-						                        name: hibernateColumn.name + '_unique_' + System.currentTimeMillis())
+						                        name: hibernateColumn.name + '_uniq_' + System.currentTimeMillis())
 						index.columns << hibernateColumn.name
 						snapshot.indexes << index
 					}
@@ -107,7 +98,7 @@ class GormDatabaseSnapshotGenerator implements DatabaseSnapshotGenerator {
 				}
 
 				for (hiberateUnique in hibernateTable.uniqueKeyIterator) {
-					Index index = new Index(table: table, name: hiberateUnique.name, unique: true)
+					Index index = new Index(table: table, name: hiberateUnique.name.replaceAll('-', '_'), unique: true)
 					for (hibernateColumn in hiberateUnique.columnIterator) {
 						index.columns << hibernateColumn.name
 					}
@@ -168,18 +159,29 @@ class GormDatabaseSnapshotGenerator implements DatabaseSnapshotGenerator {
 			throw new DatabaseException(e)
 		}
 
+		if (db.schema) {
+			filterSnapshot(snapshot, db.schema)
+		}
+
 		snapshot
 	}
 
-	// workaround for changed method signature without backwards compatibility
-	private boolean isIdentityColumn(/*org.hibernate.mapping.Value*/ value, /*org.hibernate.dialect.Dialect*/ dialect, /*org.hibernate.cfg.Configuration*/ cfg) {
-		Method method = value.getClass().getMethods().find { it.name == 'isIdentityColumn' }
-		if (method.getParameterTypes().length == 1) {
-			// pre-3.6 Hibernate
-			return value.isIdentityColumn(dialect)
+	/**
+	 * Filters snapshot removing objects not belonging to schema or referencing objects outside schema.
+	 */
+	protected void filterSnapshot(DatabaseSnapshot snapshot, String schema) {
+
+		def removeNotInSchema = { Collection things, Closure getSchema ->
+			things.removeAll things.findAll { getSchema(it) != schema }
 		}
 
-		value.isIdentityColumn cfg.identifierGeneratorFactory, dialect
+		removeNotInSchema snapshot.primaryKeys, { PrimaryKey pk -> pk.table.schema }
+
+		removeNotInSchema snapshot.indexes, { Index index -> index.table.schema }
+
+		removeNotInSchema snapshot.foreignKeys, { ForeignKey fk -> fk.foreignKeyTable.schema }
+
+		removeNotInSchema snapshot.tables, { Table table -> table.schema }
 	}
 
 	// another workaround for changed method signature without backwards compatibility

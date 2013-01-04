@@ -1,4 +1,4 @@
-/* Copyright 2010-2012 SpringSource.
+/* Copyright 2010-2013 SpringSource.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,13 +22,13 @@ includeTargets << new File("$databaseMigrationPluginDir/scripts/_DatabaseMigrati
 target(dbmCreateChangelog: 'Creates an empty changelog file') {
 	depends dbmInit
 
-	String name = argsList[0] ?: MigrationUtils.changelogFileName
+	String name = argsList[0] ?: MigrationUtils.getChangelogFileName(dsName)
 	if (!name.toLowerCase().endsWith('.groovy')) {
 		name += '.groovy'
 	}
 
 	try {
-		def file = new File(MigrationUtils.changelogLocation + '/' + name)
+		def file = new File(MigrationUtils.getChangelogLocation(dsName) + '/' + name)
 		file.parentFile?.mkdirs()
 
 		if (!okToWrite(file.path)) return

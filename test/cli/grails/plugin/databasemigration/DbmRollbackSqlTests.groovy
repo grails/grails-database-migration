@@ -1,4 +1,4 @@
-/* Copyright 2010-2012 SpringSource.
+/* Copyright 2010-2013 SpringSource.
  *
  * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ package grails.plugin.databasemigration
 class DbmRollbackSqlTests extends AbstractScriptTests {
 
 	void testRollbackSql() {
+		String url = AbstractScriptTests.URL
 
 		// run all the updates
 		copyTestChangelog()
@@ -27,7 +28,7 @@ class DbmRollbackSqlTests extends AbstractScriptTests {
 
 		// manually tag the first update
 		String tagName = 'THE_TAG'
-		executeUpdate "update databasechangelog set tag=? where id='test-1'", [tagName]
+		executeUpdate url, "update databasechangelog set tag=? where id='test-1'", [tagName]
 
 		// test parameter check
 		executeAndCheck(['dbm-rollback-sql'], false)
@@ -40,5 +41,29 @@ class DbmRollbackSqlTests extends AbstractScriptTests {
 		assertTrue output.contains('ALTER TABLE PERSON DROP COLUMN STREET2')
 		assertTrue output.contains("DELETE FROM DATABASECHANGELOG  WHERE ID='test-2' AND AUTHOR='burt' AND FILENAME='changelog.cli.test.groovy'")
 		assertTrue output.contains("DELETE FROM DATABASECHANGELOG  WHERE ID='test-3' AND AUTHOR='burt' AND FILENAME='changelog.cli.test.groovy'")
+	}
+
+	void testRollbackSqlForSecondaryDataSource() {
+		String url = AbstractScriptTests.SECONDARY_URL
+
+		// run all the updates
+		copyTestChangelog('test.changelog', SECONDARY_TEST_CHANGELOG)
+		executeAndCheck (['dbm-update', '--dataSource=secondary'])
+
+		// manually tag the first update
+		String tagName = 'THE_TAG'
+		executeUpdate url, "update databasechangelog set tag=? where id='test-1'", [tagName]
+
+		// test parameter check
+		executeAndCheck(['dbm-rollback-sql', '--dataSource=secondary'], false)
+		assertTrue output.contains('ERROR: The dbm-rollback-sql script requires a tag')
+
+		executeAndCheck(['dbm-rollback-sql', tagName, '--dataSource=secondary'])
+
+		assertTrue output.contains('ALTER TABLE PERSON DROP COLUMN ZIPCODE')
+		assertTrue output.contains('ALTER TABLE PERSON DROP COLUMN STREET1')
+		assertTrue output.contains('ALTER TABLE PERSON DROP COLUMN STREET2')
+		assertTrue output.contains("DELETE FROM DATABASECHANGELOG  WHERE ID='test-2' AND AUTHOR='burt' AND FILENAME='changelog.cli.secondary-test.groovy'")
+		assertTrue output.contains("DELETE FROM DATABASECHANGELOG  WHERE ID='test-3' AND AUTHOR='burt' AND FILENAME='changelog.cli.secondary-test.groovy'")
 	}
 }

@@ -1,4 +1,4 @@
-/* Copyright 2010-2012 SpringSource.
+/* Copyright 2010-2013 SpringSource.
  *
  * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
@@ -72,5 +72,19 @@ class DbmGenerateGormChangelogTests extends AbstractScriptTests {
 
 		assertTrue output.contains(
 			'Starting dbm-generate-gorm-changelog for database sa @ jdbc:h2:tcp://localhost/./target/testdb/testdb')
+	}
+
+	void testGenerateGormChangelogForSecondaryDataSource() {
+
+		executeAndCheck (['dbm-generate-gorm-changelog', '--dataSource=secondary'])
+
+		assertTrue output.contains('<databaseChangeLog')
+		assertTrue output.contains('<changeSet')
+		assertTrue output.contains('<createTable')
+
+		assertTrue output.contains(
+			'Starting dbm-generate-gorm-changelog for database sa @ jdbc:h2:tcp://localhost/./target/testdb/testdb-secondary')
+
+		assertTrue output.contains('secondary_thing')
 	}
 }

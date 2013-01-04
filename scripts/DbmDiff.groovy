@@ -1,4 +1,4 @@
-/* Copyright 2010-2012 SpringSource.
+/* Copyright 2010-2013 SpringSource.
  *
  * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
@@ -31,8 +31,7 @@ target(dbmDiff: 'Writes description of differences to standard out') {
 		errorAndDie 'You must specify the environment to diff against'
 	}
 
-	if (Environment.getEnvironment(otherEnv) == Environment.current ||
-			otherEnv == Environment.current.name) {
+	if (Environment.getEnvironment(otherEnv) == Environment.current || otherEnv == Environment.current.name) {
 		errorAndDie 'You must specify a different environment than the one the script is running in'
 	}
 
@@ -43,11 +42,11 @@ target(dbmDiff: 'Writes description of differences to standard out') {
 	try {
 		printMessage "Starting $hyphenatedScriptName against environment '$otherEnv'"
 
-		ScriptUtils.executeAndWrite argsList[1], booleanArg('add'), { PrintStream out ->
-			MigrationUtils.executeInSession {
-				thisDatabase = MigrationUtils.getDatabase(defaultSchema)
+		ScriptUtils.executeAndWrite argsList[1], booleanArg('add'), dsName, { PrintStream out ->
+			MigrationUtils.executeInSession(dsName) {
+				thisDatabase = MigrationUtils.getDatabase(defaultSchema, dsName)
 				otherDatabase = buildOtherDatabase(otherEnv)
-				ScriptUtils.createDiff(thisDatabase, otherDatabase, appCtx, diffTypes).compare().printChangeLog(out, otherDatabase)
+				ScriptUtils.createAndPrintDiff thisDatabase, otherDatabase, otherDatabase, appCtx, diffTypes, out
 			}
 		}
 

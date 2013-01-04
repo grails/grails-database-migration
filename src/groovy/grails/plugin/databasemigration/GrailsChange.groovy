@@ -1,4 +1,4 @@
-/* Copyright 2010-2012 SpringSource.
+/* Copyright 2010-2013 SpringSource.
  *
  * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,8 @@ import liquibase.database.DatabaseConnection
 import liquibase.exception.SetupException
 import liquibase.exception.ValidationErrors
 import liquibase.exception.Warnings
+import liquibase.executor.ExecutorService
+import liquibase.executor.LoggingExecutor
 import liquibase.statement.SqlStatement
 
 import org.codehaus.groovy.grails.commons.GrailsApplication
@@ -40,16 +42,19 @@ import org.springframework.context.ApplicationContext
 class GrailsChange extends AbstractChange {
 
 	@ChangeProperty(includeInSerialization=false)
-	private boolean validateClosureCalled
+	protected boolean validateClosureCalled
 
 	@ChangeProperty(includeInSerialization=false)
-	private ValidationErrors validationErrors = new ValidationErrors()
+	protected ValidationErrors validationErrors = new ValidationErrors()
 
 	@ChangeProperty(includeInSerialization=false)
-	private Warnings warnings = new Warnings()
+	protected Warnings warnings = new Warnings()
 
 	@ChangeProperty(includeInSerialization=false)
-	private List<SqlStatement> allStatements = []
+	protected List<SqlStatement> allStatements = []
+
+	@ChangeProperty(includeInSerialization=false)
+	protected boolean shouldRun = true
 
 	@ChangeProperty(includeInSerialization=false)
 	Database database
@@ -105,15 +110,21 @@ class GrailsChange extends AbstractChange {
 
 	@Override
 	Warnings warn(Database database) {
-		this.database = database
-		callValidateClosure()
+		initDatabase database
+		if (shouldRun) {
+			callValidateClosure()
+		}
+
 		warnings
 	}
 
 	@Override
 	ValidationErrors validate(Database database) {
-		this.database = database
-		callValidateClosure()
+		initDatabase database
+		if (shouldRun) {
+			callValidateClosure()
+		}
+
 		validationErrors
 	}
 
@@ -141,9 +152,9 @@ class GrailsChange extends AbstractChange {
 	 */
 	@Override
 	SqlStatement[] generateStatements(Database database) {
-		this.database = database
+		initDatabase database
 
-		if (changeClosure) {
+		if (shouldRun && changeClosure) {
 			changeClosure.delegate = this
 			changeClosure()
 		}
@@ -157,9 +168,9 @@ class GrailsChange extends AbstractChange {
 	 */
 	@Override
 	SqlStatement[] generateRollbackStatements(Database database) {
-		this.database = database
+		initDatabase database
 
-		if (rollbackClosure) {
+		if (shouldRun && rollbackClosure) {
 			rollbackClosure.delegate = this
 			rollbackClosure()
 		}
@@ -173,7 +184,7 @@ class GrailsChange extends AbstractChange {
 	 * @param statement the statement
 	 */
 	void sqlStatement(SqlStatement statement) {
-		if (statement) allStatements << statement
+		if (shouldRun && statement) allStatements << statement
 	}
 
 	/**
@@ -182,7 +193,7 @@ class GrailsChange extends AbstractChange {
 	 * @param statement the statement
 	 */
 	void sqlStatements(statements) {
-		if (statements) allStatements.addAll (statements as List)
+		if (shouldRun && statements) allStatements.addAll (statements as List)
 	}
 
 	/**
@@ -197,7 +208,7 @@ class GrailsChange extends AbstractChange {
 	 * @see liquibase.change.AbstractChange#supportsRollback(liquibase.database.Database)
 	 */
 	@Override
-	boolean supportsRollback(Database database) { true }
+	boolean supportsRollback(Database database) { shouldRun }
 
 	/**
 	 * {@inheritDoc}
@@ -255,13 +266,18 @@ class GrailsChange extends AbstractChange {
 
 	// warn is called then validate, but both are handled by
 	// the 'warnings' closure, so we only want to run it once
-	private void callValidateClosure() {
-		if (!validateClosure || validateClosureCalled) {
+	protected void callValidateClosure() {
+		if (!shouldRun || !validateClosure || validateClosureCalled) {
 			return
 		}
 
 		validateClosure.delegate = this
 		validateClosure()
 		validationErrors
+	}
+
+	protected void initDatabase(Database database) {
+		this.database = database
+		shouldRun = !(ExecutorService.getInstance().getExecutor(database) instanceof LoggingExecutor)
 	}
 }

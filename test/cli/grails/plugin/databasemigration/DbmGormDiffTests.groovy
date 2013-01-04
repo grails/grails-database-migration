@@ -1,4 +1,4 @@
-/* Copyright 2010-2012 SpringSource.
+/* Copyright 2010-2013 SpringSource.
  *
  * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
@@ -99,6 +99,98 @@ class DbmGormDiffTests extends AbstractScriptTests {
 		assertTrue output.contains('Starting dbm-gorm-diff')
 
 		assertTableCount 4
+
+		assertTrue output.contains('<databaseChangeLog ')
+		assertTrue output.contains('<changeSet ')
+		assertTrue output.contains('<createTable tableName="author">')
+		assertTrue output.contains('<createTable tableName="book">')
+		assertTrue output.contains('<addForeignKeyConstraint baseColumnNames="author_id" baseTableName="book" ')
+		assertTrue output.contains('referencedColumnNames="id" referencedTableName="author" ')
+
+		// no corresponding domain class
+		assertTrue output.contains('<dropTable tableName="PERSON"/>')
+	}
+
+	void testGormDiffForSecondaryDataSource_XML() {
+
+		assertTableCount 1, SECONDARY_URL
+
+		copyTestChangelog('test.changelog', AbstractScriptTests.SECONDARY_TEST_CHANGELOG)
+		executeAndCheck (['dbm-update', '--dataSource=secondary'])
+		// original + 2 Liquibase + new person table
+		assertTableCount 4, SECONDARY_URL
+
+		def file = new File(CHANGELOG_DIR, '/gormdiff.xml')
+		assertFalse file.exists()
+
+		executeAndCheck(['dbm-gorm-diff', 'gormdiff.xml', '--dataSource=secondary'])
+
+		assertTrue file.exists()
+		file.deleteOnExit()
+
+		assertTrue output.contains('Starting dbm-gorm-diff')
+
+		assertTableCount 4, SECONDARY_URL
+
+		String diffOutput = file.text
+		assertTrue diffOutput.contains('<databaseChangeLog ')
+		assertTrue diffOutput.contains('<changeSet ')
+		assertTrue diffOutput.contains('<createTable tableName="author">')
+		assertTrue diffOutput.contains('<createTable tableName="book">')
+		assertTrue diffOutput.contains('<addForeignKeyConstraint baseColumnNames="author_id" baseTableName="book" ')
+		assertTrue diffOutput.contains('referencedColumnNames="id" referencedTableName="author" ')
+
+		// no corresponding domain class
+		assertTrue diffOutput.contains('<dropTable tableName="PERSON"/>')
+	}
+
+	void testGormDiffForSecondaryDataSource_Groovy() {
+
+		assertTableCount 1, SECONDARY_URL
+
+		copyTestChangelog('test.changelog', SECONDARY_TEST_CHANGELOG)
+		executeAndCheck (['dbm-update', '--dataSource=secondary'])
+		// original + 2 Liquibase + new person table
+		assertTableCount 4, SECONDARY_URL
+
+		def file = new File(CHANGELOG_DIR, '/gormdiff.groovy')
+		assertFalse file.exists()
+
+		executeAndCheck(['dbm-gorm-diff', 'gormdiff.groovy', '--dataSource=secondary'])
+
+		assertTrue file.exists()
+		file.deleteOnExit()
+
+		assertTrue output.contains('Starting dbm-gorm-diff')
+
+		assertTableCount 4, SECONDARY_URL
+
+		String diffOutput = file.text
+
+		assertTrue diffOutput.contains('databaseChangeLog = {')
+		assertTrue diffOutput.contains('changeSet(author: ')
+		assertTrue diffOutput.contains('createTable(tableName: "author") {')
+		assertTrue diffOutput.contains('createTable(tableName: "book") {')
+		assertTrue diffOutput.contains('addForeignKeyConstraint(baseColumnNames: "author_id", baseTableName: "book", ')
+		assertTrue diffOutput.contains('referencedColumnNames: "id", referencedTableName: "author"')
+
+		// no corresponding domain class
+		assertTrue diffOutput.contains('dropTable(tableName: "PERSON")')
+	}
+
+	void testGormDiffForSecondaryDataSource_STDOUT() {
+
+		assertTableCount 1, SECONDARY_URL
+
+		copyTestChangelog('test.changelog', SECONDARY_TEST_CHANGELOG)
+		executeAndCheck (['dbm-update', '-dataSource=secondary'])
+		// original + 2 Liquibase + new person table
+		assertTableCount 4, SECONDARY_URL
+
+		executeAndCheck(['dbm-gorm-diff', '--dataSource=secondary'])
+		assertTrue output.contains('Starting dbm-gorm-diff')
+
+		assertTableCount 4, SECONDARY_URL
 
 		assertTrue output.contains('<databaseChangeLog ')
 		assertTrue output.contains('<changeSet ')

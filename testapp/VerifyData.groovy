@@ -25,6 +25,15 @@ target(verifyData: 'Verifies data') {
 		assertEquals 3, Order.count()
 		def orders = Order.listOrderById()
 
+		orders.each { order ->
+			order.refresh()
+			order.customer.refresh()
+			order.items.each { item ->
+				item.refresh()
+				item.product.refresh()
+			}
+		}
+
 		assertEquals 'c1', orders[0].customer.name
 		assertEquals 1, orders[0].items.size()
 		def items = orders[0].items.sort { it.product.name }

@@ -1,4 +1,4 @@
-/* Copyright 2010-2012 SpringSource.
+/* Copyright 2010-2013 SpringSource.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,10 +20,11 @@ import grails.plugin.databasemigration.GrailsChangeLogParser
 import grails.plugin.databasemigration.GrailsClassLoaderResourceAccessor
 import grails.plugin.databasemigration.GrailsDiffStatusListener
 import grails.plugin.databasemigration.GrailsPrecondition
-import grails.plugin.databasemigration.Log4jLogger
 import grails.plugin.databasemigration.MigrationRunner
 import grails.plugin.databasemigration.MigrationUtils
 import grails.plugin.databasemigration.MysqlAwareCreateTableGenerator
+import grails.plugin.databasemigration.Slf4jLogger
+import grails.plugin.databasemigration.jaxb.JaxbChangeLogParser
 import liquibase.change.ChangeFactory
 import liquibase.database.typeconversion.TypeConverterFactory
 import liquibase.logging.LogFactory
@@ -41,7 +42,7 @@ import liquibase.sqlgenerator.core.CreateTableGenerator
 
 class DatabaseMigrationGrailsPlugin {
 
-	String version = '1.2.2'
+	String version = '1.3'
 	String grailsVersion = '1.3.0 > *'
 	String author = 'Burt Beckwith'
 	String authorEmail = 'beckwithb@vmware.com'
@@ -84,12 +85,16 @@ class DatabaseMigrationGrailsPlugin {
 
 		fixLogging()
 
-		MigrationRunner.autoRun()
+		MigrationRunner.autoRun ctx.migrationCallbacks
 	}
 
 	private void register(ctx) {
 		// adds support for .groovy extension
-		ChangeLogParserFactory.instance.register new GrailsChangeLogParser(ctx)
+		GrailsChangeLogParser grailsChangeLogParser = new GrailsChangeLogParser(ctx)
+		ChangeLogParserFactory.instance.register grailsChangeLogParser
+
+		// adds support for compiled JAXB .class files
+		ChangeLogParserFactory.instance.register new JaxbChangeLogParser(grailsChangeLogParser)
 
 		// adds support for Groovy-based changes in DSL changelogs
 		ChangeFactory.instance.register GrailsChange
@@ -121,7 +126,7 @@ class DatabaseMigrationGrailsPlugin {
 
 		try {
 			// register the plugin's logger
-			ServiceLocator.instance.classesBySuperclass[Logger] << Log4jLogger
+			ServiceLocator.instance.classesBySuperclass[Logger] << Slf4jLogger
 		}
 		catch (Throwable t) {
 			// ignored, fall back to default logging

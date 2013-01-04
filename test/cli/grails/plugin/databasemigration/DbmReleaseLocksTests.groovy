@@ -1,4 +1,4 @@
-/* Copyright 2010-2012 SpringSource.
+/* Copyright 2010-2013 SpringSource.
  *
  * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
@@ -26,18 +26,42 @@ class DbmReleaseLocksTests extends AbstractScriptTests {
 		generateChangelog()
 
 		// auto-created by hbm2ddl
-		executeUpdate 'drop table thing'
+		String url = AbstractScriptTests.URL
+		executeUpdate url, 'drop table thing'
 
 		executeAndCheck(['dbm-update-count', '1'])
 
 		// force a lock
-		executeUpdate('update databasechangeloglock set locked=?, lockgranted=?, lockedby=?',
-		              [true, new Timestamp(System.currentTimeMillis()), 'cli_test'])
+		executeUpdate(url, 'update databasechangeloglock set locked=?, lockgranted=?, lockedby=?',
+			[true, new Timestamp(System.currentTimeMillis()), 'cli_test'])
 		executeAndCheck 'dbm-list-locks'
 
 		assertFalse output.contains('No locks')
 
 		executeAndCheck 'dbm-release-locks'
+
+		assertTrue output.contains('Successfully released change log lock')
+	}
+
+	void testReleaseLocksForSecondaryDataSource() {
+
+		generateChangelog()
+		generateSecondaryChagelog()
+
+		// auto-created by hbm2ddl
+		String url = AbstractScriptTests.SECONDARY_URL
+		executeUpdate url, 'drop table secondary_thing'
+
+		executeAndCheck(['dbm-update-count', '1', '--dataSource=secondary'])
+
+		// force a lock
+		executeUpdate(url, 'update databasechangeloglock set locked=?, lockgranted=?, lockedby=?',
+			[true, new Timestamp(System.currentTimeMillis()), 'cli_test'])
+		executeAndCheck (['dbm-list-locks', '--dataSource=secondary'])
+
+		assertFalse output.contains('No locks')
+
+		executeAndCheck (['dbm-release-locks', '--dataSource=secondary'])
 
 		assertTrue output.contains('Successfully released change log lock')
 	}

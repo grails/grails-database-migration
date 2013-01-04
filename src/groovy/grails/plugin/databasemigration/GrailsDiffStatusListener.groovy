@@ -1,4 +1,4 @@
-/* Copyright 2010-2012 SpringSource.
+/* Copyright 2010-2013 SpringSource.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,15 @@ package grails.plugin.databasemigration
 
 import liquibase.diff.DiffStatusListener
 
-import org.apache.log4j.Logger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 /**
  * @author <a href='mailto:burt@burtbeckwith.com'>Burt Beckwith</a>
  */
 class GrailsDiffStatusListener implements DiffStatusListener {
 
-	private Logger log = Logger.getLogger(getClass())
+	private Logger log = LoggerFactory.getLogger(getClass())
 
 	void statusUpdate(String message) {
 		log.info message

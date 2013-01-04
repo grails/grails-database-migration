@@ -1,4 +1,4 @@
-/* Copyright 2010-2012 SpringSource.
+/* Copyright 2010-2013 SpringSource.
  *
  * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ class DbmUpdateCountTests extends AbstractScriptTests {
 
 		// should fail since the table isn't there yet
 		String message = shouldFail(SQLException) {
-			executeUpdate '''
+			executeUpdate AbstractScriptTests.URL, '''
 				insert into person(version, name, street1, street2, zipcode)
 				values (0, 'test.name', 'test.street1', 'test.street2', '12345')
 			'''
@@ -50,7 +50,7 @@ class DbmUpdateCountTests extends AbstractScriptTests {
 
 		// can't do full insert since the 3rd change wasn't applied
 		message = shouldFail(SQLException) {
-			executeUpdate '''
+			executeUpdate AbstractScriptTests.URL, '''
 				insert into person(version, name, street1, street2, zipcode)
 				values (0, 'test.name', 'test.street1', 'test.street2', '12345')
 			'''
@@ -59,7 +59,51 @@ class DbmUpdateCountTests extends AbstractScriptTests {
 		assertTrue message.contains('Column "ZIPCODE" not found')
 
 		// can do partial insert
-		executeUpdate '''
+		executeUpdate AbstractScriptTests.URL, '''
+			insert into person(version, name, street1, street2)
+			values (0, 'test.name', 'test.street1', 'test.street2')
+		'''
+	}
+
+	void testUpdateCountForSecondaryDataSource() {
+
+		assertTableCount 1, AbstractScriptTests.SECONDARY_URL
+
+		// should fail since the table isn't there yet
+		String message = shouldFail(SQLException) {
+			executeUpdate AbstractScriptTests.SECONDARY_URL, '''
+				insert into person(version, name, street1, street2, zipcode)
+				values (0, 'test.name', 'test.street1', 'test.street2', '12345')
+			'''
+		}
+		assertTrue message.contains('Table "PERSON" not found')
+
+		copyTestChangelog('test.changelog', AbstractScriptTests.SECONDARY_TEST_CHANGELOG)
+
+		// test parameter check
+		executeAndCheck(['dbm-update-count', '--dataSource=secondary'], false)
+		assertTrue output.contains('ERROR: The dbm-update-count script requires a change set count argument')
+
+		executeAndCheck(['dbm-update-count', '2', '--dataSource=secondary'])
+
+		// original + 2 Liquibase + new person table
+		assertTableCount 4, AbstractScriptTests.SECONDARY_URL
+
+		assertTrue output.contains(
+			'Starting dbm-update-count for database sa @ jdbc:h2:tcp://localhost/./target/testdb/testdb-secondary')
+
+		// can't do full insert since the 3rd change wasn't applied
+		message = shouldFail(SQLException) {
+			executeUpdate AbstractScriptTests.SECONDARY_URL, '''
+				insert into person(version, name, street1, street2, zipcode)
+				values (0, 'test.name', 'test.street1', 'test.street2', '12345')
+			'''
+		}
+
+		assertTrue message.contains('Column "ZIPCODE" not found')
+
+		// can do partial insert
+		executeUpdate AbstractScriptTests.SECONDARY_URL, '''
 			insert into person(version, name, street1, street2)
 			values (0, 'test.name', 'test.street1', 'test.street2')
 		'''

@@ -1,4 +1,4 @@
-/* Copyright 2010-2012 SpringSource.
+/* Copyright 2010-2013 SpringSource.
  *
  * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
@@ -27,5 +27,15 @@ class DbmValidateTests extends AbstractScriptTests {
 
 		assertTrue output.contains(
 			'Starting dbm-validate for database sa @ jdbc:h2:tcp://localhost/./target/testdb/testdb')
+	}
+
+	void testValidateForSecondaryDataSource() {
+
+		generateSecondaryChagelog()
+
+		executeAndCheck (['dbm-validate', '--dataSource=secondary'])
+
+		assertTrue output.contains(
+			'Starting dbm-validate for database sa @ jdbc:h2:tcp://localhost/./target/testdb/testdb-secondary')
 	}
 }

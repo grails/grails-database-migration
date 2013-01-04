@@ -1,4 +1,4 @@
-/* Copyright 2010-2012 SpringSource.
+/* Copyright 2010-2013 SpringSource.
  *
  * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
@@ -63,6 +63,58 @@ class DbmChangelogToGroovyTests extends AbstractScriptTests {
 		file.deleteOnExit()
 
 		assertTrue output.contains("Converting $CHANGELOG_DIR/changelog.xml to $CHANGELOG_DIR/cl.groovy".toString())
+
+		groovy = file.text
+		assertTrue groovy.contains('databaseChangeLog = {')
+		assertTrue groovy.contains('changeSet(')
+		assertTrue groovy.contains('createTable(')
+	}
+
+	void testChangelogToGroovyForSecondaryDataSource() {
+
+		def file = new File(CHANGELOG_DIR, '/changelog-secondary.xml')
+		file.delete()
+		assertFalse file.exists()
+
+		executeAndCheck(['dbm-generate-changelog', 'changelog-secondary.xml', '--dataSource=secondary'])
+
+		assertTrue file.exists()
+		file.deleteOnExit()
+
+		// test parameter check
+		executeAndCheck(['dbm-changelog-to-groovy'], false)
+		assertTrue output.contains('ERROR: Must specify the source XML file path')
+
+		file = new File(CHANGELOG_DIR, '/changelog-secondary.groovy')
+		file.delete()
+		assertFalse file.exists()
+
+		executeAndCheck(['dbm-changelog-to-groovy', CHANGELOG_DIR + '/changelog-secondary.xml', '--dataSource=secondary'])
+
+		assertTrue file.exists()
+		file.deleteOnExit()
+
+		assertTrue output.contains("Converting $CHANGELOG_DIR/changelog-secondary.xml to $CHANGELOG_DIR/changelog-secondary.groovy".toString())
+
+		String groovy = file.text
+
+		assertTrue groovy.contains('databaseChangeLog = {')
+		assertTrue groovy.contains('changeSet(')
+		assertTrue groovy.contains('createTable(')
+
+		file = new File(CHANGELOG_DIR, '/cl.groovy')
+		file.delete()
+		assertFalse file.exists()
+
+		executeAndCheck(['dbm-changelog-to-groovy',
+			CHANGELOG_DIR + '/changelog-secondary.xml',
+			CHANGELOG_DIR + '/cl.groovy'
+		])
+
+		assertTrue file.exists()
+		file.deleteOnExit()
+
+		assertTrue output.contains("Converting $CHANGELOG_DIR/changelog-secondary.xml to $CHANGELOG_DIR/cl.groovy".toString())
 
 		groovy = file.text
 		assertTrue groovy.contains('databaseChangeLog = {')

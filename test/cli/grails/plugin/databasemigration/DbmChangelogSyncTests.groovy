@@ -1,4 +1,4 @@
-/* Copyright 2010-2012 SpringSource.
+/* Copyright 2010-2013 SpringSource.
  *
  * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ class DbmChangelogSyncTests extends AbstractScriptTests {
 
 	void testChangelogSync() {
 
-		def tableNames = findAllTableNames()
+		def tableNames = findAllTableNames(AbstractScriptTests.URL)
 		assertEquals 1, tableNames.size()
 		assertTrue tableNames.contains('thing')
 
@@ -29,7 +29,7 @@ class DbmChangelogSyncTests extends AbstractScriptTests {
 
 		executeAndCheck 'dbm-changelog-sync'
 
-		tableNames = findAllTableNames()
+		tableNames = findAllTableNames(AbstractScriptTests.URL)
 		assertEquals 3, tableNames.size()
 		assertTrue tableNames.contains('thing')
 		assertTrue tableNames.contains('databasechangelog')
@@ -37,5 +37,24 @@ class DbmChangelogSyncTests extends AbstractScriptTests {
 
 		assertTrue output.contains(
 			'Starting dbm-changelog-sync for database sa @ jdbc:h2:tcp://localhost/./target/testdb/testdb')
+	}
+
+	void testChangelogSyncSecondaryDataSource() {
+		def tableNames = findAllTableNames(AbstractScriptTests.SECONDARY_URL)
+		assertEquals 1, tableNames.size()
+		assertTrue tableNames.contains('secondary_thing')
+
+		executeAndCheck(['dbm-generate-changelog', 'changelog.cli.secondary-test.groovy', '--dataSource=secondary'])
+
+		executeAndCheck(['dbm-changelog-sync', '--dataSource=secondary'])
+
+		tableNames = findAllTableNames(AbstractScriptTests.SECONDARY_URL)
+		assertEquals 3, tableNames.size()
+		assertTrue tableNames.contains('secondary_thing')
+		assertTrue tableNames.contains('databasechangelog')
+		assertTrue tableNames.contains('databasechangeloglock')
+
+		assertTrue output.contains(
+			'Starting dbm-changelog-sync for database sa @ jdbc:h2:tcp://localhost/./target/testdb/testdb-secondary')
 	}
 }
