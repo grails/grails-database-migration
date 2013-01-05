@@ -38,7 +38,9 @@ import liquibase.changelog.ChangeLogParameters
 import liquibase.changelog.ChangeSet
 import liquibase.changelog.DatabaseChangeLog
 import liquibase.exception.ChangeLogParseException
+import liquibase.exception.LiquibaseException
 import liquibase.exception.MigrationFailedException
+import liquibase.parser.ChangeLogParser
 import liquibase.parser.ChangeLogParserFactory
 import liquibase.precondition.CustomPreconditionWrapper
 import liquibase.precondition.Precondition
@@ -717,10 +719,6 @@ class DslBuilder extends BuilderSupport {
 
 	protected boolean handleIncludedChangeLog(String fileName, boolean isRelativePath, String relativeBaseFileName) {
 		String lowerName = fileName.toLowerCase()
-		if (!(lowerName.endsWith('.xml') || lowerName.endsWith('.groovy') || lowerName.endsWith('.sql'))) {
-			log.debug "$relativeBaseFileName/$fileName is not a recognized file type"
-			return false
-		}
 
 		if (lowerName.startsWith('.') || lowerName.equals('cvs')) {
 			return false
@@ -737,8 +735,16 @@ class DslBuilder extends BuilderSupport {
 			}
 		}
 
-		DatabaseChangeLog changeLog = ChangeLogParserFactory.instance.getParser(fileName, resourceAccessor).parse(
-			fileName, changeLogParameters, resourceAccessor)
+		ChangeLogParser parser
+		try {
+			parser = ChangeLogParserFactory.instance.getParser(fileName, resourceAccessor)
+		}
+		catch (LiquibaseException e) {
+			log.error "$relativeBaseFileName/$fileName is not a recognized file type"
+			return false
+		}
+
+		DatabaseChangeLog changeLog = parser.parse(fileName, changeLogParameters, resourceAccessor)
 		PreconditionContainer preconditions = changeLog.preconditions
 		if (preconditions) {
 			if (!databaseChangeLog.preconditions) {
