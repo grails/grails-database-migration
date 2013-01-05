@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory
  */
 class GrailsDiffStatusListener implements DiffStatusListener {
 
-	private Logger log = LoggerFactory.getLogger(getClass())
+	protected Logger log = LoggerFactory.getLogger(getClass())
 
 	void statusUpdate(String message) {
 		log.info message

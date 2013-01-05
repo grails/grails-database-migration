@@ -32,7 +32,7 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
  */
 class MigrationUtils {
 
-	private MigrationUtils() {
+	protected MigrationUtils() {
 		// static only
 	}
 
@@ -138,7 +138,7 @@ class MigrationUtils {
 		}
 	}
 
-	private static boolean initSession(String dataSourceSuffix) {
+	protected static boolean initSession(String dataSourceSuffix) {
 		def sessionFactory = findSessionFactory(dataSourceSuffix)
 		if (TransactionSynchronizationManager.hasResource(sessionFactory)) {
 			return true
@@ -154,7 +154,7 @@ class MigrationUtils {
 		false
 	}
 
-	private static void flushAndClose(String dataSourceSuffix) {
+	protected static void flushAndClose(String dataSourceSuffix) {
 		def SessionFactoryUtils = MigrationUtils.classForName('org.springframework.orm.hibernate3.SessionFactoryUtils')
 		def FlushMode = MigrationUtils.classForName('org.hibernate.FlushMode')
 
@@ -166,7 +166,7 @@ class MigrationUtils {
 		SessionFactoryUtils.closeSession session
 	}
 
-	private static findSessionFactory(String dataSourceSuffix = '') {
+	protected static findSessionFactory(String dataSourceSuffix = '') {
 
 		def factoryBean = application.mainContext.getBean('&sessionFactory' + dataSourceSuffix)
 		if (factoryBean.getClass().simpleName == 'DelayedSessionFactoryBean') {
@@ -178,7 +178,7 @@ class MigrationUtils {
 		application.mainContext."sessionFactory$dataSourceSuffix"
 	}
 
-	private static extractSuffix(String dataSourceName) {
+	protected static extractSuffix(String dataSourceName) {
 		dataSourceName == 'dataSource' ? '' : dataSourceName[10..-1]
 	}
 
@@ -186,7 +186,7 @@ class MigrationUtils {
 		dataSourceSuffix ? 'dataSource_' + dataSourceSuffix : 'dataSource'
 	}
 
-	private static extractSuffixWithOutUnderbar(dataSourceName) {
+	protected static extractSuffixWithOutUnderbar(dataSourceName) {
 		dataSourceName == 'dataSource' ? '' : dataSourceName[11..-1]
 	}
 

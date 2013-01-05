@@ -36,7 +36,7 @@ import liquibase.statement.SqlStatement
  */
 class MysqlAwareCreateTableGenerator implements SqlGenerator {
 
-	private CreateTableGenerator _super = new CreateTableGenerator()
+	protected CreateTableGenerator _super = new CreateTableGenerator()
 
 	Sql[] generateSql(SqlStatement statement, Database database, SqlGeneratorChain chain) {
 		Sql[] statements = _super.generateSql(statement, database, chain)
@@ -47,7 +47,7 @@ class MysqlAwareCreateTableGenerator implements SqlGenerator {
 	}
 
 	// no-op in most cases but adds 'ENGINE=InnoDB' if using InnoDB
-	private Sql[] updateSql(Sql[] statements, Database database) {
+	protected Sql[] updateSql(Sql[] statements, Database database) {
 		UnparsedSql newSql = new UnparsedSql(statements[0].toSql() + database.dialect.tableTypeString,
 				statements[0].endDelimiter, statements[0].affectedDatabaseObjects as DatabaseObject[])
 		[newSql] as Sql[]

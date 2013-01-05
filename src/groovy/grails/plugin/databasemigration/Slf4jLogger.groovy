@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory
  */
 class Slf4jLogger implements liquibase.logging.Logger {
 
-	private Logger log
+	protected Logger log
 
 	void severe(String message) { log.error message }
 

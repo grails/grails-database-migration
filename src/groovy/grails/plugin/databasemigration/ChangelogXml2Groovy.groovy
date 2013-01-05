@@ -21,7 +21,7 @@ package grails.plugin.databasemigration
  */
 class ChangelogXml2Groovy {
 
-	private static final String NEWLINE = System.getProperty('line.separator')
+	protected static final String NEWLINE = System.getProperty('line.separator')
 
 	/**
 	 * Convert a Liquibase XML changelog to Groovy DSL format.
@@ -39,7 +39,7 @@ class ChangelogXml2Groovy {
 		groovy.toString()
 	}
 
-	private static void convertNode(Node node, StringBuilder groovy, int indentLevel) {
+	protected static void convertNode(Node node, StringBuilder groovy, int indentLevel) {
 
 		groovy.append NEWLINE
 		appendWithIndent indentLevel, groovy, node.name()
@@ -70,7 +70,7 @@ class ChangelogXml2Groovy {
 		}
 	}
 
-	private static void appendAttrs(StringBuilder groovy, Node node, String text) {
+	protected static void appendAttrs(StringBuilder groovy, Node node, String text) {
 		def local = new StringBuilder()
 
 		String delimiter = ''
@@ -96,7 +96,7 @@ class ChangelogXml2Groovy {
 		}
 	}
 
-	private static void appendWithIndent(int indentLevel, StringBuilder groovy, String s) {
+	protected static void appendWithIndent(int indentLevel, StringBuilder groovy, String s) {
 		indentLevel.times { groovy.append '\t' }
 		groovy.append s
 	}

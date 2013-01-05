@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory
  */
 class MigrationRunner {
 
-	private static Logger LOG = LoggerFactory.getLogger(this)
+	protected static Logger LOG = LoggerFactory.getLogger(this)
 
 	static void autoRun(migrationCallbacks = null) {
 

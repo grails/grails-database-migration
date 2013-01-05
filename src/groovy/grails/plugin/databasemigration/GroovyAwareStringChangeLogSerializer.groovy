@@ -33,7 +33,7 @@ import liquibase.util.StringUtils
  */
 class GroovyAwareStringChangeLogSerializer extends StringChangeLogSerializer {
 
-	private static final int INDENT_LENGTH = 4
+	protected static final int INDENT_LENGTH = 4
 
 	String serialize(Change change) {
 		change.changeMetaData.name + ':' + serializeObject(change, 1)
@@ -43,7 +43,7 @@ class GroovyAwareStringChangeLogSerializer extends StringChangeLogSerializer {
 		visitor.name + ':' + serializeObject(visitor, 1)
 	}
 
-	private String serializeObject(objectToSerialize, int indent) {
+	protected String serializeObject(objectToSerialize, int indent) {
 		try {
 			StringBuilder buffer = new StringBuilder('[')
 
@@ -103,11 +103,11 @@ class GroovyAwareStringChangeLogSerializer extends StringChangeLogSerializer {
 		}
 	}
 
-	private String indentTimes(int indent) {
+	protected String indentTimes(int indent) {
 		StringUtils.repeat ' ', INDENT_LENGTH * indent
 	}
 
-	private String serializeObject(Collection collection, int indent) {
+	protected String serializeObject(Collection collection, int indent) {
 		if (!collection) {
 			return '[]'
 		}
@@ -127,7 +127,7 @@ class GroovyAwareStringChangeLogSerializer extends StringChangeLogSerializer {
 		returnString
 	}
 
-	private String serializeObject(Map collection, int indent) {
+	protected String serializeObject(Map collection, int indent) {
 		if (!collection) {
 			return '[]'
 		}
@@ -142,15 +142,15 @@ class GroovyAwareStringChangeLogSerializer extends StringChangeLogSerializer {
 		returnString
 	}
 
-	private String serializeColumnConfig(ColumnConfig columnConfig, int indent) {
+	protected String serializeColumnConfig(ColumnConfig columnConfig, int indent) {
 		'column:' + serializeObject(columnConfig, indent)
 	}
 
-	private String serializeConstraintsConfig(ConstraintsConfig constraintsConfig, int indent) {
+	protected String serializeConstraintsConfig(ConstraintsConfig constraintsConfig, int indent) {
 		'constraints:' + serializeObject(constraintsConfig, indent)
 	}
 
-	private String serializeCustomChange(CustomChange customChange, int indent) {
+	protected String serializeCustomChange(CustomChange customChange, int indent) {
 		'customChange:' + serializeObject(customChange, indent)
 	}
 }

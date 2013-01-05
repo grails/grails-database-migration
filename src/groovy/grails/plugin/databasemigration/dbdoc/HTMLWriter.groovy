@@ -28,8 +28,8 @@ import liquibase.util.StringUtils
 abstract class HTMLWriter {
 
 	protected Database database
-	private Map files
-	private String subdir
+	protected Map files
+	protected String subdir
 
 	protected HTMLWriter(Map files, String subdir, Database database) {
 		this.files = files

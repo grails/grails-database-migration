@@ -27,7 +27,7 @@ import liquibase.database.Database
  */
 class NoopVisitor implements ChangeSetVisitor {
 
-	private Database database
+	protected Database database
 
 	NoopVisitor(Database db) {
 		database = db

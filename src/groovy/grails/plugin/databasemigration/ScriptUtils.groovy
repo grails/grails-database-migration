@@ -47,7 +47,7 @@ class ScriptUtils {
 	static final String DAY_DATE_FORMAT = 'yyyy-MM-dd'
 	static final String FULL_DATE_FORMAT = DAY_DATE_FORMAT + ' HH:mm:ss'
 
-	private Logger log = LoggerFactory.getLogger('grails.plugin.databasemigration.Scripts')
+	protected Logger log = LoggerFactory.getLogger('grails.plugin.databasemigration.Scripts')
 
 	static void printStackTrace(Throwable e) {
 		GrailsUtil.deepSanitize e
