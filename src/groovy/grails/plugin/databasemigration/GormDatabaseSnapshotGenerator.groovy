@@ -185,7 +185,7 @@ class GormDatabaseSnapshotGenerator implements DatabaseSnapshotGenerator {
 	}
 
 	// another workaround for changed method signature without backwards compatibility
-	private /*org.hibernate.id.IdentifierGenerator*/ createIdentifierGenerator(/*org.hibernate.dialect.Dialect*/ dialect,
+	protected /*org.hibernate.id.IdentifierGenerator*/ createIdentifierGenerator(/*org.hibernate.dialect.Dialect*/ dialect,
 				/*org.hibernate.mapping.PersistentClass*/ pc, /*org.hibernate.cfg.Configuration*/ cfg) {
 
 		Method method = pc.identifier.getClass().getMethods().find { it.name == 'createIdentifierGenerator' }
@@ -199,7 +199,7 @@ class GormDatabaseSnapshotGenerator implements DatabaseSnapshotGenerator {
 
 	// MySQL is unique in that the Dialect adds an index to each FK but it's
 	// not exposed in the object model. so we add it here to be consistent
-	private void addMysqlFkIndex(DatabaseSnapshot snapshot, Table table, hibernateForeignKey) {
+	protected void addMysqlFkIndex(DatabaseSnapshot snapshot, Table table, hibernateForeignKey) {
 		Index index = new Index(table: table, name: hibernateForeignKey.name)
 		for (hibernateColumn in hibernateForeignKey.columnIterator) {
 			index.columns << hibernateColumn.name

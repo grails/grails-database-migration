@@ -111,7 +111,7 @@ class DbdocController {
 		render "no content for $key"
 	}
 
-	private Map generateHTML(String changelogFileName) {
+	protected Map generateHTML(String changelogFileName) {
 		def database
 		LockService lockService
 		try {
@@ -147,7 +147,7 @@ class DbdocController {
 		}
 	}
 
-	private void checkDatabaseChangeLogTable(DatabaseChangeLog databaseChangeLog, Database database) {
+	protected void checkDatabaseChangeLogTable(DatabaseChangeLog databaseChangeLog, Database database) {
 		database.checkDatabaseChangeLogTable false, databaseChangeLog, null
 		database.checkDatabaseChangeLogLockTable()
 	}

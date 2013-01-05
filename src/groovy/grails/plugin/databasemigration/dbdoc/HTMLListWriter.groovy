@@ -19,10 +19,10 @@ package grails.plugin.databasemigration.dbdoc
  */
 class HTMLListWriter {
 
-	private String directory
-	private String filename
-	private String title
-	private Map files
+	protected String directory
+	protected String filename
+	protected String title
+	protected Map files
 
 	HTMLListWriter(String title, String filename, String subdir, Map files) {
 		this.title = title

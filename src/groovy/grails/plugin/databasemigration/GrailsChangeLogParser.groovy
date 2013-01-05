@@ -34,9 +34,9 @@ import org.springframework.context.ApplicationContext
  */
 class GrailsChangeLogParser implements ChangeLogParser {
 
-	private Logger log = LoggerFactory.getLogger(getClass())
+	protected Logger log = LoggerFactory.getLogger(getClass())
 
-	private ApplicationContext ctx
+	protected ApplicationContext ctx
 
 	/**
 	 * Constructor.
@@ -97,7 +97,7 @@ class GrailsChangeLogParser implements ChangeLogParser {
 
 	int getPriority() { PRIORITY_DEFAULT }
 
-	private void setChangelogProperties(ChangeLogParameters changeLogParameters) {
+	protected void setChangelogProperties(ChangeLogParameters changeLogParameters) {
 
 		MigrationUtils.changelogProperties.each { name, value ->
 

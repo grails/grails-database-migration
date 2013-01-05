@@ -25,7 +25,7 @@ import liquibase.exception.MigrationFailedException
  */
 class PendingSQLWriter extends HTMLWriter {
 
-	private DatabaseChangeLog databaseChangeLog
+	protected DatabaseChangeLog databaseChangeLog
 
 	PendingSQLWriter(Map files, Database database, DatabaseChangeLog databaseChangeLog) {
 		super(files, 'pending', database)

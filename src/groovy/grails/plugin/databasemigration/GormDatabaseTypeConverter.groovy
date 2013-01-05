@@ -25,7 +25,7 @@ import liquibase.database.typeconversion.core.DefaultTypeConverter
  */
 class GormDatabaseTypeConverter extends DefaultTypeConverter {
 
-	private static final List<String> NAMES = [
+	protected static final List<String> NAMES = [
 		'longtext', 'mediumtext', 'text', 'tinytext',
 		'tinyblob', 'blob', 'mediumblob', 'longblob']
 

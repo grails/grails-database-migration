@@ -33,7 +33,7 @@ abstract class AbstractScriptTests extends AbstractCliTestCase {
 	protected static final String URL = 'jdbc:h2:tcp://localhost/./target/testdb/testdb'
 	protected static final String SECONDARY_URL = 'jdbc:h2:tcp://localhost/./target/testdb/testdb-secondary'
 
-	private Server server
+	protected Server server
 
 	protected File file
 

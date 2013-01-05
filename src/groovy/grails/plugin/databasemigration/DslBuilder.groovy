@@ -64,25 +64,25 @@ import org.springframework.context.ApplicationContext
  */
 class DslBuilder extends BuilderSupport {
 
-	private Logger log = LoggerFactory.getLogger(getClass())
+	protected Logger log = LoggerFactory.getLogger(getClass())
 
-	private Change currentChange
-	private String currentText
-	private ChangeSet currentChangeSet
-	private String currentParamName
-	private Precondition currentPrecondition
-	private PreconditionContainer rootPrecondition
-	private List changeSubObjects = []
-	private List<PreconditionLogic> preconditionLogicStack = []
-	private boolean inRollback
-	private boolean inModifySql
-	private boolean modifySqlAppliedOnRollback
-	private Set<String> modifySqlDbmsList
-	private Set<String> modifySqlContexts
+	protected Change currentChange
+	protected String currentText
+	protected ChangeSet currentChangeSet
+	protected String currentParamName
+	protected Precondition currentPrecondition
+	protected PreconditionContainer rootPrecondition
+	protected List changeSubObjects = []
+	protected List<PreconditionLogic> preconditionLogicStack = []
+	protected boolean inRollback
+	protected boolean inModifySql
+	protected boolean modifySqlAppliedOnRollback
+	protected Set<String> modifySqlDbmsList
+	protected Set<String> modifySqlContexts
 
-	private ResourceAccessor resourceAccessor
-	private ChangeLogParameters changeLogParameters
-	private ApplicationContext ctx
+	protected ResourceAccessor resourceAccessor
+	protected ChangeLogParameters changeLogParameters
+	protected ApplicationContext ctx
 
 	// set after the parser runs
 	DatabaseChangeLog databaseChangeLog
@@ -225,7 +225,7 @@ class DslBuilder extends BuilderSupport {
 		name
 	}
 
-	private Map expandExpressions(Map original) {
+	protected Map expandExpressions(Map original) {
 		def expanded = [:]
 		original.each { name, value ->
 			expanded[name] = changeLogParameters.expandExpressions(original[name]?.toString())
@@ -233,7 +233,7 @@ class DslBuilder extends BuilderSupport {
 		expanded
 	}
 
-	private boolean processGrailsChangeProperty(String methodName, args) {
+	protected boolean processGrailsChangeProperty(String methodName, args) {
 		args = InvokerHelper.asList(args)
 
 		switch (methodName.toLowerCase()) {
@@ -290,7 +290,7 @@ class DslBuilder extends BuilderSupport {
 		false
 	}
 
-	private boolean processGrailsPreconditionProperty(String methodName, args) {
+	protected boolean processGrailsPreconditionProperty(String methodName, args) {
 		args = InvokerHelper.asList(args)
 
 		if ('check' == methodName.toLowerCase() &&
@@ -302,11 +302,11 @@ class DslBuilder extends BuilderSupport {
 		false
 	}
 
-	private void setText(String value) {
+	protected void setText(String value) {
 		currentText = changeLogParameters.expandExpressions(StringUtils.trimToNull(value))
 	}
 
-	private void processIncludeAll(Map attributes) {
+	protected void processIncludeAll(Map attributes) {
 		String pathName = attributes.path.replace('\\', '/')
 		if (!pathName.endsWith('/')) {
 			pathName += '/'
@@ -380,7 +380,7 @@ class DslBuilder extends BuilderSupport {
 		}
 	}
 
-	private File extractZipFile(URL resource) {
+	protected File extractZipFile(URL resource) {
 		String path = resource.file.split('!')[0]
 		if (path.matches('file:\\/[A-Za-z]:\\/.*')) {
 			path = path.replaceFirst('file:\\/', '')
@@ -399,7 +399,7 @@ class DslBuilder extends BuilderSupport {
 		tempDir
 	}
 
-	private void processChangeSet(Map attributes) {
+	protected void processChangeSet(Map attributes) {
 		boolean alwaysRun = 'true'.equalsIgnoreCase(attributes.runAlways)
 		boolean runOnChange = 'true'.equalsIgnoreCase(attributes.runOnChange)
 		String filePath = attributes.logicalFilePath ?: databaseChangeLog.filePath
@@ -421,7 +421,7 @@ class DslBuilder extends BuilderSupport {
 		}
 	}
 
-	private void processRollback(Map attributes) {
+	protected void processRollback(Map attributes) {
 		inRollback = true
 		String id = attributes.changeSetId
 		if (id == null) {
@@ -443,7 +443,7 @@ class DslBuilder extends BuilderSupport {
 		cs.changes.each { currentChangeSet.addRollbackChange it }
 	}
 
-	private void processPreConditions(Map attributes) {
+	protected void processPreConditions(Map attributes) {
 		rootPrecondition = new PreconditionContainer()
 		rootPrecondition.setOnFail StringUtils.trimToNull(attributes.onFail)
 		rootPrecondition.setOnError StringUtils.trimToNull(attributes.onError)
@@ -453,7 +453,7 @@ class DslBuilder extends BuilderSupport {
 		preconditionLogicStack << rootPrecondition
 	}
 
-	private void processModifySql(Map attributes) {
+	protected void processModifySql(Map attributes) {
 		inModifySql = true
 
 		if (StringUtils.trimToNull(attributes.dbms)) {
@@ -469,7 +469,7 @@ class DslBuilder extends BuilderSupport {
 		}
 	}
 
-	private void processChange(String name, Map attributes, value) {
+	protected void processChange(String name, Map attributes, value) {
 		setText value
 
 		currentChange = ChangeFactory.instance.create(name)
@@ -508,7 +508,7 @@ class DslBuilder extends BuilderSupport {
 		currentChange.init()
 	}
 
-	private void processColumn(Map attributes) {
+	protected void processColumn(Map attributes) {
 		def column = currentChange instanceof LoadDataChange ?
 			new LoadDataColumnConfig() : new ColumnConfig()
 
@@ -522,7 +522,7 @@ class DslBuilder extends BuilderSupport {
 		}
 	}
 
-	private void processConstraints(Map attributes) {
+	protected void processConstraints(Map attributes) {
 		def constraints = new ConstraintsConfig()
 		setPropertiesFromAttributes constraints, attributes
 
@@ -543,7 +543,7 @@ class DslBuilder extends BuilderSupport {
 		lastColumn.setConstraints constraints
 	}
 
-	private void processParam(Map attributes) {
+	protected void processParam(Map attributes) {
 		if (currentChange instanceof CustomChangeWrapper) {
 			if (attributes.value == null) {
 				currentParamName = attributes.name
@@ -557,7 +557,7 @@ class DslBuilder extends BuilderSupport {
 		}
 	}
 
-	private void processProperty(Map attributes) {
+	protected void processProperty(Map attributes) {
 		String context = StringUtils.trimToNull(attributes.context)
 		String dbms = StringUtils.trimToNull(attributes.dbms)
 		if (!StringUtils.trimToNull(attributes.file)) {
@@ -696,11 +696,11 @@ class DslBuilder extends BuilderSupport {
 		}
 	}
 
-	private void setPropertiesFromAttributes(object, Map attributes) {
+	protected void setPropertiesFromAttributes(object, Map attributes) {
 		attributes.each { name, value -> setPropertyValue object, name, value }
 	}
 
-	private void setPropertyValue(object, String name, String value) {
+	protected void setPropertyValue(object, String name, String value) {
 		value = changeLogParameters.expandExpressions(value)
 		if (object instanceof CustomChangeWrapper) {
 			if ('class' == name) {
@@ -715,7 +715,7 @@ class DslBuilder extends BuilderSupport {
 		}
 	}
 
-	private boolean handleIncludedChangeLog(String fileName, boolean isRelativePath, String relativeBaseFileName) {
+	protected boolean handleIncludedChangeLog(String fileName, boolean isRelativePath, String relativeBaseFileName) {
 		String lowerName = fileName.toLowerCase()
 		if (!(lowerName.endsWith('.xml') || lowerName.endsWith('.groovy') || lowerName.endsWith('.sql'))) {
 			log.debug "$relativeBaseFileName/$fileName is not a recognized file type"

@@ -27,7 +27,7 @@ import org.springframework.jdbc.datasource.DelegatingDataSource
  */
 class DelayedDataSource extends DelegatingDataSource {
 
-	private boolean _initialized
+	protected boolean _initialized
 
 	ConfigObject dataSourceConfig
 
@@ -42,7 +42,7 @@ class DelayedDataSource extends DelegatingDataSource {
 		// override to not check for targetDataSource since it's lazily created
 	}
 
-	private synchronized void initialize() {
+	protected synchronized void initialize() {
 		if (_initialized) {
 			return
 		}

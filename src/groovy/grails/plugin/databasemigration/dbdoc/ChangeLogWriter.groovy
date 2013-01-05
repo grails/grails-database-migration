@@ -20,8 +20,8 @@ import liquibase.resource.ResourceAccessor
  * @author <a href='mailto:burt@burtbeckwith.com'>Burt Beckwith</a>
  */
 class ChangeLogWriter {
-	private ResourceAccessor resourceAccessor
-	private Map files
+	protected ResourceAccessor resourceAccessor
+	protected Map files
 
 	ChangeLogWriter(ResourceAccessor resourceAccessor, Map files) {
 		this.files = files
