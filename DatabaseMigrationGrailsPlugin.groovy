@@ -41,7 +41,7 @@ import liquibase.sqlgenerator.core.CreateTableGenerator
 
 class DatabaseMigrationGrailsPlugin {
 
-	String version = '1.3.2'
+	String version = '1.3.2pg20'
 	String grailsVersion = '1.3.0 > *'
 	String author = 'Burt Beckwith'
 	String authorEmail = 'beckwithb@vmware.com'

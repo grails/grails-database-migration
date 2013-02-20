@@ -32,7 +32,7 @@
 		<link>
 			<name>.link_to_grails_plugins</name>
 			<type>2</type>
-			<locationURI>GRAILS_ROOT/grails-database-migration/target/plugins</locationURI>
+			<location>C:/workspace/grails-database-migration/target/plugins</location>
 		</link>
 	</linkedResources>
 </projectDescription>
