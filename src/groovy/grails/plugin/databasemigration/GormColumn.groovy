@@ -51,6 +51,7 @@ class GormColumn extends Column {
 		}
 		else {
 			hibernateColumn.sqlType = hibernateColumn.getSqlType(dialect, mapping)
+			sqlTypeSet = hibernateColumn.sqlType != null
 		}
 
 		setName hibernateColumn.name
