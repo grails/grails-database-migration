@@ -42,7 +42,7 @@ class GormColumn extends Column {
 		if (!typeHasScaleAndPrecision(dataType)) {
 			decimalDigits = 0
 		}
-		if (!typeHasLength(dataType)) {
+		if (typeHasLength(dataType)) {
 			decimalDigits = 0
 		}
 
