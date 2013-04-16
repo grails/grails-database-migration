@@ -80,6 +80,15 @@ class DatabaseMigrationGrailsPlugin {
 	}
 
 	def doWithApplicationContext = { ctx ->
+
+		def conf = ctx.grailsApplication.config.grails.plugin.databasemigration
+		if (conf.databaseChangeLogTableName) {
+			System.setProperty 'liquibase.databaseChangeLogTableName', conf.databaseChangeLogTableName
+		}
+		if (conf.databaseChangeLogLockTableName) {
+			System.setProperty 'liquibase.databaseChangeLogLockTableName', conf.databaseChangeLogLockTableName
+		}
+
 		register ctx
 
 		fixLogging()
