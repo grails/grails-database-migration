@@ -21,6 +21,10 @@ import grails.util.Environment
 
 import java.sql.DriverManager
 
+import javax.sql.DataSource
+
+import org.springframework.jndi.JndiObjectFactoryBean
+
 includeTargets << new File("$databaseMigrationPluginDir/scripts/_DatabaseMigrationCommon.groovy")
 
 target(dbmDiff: 'Writes description of differences to standard out') {
@@ -62,7 +66,6 @@ target(dbmDiff: 'Writes description of differences to standard out') {
 	}
 }
 
-// TODO this will fail with JNDI or encryption codec
 buildOtherDatabase = { String otherEnv ->
 
 	try {
@@ -81,21 +84,65 @@ buildOtherDatabase = { String otherEnv ->
 	configSlurper.binding = binding.variables
 	def otherDsConfig = configSlurper.parse(classLoader.loadClass('DataSource')).dataSource
 
-	try {
-		Class.forName otherDsConfig.driverClassName, true, classLoader
-	}
-	catch (e) {
-		errorAndDie "Driver class $otherDsConfig.driverClassName not found"
-	}
+	def connection
 
-	if (!otherDsConfig.url || !otherDsConfig.username) {
-		errorAndDie "The comparison DataSource URL and/or username is missing, or the DataSource configuration for environment '$otherEnv' wasn't found"
+	if (otherDsConfig.jndiName) {
+		def factory = new JndiObjectFactoryBean(jndiName: otherDsConfig.jndiName, expectedType: DataSource)
+		factory.afterPropertiesSet()
+		connection = factory.object.connection
 	}
+	else {
+		try {
+			Class.forName otherDsConfig.driverClassName, true, classLoader
+		}
+		catch (e) {
+			errorAndDie "Driver class $otherDsConfig.driverClassName not found"
+		}
 
-	def connection = DriverManager.getConnection(
-		otherDsConfig.url, otherDsConfig.username, otherDsConfig.password ?: null)
+		if (!otherDsConfig.url || !otherDsConfig.username) {
+			errorAndDie "The comparison DataSource URL and/or username is missing, or the DataSource configuration for environment '$otherEnv' wasn't found"
+		}
+
+		String password = otherDsConfig.passwordEncryptionCodec ? resolvePassword(otherDsConfig) : otherDsConfig.password ?: null
+		connection = DriverManager.getConnection(otherDsConfig.url, otherDsConfig.username, password)
+	}
 
 	MigrationUtils.getDatabase connection, defaultSchema, null
+}
+
+resolvePassword = { ds ->
+
+	Class codecClass
+
+	def encryptionCodec = ds.passwordEncryptionCodec
+	if (encryptionCodec instanceof Class) {
+		codecClass = encryptionCodec
+	}
+	else {
+		encryptionCodec = encryptionCodec.toString()
+		codecClass = grailsApp.codecClasses.find {
+			it.name.equalsIgnoreCase(encryptionCodec) || it.fullName == encryptionCodec
+		}?.clazz
+
+		if (!codecClass) {
+			codecClass = Class.forName(encryptionCodec, true, grailsApp.classLoader)
+		}
+
+		if (!codecClass) {
+			throw new RuntimeException("Error decoding dataSource password. Codec class not found for name [$encryptionCodec]")
+		}
+	}
+
+	try {
+		return codecClass.decode(ds.password)
+	}
+	catch (ClassNotFoundException e) {
+		throw new RuntimeException(
+			"Error decoding dataSource password. Codec class not found for name [$encryptionCodec]: $e.message", e)
+	}
+	catch (e) {
+		throw new RuntimeException("Error decoding dataSource password with codec [$encryptionCodec]: $e.message", e)
+	}
 }
 
 setDefaultTarget dbmDiff

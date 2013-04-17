@@ -15,6 +15,7 @@
 package grails.plugin.databasemigration
 
 import grails.util.GrailsUtil
+import liquibase.exception.ValidationFailedException
 
 import java.text.SimpleDateFormat
 
@@ -48,6 +49,10 @@ class ScriptUtils {
 	static final String FULL_DATE_FORMAT = DAY_DATE_FORMAT + ' HH:mm:ss'
 
 	protected Logger log = LoggerFactory.getLogger('grails.plugin.databasemigration.Scripts')
+
+	static void printStackTrace(ValidationFailedException e) {
+		e.printDescriptiveError System.out
+	}
 
 	static void printStackTrace(Throwable e) {
 		GrailsUtil.deepSanitize e

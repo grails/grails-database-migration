@@ -203,6 +203,11 @@ class MigrationUtils {
 			scriptName = 'RunApp'
 		}
 
+		if (!scriptName) {
+			// not run-app, so it won't make sense to auto-migrate
+			return
+		}
+
 		// in run-app
 		if (getAutoMigrateScripts(dsName).contains(scriptName)) {
 			return true

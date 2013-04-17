@@ -15,6 +15,8 @@ grails.plugin.databasemigration. updateOnStartDefaultSchema | none | the default
 grails.plugin.databasemigration. updateOnStartContexts | none | A comma-delimited list of [context|http://www.liquibase.org/manual/contexts] names. If specified, only changesets tagged with one of the context names will be run
 grails.plugin.databasemigration. autoMigrateScripts | ['RunApp'] | the scripts when running auto-migrate. Useful to run auto-migrate during test phase with: ['RunApp', 'TestApp']
 grails.plugin.databasemigration. ignoredObjects | none | one or more database object names to ignore while performing a dbm-gorm-diff or dbm-generate-gorm-changelog
+grails.plugin.databasemigration. databaseChangeLogTableName | 'databasechangelog' | the Liquibase changelog record table name
+grails.plugin.databasemigration. databaseChangeLogLockTableName | 'databasechangeloglock' | the Liquibase lock table name
 {table}
 
 {note}

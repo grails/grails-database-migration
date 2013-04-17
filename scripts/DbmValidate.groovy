@@ -16,21 +16,13 @@
 /**
  * @author <a href='mailto:burt@burtbeckwith.com'>Burt Beckwith</a>
  */
-
-import liquibase.exception.ValidationFailedException
-
 includeTargets << new File("$databaseMigrationPluginDir/scripts/_DatabaseMigrationCommon.groovy")
 
 target(dbmValidate: 'Checks the changelog for errors') {
 	depends dbmInit
 
 	doAndClose {
-		try {
-			liquibase.validate()
-		}
-		catch (ValidationFailedException e) {
-			e.printDescriptiveError System.out
-		}
+		liquibase.validate()
 	}
 }
 

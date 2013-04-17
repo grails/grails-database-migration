@@ -41,7 +41,7 @@ import liquibase.sqlgenerator.core.CreateTableGenerator
 
 class DatabaseMigrationGrailsPlugin {
 
-	String version = '1.3.2'
+	String version = '1.3.3'
 	String grailsVersion = '1.3.0 > *'
 	String author = 'Burt Beckwith'
 	String authorEmail = 'beckwithb@vmware.com'
@@ -80,6 +80,15 @@ class DatabaseMigrationGrailsPlugin {
 	}
 
 	def doWithApplicationContext = { ctx ->
+
+		def conf = ctx.grailsApplication.config.grails.plugin.databasemigration
+		if (conf.databaseChangeLogTableName) {
+			System.setProperty 'liquibase.databaseChangeLogTableName', conf.databaseChangeLogTableName
+		}
+		if (conf.databaseChangeLogLockTableName) {
+			System.setProperty 'liquibase.databaseChangeLogLockTableName', conf.databaseChangeLogLockTableName
+		}
+
 		register ctx
 
 		fixLogging()
