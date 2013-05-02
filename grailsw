@@ -295,6 +295,11 @@ STARTER_MAIN_CLASS=org.grails.wrapper.GrailsWrapper
 
 lateInit
 
+grailsVersion=$( cat application.properties | grep "app.grails.version=" | sed -e "s/^.*=//" | tr -d '\r\n ' )
+realGrailsHome=$HOME/.grails/wrapper/$grailsVersion/grails-$grailsVersion
+chmod u+x $realGrailsHome/bin/grails
+chmod u+x $realGrailsHome/bin/startGrails
+
 startGrails() {
   CLASS=$1
   shift
