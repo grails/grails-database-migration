@@ -103,4 +103,16 @@ class GormColumn extends Column {
 
 		name.equalsIgnoreCase(column.name) && column.table == table && column.view == view
 	}
+	
+	// have to re-implement since base class does case-sensitive column-name comparison
+	@Override
+	public int compareTo(Column o) {
+		int d
+		if(table || o.table) {
+			d = table <=> o.table
+		} else {
+			d = view <=> o.view
+		}
+		d != 0 ? d : name.compareToIgnoreCase(o.name)
+	}
 }
