@@ -64,7 +64,7 @@ class MigrationRunner {
 					Map<String, Liquibase> liquibases = [:]
 					for (String changelogName in config.updateOnStartFileNames) {
 						Liquibase liquibase = MigrationUtils.getLiquibase(database, changelogName)
-						if (liquibase.listUnrunChangeSets()) {
+						if (liquibase.listUnrunChangeSets(config.updateOnStartContexts ?: config.contexts ?: null)) {
 							liquibases[changelogName] = liquibase
 						}
 					}
