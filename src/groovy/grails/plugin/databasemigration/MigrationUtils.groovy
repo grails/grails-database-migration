@@ -353,6 +353,8 @@ class MigrationUtils {
 				ignoredColumns.find { pattern -> "${column.table.name}.$column.name" ==~ pattern } != null
 			})
 		}
+
+		diffResult.missingViews.removeAll(diffResult.missingViews.findAll { ignoredObjects.contains(it.name) })
 	}
 
 	static boolean hibernateAvailable() {
