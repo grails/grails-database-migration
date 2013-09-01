@@ -337,6 +337,7 @@ class MigrationUtils {
 
 		// ignore unexpected foreign keys that are for ignored tables
 		diffResult.unexpectedForeignKeys.removeAll(diffResult.unexpectedForeignKeys.findAll { ignoredObjects.contains(it.foreignKeyTable.name) })
+		diffResult.unexpectedIndexes.removeAll(diffResult.unexpectedIndexes.findAll { ignoredObjects.contains(it.table.name) })
 		diffResult.unexpectedIndexes.removeAll(diffResult.unexpectedIndexes.findAll { ignoredObjects.contains(it.name) })
 		diffResult.unexpectedPrimaryKeys.removeAll(diffResult.unexpectedPrimaryKeys.findAll { ignoredObjects.contains(it.name) })
 
@@ -344,6 +345,21 @@ class MigrationUtils {
 		diffResult.unexpectedPrimaryKeys.removeAll(diffResult.unexpectedPrimaryKeys.findAll { ignoredObjects.contains(it.table.name) })
 		diffResult.unexpectedUniqueConstraints.removeAll(diffResult.unexpectedUniqueConstraints.findAll { ignoredObjects.contains(it.name) })
 		diffResult.unexpectedSequences.removeAll(diffResult.unexpectedSequences.findAll { ignoredObjects.contains(it.name) })
+
+
+		def ignoredColumns= application.config.grails.plugin.databasemigration.ignoredColumns
+
+		//list of regex expressions matching columns
+		if (ignoredColumns){
+			diffResult.unexpectedColumns.removeAll(diffResult.unexpectedColumns.findAll{column->
+				def matches = ignoredColumns.find{pattern ->
+						 return (column.table.name + "." + column.name) ==~ pattern
+					}
+
+				return matches != null
+				}
+			)
+		}
 	}
 
 	static boolean hibernateAvailable() {
