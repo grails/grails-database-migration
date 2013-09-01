@@ -106,13 +106,14 @@ class GormColumn extends Column {
 	
 	// have to re-implement since base class does case-sensitive column-name comparison
 	@Override
-	public int compareTo(Column o) {
+	int compareTo(Column o) {
 		int d
-		if(table || o.table) {
+		if (table || o.table) {
 			d = table <=> o.table
-		} else {
+		}
+		else {
 			d = view <=> o.view
 		}
-		d != 0 ? d : name.compareToIgnoreCase(o.name)
+		d ?: name.compareToIgnoreCase(o.name)
 	}
 }
