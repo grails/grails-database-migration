@@ -14,8 +14,6 @@
  */
 package grails.plugin.databasemigration
 
-import groovy.util.logging.Slf4j
-
 import java.lang.reflect.Field
 
 import liquibase.database.Database
@@ -144,17 +142,18 @@ class GormDiff extends Diff {
 		if (baseColumn.sqlTypeSet && baseColumn.typeName.equalsIgnoreCase(targetColumn.typeName)) {
 			return true
 		}
-		log.debug "Comparing target column $targetColumn(${targetColumn.dataType}, ${targetColumn.columnSize}, ${targetColumn.columnSize}, ${targetColumn.decimalDigits}, ${targetColumn.typeName}) "
-		log.debug "with base column $baseColumn(${baseColumn.dataType}, ${baseColumn.columnSize}, ${baseColumn.columnSize}, ${baseColumn.decimalDigits}, ${baseColumn.typeName}, ${baseColumn.sqlTypeSet}) "
-		try{
-			def targetTypeName = dialect.getTypeName(targetColumn.dataType, targetColumn.columnSize, targetColumn.columnSize, targetColumn.decimalDigits)
-			def baseTypeName = dialect.getTypeName(baseColumn.dataType, baseColumn.columnSize, baseColumn.columnSize, baseColumn.decimalDigits)
+
+		log.debug """Comparing target column $targetColumn($targetColumn.dataType, $targetColumn.columnSize, $targetColumn.columnSize, $targetColumn.decimalDigits, $targetColumn.typeName)
+with base column $baseColumn($baseColumn.dataType, $baseColumn.columnSize, $baseColumn.columnSize, $baseColumn.decimalDigits, $baseColumn.typeName, $baseColumn.sqlTypeSet)"""
+		try {
+			String targetTypeName = dialect.getTypeName(targetColumn.dataType, targetColumn.columnSize, targetColumn.columnSize, targetColumn.decimalDigits)
+			String baseTypeName = dialect.getTypeName(baseColumn.dataType, baseColumn.columnSize, baseColumn.columnSize, baseColumn.decimalDigits)
 			return targetTypeName == baseTypeName
-		}catch (Exception e){
-			log.error "Failed to compare type... We will continue with the comparison", e
+		}
+		catch (e) {
+			log.warn "Failed to compare type... We will continue with the comparison", e
 			return false
 		}
-
 	}
 
 	@Override

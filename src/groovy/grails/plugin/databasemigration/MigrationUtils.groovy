@@ -346,19 +346,12 @@ class MigrationUtils {
 		diffResult.unexpectedUniqueConstraints.removeAll(diffResult.unexpectedUniqueConstraints.findAll { ignoredObjects.contains(it.name) })
 		diffResult.unexpectedSequences.removeAll(diffResult.unexpectedSequences.findAll { ignoredObjects.contains(it.name) })
 
-
-		def ignoredColumns= application.config.grails.plugin.databasemigration.ignoredColumns
-
 		//list of regex expressions matching columns
-		if (ignoredColumns){
-			diffResult.unexpectedColumns.removeAll(diffResult.unexpectedColumns.findAll{column->
-				def matches = ignoredColumns.find{pattern ->
-						 return (column.table.name + "." + column.name) ==~ pattern
-					}
-
-				return matches != null
-				}
-			)
+		def ignoredColumns = application.config.grails.plugin.databasemigration.ignoredColumns ?: []
+		if (ignoredColumns) {
+			diffResult.unexpectedColumns.removeAll(diffResult.unexpectedColumns.findAll { column ->
+				ignoredColumns.find { pattern -> "${column.table.name}.$column.name" ==~ pattern } != null
+			})
 		}
 	}
 
