@@ -59,6 +59,7 @@ doAndClose = { Closure c ->
 		}
 	}
 	catch (e) {
+                printMessage "Caught exception: $e"
 		ScriptUtils.printStackTrace e
 		exit 1
 	}
