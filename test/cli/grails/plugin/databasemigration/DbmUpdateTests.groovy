@@ -101,7 +101,7 @@ class DbmUpdateTests extends AbstractScriptTests {
 		assertTrue createFileContent.contains("in create")
 		assertTrue createFileContent.contains("database class: 'liquibase.database.core.H2Database', typeName: 'h2'")
 		assertTrue createFileContent.contains("databaseConnection class: 'liquibase.database.jvm.JdbcConnection'")
-		assertTrue createFileContent.contains("connection class: '\$Proxy")
+		assertTrue((createFileContent =~ "connection class: '.+\\\$Proxy.+'") as Boolean)
 
 		assertFalse rollbackFile.exists()
 
@@ -121,7 +121,7 @@ class DbmUpdateTests extends AbstractScriptTests {
 		assertTrue rollbackFileContent.contains("in rollback")
 		assertTrue rollbackFileContent.contains("database class: 'liquibase.database.core.H2Database', typeName: 'h2'")
 		assertTrue rollbackFileContent.contains("databaseConnection class: 'liquibase.database.jvm.JdbcConnection'")
-		assertTrue rollbackFileContent.contains("connection class: '\$Proxy")
+		assertTrue((rollbackFileContent =~ "connection class: '.+\\\$Proxy.+'") as Boolean)
 
 		// should only have the row we inserted above
 		assertEquals 1, tableSize()
@@ -332,7 +332,7 @@ class DbmUpdateTests extends AbstractScriptTests {
 		assertTrue createFileContent.contains("in create")
 		assertTrue createFileContent.contains("database class: 'liquibase.database.core.H2Database', typeName: 'h2'")
 		assertTrue createFileContent.contains("databaseConnection class: 'liquibase.database.jvm.JdbcConnection'")
-		assertTrue createFileContent.contains("connection class: '\$Proxy")
+		assertTrue((createFileContent =~ "connection class: '.+\\\$Proxy.+'") as Boolean)
 
 		assertFalse rollbackFile.exists()
 
@@ -352,7 +352,7 @@ class DbmUpdateTests extends AbstractScriptTests {
 		assertTrue rollbackFileContent.contains("in rollback")
 		assertTrue rollbackFileContent.contains("database class: 'liquibase.database.core.H2Database', typeName: 'h2'")
 		assertTrue rollbackFileContent.contains("databaseConnection class: 'liquibase.database.jvm.JdbcConnection'")
-		assertTrue rollbackFileContent.contains("connection class: '\$Proxy")
+		assertTrue((rollbackFileContent =~ "connection class: '.+\\\$Proxy.+'") as Boolean)
 
 		// should only have the row we inserted above
 		assertEquals 1, tableSize()
