@@ -28,7 +28,7 @@ class DbmClearChecksumsTests extends AbstractScriptTests {
 		executeAndCheck(['dbm-update-count', '1'])
 
 		// should have checksums after running update
-		newSql(AbstractScriptTests.URL).eachRow('select * from databasechangelog') {
+		newSql(AbstractScriptTests.URL).eachRow('select * from xdatabasechangelogx') {
 			assertNotNull it.md5sum
 			assertEquals 34, it.md5sum.length()
 			assertEquals 'changelog.cli.test.groovy', it.filename
@@ -40,7 +40,7 @@ class DbmClearChecksumsTests extends AbstractScriptTests {
 		executeAndCheck 'dbm-clear-checksums'
 
 		// should have null checksums but otherwise unchanged
-		newSql(AbstractScriptTests.URL).eachRow('select * from databasechangelog') {
+		newSql(AbstractScriptTests.URL).eachRow('select * from xdatabasechangelogx') {
 			assertNull it.md5sum
 			assertEquals 'changelog.cli.test.groovy', it.filename
 			assertEquals 'EXECUTED', it.exectype
@@ -61,7 +61,7 @@ class DbmClearChecksumsTests extends AbstractScriptTests {
 		executeAndCheck(['dbm-update-count', '1', '--dataSource=secondary'])
 
 		// should have checksums after running update
-		newSql(AbstractScriptTests.SECONDARY_URL).eachRow('select * from databasechangelog') {
+		newSql(AbstractScriptTests.SECONDARY_URL).eachRow('select * from xdatabasechangelogx') {
 			assertNotNull it.md5sum
 			assertEquals 34, it.md5sum.length()
 			assertEquals 'changelog.cli.secondary-test.groovy', it.filename
@@ -73,7 +73,7 @@ class DbmClearChecksumsTests extends AbstractScriptTests {
 		executeAndCheck (['dbm-clear-checksums', '--dataSource=secondary'])
 
 		// should have null checksums but otherwise unchanged
-		newSql(AbstractScriptTests.SECONDARY_URL).eachRow('select * from databasechangelog') {
+		newSql(AbstractScriptTests.SECONDARY_URL).eachRow('select * from xdatabasechangelogx') {
 			assertNull it.md5sum
 			assertEquals 'changelog.cli.secondary-test.groovy', it.filename
 			assertEquals 'EXECUTED', it.exectype

@@ -14,6 +14,10 @@ eventCreateWarStart = { name, stagingDir ->
 
 	def conf = config.grails.plugin.databasemigration
 	String changelogLocation = conf.changelogLocation ?: 'grails-app/migrations'
+	if (!new File(changelogLocation).exists()) {
+		return
+	}
+
 	File classesDir = new File(stagingDir, 'WEB-INF/classes/migrations')
 	classesDir.mkdirs()
 

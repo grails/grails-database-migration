@@ -143,8 +143,17 @@ class GormDiff extends Diff {
 			return true
 		}
 
-		dialect.getTypeName(targetColumn.dataType, targetColumn.columnSize, targetColumn.columnSize, targetColumn.decimalDigits) ==
-		dialect.getTypeName(baseColumn.dataType, baseColumn.columnSize, baseColumn.columnSize, baseColumn.decimalDigits)
+		log.debug """Comparing target column $targetColumn($targetColumn.dataType, $targetColumn.columnSize, $targetColumn.columnSize, $targetColumn.decimalDigits, $targetColumn.typeName)
+with base column $baseColumn($baseColumn.dataType, $baseColumn.columnSize, $baseColumn.columnSize, $baseColumn.decimalDigits, $baseColumn.typeName, $baseColumn.sqlTypeSet)"""
+		try {
+			String targetTypeName = dialect.getTypeName(targetColumn.dataType, targetColumn.columnSize, targetColumn.columnSize, targetColumn.decimalDigits)
+			String baseTypeName = dialect.getTypeName(baseColumn.dataType, baseColumn.columnSize, baseColumn.columnSize, baseColumn.decimalDigits)
+			return targetTypeName == baseTypeName
+		}
+		catch (e) {
+			log.warn "Failed to compare type... We will continue with the comparison", e
+			return false
+		}
 	}
 
 	@Override

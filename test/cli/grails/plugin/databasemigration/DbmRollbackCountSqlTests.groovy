@@ -42,7 +42,7 @@ class DbmRollbackCountSqlTests extends AbstractScriptTests {
 		assertTrue output.contains(
 			'ALTER TABLE PERSON DROP COLUMN ZIPCODE')
 		assertTrue output.contains(
-			"DELETE FROM DATABASECHANGELOG  WHERE ID='test-3' AND AUTHOR='burt' AND FILENAME='changelog.cli.test.groovy';")
+			"DELETE FROM xdatabasechangelogx  WHERE ID='test-3' AND AUTHOR='burt' AND FILENAME='changelog.cli.test.groovy';")
 	}
 
 	void testRollbackCountSqlForSecondaryDataSource() {
@@ -69,6 +69,6 @@ class DbmRollbackCountSqlTests extends AbstractScriptTests {
 		assertTrue output.contains('ALTER TABLE PERSON DROP COLUMN ZIPCODE')
 
 		assertTrue output.contains(
-			"DELETE FROM DATABASECHANGELOG  WHERE ID='test-3' AND AUTHOR='burt' AND FILENAME='changelog.cli.secondary-test.groovy';")
+			"DELETE FROM xdatabasechangelogx  WHERE ID='test-3' AND AUTHOR='burt' AND FILENAME='changelog.cli.secondary-test.groovy';")
 	}
 }

@@ -25,11 +25,11 @@ class DbmChangelogSyncSqlTests extends AbstractScriptTests {
 
 		executeAndCheck 'dbm-changelog-sync-sql'
 
-		assertTrue output.contains('CREATE TABLE DATABASECHANGELOGLOCK')
-		assertTrue output.contains('INSERT INTO DATABASECHANGELOGLOCK')
+		assertTrue output.contains('CREATE TABLE xdatabasechangeloglockx')
+		assertTrue output.contains('INSERT INTO xdatabasechangeloglockx')
 
-		assertTrue output.contains('CREATE TABLE DATABASECHANGELOG')
-		assertTrue output.contains('INSERT INTO DATABASECHANGELOG')
+		assertTrue output.contains('CREATE TABLE xdatabasechangelogx')
+		assertTrue output.contains('INSERT INTO xdatabasechangelogx')
 
 		assertTrue output.contains(
 			'Starting dbm-changelog-sync-sql for database sa @ jdbc:h2:tcp://localhost/./target/testdb/testdb')
@@ -41,11 +41,11 @@ class DbmChangelogSyncSqlTests extends AbstractScriptTests {
 
 		executeAndCheck(['dbm-changelog-sync-sql', '--dataSource=secondary'])
 
-		assertTrue output.contains('CREATE TABLE DATABASECHANGELOGLOCK')
-		assertTrue output.contains('INSERT INTO DATABASECHANGELOGLOCK')
+		assertTrue output.contains('CREATE TABLE xdatabasechangeloglockx')
+		assertTrue output.contains('INSERT INTO xdatabasechangeloglockx')
 
-		assertTrue output.contains('CREATE TABLE DATABASECHANGELOG')
-		assertTrue output.contains('INSERT INTO DATABASECHANGELOG')
+		assertTrue output.contains('CREATE TABLE xdatabasechangelogx')
+		assertTrue output.contains('INSERT INTO xdatabasechangelogx')
 
 		assertTrue output.contains(
 			'Starting dbm-changelog-sync-sql for database sa @ jdbc:h2:tcp://localhost/./target/testdb/testdb-secondary')

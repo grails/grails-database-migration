@@ -37,7 +37,7 @@ class DbmRollbackTests extends AbstractScriptTests {
 
 		// manually tag the first two updates
 		String tagName = 'THE_TAG'
-		executeUpdate url, "update databasechangelog set tag=? where id='test-1' or id='test-2'", [tagName]
+		executeUpdate url, "update xdatabasechangelogx set tag=? where id='test-1' or id='test-2'", [tagName]
 
 		// test parameter check
 		executeAndCheck(['dbm-rollback'], false)
@@ -77,7 +77,7 @@ class DbmRollbackTests extends AbstractScriptTests {
 
 		// manually tag the first two updates
 		String tagName = 'THE_TAG'
-		executeUpdate url, "update databasechangelog set tag=? where id='test-1' or id='test-2'", [tagName]
+		executeUpdate url, "update xdatabasechangelogx set tag=? where id='test-1' or id='test-2'", [tagName]
 
 		// test parameter check
 		executeAndCheck(['dbm-rollback', '--dataSource=secondary'], false)

@@ -29,7 +29,7 @@ class DbmTagTests extends AbstractScriptTests {
 
 		executeAndCheck(['dbm-update-count', '1'])
 
-		newSql(url).eachRow('select * from DATABASECHANGELOG') { assertNull it.TAG }
+		newSql(url).eachRow('select * from xdatabasechangelogx') { assertNull it.TAG }
 
 		// test parameter check
 		executeAndCheck(['dbm-tag'], false)
@@ -37,7 +37,7 @@ class DbmTagTests extends AbstractScriptTests {
 
 		executeAndCheck(['dbm-tag', 'tag123'])
 
-		newSql(url).eachRow('select * from DATABASECHANGELOG') { assertEquals 'tag123', it.TAG }
+		newSql(url).eachRow('select * from xdatabasechangelogx') { assertEquals 'tag123', it.TAG }
 	}
 
 	void testTagForSecondaryDataSource() {
@@ -50,7 +50,7 @@ class DbmTagTests extends AbstractScriptTests {
 
 		executeAndCheck(['dbm-update-count', '1', '--dataSource=secondary'])
 
-		newSql(url).eachRow('select * from DATABASECHANGELOG') { assertNull it.TAG }
+		newSql(url).eachRow('select * from xdatabasechangelogx') { assertNull it.TAG }
 
 		// test parameter check
 		executeAndCheck(['dbm-tag', '--dataSource=secondary'], false)
@@ -58,6 +58,6 @@ class DbmTagTests extends AbstractScriptTests {
 
 		executeAndCheck(['dbm-tag', 'tag123', '--dataSource=secondary'])
 
-		newSql(url).eachRow('select * from DATABASECHANGELOG') { assertEquals 'tag123', it.TAG }
+		newSql(url).eachRow('select * from xdatabasechangelogx') { assertEquals 'tag123', it.TAG }
 	}
 }

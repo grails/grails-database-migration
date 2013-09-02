@@ -3,14 +3,8 @@ h4. The first step is to add a dependency for the plugin in @BuildConfig.groovy@
 {code}
 plugins {
    ...
-   runtime ':database-migration:1.1'
+   runtime ':database-migration:1.3.6'
 }
-{code}
-
-or install with @install-plugin@:
-
-{code}
-grails install-plugin database-migration
 {code}
 
 h4. Typical initial workflow

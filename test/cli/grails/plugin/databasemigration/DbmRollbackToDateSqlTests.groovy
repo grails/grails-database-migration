@@ -32,11 +32,11 @@ class DbmRollbackToDateSqlTests extends AbstractScriptTests {
 		assertTableCount 4, url
 
 		// fake out the dates to be able to rollback to particular date
-		executeUpdate url, "update databasechangelog set dateexecuted=? where id='test-1'",
+		executeUpdate url, "update xdatabasechangelogx set dateexecuted=? where id='test-1'",
 			[new Timestamp((new Date() - 30).time)]
-		executeUpdate url, "update databasechangelog set dateexecuted=? where id='test-2'",
+		executeUpdate url, "update xdatabasechangelogx set dateexecuted=? where id='test-2'",
 			[new Timestamp((new Date() - 20).time)]
-		executeUpdate url, "update databasechangelog set dateexecuted=? where id='test-3'",
+		executeUpdate url, "update xdatabasechangelogx set dateexecuted=? where id='test-3'",
 			[new Timestamp((new Date() - 10).time)]
 
 		// test parameter check
@@ -52,8 +52,8 @@ class DbmRollbackToDateSqlTests extends AbstractScriptTests {
 		assertTrue output.contains('ALTER TABLE PERSON DROP COLUMN STREET1')
 		assertTrue output.contains('ALTER TABLE PERSON DROP COLUMN STREET2')
 		assertTrue output.contains('ALTER TABLE PERSON DROP COLUMN ZIPCODE')
-		assertTrue output.contains("DELETE FROM DATABASECHANGELOG  WHERE ID='test-2' AND AUTHOR='burt' AND FILENAME='changelog.cli.test.groovy'")
-		assertTrue output.contains("DELETE FROM DATABASECHANGELOG  WHERE ID='test-3' AND AUTHOR='burt' AND FILENAME='changelog.cli.test.groovy'")
+		assertTrue output.contains("DELETE FROM xdatabasechangelogx  WHERE ID='test-2' AND AUTHOR='burt' AND FILENAME='changelog.cli.test.groovy'")
+		assertTrue output.contains("DELETE FROM xdatabasechangelogx  WHERE ID='test-3' AND AUTHOR='burt' AND FILENAME='changelog.cli.test.groovy'")
 	}
 
 	void testRollbackToDateSqlForSecondaryDataSource_stdout() {
@@ -66,11 +66,11 @@ class DbmRollbackToDateSqlTests extends AbstractScriptTests {
 		assertTableCount 4, url
 
 		// fake out the dates to be able to rollback to particular date
-		executeUpdate url, "update databasechangelog set dateexecuted=? where id='test-1'",
+		executeUpdate url, "update xdatabasechangelogx set dateexecuted=? where id='test-1'",
 			[new Timestamp((new Date() - 30).time)]
-		executeUpdate url, "update databasechangelog set dateexecuted=? where id='test-2'",
+		executeUpdate url, "update xdatabasechangelogx set dateexecuted=? where id='test-2'",
 			[new Timestamp((new Date() - 20).time)]
-		executeUpdate url, "update databasechangelog set dateexecuted=? where id='test-3'",
+		executeUpdate url, "update xdatabasechangelogx set dateexecuted=? where id='test-3'",
 			[new Timestamp((new Date() - 10).time)]
 
 		// test parameter check
@@ -86,8 +86,8 @@ class DbmRollbackToDateSqlTests extends AbstractScriptTests {
 		assertTrue output.contains('ALTER TABLE PERSON DROP COLUMN STREET1')
 		assertTrue output.contains('ALTER TABLE PERSON DROP COLUMN STREET2')
 		assertTrue output.contains('ALTER TABLE PERSON DROP COLUMN ZIPCODE')
-		assertTrue output.contains("DELETE FROM DATABASECHANGELOG  WHERE ID='test-2' AND AUTHOR='burt' AND FILENAME='changelog.cli.secondary-test.groovy'")
-		assertTrue output.contains("DELETE FROM DATABASECHANGELOG  WHERE ID='test-3' AND AUTHOR='burt' AND FILENAME='changelog.cli.secondary-test.groovy'")
+		assertTrue output.contains("DELETE FROM xdatabasechangelogx  WHERE ID='test-2' AND AUTHOR='burt' AND FILENAME='changelog.cli.secondary-test.groovy'")
+		assertTrue output.contains("DELETE FROM xdatabasechangelogx  WHERE ID='test-3' AND AUTHOR='burt' AND FILENAME='changelog.cli.secondary-test.groovy'")
 	}
 
 	void testRollbackToDateSql_file() {
@@ -100,11 +100,11 @@ class DbmRollbackToDateSqlTests extends AbstractScriptTests {
 		assertTableCount 4, url
 
 		// fake out the dates to be able to rollback to particular date
-		executeUpdate url, "update databasechangelog set dateexecuted=? where id='test-1'",
+		executeUpdate url, "update xdatabasechangelogx set dateexecuted=? where id='test-1'",
 			[new Timestamp((new Date() - 30).time)]
-		executeUpdate url, "update databasechangelog set dateexecuted=? where id='test-2'",
+		executeUpdate url, "update xdatabasechangelogx set dateexecuted=? where id='test-2'",
 			[new Timestamp((new Date() - 20).time)]
-		executeUpdate url, "update databasechangelog set dateexecuted=? where id='test-3'",
+		executeUpdate url, "update xdatabasechangelogx set dateexecuted=? where id='test-3'",
 			[new Timestamp((new Date() - 10).time)]
 
 		// test parameter check
@@ -129,8 +129,8 @@ class DbmRollbackToDateSqlTests extends AbstractScriptTests {
 		assertTrue fileContents.contains('ALTER TABLE PERSON DROP COLUMN STREET1')
 		assertTrue fileContents.contains('ALTER TABLE PERSON DROP COLUMN STREET2')
 		assertTrue fileContents.contains('ALTER TABLE PERSON DROP COLUMN ZIPCODE')
-		assertTrue fileContents.contains("DELETE FROM DATABASECHANGELOG  WHERE ID='test-2' AND AUTHOR='burt' AND FILENAME='changelog.cli.test.groovy'")
-		assertTrue fileContents.contains("DELETE FROM DATABASECHANGELOG  WHERE ID='test-3' AND AUTHOR='burt' AND FILENAME='changelog.cli.test.groovy'")
+		assertTrue fileContents.contains("DELETE FROM xdatabasechangelogx  WHERE ID='test-2' AND AUTHOR='burt' AND FILENAME='changelog.cli.test.groovy'")
+		assertTrue fileContents.contains("DELETE FROM xdatabasechangelogx  WHERE ID='test-3' AND AUTHOR='burt' AND FILENAME='changelog.cli.test.groovy'")
 	}
 
 	void testRollbackToDateSqlForSecondaryDataSource_file() {
@@ -143,11 +143,11 @@ class DbmRollbackToDateSqlTests extends AbstractScriptTests {
 		assertTableCount 4, url
 
 		// fake out the dates to be able to rollback to particular date
-		executeUpdate url, "update databasechangelog set dateexecuted=? where id='test-1'",
+		executeUpdate url, "update xdatabasechangelogx set dateexecuted=? where id='test-1'",
 			[new Timestamp((new Date() - 30).time)]
-		executeUpdate url, "update databasechangelog set dateexecuted=? where id='test-2'",
+		executeUpdate url, "update xdatabasechangelogx set dateexecuted=? where id='test-2'",
 			[new Timestamp((new Date() - 20).time)]
-		executeUpdate url, "update databasechangelog set dateexecuted=? where id='test-3'",
+		executeUpdate url, "update xdatabasechangelogx set dateexecuted=? where id='test-3'",
 			[new Timestamp((new Date() - 10).time)]
 
 		// test parameter check
@@ -172,7 +172,7 @@ class DbmRollbackToDateSqlTests extends AbstractScriptTests {
 		assertTrue fileContents.contains('ALTER TABLE PERSON DROP COLUMN STREET1')
 		assertTrue fileContents.contains('ALTER TABLE PERSON DROP COLUMN STREET2')
 		assertTrue fileContents.contains('ALTER TABLE PERSON DROP COLUMN ZIPCODE')
-		assertTrue fileContents.contains("DELETE FROM DATABASECHANGELOG  WHERE ID='test-2' AND AUTHOR='burt' AND FILENAME='changelog.cli.secondary-test.groovy'")
-		assertTrue fileContents.contains("DELETE FROM DATABASECHANGELOG  WHERE ID='test-3' AND AUTHOR='burt' AND FILENAME='changelog.cli.secondary-test.groovy'")
+		assertTrue fileContents.contains("DELETE FROM xdatabasechangelogx  WHERE ID='test-2' AND AUTHOR='burt' AND FILENAME='changelog.cli.secondary-test.groovy'")
+		assertTrue fileContents.contains("DELETE FROM xdatabasechangelogx  WHERE ID='test-3' AND AUTHOR='burt' AND FILENAME='changelog.cli.secondary-test.groovy'")
 	}
 }

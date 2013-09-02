@@ -51,6 +51,7 @@ class GormColumn extends Column {
 		}
 		else {
 			hibernateColumn.sqlType = hibernateColumn.getSqlType(dialect, mapping)
+			sqlTypeSet = hibernateColumn.sqlType != null
 		}
 
 		setName hibernateColumn.name
@@ -101,5 +102,18 @@ class GormColumn extends Column {
 		Column column = other
 
 		name.equalsIgnoreCase(column.name) && column.table == table && column.view == view
+	}
+	
+	// have to re-implement since base class does case-sensitive column-name comparison
+	@Override
+	int compareTo(Column o) {
+		int d
+		if (table || o.table) {
+			d = table <=> o.table
+		}
+		else {
+			d = view <=> o.view
+		}
+		d ?: name.compareToIgnoreCase(o.name)
 	}
 }

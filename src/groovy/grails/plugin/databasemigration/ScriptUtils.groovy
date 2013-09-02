@@ -56,7 +56,7 @@ class ScriptUtils {
 
 	static void printStackTrace(Throwable e) {
 		GrailsUtil.deepSanitize e
-		e.printStackTrace()
+		e.printStackTrace(System.out)
 	}
 
 	static PrintStream calculateDestination(List argsList, Integer argIndex = 0, boolean relativeToMigrationDir = false) {

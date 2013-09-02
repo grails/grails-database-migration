@@ -50,6 +50,9 @@ class DbmGormDiffTests extends AbstractScriptTests {
 
 		// no corresponding domain class
 		assertTrue diffOutput.contains('<dropTable tableName="PERSON"/>')
+		
+		assertFalse 'Must not drop columns in RDBMS which convert column names to upper-case', 
+			diffOutput.contains('<dropColumn columnName="NAME" tableName="THING"/>')
 	}
 
 	void testGormDiff_Groovy() {
@@ -84,6 +87,9 @@ class DbmGormDiffTests extends AbstractScriptTests {
 
 		// no corresponding domain class
 		assertTrue diffOutput.contains('dropTable(tableName: "PERSON")')
+		
+		assertFalse 'Must not drop columns in RDBMS which convert column names to upper-case', 
+			diffOutput.contains('dropColumn(columnName: "ID", tableName: "THING")')
 	}
 
 	void testGormDiff_STDOUT() {
@@ -109,6 +115,9 @@ class DbmGormDiffTests extends AbstractScriptTests {
 
 		// no corresponding domain class
 		assertTrue output.contains('<dropTable tableName="PERSON"/>')
+		
+		assertFalse 'Must not drop columns in RDBMS which convert column names to upper-case',
+			output.contains('<dropColumn columnName="NAME" tableName="THING"/>')
 	}
 
 	void testGormDiffForSecondaryDataSource_XML() {
