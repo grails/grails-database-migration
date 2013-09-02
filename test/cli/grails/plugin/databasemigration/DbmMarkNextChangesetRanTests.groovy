@@ -31,7 +31,7 @@ class DbmMarkNextChangesetRanTests extends AbstractScriptTests {
 		executeAndCheck 'dbm-mark-next-changeset-ran'
 		assertTrue output.contains('Starting dbm-mark-next-changeset-ran')
 
-		assertTrue output.contains('Executing EXECUTE database command: INSERT INTO DATABASECHANGELOG')
+		assertTrue output.contains('Executing EXECUTE database command: INSERT INTO xdatabasechangelogx')
 		assertTrue output.contains("VALUES ('burt', '', NOW(), 'Add Column', 'EXECUTED', 'changelog.cli.test.groovy', 'test-3', ")
 
 		executeAndCheck 'dbm-update'
@@ -59,7 +59,7 @@ class DbmMarkNextChangesetRanTests extends AbstractScriptTests {
 		String content = file.text
 		assertFalse content.contains('Executing EXECUTE database command')
 		assertTrue content.contains('SQL to add all changesets to database history table')
-		assertTrue content.contains('INSERT INTO DATABASECHANGELOG')
+		assertTrue content.contains('INSERT INTO xdatabasechangelogx')
 		assertTrue content.contains("VALUES ('burt', '', NOW(), 'Add Column', 'EXECUTED', 'changelog.cli.test.groovy', 'test-3', ")
 	}
 
@@ -75,7 +75,7 @@ class DbmMarkNextChangesetRanTests extends AbstractScriptTests {
 		executeAndCheck (['dbm-mark-next-changeset-ran', '--dataSource=secondary'])
 		assertTrue output.contains('Starting dbm-mark-next-changeset-ran')
 
-		assertTrue output.contains('Executing EXECUTE database command: INSERT INTO DATABASECHANGELOG')
+		assertTrue output.contains('Executing EXECUTE database command: INSERT INTO xdatabasechangelogx')
 		assertTrue output.contains("VALUES ('burt', '', NOW(), 'Add Column', 'EXECUTED', 'changelog.cli.secondary-test.groovy', 'test-3', ")
 
 		executeAndCheck (['dbm-update', '--dataSource=secondary'])
@@ -104,7 +104,7 @@ class DbmMarkNextChangesetRanTests extends AbstractScriptTests {
 
 		assertFalse content.contains('Executing EXECUTE database command')
 		assertTrue content.contains('SQL to add all changesets to database history table')
-		assertTrue content.contains('INSERT INTO DATABASECHANGELOG')
+		assertTrue content.contains('INSERT INTO xdatabasechangelogx')
 		assertTrue content.contains("VALUES ('burt', '', NOW(), 'Add Column', 'EXECUTED', 'changelog.cli.secondary-test.groovy', 'test-3', ")
 	}
 }

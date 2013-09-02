@@ -9,8 +9,8 @@ grails.plugin.databasemigration.changelogProperties = [
 grails.plugin.databasemigration.secondary.changelogLocation = 'target/changelogs'
 grails.plugin.databasemigration.secondary.changelogFileName = 'changelog.cli.secondary-test.groovy'
 
-grails.plugin.databasemigration.databaseChangeLogTableName = 'foo'
-grails.plugin.databasemigration.databaseChangeLogLockTableName = 'bar'
+grails.plugin.databasemigration.databaseChangeLogTableName = 'xdatabasechangelogx'
+grails.plugin.databasemigration.databaseChangeLogLockTableName = 'xdatabasechangeloglockx'
 
 grails.doc.authors = 'Burt Beckwith'
 grails.doc.license = 'Apache License 2.0'

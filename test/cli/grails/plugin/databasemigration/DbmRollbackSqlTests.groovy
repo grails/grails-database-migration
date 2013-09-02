@@ -28,7 +28,7 @@ class DbmRollbackSqlTests extends AbstractScriptTests {
 
 		// manually tag the first update
 		String tagName = 'THE_TAG'
-		executeUpdate url, "update databasechangelog set tag=? where id='test-1'", [tagName]
+		executeUpdate url, "update xdatabasechangelogx set tag=? where id='test-1'", [tagName]
 
 		// test parameter check
 		executeAndCheck(['dbm-rollback-sql'], false)
@@ -39,8 +39,8 @@ class DbmRollbackSqlTests extends AbstractScriptTests {
 		assertTrue output.contains('ALTER TABLE PERSON DROP COLUMN ZIPCODE')
 		assertTrue output.contains('ALTER TABLE PERSON DROP COLUMN STREET1')
 		assertTrue output.contains('ALTER TABLE PERSON DROP COLUMN STREET2')
-		assertTrue output.contains("DELETE FROM DATABASECHANGELOG  WHERE ID='test-2' AND AUTHOR='burt' AND FILENAME='changelog.cli.test.groovy'")
-		assertTrue output.contains("DELETE FROM DATABASECHANGELOG  WHERE ID='test-3' AND AUTHOR='burt' AND FILENAME='changelog.cli.test.groovy'")
+		assertTrue output.contains("DELETE FROM xdatabasechangelogx  WHERE ID='test-2' AND AUTHOR='burt' AND FILENAME='changelog.cli.test.groovy'")
+		assertTrue output.contains("DELETE FROM xdatabasechangelogx  WHERE ID='test-3' AND AUTHOR='burt' AND FILENAME='changelog.cli.test.groovy'")
 	}
 
 	void testRollbackSqlForSecondaryDataSource() {
@@ -52,7 +52,7 @@ class DbmRollbackSqlTests extends AbstractScriptTests {
 
 		// manually tag the first update
 		String tagName = 'THE_TAG'
-		executeUpdate url, "update databasechangelog set tag=? where id='test-1'", [tagName]
+		executeUpdate url, "update xdatabasechangelogx set tag=? where id='test-1'", [tagName]
 
 		// test parameter check
 		executeAndCheck(['dbm-rollback-sql', '--dataSource=secondary'], false)
@@ -63,7 +63,7 @@ class DbmRollbackSqlTests extends AbstractScriptTests {
 		assertTrue output.contains('ALTER TABLE PERSON DROP COLUMN ZIPCODE')
 		assertTrue output.contains('ALTER TABLE PERSON DROP COLUMN STREET1')
 		assertTrue output.contains('ALTER TABLE PERSON DROP COLUMN STREET2')
-		assertTrue output.contains("DELETE FROM DATABASECHANGELOG  WHERE ID='test-2' AND AUTHOR='burt' AND FILENAME='changelog.cli.secondary-test.groovy'")
-		assertTrue output.contains("DELETE FROM DATABASECHANGELOG  WHERE ID='test-3' AND AUTHOR='burt' AND FILENAME='changelog.cli.secondary-test.groovy'")
+		assertTrue output.contains("DELETE FROM xdatabasechangelogx  WHERE ID='test-2' AND AUTHOR='burt' AND FILENAME='changelog.cli.secondary-test.groovy'")
+		assertTrue output.contains("DELETE FROM xdatabasechangelogx  WHERE ID='test-3' AND AUTHOR='burt' AND FILENAME='changelog.cli.secondary-test.groovy'")
 	}
 }

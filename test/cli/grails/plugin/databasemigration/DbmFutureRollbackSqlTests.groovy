@@ -29,7 +29,7 @@ class DbmFutureRollbackSqlTests extends AbstractScriptTests {
 
 		assertTrue output.contains('Starting dbm-future-rollback-sql')
 		assertTrue output.contains('ALTER TABLE PERSON DROP COLUMN ZIPCODE')
-		assertTrue output.contains("DELETE FROM DATABASECHANGELOG  WHERE ID='test-3'")
+		assertTrue output.contains("DELETE FROM xdatabasechangelogx  WHERE ID='test-3'")
 	}
 
 	void testFutureRollbackSqlForSecondaryDataSource() {
@@ -42,7 +42,7 @@ class DbmFutureRollbackSqlTests extends AbstractScriptTests {
 
 		assertTrue output.contains('Starting dbm-future-rollback-sql')
 		assertTrue output.contains('ALTER TABLE PERSON DROP COLUMN ZIPCODE')
-		assertTrue output.contains("DELETE FROM DATABASECHANGELOG  WHERE ID='test-3'")
+		assertTrue output.contains("DELETE FROM xdatabasechangelogx  WHERE ID='test-3'")
 
 		assertTrue output.contains(
 			"Starting dbm-future-rollback-sql for database sa @ jdbc:h2:tcp://localhost/./target/testdb/testdb-secondary")

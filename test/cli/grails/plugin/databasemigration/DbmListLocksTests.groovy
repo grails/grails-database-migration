@@ -33,7 +33,7 @@ class DbmListLocksTests extends AbstractScriptTests {
 		assertTrue output.contains('Database change log locks for SA@jdbc:h2:tcp://localhost/./target/testdb/testdb')
 		assertTrue output.contains('No locks')
 
-		executeUpdate(AbstractScriptTests.URL, 'update databasechangeloglock set locked=?, lockgranted=?, lockedby=?',
+		executeUpdate(AbstractScriptTests.URL, 'update xdatabasechangeloglockx set locked=?, lockgranted=?, lockedby=?',
 			[true, new java.sql.Timestamp(System.currentTimeMillis()), 'cli_test'])
 		executeAndCheck 'dbm-list-locks'
 
@@ -55,7 +55,7 @@ class DbmListLocksTests extends AbstractScriptTests {
 		assertTrue output.contains('Database change log locks for SA@jdbc:h2:tcp://localhost/./target/testdb/testdb-secondary')
 		assertTrue output.contains('No locks')
 
-		executeUpdate(AbstractScriptTests.SECONDARY_URL, 'update databasechangeloglock set locked=?, lockgranted=?, lockedby=?',
+		executeUpdate(AbstractScriptTests.SECONDARY_URL, 'update xdatabasechangeloglockx set locked=?, lockgranted=?, lockedby=?',
 			[true, new java.sql.Timestamp(System.currentTimeMillis()), 'cli_test'])
 		executeAndCheck (['dbm-list-locks', '--dataSource=secondary'])
 

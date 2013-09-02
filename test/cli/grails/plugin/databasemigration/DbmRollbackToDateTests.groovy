@@ -52,11 +52,11 @@ class DbmRollbackToDateTests extends AbstractScriptTests {
 		'''
 
 		// fake out the dates to be able to rollback to particular date
-		executeUpdate url, "update databasechangelog set dateexecuted=? where id='test-1'",
+		executeUpdate url, "update xdatabasechangelogx set dateexecuted=? where id='test-1'",
 			[new Timestamp((new Date() - 30).time)]
-		executeUpdate url, "update databasechangelog set dateexecuted=? where id='test-2'",
+		executeUpdate url, "update xdatabasechangelogx set dateexecuted=? where id='test-2'",
 			[new Timestamp((new Date() - 20).time)]
-		executeUpdate url, "update databasechangelog set dateexecuted=? where id='test-3'",
+		executeUpdate url, "update xdatabasechangelogx set dateexecuted=? where id='test-3'",
 			[new Timestamp((new Date() - 10).time)]
 
 		// test parameter check
@@ -114,11 +114,11 @@ class DbmRollbackToDateTests extends AbstractScriptTests {
 		'''
 
 		// fake out the dates to be able to rollback to particular date
-		executeUpdate url, "update databasechangelog set dateexecuted=? where id='test-1'",
+		executeUpdate url, "update xdatabasechangelogx set dateexecuted=? where id='test-1'",
 			[new Timestamp((new Date() - 30).time)]
-		executeUpdate url, "update databasechangelog set dateexecuted=? where id='test-2'",
+		executeUpdate url, "update xdatabasechangelogx set dateexecuted=? where id='test-2'",
 			[new Timestamp((new Date() - 20).time)]
-		executeUpdate url, "update databasechangelog set dateexecuted=? where id='test-3'",
+		executeUpdate url, "update xdatabasechangelogx set dateexecuted=? where id='test-3'",
 			[new Timestamp((new Date() - 10).time)]
 
 		// test parameter check

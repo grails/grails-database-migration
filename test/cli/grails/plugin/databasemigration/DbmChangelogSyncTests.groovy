@@ -32,8 +32,8 @@ class DbmChangelogSyncTests extends AbstractScriptTests {
 		tableNames = findAllTableNames(AbstractScriptTests.URL)
 		assertEquals 3, tableNames.size()
 		assertTrue tableNames.contains('thing')
-		assertTrue tableNames.contains('databasechangelog')
-		assertTrue tableNames.contains('databasechangeloglock')
+		assertTrue tableNames.contains('xdatabasechangelogx')
+		assertTrue tableNames.contains('xdatabasechangeloglockx')
 
 		assertTrue output.contains(
 			'Starting dbm-changelog-sync for database sa @ jdbc:h2:tcp://localhost/./target/testdb/testdb')
@@ -51,8 +51,8 @@ class DbmChangelogSyncTests extends AbstractScriptTests {
 		tableNames = findAllTableNames(AbstractScriptTests.SECONDARY_URL)
 		assertEquals 3, tableNames.size()
 		assertTrue tableNames.contains('secondary_thing')
-		assertTrue tableNames.contains('databasechangelog')
-		assertTrue tableNames.contains('databasechangeloglock')
+		assertTrue tableNames.contains('xdatabasechangelogx')
+		assertTrue tableNames.contains('xdatabasechangeloglockx')
 
 		assertTrue output.contains(
 			'Starting dbm-changelog-sync for database sa @ jdbc:h2:tcp://localhost/./target/testdb/testdb-secondary')

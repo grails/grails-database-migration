@@ -35,12 +35,12 @@ class DbmUpdateCountSqlTests extends AbstractScriptTests {
 		assertTrue output.contains(
 			'Starting dbm-update-count-sql for database sa @ jdbc:h2:tcp://localhost/./target/testdb/testdb')
 
-		assertTrue output.contains('CREATE TABLE DATABASECHANGELOGLOCK')
-		assertTrue output.contains('CREATE TABLE DATABASECHANGELOG')
+		assertTrue output.contains('CREATE TABLE xdatabasechangeloglockx')
+		assertTrue output.contains('CREATE TABLE xdatabasechangelogx')
 		assertTrue output.contains('-- Changeset changelog.cli.test.groovy::test-1::burt::')
 		assertTrue output.contains('-- Changeset changelog.cli.test.groovy::test-2::burt::')
 		assertFalse output.contains('-- Changeset changelog.cli.test.groovy::test-3::burt::')
-		assertTrue output.contains('INSERT INTO DATABASECHANGELOG')
+		assertTrue output.contains('INSERT INTO xdatabasechangelogx')
 		assertTrue output.contains('CREATE TABLE PERSON')
 		assertTrue output.contains('ALTER TABLE PERSON ADD STREET1 VARCHAR(100) NOT NULL')
 		assertTrue output.contains('ALTER TABLE PERSON ADD STREET2 VARCHAR(100)')

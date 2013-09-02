@@ -32,7 +32,7 @@ class DbmReleaseLocksTests extends AbstractScriptTests {
 		executeAndCheck(['dbm-update-count', '1'])
 
 		// force a lock
-		executeUpdate(url, 'update databasechangeloglock set locked=?, lockgranted=?, lockedby=?',
+		executeUpdate(url, 'update xdatabasechangeloglockx set locked=?, lockgranted=?, lockedby=?',
 			[true, new Timestamp(System.currentTimeMillis()), 'cli_test'])
 		executeAndCheck 'dbm-list-locks'
 
@@ -55,7 +55,7 @@ class DbmReleaseLocksTests extends AbstractScriptTests {
 		executeAndCheck(['dbm-update-count', '1', '--dataSource=secondary'])
 
 		// force a lock
-		executeUpdate(url, 'update databasechangeloglock set locked=?, lockgranted=?, lockedby=?',
+		executeUpdate(url, 'update xdatabasechangeloglockx set locked=?, lockgranted=?, lockedby=?',
 			[true, new Timestamp(System.currentTimeMillis()), 'cli_test'])
 		executeAndCheck (['dbm-list-locks', '--dataSource=secondary'])
 

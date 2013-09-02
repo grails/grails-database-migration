@@ -17,8 +17,8 @@ class MiscTests {
 		def names = findTableNames()
 		assert !names.contains('DATABASECHANGELOG')
 		assert !names.contains('DATABASECHANGELOGLOCK')
-		assert !names.contains('FOO')
-		assert !names.contains('BAR')
+		assert !names.contains('XDATABASECHANGELOGX')
+		assert !names.contains('XDATABASECHANGELOGLOCKX')
 
 		def databaseChangeLog = new XMLChangeLogSAXParser().parse('test.changelist.xml',
 					new ChangeLogParameters(), new ParserTestResourceAccessor())
@@ -30,8 +30,8 @@ class MiscTests {
 		names = findTableNames()
 		assert !names.contains('DATABASECHANGELOG')
 		assert !names.contains('DATABASECHANGELOGLOCK')
-		assert names.contains('FOO')
-		assert names.contains('BAR')
+		assert names.contains('XDATABASECHANGELOGX')
+		assert names.contains('XDATABASECHANGELOGLOCKX')
 	}
 
 	private List<String> findTableNames() {
