@@ -24,6 +24,8 @@ includeTargets << grailsScript('_GrailsBootstrap')
 target(dbmInit: 'General initialization, also creates a Liquibase instance') {
 	depends(classpath, checkVersion, configureProxy, enableExpandoMetaClass, bootstrap, loadApp)
 
+	configureApp()
+
 	try {
 		hyphenatedScriptName = GrailsNameUtils.getScriptName(scriptName)
 		MigrationUtils = classLoader.loadClass('grails.plugin.databasemigration.MigrationUtils')
