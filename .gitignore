@@ -1,5 +1,6 @@
 *.log
 /target
-/grails-*.zip
-/plugin.xml
+grails-database-migration-*.zip
+grails-database-migration-*.zip.sha1
+plugin.xml
 web-app

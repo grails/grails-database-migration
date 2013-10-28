@@ -6,5 +6,6 @@ cd grails-database-migration
 grails clean
 grails compile
 grails compile
-#grails publish-plugin --noScm --snapshot --stacktrace
-grails publish-plugin --noScm --stacktrace
+
+#grails publish-plugin --snapshot --stacktrace
+grails publish-plugin --stacktrace
