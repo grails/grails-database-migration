@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>1.1 History 1.3.7</title>
+    <title>2.1 Migration from Autobase 1.3.8</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -24,28 +24,28 @@ function addJsClass() {
 
                 <div id="nav-summary-childs" style="display:none;">
                     
-                    <div class="toc-item" style="margin-left:0"><a href="../../guide/1%20Introduction%20to%20the%20Database%20Migration%20Plugin.html"><strong>1</strong><span>Introduction to the Database Migration Plugin</span></a>
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/introduction.html"><strong>1</strong><span>Introduction to the Database Migration Plugin</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:0"><a href="../../guide/2%20Getting%20Started.html"><strong>2</strong><span>Getting Started</span></a>
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/gettingStarted.html"><strong>2</strong><span>Getting Started</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:0"><a href="../../guide/3%20Configuration.html"><strong>3</strong><span>Configuration</span></a>
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/configuration.html"><strong>3</strong><span>Configuration</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:0"><a href="../../guide/4%20General%20Usage.html"><strong>4</strong><span>General Usage</span></a>
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/generalUsage.html"><strong>4</strong><span>General Usage</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:0"><a href="../../guide/5%20Groovy%20Changes.html"><strong>5</strong><span>Groovy Changes</span></a>
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/groovyChanges.html"><strong>5</strong><span>Groovy Changes</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:0"><a href="../../guide/6%20Groovy%20Preconditions.html"><strong>6</strong><span>Groovy Preconditions</span></a>
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/groovyPreconditions.html"><strong>6</strong><span>Groovy Preconditions</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:0"><a href="../../guide/7%20GORM%20Support.html"><strong>7</strong><span>GORM Support</span></a>
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/gorm.html"><strong>7</strong><span>GORM Support</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:0"><a href="../../guide/8%20DbDoc%20Controller.html"><strong>8</strong><span>DbDoc Controller</span></a>
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/dbdoc.html"><strong>8</strong><span>DbDoc Controller</span></a>
                     </div>
                     
                 </div>
@@ -71,20 +71,22 @@ function addJsClass() {
             <div id="main" class="corner-all">
 
                 
+                    <div class="toc-item prev-left"><a href="../../guide/introduction.html">&lt;&lt; <strong>1</strong><span>Introduction to the Database Migration Plugin</span></a></div>
+                
 
                 <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
 
                 
-                    <div class="toc-item next-right"><a href="../../guide/2%20Getting%20Started.html"><strong>2</strong><span>Getting Started</span> >></a></div>
+                    <div class="toc-item next-right"><a href="../../guide/configuration.html"><strong>3</strong><span>Configuration</span> >></a></div>
                 
 
 
                 <div class="project">
-                    <h1>1.1 History - Reference Documentation</h1>
+                    <h1>2.1 Migration from Autobase - Reference Documentation</h1>
 
                     <p><strong>Authors:</strong> Burt Beckwith</p>
 
-                    <p><strong>Version:</strong> 1.3.7</p>
+                    <p><strong>Version:</strong> 1.3.8</p>
 
                     
                 </div>
@@ -93,88 +95,41 @@ function addJsClass() {
 
                 
 
-<h2 id="1.1 History">1.1 History</h2>
-<h4>History</h4>
+<h2 id="autobase">2.1 Migration from Autobase</h2>
+Autobase is another plugin for managing database migrations. It uses Groovy migration scripts that have a similar syntax to this plugin's ones, but there are some differences that mean you will have to do a little bit of work to migrate your existing scripts. The following notes are applicable to Autobase 0.11 and earlier.<p class="paragraph"/><h4>Location of migration scripts</h4><p class="paragraph"/>Autobase defaulted to putting its migration scripts into a <code>./migrations</code> directory, whereas the Database Migration plugin uses <code>./grails-app/migrations</code> as the default. So, you can either move your scripts or add this setting to your <code>grails-app/conf/Config.groovy</code> file:
+<div class="code"><pre>grails.plugin.databasemigration.changelogLocation = <span class="java&#45;quote">"migrations"</span></pre></div><p class="paragraph"/><h4>New syntax for all scripts</h4><p class="paragraph"/>Autobase allowed you to write changelog files that just included the change sets one after the other. This isn't supported by the Database Migration plugin, so  <em class="italic">all</em>  changelogs must put their change set definitions inside a block like so:<p class="paragraph"/><div class="code"><pre>databaseChangeLog = &#123;
+   changeSet(...) &#123; &#8230; &#125;
+   changeSet(...) &#123; &#8230; &#125;
+   &#8230;
+&#125;</pre></div><p class="paragraph"/>In addition, if your main Autobase changelog specifies a logical file path (see next section), you will have to use the syntax:<p class="paragraph"/><div class="code"><pre>databaseChangeLog = &#123;
+   logicalFilePath <span class="java&#45;quote">"app&#45;autobase"</span>
+   &#8230;
+&#125;</pre></div><p class="paragraph"/>in all the changelog files. If you don't do this, the plugin won't recognise that existing migrations have already been applied to a database and all of them will be reapplied.<p class="paragraph"/>These changes also apply to the main changelog, but there are some other differences to cover for that.<p class="paragraph"/><h4>Parent changelog differences</h4><p class="paragraph"/>The syntax for the main (or parent) Autobase changelog file looks like:<p class="paragraph"/><div class="code"><pre>databaseChangeLog(logicalFilePath: <span class="java&#45;quote">"appName&#45;autobase"</span>) &#123;
+   include <span class="java&#45;quote">"./migrations/batch/SomeBigChanges.groovy"</span>
+   include <span class="java&#45;quote">"./migrations/changelog&#45;1.0.1.groovy"</span>
+   include <span class="java&#45;quote">"./migrations/changelog&#45;1.0.5.groovy"</span>
+&#125;</pre></div><p class="paragraph"/>The new format is noticeably different:<p class="paragraph"/><div class="code"><pre>databaseChangeLog = &#123;
+   logicalFilePath <span class="java&#45;quote">"site&#45;autobase"</span><p class="paragraph"/>   include file: <span class="java&#45;quote">"batch/SomeBigChanges.groovy"</span>
+   include file: <span class="java&#45;quote">"changelog&#45;1.0.1.groovy"</span>
+   include file: <span class="java&#45;quote">"changelog&#45;1.0.5.groovy"</span>
+&#125;</pre></div><p class="paragraph"/>In particular, note that:
 <ul class="star">
-<li>October 27, 2013</li>
-<ul class="star">
-<li>1.3.7 release</li>
-<li><a href="http://jira.grails.org/secure/ReleaseNote.jspa?projectId=10092&amp;version=13523" target="blank">JIRA Issues</a></li>
-</ul>
-<li>September 2, 2013</li>
-<ul class="star">
-<li>1.3.6 release</li>
-<li><a href="http://jira.grails.org/secure/ReleaseNote.jspa?projectId=10092&amp;version=13503" target="blank">JIRA Issues</a></li>
-</ul>
-<li>July 1, 2013</li>
-<ul class="star">
-<li>1.3.5 release</li>
-<li><a href="http://jira.grails.org/secure/ReleaseNote.jspa?projectId=10092&amp;version=13445" target="blank">JIRA Issues</a></li>
-</ul>
-<li>April 17, 2013</li>
-<ul class="star">
-<li>1.3.3 release</li>
-<li><a href="http://jira.grails.org/secure/ReleaseNote.jspa?projectId=10092&amp;version=13437" target="blank">JIRA Issues</a></li>
-</ul>
-<li>January 4, 2013</li>
-<ul class="star">
-<li>1.3.2 release</li>
-<li><a href="http://jira.grails.org/secure/ReleaseNote.jspa?projectId=10092&amp;version=13424" target="blank">JIRA Issues</a></li>
-</ul>
-<li>January 4, 2013</li>
-<ul class="star">
-<li>1.3.1 release</li>
-<li><a href="http://jira.grails.org/secure/ReleaseNote.jspa?projectId=10092&amp;version=13423" target="blank">JIRA Issues</a></li>
-</ul>
-<li>January 3, 2013</li>
-<ul class="star">
-<li>1.3 release</li>
-<li><a href="http://jira.grails.org/secure/ReleaseNote.jspa?projectId=10092&amp;version=13422" target="blank">JIRA Issues</a></li>
-</ul>
-<li>December 6, 2012</li>
-<ul class="star">
-<li>1.2.2 release</li>
-</ul>
-<li>December 1, 2012</li>
-<ul class="star">
-<li>1.2.1 release</li>
-<li><a href="http://jira.grails.org/secure/ReleaseNote.jspa?projectId=10092&amp;version=13341" target="blank">JIRA Issues</a></li>
-</ul>
-<li>October 28, 2012</li>
-<ul class="star">
-<li>1.2 release</li>
-<li><a href="http://jira.grails.org/secure/ReleaseNote.jspa?projectId=10092&amp;version=13113" target="blank">JIRA Issues</a></li>
-</ul>
-<li>May 11, 2012</li>
-<ul class="star">
-<li>1.1 release</li>
-<li><a href="http://jira.grails.org/secure/ReleaseNote.jspa?projectId=10092&amp;version=13112" target="blank">JIRA Issues</a></li>
-</ul>
-<li>August 17, 2011</li>
-<ul class="star">
-<li>1.0 release</li>
-<li><a href="http://jira.grails.org/secure/ReleaseNote.jspa?projectId=10092&amp;version=12701" target="blank">JIRA Issues</a></li>
-</ul>
-<li>April 19, 2011</li>
-<ul class="star">
-<li>0.2.1 release</li>
-</ul>
-<li>February 13, 2011</li>
-<ul class="star">
-<li>0.2 release</li>
-<ul class="star">
-<li>One breaking change: the default migrations folder changed from grails-app/conf/migrations to grails-app/migrations</li>
-</ul>
-</ul>
-<li>May 22, 2010</li>
-<ul class="star">
-<li>initial 0.1 release</li>
-</ul></ul><p class="paragraph"/>
+<li>The <code>databaseChangeLog</code> line is different</li>
+<li>The logical file path must be defined inside the block</li>
+<li><code>include</code> takes a named <code>file</code> argument</li>
+<li>The file paths passed to <code>include</code> are relative to the configured migrations directory</li>
+</ul><p class="paragraph"/>Fortunately, these changes are highly localised and pretty trivial to implement.<p class="paragraph"/><h4>modifyColumn refactoring no longer available</h4><p class="paragraph"/>The <code>modifyColumn</code> refactoring has been removed in the version of Liquibase that comes with the Database Migration plugin. Instead you should use the new <code>modifyDataType</code> refactoring like so:<p class="paragraph"/><div class="code"><pre>&#8230;
+changeSet(id:'IncreaseCommentBodySize', author:'someone') &#123;
+   modifyDataType tableName: 'comment', columnName: 'body', newDataType: 'TEXT'
+&#125;</pre></div><p class="paragraph"/>The parameters are the same as for <code>modifyColumn</code>, but the syntax is somewhat different.
+
 
 
                 <div style="clear:both;margin-top:15px;"></div>
                 
-                    <div class="toc-item next-right"><a href="../../guide/2%20Getting%20Started.html"><strong>2</strong><span>Getting Started</span> >></a></div>
+                    <div class="toc-item prev-left"><a href="../../guide/introduction.html">&lt;&lt; <strong>1</strong><span>Introduction to the Database Migration Plugin</span></a></div>
+                
+                    <div class="toc-item next-right"><a href="../../guide/configuration.html"><strong>3</strong><span>Configuration</span> >></a></div>
                 
                 <div style="clear:both"></div>
             </div>

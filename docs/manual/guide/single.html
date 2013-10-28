@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
     <head>
-        <title>Database Migration Plugin 1.3.7</title>
+        <title>Database Migration Plugin 1.3.8</title>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8" />
         <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8" />
@@ -23,21 +23,21 @@ function addJsClass(el) {
                         <a href="../guide/index.html" class="button">Table of contents</a>
                         <div id="nav-summary-childs" style="display:none;">
                             
-                            <div class="toc-item" style="margin-left:0"><a href="#1%20Introduction%20to%20the%20Database%20Migration%20Plugin"><strong>1</strong><span>Introduction to the Database Migration Plugin</span></a></div>
+                            <div class="toc-item" style="margin-left:0"><a href="#introduction"><strong>1</strong><span>Introduction to the Database Migration Plugin</span></a></div>
                             
-                            <div class="toc-item" style="margin-left:0"><a href="#2%20Getting%20Started"><strong>2</strong><span>Getting Started</span></a></div>
+                            <div class="toc-item" style="margin-left:0"><a href="#gettingStarted"><strong>2</strong><span>Getting Started</span></a></div>
                             
-                            <div class="toc-item" style="margin-left:0"><a href="#3%20Configuration"><strong>3</strong><span>Configuration</span></a></div>
+                            <div class="toc-item" style="margin-left:0"><a href="#configuration"><strong>3</strong><span>Configuration</span></a></div>
                             
-                            <div class="toc-item" style="margin-left:0"><a href="#4%20General%20Usage"><strong>4</strong><span>General Usage</span></a></div>
+                            <div class="toc-item" style="margin-left:0"><a href="#generalUsage"><strong>4</strong><span>General Usage</span></a></div>
                             
-                            <div class="toc-item" style="margin-left:0"><a href="#5%20Groovy%20Changes"><strong>5</strong><span>Groovy Changes</span></a></div>
+                            <div class="toc-item" style="margin-left:0"><a href="#groovyChanges"><strong>5</strong><span>Groovy Changes</span></a></div>
                             
-                            <div class="toc-item" style="margin-left:0"><a href="#6%20Groovy%20Preconditions"><strong>6</strong><span>Groovy Preconditions</span></a></div>
+                            <div class="toc-item" style="margin-left:0"><a href="#groovyPreconditions"><strong>6</strong><span>Groovy Preconditions</span></a></div>
                             
-                            <div class="toc-item" style="margin-left:0"><a href="#7%20GORM%20Support"><strong>7</strong><span>GORM Support</span></a></div>
+                            <div class="toc-item" style="margin-left:0"><a href="#gorm"><strong>7</strong><span>GORM Support</span></a></div>
                             
-                            <div class="toc-item" style="margin-left:0"><a href="#8%20DbDoc%20Controller"><strong>8</strong><span>DbDoc Controller</span></a></div>
+                            <div class="toc-item" style="margin-left:0"><a href="#dbdoc"><strong>8</strong><span>DbDoc Controller</span></a></div>
                             
                         </div>
                     </div>
@@ -66,7 +66,7 @@ function addJsClass(el) {
                         <div class="project">
                             <h1>Database Migration Plugin - Reference Documentation</h1>
                             <p><strong>Authors:</strong> Burt Beckwith</p>
-                            <p><strong>Version:</strong> 1.3.7</p>
+                            <p><strong>Version:</strong> 1.3.8</p>
                             
                         </div>
 
@@ -74,38 +74,43 @@ function addJsClass(el) {
                         <div id="table-of-content">
                             <h2>Table of Contents</h2>
                             
-                            <div class="toc-item" style="margin-left:0px"><a href="#1%20Introduction%20to%20the%20Database%20Migration%20Plugin"><strong>1</strong><span>Introduction to the Database Migration Plugin</span></a></div>
+                            <div class="toc-item" style="margin-left:0px"><a href="#introduction"><strong>1</strong><span>Introduction to the Database Migration Plugin</span></a></div>
                             
-                            <div class="toc-item" style="margin-left:10px"><a href="#1.1%20History"><strong>1.1</strong><span>History</span></a></div>
+                            <div class="toc-item" style="margin-left:10px"><a href="#history"><strong>1.1</strong><span>History</span></a></div>
                             
-                            <div class="toc-item" style="margin-left:0px"><a href="#2%20Getting%20Started"><strong>2</strong><span>Getting Started</span></a></div>
+                            <div class="toc-item" style="margin-left:0px"><a href="#gettingStarted"><strong>2</strong><span>Getting Started</span></a></div>
                             
-                            <div class="toc-item" style="margin-left:10px"><a href="#2.1%20Migration%20from%20Autobase"><strong>2.1</strong><span>Migration from Autobase</span></a></div>
+                            <div class="toc-item" style="margin-left:10px"><a href="#autobase"><strong>2.1</strong><span>Migration from Autobase</span></a></div>
                             
-                            <div class="toc-item" style="margin-left:0px"><a href="#3%20Configuration"><strong>3</strong><span>Configuration</span></a></div>
+                            <div class="toc-item" style="margin-left:0px"><a href="#configuration"><strong>3</strong><span>Configuration</span></a></div>
                             
-                            <div class="toc-item" style="margin-left:0px"><a href="#4%20General%20Usage"><strong>4</strong><span>General Usage</span></a></div>
+                            <div class="toc-item" style="margin-left:0px"><a href="#generalUsage"><strong>4</strong><span>General Usage</span></a></div>
                             
-                            <div class="toc-item" style="margin-left:0px"><a href="#5%20Groovy%20Changes"><strong>5</strong><span>Groovy Changes</span></a></div>
+                            <div class="toc-item" style="margin-left:0px"><a href="#groovyChanges"><strong>5</strong><span>Groovy Changes</span></a></div>
                             
-                            <div class="toc-item" style="margin-left:0px"><a href="#6%20Groovy%20Preconditions"><strong>6</strong><span>Groovy Preconditions</span></a></div>
+                            <div class="toc-item" style="margin-left:0px"><a href="#groovyPreconditions"><strong>6</strong><span>Groovy Preconditions</span></a></div>
                             
-                            <div class="toc-item" style="margin-left:0px"><a href="#7%20GORM%20Support"><strong>7</strong><span>GORM Support</span></a></div>
+                            <div class="toc-item" style="margin-left:0px"><a href="#gorm"><strong>7</strong><span>GORM Support</span></a></div>
                             
-                            <div class="toc-item" style="margin-left:0px"><a href="#8%20DbDoc%20Controller"><strong>8</strong><span>DbDoc Controller</span></a></div>
+                            <div class="toc-item" style="margin-left:0px"><a href="#dbdoc"><strong>8</strong><span>DbDoc Controller</span></a></div>
                             
                             <div style="clear:both" ></div>
                         </div>
                         
                         
 
-<h1 id="1 Introduction to the Database Migration Plugin">1 Introduction to the Database Migration Plugin</h1>
+<h1 id="introduction">1 Introduction to the Database Migration Plugin</h1>
 The Database Migration plugin helps you manage database changes while developing Grails applications. The plugin uses the <a href="http://www.liquibase.org/" target="blank">Liquibase</a> library.<p class="paragraph"/>Using this plugin (and Liquibase in general) adds some structure and process to managing database changes. It will help avoid inconsistencies, communication issues, and other problems with ad-hoc approaches.<p class="paragraph"/>Database migrations are represented in text form, either using a Groovy DSL or native Liquibase XML, in one or more changelog files. This approach makes it natural to maintain the changelog files in source control and also works well with branches. Changelog files can include other changelog files, so often developers create hierarchical files organized with various schemes. One popular approach is to have a root changelog named changlog.groovy (or changelog.xml) and to include a changelog per feature/branch that includes multiple smaller changelogs. Once the feature is finished and merged into the main development tree/trunk the changelog files can either stay as they are or be merged into one large file. Use whatever approach makes sense for your applications, but keep in mind that there are many options available for changelog management.<p class="paragraph"/>Individual changes have an ID that should be globally unique, although they also include the username of the user making the change, making the combination of ID and username unique (although technically the ID, username, and changelog location are the "unique key").<p class="paragraph"/>As you make changes in your code (typically domain classes) that require changes in the database, you add a new change set to the changelog. Commit the code changes along with the changelog additions, and the other developers on your team will get both when they update from source control. Once they apply the new changes their code and development database will be in sync with your changes. Likewise when you deploy to a QA, a staging server, or production, you'll run the un-run changes that correspond to the code updates to being that environment's database in sync. Liquibase keeps track of previously executed changes so there's no need to think about what has and hasn't been run yet.<p class="paragraph"/><h4>Scripts</h4><p class="paragraph"/>Your primary interaction with the plugin will be using the provided scripts. For the most part these correspond to the many Liquibase commands that are typically executed directly from the commandline or with its Ant targets, but there are also a few Grails-specific scripts that take advantage of the information available from the GORM mappings.<p class="paragraph"/>All of the scripts start with <code>dbm-</code> to ensure that they're unique and don't clash with scripts from Grails or other plugins.<p class="paragraph"/>
 
 
-<h2 id="1.1 History">1.1 History</h2>
+<h2 id="history">1.1 History</h2>
 <h4>History</h4>
 <ul class="star">
+<li>October 28, 2013</li>
+<ul class="star">
+<li>1.3.8 release</li>
+<li><a href="http://jira.grails.org/secure/ReleaseNote.jspa?projectId=10092&amp;version=13524" target="blank">JIRA Issues</a></li>
+</ul>
 <li>October 27, 2013</li>
 <ul class="star">
 <li>1.3.7 release</li>
@@ -182,7 +187,7 @@ The Database Migration plugin helps you manage database changes while developing
 </ul></ul><p class="paragraph"/>
 
 
-<h1 id="2 Getting Started">2 Getting Started</h1>
+<h1 id="gettingStarted">2 Getting Started</h1>
 <h4>The first step is to add a dependency for the plugin in <code>BuildConfig.groovy</code>:</h4><p class="paragraph"/><div class="code"><pre>plugins &#123;
    &#8230;
    runtime ':database&#45;migration:1.3.6'
@@ -207,7 +212,7 @@ bulkIndexOnStartup = <span class="java&#45;keyword">false</span></pre></div><p c
 
 
 
-<h2 id="2.1 Migration from Autobase">2.1 Migration from Autobase</h2>
+<h2 id="autobase">2.1 Migration from Autobase</h2>
 Autobase is another plugin for managing database migrations. It uses Groovy migration scripts that have a similar syntax to this plugin's ones, but there are some differences that mean you will have to do a little bit of work to migrate your existing scripts. The following notes are applicable to Autobase 0.11 and earlier.<p class="paragraph"/><h4>Location of migration scripts</h4><p class="paragraph"/>Autobase defaulted to putting its migration scripts into a <code>./migrations</code> directory, whereas the Database Migration plugin uses <code>./grails-app/migrations</code> as the default. So, you can either move your scripts or add this setting to your <code>grails-app/conf/Config.groovy</code> file:
 <div class="code"><pre>grails.plugin.databasemigration.changelogLocation = <span class="java&#45;quote">"migrations"</span></pre></div><p class="paragraph"/><h4>New syntax for all scripts</h4><p class="paragraph"/>Autobase allowed you to write changelog files that just included the change sets one after the other. This isn't supported by the Database Migration plugin, so  <em class="italic">all</em>  changelogs must put their change set definitions inside a block like so:<p class="paragraph"/><div class="code"><pre>databaseChangeLog = &#123;
    changeSet(...) &#123; &#8230; &#125;
@@ -237,7 +242,7 @@ changeSet(id:'IncreaseCommentBodySize', author:'someone') &#123;
 
 
 
-<h1 id="3 Configuration">3 Configuration</h1>
+<h1 id="configuration">3 Configuration</h1>
 There are a few configuration options for the plugin:<p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th><strong class="bold">Property</strong></th><th><strong class="bold">Default</strong></th><th><strong class="bold">Meaning</strong></th></tr><tr class="table-odd"><td>grails.plugin.databasemigration. changelogLocation</td><td><code>grails-app/migrations</code></td><td>the folder containing the main changelog file (which can include one or more other files)</td></tr><tr class="table-even"><td>grails.plugin.databasemigration. changelogFileName</td><td><code>changelog.groovy</code></td><td>the name of the main changelog file</td></tr><tr class="table-odd"><td>grails.plugin.databasemigration. changelogProperties</td><td>none</td><td>a map of properties to use for property substitution in Groovy DSL changelogs</td></tr><tr class="table-even"><td>grails.plugin.databasemigration. contexts</td><td>none</td><td>A comma-delimited list of <a href="http://www.liquibase.org/manual/contexts" target="blank">context</a> names. If specified, only changesets tagged with one of the context names will be run</td></tr><tr class="table-odd"><td>grails.plugin.databasemigration. dbDocLocation</td><td><code>target/dbdoc</code></td><td>the directory where the output from the <a href="../ref/Documentation Scripts/dbm-db-doc.html" class="Documentation Scripts">dbm-db-doc</a> script is written</td></tr><tr class="table-even"><td>grails.plugin.databasemigration. dbDocController.enabled</td><td><code>true</code> in dev mode</td><td>whether the /dbdoc/ url is accessible at runtime</td></tr><tr class="table-odd"><td>grails.plugin.databasemigration. dropOnStart</td><td><code>false</code></td><td>if <code>true</code> then drops all tables before auto-running migrations (if updateOnStart is true)</td></tr><tr class="table-even"><td>grails.plugin.databasemigration. updateOnStart</td><td><code>false</code></td><td>if <code>true</code> then changesets from the specified list of names will be run at startup</td></tr><tr class="table-odd"><td>grails.plugin.databasemigration. updateOnStartFileNames</td><td>none</td><td>one or more file names (relative to <code>changelogLocation</code>) to run at startup if <code>updateOnStart</code> is <code>true</code></td></tr><tr class="table-even"><td>grails.plugin.databasemigration. updateOnStartDefaultSchema</td><td>none</td><td>the default schema to use when running auto-migrate on start</td></tr><tr class="table-odd"><td>grails.plugin.databasemigration. updateOnStartContexts</td><td>none</td><td>A comma-delimited list of <a href="http://www.liquibase.org/manual/contexts" target="blank">context</a> names. If specified, only changesets tagged with one of the context names will be run</td></tr><tr class="table-even"><td>grails.plugin.databasemigration. autoMigrateScripts</td><td>'RunApp'</td><td>the scripts when running auto-migrate. Useful to run auto-migrate during test phase with: 'RunApp', 'TestApp'</td></tr><tr class="table-odd"><td>grails.plugin.databasemigration. ignoredColumns</td><td>none</td><td>one or more database column names (regexes) to ignore while performing a dbm-gorm-diff or dbm-generate-gorm-changelog</td></tr><tr class="table-even"><td>grails.plugin.databasemigration. ignoredObjects</td><td>none</td><td>one or more database object names to ignore while performing a dbm-gorm-diff or dbm-generate-gorm-changelog</td></tr><tr class="table-odd"><td>grails.plugin.databasemigration. databaseChangeLogTableName</td><td>'databasechangelog'</td><td>the Liquibase changelog record table name</td></tr><tr class="table-even"><td>grails.plugin.databasemigration. databaseChangeLogLockTableName</td><td>'databasechangeloglock'</td><td>the Liquibase lock table name</td></tr></table><p class="paragraph"/><blockquote class="note">
 All of the above configs can be used for a multiple datasources in Grails 2.0.x.
 </blockquote><p class="paragraph"/><h4>Multiple DataSource Example:</h4>
@@ -252,7 +257,7 @@ grails.plugin.databasemigration.reports.changelogFileName = changelog&#45;report
 
 
 
-<h1 id="4 General Usage">4 General Usage</h1>
+<h1 id="generalUsage">4 General Usage</h1>
 After creating the initial changelog, the typical workflow will be along the lines of:
 <ul class="star">
 <li>make domain class changes that affect the schema</li>
@@ -285,7 +290,7 @@ When running migration scripts on non-development databases, it's important that
 
 
 
-<h1 id="5 Groovy Changes">5 Groovy Changes</h1>
+<h1 id="groovyChanges">5 Groovy Changes</h1>
 In addition to the built-in Liquibase changes (see <a href="http://www.liquibase.org/manual/home" target="blank">the documentation</a> for what's available) you can also make database changes using Groovy code (as long as you're using the Groovy DSL file format). These changes use the <code>grailsChange</code> tag name and are contained in a <code>changeSet</code> tag like standard built-in tags.<p class="paragraph"/>There are four supported inner tags and two callable methods (to override the default confirmation message and checksum value).<p class="paragraph"/><h4>General format</h4><p class="paragraph"/>This is the general format of a Groovy-based change; all inner tags and methods are optional:<p class="paragraph"/><div class="code"><pre>databaseChangeLog = &#123;<p class="paragraph"/>   changeSet(author: '...', id: '...') &#123;<p class="paragraph"/>      grailsChange &#123;
          init &#123;
              // arbitrary initialization code; note that no
@@ -341,7 +346,7 @@ In addition to the built-in Liquibase changes (see <a href="http://www.liquibase
 
 
 
-<h1 id="6 Groovy Preconditions">6 Groovy Preconditions</h1>
+<h1 id="groovyPreconditions">6 Groovy Preconditions</h1>
 In addition to the built-in Liquibase preconditions (see <a href="http://www.liquibase.org/manual/preconditions" target="blank">the documentation</a> for what's available) you can also specify preconditions using Groovy code (as long as you're using the Groovy DSL file format). These changes use the <code>grailsPrecondition</code> tag name and are contained in the <code>databaseChangeLog</code> tag or in a <code>changeSet</code> tag like standard built-in tags.<p class="paragraph"/><h4>General format</h4><p class="paragraph"/>This is general format of a Groovy-based precondition:<p class="paragraph"/><div class="code"><pre>databaseChangeLog = &#123;<p class="paragraph"/>   changeSet(author: '...', id: '...') &#123;<p class="paragraph"/>      preConditions &#123;<p class="paragraph"/>         grailsPrecondition &#123;<p class="paragraph"/>            check &#123;<p class="paragraph"/>               // use an assertion
                assert x == x<p class="paragraph"/>               // use an assertion with an error message
                assert y == y : 'value cannot be 237'<p class="paragraph"/>               // call the fail method
@@ -408,7 +413,7 @@ In addition to the built-in Liquibase preconditions (see <a href="http://www.liq
 </ul></ul><p class="paragraph"/>
 
 
-<h1 id="7 GORM Support">7 GORM Support</h1>
+<h1 id="gorm">7 GORM Support</h1>
 The plugin's support for GORM is one feature that differentiates it from using Liquibase directly. Typically when using Liquibase you make changes to a database yourself, and then create changesets manually, or use a diff script to compare your updated database to one that hasn't been updated yet. This is a decent amount of work and is rather error-prone. It's easy to forget some changes that aren't required but help performance, for example creating an index on a foreign key when using MySQL.<p class="paragraph"/><h4>create-drop, create, and update</h4><p class="paragraph"/>On the other end of the spectrum, Hibernate's <code>create-drop</code> mode (or <code>create</code>) will create a database that matches your domain model, but it's destructive since all previous data is lost when it runs. This works well in the very early stages of development but gets frustrating quickly. Unfortunately Hibernate's <code>update</code> mode seems like a good compromise since it only makes changes to your existing schema, but it's very limited in what it will do. It's very pessimistic and won't make any changes that could lose data. So it will add new tables and columns, but won't drop anything. If you remove a not-null domain class property you'll find you can't insert anymore since the column is still there. And it will create not-null columns as nullable since otherwise existing data would be invalid. It won't even widen a column e.g. from <code>VARCHAR(100)</code> to <code>VARCHAR(200)</code>.<p class="paragraph"/><h4>dbm-gorm-diff</h4><p class="paragraph"/>The plugin provides a script that will compare your GORM current domain model with a database that you specify, and the result is a Liquibase changeset - <code>dbm-gorm-diff</code>. This is the same changeset you would get if you exported your domain model to a scratch database and diffed it with the other database, but it's more convenient.<p class="paragraph"/>So a good workflow would be:
 <ul class="star">
 <li>make whatever domain class changes you need (add new ones, delete unneeded ones, add/change/remove properties, etc.)</li>
@@ -421,7 +426,7 @@ The plugin's support for GORM is one feature that differentiates it from using L
 </ul><p class="paragraph"/><h4>dbm-generate-gorm-changelog</h4><p class="paragraph"/>The <a href="../ref/Rollback Scripts/dbm-generate-gorm-changelog.html" class="Rollback Scripts">dbm-generate-gorm-changelog</a> script is useful for when you want to switch from <code>create-drop</code> mode to doing proper migrations. It's not very useful if you already have a database that's in sync with your code, since you can just use the <a href="../ref/Rollback Scripts/dbm-generate-changelog.html" class="Rollback Scripts">dbm-generate-changelog</a> script that creates a changelog from your databse.<p class="paragraph"/>
 
 
-<h1 id="8 DbDoc Controller">8 DbDoc Controller</h1>
+<h1 id="dbdoc">8 DbDoc Controller</h1>
 You can use the <a href="../ref/Documentation Scripts/dbm-db-doc.html" class="Documentation Scripts">dbm-db-doc</a> script to generate static HTML files to view changelog information, but another option is to use the <code>DbDocController</code> at runtime. By default this controller is mapped to <code>/appname/dbdoc/</code> but this can be customized with <code>UrlMappings</code> like any controller.<p class="paragraph"/>You probably don't want to expose this information to all of your application's users so by default the controller is only enabled in the development environment. But you can enable or disable it for any environment in <code>Config.groovy</code> with the <code>dbDocController.enabled</code> config option. For example to enable for all environments (be sure to guard the URL with a security plugin in prod):<p class="paragraph"/><div class="code"><pre>grails.plugin.databasemigration.dbDocController.enabled = <span class="java&#45;keyword">true</span></pre></div><p class="paragraph"/>or to enable in the production environment:<p class="paragraph"/><div class="code"><pre>environments &#123;
    production &#123;
       grails.plugin.databasemigration.dbDocController.enabled = <span class="java&#45;keyword">true</span>

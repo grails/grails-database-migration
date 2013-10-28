@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>3 Configuration 1.3.7</title>
+    <title>1 Introduction to the Database Migration Plugin 1.3.8</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -24,28 +24,28 @@ function addJsClass() {
 
                 <div id="nav-summary-childs" style="display:none;">
                     
-                    <div class="toc-item" style="margin-left:0"><a href="../guide/1%20Introduction%20to%20the%20Database%20Migration%20Plugin.html"><strong>1</strong><span>Introduction to the Database Migration Plugin</span></a>
+                    <div class="toc-item" style="margin-left:0"><a href="../guide/introduction.html"><strong>1</strong><span>Introduction to the Database Migration Plugin</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:0"><a href="../guide/2%20Getting%20Started.html"><strong>2</strong><span>Getting Started</span></a>
+                    <div class="toc-item" style="margin-left:0"><a href="../guide/gettingStarted.html"><strong>2</strong><span>Getting Started</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:0"><a href="../guide/3%20Configuration.html"><strong>3</strong><span>Configuration</span></a>
+                    <div class="toc-item" style="margin-left:0"><a href="../guide/configuration.html"><strong>3</strong><span>Configuration</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:0"><a href="../guide/4%20General%20Usage.html"><strong>4</strong><span>General Usage</span></a>
+                    <div class="toc-item" style="margin-left:0"><a href="../guide/generalUsage.html"><strong>4</strong><span>General Usage</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:0"><a href="../guide/5%20Groovy%20Changes.html"><strong>5</strong><span>Groovy Changes</span></a>
+                    <div class="toc-item" style="margin-left:0"><a href="../guide/groovyChanges.html"><strong>5</strong><span>Groovy Changes</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:0"><a href="../guide/6%20Groovy%20Preconditions.html"><strong>6</strong><span>Groovy Preconditions</span></a>
+                    <div class="toc-item" style="margin-left:0"><a href="../guide/groovyPreconditions.html"><strong>6</strong><span>Groovy Preconditions</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:0"><a href="../guide/7%20GORM%20Support.html"><strong>7</strong><span>GORM Support</span></a>
+                    <div class="toc-item" style="margin-left:0"><a href="../guide/gorm.html"><strong>7</strong><span>GORM Support</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:0"><a href="../guide/8%20DbDoc%20Controller.html"><strong>8</strong><span>DbDoc Controller</span></a>
+                    <div class="toc-item" style="margin-left:0"><a href="../guide/dbdoc.html"><strong>8</strong><span>DbDoc Controller</span></a>
                     </div>
                     
                 </div>
@@ -71,50 +71,127 @@ function addJsClass() {
             <div id="main" class="corner-all">
 
                 
-                    <div class="toc-item prev-left"><a href="../guide/2%20Getting%20Started.html">&lt;&lt; <strong>2</strong><span>Getting Started</span></a></div>
-                
 
                 <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
 
                 
-                    <div class="toc-item next-right"><a href="../guide/4%20General%20Usage.html"><strong>4</strong><span>General Usage</span> >></a></div>
+                    <div class="toc-item next-right"><a href="../guide/gettingStarted.html"><strong>2</strong><span>Getting Started</span> >></a></div>
                 
 
 
                 <div class="project">
-                    <h1>3 Configuration - Reference Documentation</h1>
+                    <h1>1 Introduction to the Database Migration Plugin - Reference Documentation</h1>
 
                     <p><strong>Authors:</strong> Burt Beckwith</p>
 
-                    <p><strong>Version:</strong> 1.3.7</p>
+                    <p><strong>Version:</strong> 1.3.8</p>
 
                     
                 </div>
 
                 
+                <div id="table-of-content">
+                    <h2>Table of Contents</h2>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#history"><strong>1.1</strong><span>History</span></a>
+                    </div>
+                    
+                </div>
+                
 
                 
 
-<h1 id="3 Configuration">3 Configuration</h1>
-There are a few configuration options for the plugin:<p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th><strong class="bold">Property</strong></th><th><strong class="bold">Default</strong></th><th><strong class="bold">Meaning</strong></th></tr><tr class="table-odd"><td>grails.plugin.databasemigration. changelogLocation</td><td><code>grails-app/migrations</code></td><td>the folder containing the main changelog file (which can include one or more other files)</td></tr><tr class="table-even"><td>grails.plugin.databasemigration. changelogFileName</td><td><code>changelog.groovy</code></td><td>the name of the main changelog file</td></tr><tr class="table-odd"><td>grails.plugin.databasemigration. changelogProperties</td><td>none</td><td>a map of properties to use for property substitution in Groovy DSL changelogs</td></tr><tr class="table-even"><td>grails.plugin.databasemigration. contexts</td><td>none</td><td>A comma-delimited list of <a href="http://www.liquibase.org/manual/contexts" target="blank">context</a> names. If specified, only changesets tagged with one of the context names will be run</td></tr><tr class="table-odd"><td>grails.plugin.databasemigration. dbDocLocation</td><td><code>target/dbdoc</code></td><td>the directory where the output from the <a href="../ref/Documentation Scripts/dbm-db-doc.html" class="Documentation Scripts">dbm-db-doc</a> script is written</td></tr><tr class="table-even"><td>grails.plugin.databasemigration. dbDocController.enabled</td><td><code>true</code> in dev mode</td><td>whether the /dbdoc/ url is accessible at runtime</td></tr><tr class="table-odd"><td>grails.plugin.databasemigration. dropOnStart</td><td><code>false</code></td><td>if <code>true</code> then drops all tables before auto-running migrations (if updateOnStart is true)</td></tr><tr class="table-even"><td>grails.plugin.databasemigration. updateOnStart</td><td><code>false</code></td><td>if <code>true</code> then changesets from the specified list of names will be run at startup</td></tr><tr class="table-odd"><td>grails.plugin.databasemigration. updateOnStartFileNames</td><td>none</td><td>one or more file names (relative to <code>changelogLocation</code>) to run at startup if <code>updateOnStart</code> is <code>true</code></td></tr><tr class="table-even"><td>grails.plugin.databasemigration. updateOnStartDefaultSchema</td><td>none</td><td>the default schema to use when running auto-migrate on start</td></tr><tr class="table-odd"><td>grails.plugin.databasemigration. updateOnStartContexts</td><td>none</td><td>A comma-delimited list of <a href="http://www.liquibase.org/manual/contexts" target="blank">context</a> names. If specified, only changesets tagged with one of the context names will be run</td></tr><tr class="table-even"><td>grails.plugin.databasemigration. autoMigrateScripts</td><td>'RunApp'</td><td>the scripts when running auto-migrate. Useful to run auto-migrate during test phase with: 'RunApp', 'TestApp'</td></tr><tr class="table-odd"><td>grails.plugin.databasemigration. ignoredColumns</td><td>none</td><td>one or more database column names (regexes) to ignore while performing a dbm-gorm-diff or dbm-generate-gorm-changelog</td></tr><tr class="table-even"><td>grails.plugin.databasemigration. ignoredObjects</td><td>none</td><td>one or more database object names to ignore while performing a dbm-gorm-diff or dbm-generate-gorm-changelog</td></tr><tr class="table-odd"><td>grails.plugin.databasemigration. databaseChangeLogTableName</td><td>'databasechangelog'</td><td>the Liquibase changelog record table name</td></tr><tr class="table-even"><td>grails.plugin.databasemigration. databaseChangeLogLockTableName</td><td>'databasechangeloglock'</td><td>the Liquibase lock table name</td></tr></table><p class="paragraph"/><blockquote class="note">
-All of the above configs can be used for a multiple datasources in Grails 2.0.x.
-</blockquote><p class="paragraph"/><h4>Multiple DataSource Example:</h4>
-If a reports dataSource is configured in DataSource.groovy
-<div class="code"><pre>dataSource_reports &#123;
-   url = &#8230;
-   driverClassName = &#8230;
-   &#8230;
-&#125;</pre></div><p class="paragraph"/>The configuration for this data source would be:
-<div class="code"><pre>grails.plugin.databasemigration.reports.updateOntart = <span class="java&#45;keyword">true</span>
-grails.plugin.databasemigration.reports.changelogFileName = changelog&#45;reports.groovy</pre></div>
+<h1 id="introduction">1 Introduction to the Database Migration Plugin</h1>
+The Database Migration plugin helps you manage database changes while developing Grails applications. The plugin uses the <a href="http://www.liquibase.org/" target="blank">Liquibase</a> library.<p class="paragraph"/>Using this plugin (and Liquibase in general) adds some structure and process to managing database changes. It will help avoid inconsistencies, communication issues, and other problems with ad-hoc approaches.<p class="paragraph"/>Database migrations are represented in text form, either using a Groovy DSL or native Liquibase XML, in one or more changelog files. This approach makes it natural to maintain the changelog files in source control and also works well with branches. Changelog files can include other changelog files, so often developers create hierarchical files organized with various schemes. One popular approach is to have a root changelog named changlog.groovy (or changelog.xml) and to include a changelog per feature/branch that includes multiple smaller changelogs. Once the feature is finished and merged into the main development tree/trunk the changelog files can either stay as they are or be merged into one large file. Use whatever approach makes sense for your applications, but keep in mind that there are many options available for changelog management.<p class="paragraph"/>Individual changes have an ID that should be globally unique, although they also include the username of the user making the change, making the combination of ID and username unique (although technically the ID, username, and changelog location are the "unique key").<p class="paragraph"/>As you make changes in your code (typically domain classes) that require changes in the database, you add a new change set to the changelog. Commit the code changes along with the changelog additions, and the other developers on your team will get both when they update from source control. Once they apply the new changes their code and development database will be in sync with your changes. Likewise when you deploy to a QA, a staging server, or production, you'll run the un-run changes that correspond to the code updates to being that environment's database in sync. Liquibase keeps track of previously executed changes so there's no need to think about what has and hasn't been run yet.<p class="paragraph"/><h4>Scripts</h4><p class="paragraph"/>Your primary interaction with the plugin will be using the provided scripts. For the most part these correspond to the many Liquibase commands that are typically executed directly from the commandline or with its Ant targets, but there are also a few Grails-specific scripts that take advantage of the information available from the GORM mappings.<p class="paragraph"/>All of the scripts start with <code>dbm-</code> to ensure that they're unique and don't clash with scripts from Grails or other plugins.<p class="paragraph"/>
 
+
+<h2 id="history">1.1 History</h2>
+<h4>History</h4>
+<ul class="star">
+<li>October 28, 2013</li>
+<ul class="star">
+<li>1.3.8 release</li>
+<li><a href="http://jira.grails.org/secure/ReleaseNote.jspa?projectId=10092&amp;version=13524" target="blank">JIRA Issues</a></li>
+</ul>
+<li>October 27, 2013</li>
+<ul class="star">
+<li>1.3.7 release</li>
+<li><a href="http://jira.grails.org/secure/ReleaseNote.jspa?projectId=10092&amp;version=13523" target="blank">JIRA Issues</a></li>
+</ul>
+<li>September 2, 2013</li>
+<ul class="star">
+<li>1.3.6 release</li>
+<li><a href="http://jira.grails.org/secure/ReleaseNote.jspa?projectId=10092&amp;version=13503" target="blank">JIRA Issues</a></li>
+</ul>
+<li>July 1, 2013</li>
+<ul class="star">
+<li>1.3.5 release</li>
+<li><a href="http://jira.grails.org/secure/ReleaseNote.jspa?projectId=10092&amp;version=13445" target="blank">JIRA Issues</a></li>
+</ul>
+<li>April 17, 2013</li>
+<ul class="star">
+<li>1.3.3 release</li>
+<li><a href="http://jira.grails.org/secure/ReleaseNote.jspa?projectId=10092&amp;version=13437" target="blank">JIRA Issues</a></li>
+</ul>
+<li>January 4, 2013</li>
+<ul class="star">
+<li>1.3.2 release</li>
+<li><a href="http://jira.grails.org/secure/ReleaseNote.jspa?projectId=10092&amp;version=13424" target="blank">JIRA Issues</a></li>
+</ul>
+<li>January 4, 2013</li>
+<ul class="star">
+<li>1.3.1 release</li>
+<li><a href="http://jira.grails.org/secure/ReleaseNote.jspa?projectId=10092&amp;version=13423" target="blank">JIRA Issues</a></li>
+</ul>
+<li>January 3, 2013</li>
+<ul class="star">
+<li>1.3 release</li>
+<li><a href="http://jira.grails.org/secure/ReleaseNote.jspa?projectId=10092&amp;version=13422" target="blank">JIRA Issues</a></li>
+</ul>
+<li>December 6, 2012</li>
+<ul class="star">
+<li>1.2.2 release</li>
+</ul>
+<li>December 1, 2012</li>
+<ul class="star">
+<li>1.2.1 release</li>
+<li><a href="http://jira.grails.org/secure/ReleaseNote.jspa?projectId=10092&amp;version=13341" target="blank">JIRA Issues</a></li>
+</ul>
+<li>October 28, 2012</li>
+<ul class="star">
+<li>1.2 release</li>
+<li><a href="http://jira.grails.org/secure/ReleaseNote.jspa?projectId=10092&amp;version=13113" target="blank">JIRA Issues</a></li>
+</ul>
+<li>May 11, 2012</li>
+<ul class="star">
+<li>1.1 release</li>
+<li><a href="http://jira.grails.org/secure/ReleaseNote.jspa?projectId=10092&amp;version=13112" target="blank">JIRA Issues</a></li>
+</ul>
+<li>August 17, 2011</li>
+<ul class="star">
+<li>1.0 release</li>
+<li><a href="http://jira.grails.org/secure/ReleaseNote.jspa?projectId=10092&amp;version=12701" target="blank">JIRA Issues</a></li>
+</ul>
+<li>April 19, 2011</li>
+<ul class="star">
+<li>0.2.1 release</li>
+</ul>
+<li>February 13, 2011</li>
+<ul class="star">
+<li>0.2 release</li>
+<ul class="star">
+<li>One breaking change: the default migrations folder changed from grails-app/conf/migrations to grails-app/migrations</li>
+</ul>
+</ul>
+<li>May 22, 2010</li>
+<ul class="star">
+<li>initial 0.1 release</li>
+</ul></ul><p class="paragraph"/>
 
 
                 <div style="clear:both;margin-top:15px;"></div>
                 
-                    <div class="toc-item prev-left"><a href="../guide/2%20Getting%20Started.html">&lt;&lt; <strong>2</strong><span>Getting Started</span></a></div>
-                
-                    <div class="toc-item next-right"><a href="../guide/4%20General%20Usage.html"><strong>4</strong><span>General Usage</span> >></a></div>
+                    <div class="toc-item next-right"><a href="../guide/gettingStarted.html"><strong>2</strong><span>Getting Started</span> >></a></div>
                 
                 <div style="clear:both"></div>
             </div>
