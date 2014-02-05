@@ -32,6 +32,8 @@ class MigrationRunner {
 	protected static Logger LOG = LoggerFactory.getLogger(this)
 
 	static void autoRun(migrationCallbacks = null) {
+		try { migrationCallbacks?.init() }
+		catch (MissingMethodException ignored) {}
 
 		def dataSourceConfigs = MigrationUtils.getDataSourceConfigs()
 		dataSourceConfigs.dataSource = MigrationUtils.application.config.dataSource
