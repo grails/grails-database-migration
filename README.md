@@ -4,8 +4,11 @@ grails-database-migration
 Added support for multi schema to the original plugin.
 
 Configuration:
+
 grails.plugin.databasemigration.multiSchema = false
+
 grails.plugin.databasemigration.multiSchemaPattern = 'test_.*'
+
 grails.plugin.databasemigration.multiSchemaList = ['test_1', 'test_2', 'test_3']
 
 
