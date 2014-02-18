@@ -24,3 +24,7 @@ log4j = {
 
 	debug 'liquibase'
 }
+
+grails.plugin.databasemigration.multiSchema = false
+grails.plugin.databasemigration.multiSchemaPattern = 'test_.*'
+grails.plugin.databasemigration.multiSchemaList = ['test_1', 'test_2', 'test_3']
