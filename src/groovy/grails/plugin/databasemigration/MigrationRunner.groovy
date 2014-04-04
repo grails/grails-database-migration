@@ -15,6 +15,7 @@
 package grails.plugin.databasemigration
 
 import grails.util.GrailsUtil
+import java.sql.ResultSet
 import liquibase.Liquibase
 import liquibase.database.Database
 
@@ -32,14 +33,13 @@ class MigrationRunner {
 	protected static Logger LOG = LoggerFactory.getLogger(this)
 
 	static void autoRun(migrationCallbacks = null) {
-
-		def dataSourceConfigs = MigrationUtils.getDataSourceConfigs()
+		def dataSourceConfigs = grails.plugin.databasemigration.MigrationUtils.getDataSourceConfigs()
 		dataSourceConfigs.dataSource = MigrationUtils.application.config.dataSource
-
+		
 		for (configAndName in dataSourceConfigs) {
 			String dsConfigName = configAndName.key
 			ConfigObject configObject = configAndName.value
-
+			
 			if (!MigrationUtils.canAutoMigrate(dsConfigName)) {
 				LOG.warn "Not running auto migrate for DataSource '$dsConfigName'"
 				continue
@@ -54,42 +54,26 @@ class MigrationRunner {
 
 			try {
 				MigrationUtils.executeInSession(dsConfigName) {
-					Database database = MigrationUtils.getDatabase(MigrationUtils.getConfig(dsConfigName).updateOnStartDefaultSchema ?: null, dsConfigName)
-
-					if (config.dropOnStart) {
-						LOG.warn "Dropping tables..."
-						MigrationUtils.getLiquibase(database).dropAll()
-					}
-
-					Map<String, Liquibase> liquibases = [:]
-					for (String changelogName in config.updateOnStartFileNames) {
-						Liquibase liquibase = MigrationUtils.getLiquibase(database, changelogName)
-						if (liquibase.listUnrunChangeSets(config.updateOnStartContexts ?: config.contexts ?: null)) {
-							liquibases[changelogName] = liquibase
+					Database database
+					if(config.multiSchema){
+						database = MigrationUtils.getDatabase(null, dsConfigName)
+						ResultSet resultSet = database.connection.metaData.schemas
+						List schemas = []
+						while (resultSet.next()) {
+							String schema = resultSet.getString(1)
+							if(schema ==~ config.multiSchemaPattern || schema in config.multiSchemaList){ schemas << schema } 
+						}
+						
+						LOG.info "Found ${schemas.size()} schemas to update"
+						
+						schemas.each{ schema ->
+							database = MigrationUtils.getDatabase(schema, dsConfigName)
+							runMigrations(dsConfigName, schema, config, database, migrationCallbacks)
 						}
 					}
-
-					if (liquibases) {
-
-						LOG.info "Outstanding migrations detected for DataSource '$dsConfigName': ${liquibases.keySet()}"
-
-						try { migrationCallbacks?.beforeStartMigration database }
-						catch (MissingMethodException ignored) {}
-
-						liquibases.each { String changelogName, Liquibase liquibase ->
-							LOG.info "Running script '$changelogName'"
-
-							try { migrationCallbacks?.onStartMigration database, liquibase, changelogName }
-							catch (MissingMethodException ignored) {}
-
-							liquibase.update config.updateOnStartContexts ?: config.contexts ?: null
-						}
-
-						try { migrationCallbacks?.afterMigrations database }
-						catch (MissingMethodException ignored) {}
-					}
-					else {
-						LOG.info "No migrations to run for DataSource '$dsConfigName'"
+					else{
+						database = MigrationUtils.getDatabase(config.updateOnStartDefaultSchema ?: null, dsConfigName)
+						runMigrations(dsConfigName, config.updateOnStartDefaultSchema ?: null, config, database, migrationCallbacks)
 					}
 				}
 			}
@@ -99,4 +83,48 @@ class MigrationRunner {
 			}
 		}
 	}
+	
+	static void runMigrations(dsConfigName, schema, config, database, migrationCallbacks){
+		if (config.dropOnStart) {
+			LOG.warn "Dropping tables..."
+			MigrationUtils.getLiquibase(database).dropAll()
+		}
+
+		Map<String, Liquibase> liquibases = [:]
+		for (String changelogName in config.updateOnStartFileNames) {
+			Liquibase liquibase = MigrationUtils.getLiquibase(database, changelogName)
+			if (liquibase.listUnrunChangeSets(config.updateOnStartContexts ?: config.contexts ?: null)) {
+				liquibases[changelogName] = liquibase
+			}
+		}
+
+		if (liquibases) {
+			LOG.info "Migrations detected for '$dsConfigName${schema ? '.'+schema : ''}': ${liquibases.keySet()}"
+
+			try {
+				migrationCallbacks?.beforeStartMigration database
+			}
+			catch (MissingMethodException ignored) {}
+
+			liquibases.each { String changelogName, Liquibase liquibase ->
+				LOG.info "Running script '$changelogName'"
+
+				try {
+					migrationCallbacks?.onStartMigration database, liquibase, changelogName
+				}
+				catch (MissingMethodException ignored) {}
+
+				liquibase.update config.updateOnStartContexts ?: config.contexts ?: null
+			}
+
+			try {
+				migrationCallbacks?.afterMigrations database
+			}
+			catch (MissingMethodException ignored) {}
+		}
+		else {
+			LOG.info "No migrations to run for '$dsConfigName${schema ? '.'+schema : ''}'"
+		}
+	}
+	
 }
