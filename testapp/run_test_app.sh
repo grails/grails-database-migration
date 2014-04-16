@@ -4,8 +4,8 @@
 # migrations. Change the hard-coded values in the variables below for your local system to use.
 # Create a MySQL database 'migrationtest' and another called 'migrationtest_reports' for the
 # multi-datasource tests; both databases need a 'migrationtest' user with password 'migrationtest'.
-TESTAPP_DIR="$( cd "$( dirname "$0" )" && pwd )"
-PLUGIN_DIR="$( cd "$TESTAPP_DIR"/.. && pwd )"
+TESTAPP_SRC_DIR="$( cd "$( dirname "$0" )" && pwd )"
+PLUGIN_DIR="$( cd "$TESTAPP_SRC_DIR"/.. && pwd )"
 APP_NAME="migrationtests"
 DB_NAME="migrationtest"
 DB_REPORTS_NAME="migrationtest_reports"
@@ -17,7 +17,8 @@ GRAILS_VERSION="2.3.7"
 export GRAILS_HOME="$HOME/.gvm/grails/$GRAILS_VERSION"
 export PATH="$GRAILS_HOME/bin:$PATH"
 
-APP_DIR="$TESTAPP_DIR/$APP_NAME"
+APP_DIR_PARENT="$PLUGIN_DIR/target"
+APP_DIR="$APP_DIR_PARENT/$APP_NAME"
 
 verifyExitCode() {
 	if [ $1 -ne 0 ]; then
@@ -41,14 +42,14 @@ EOF
 
 set -x
 
-[ ! -e "$TESTAPP_DIR" ] && mkdir -p "$TESTAPP_DIR"
-cd "$TESTAPP_DIR"
+[ ! -e "$APP_DIR_PARENT" ] && mkdir -p "$APP_DIR_PARENT"
+cd "$APP_DIR_PARENT"
 
-rm -rf "$APP_NAME"
+[ -e "$APP_NAME" ] && rm -rf "$APP_NAME"
 grails create-app "$APP_NAME" --stacktrace
 verifyExitCode $? "create-app"
 
-cd "$TESTAPP_DIR"
+cd "$TESTAPP_SRC_DIR"
 
 # initial domain classes
 mkdir "$APP_DIR/grails-app/domain/migrationtests"

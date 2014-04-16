@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e -x
+rm -rf target
 grails clean
 grails compile
 grails test-app :integration
