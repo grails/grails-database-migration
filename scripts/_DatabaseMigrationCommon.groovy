@@ -126,7 +126,7 @@ calculateDate = {
 }
 
 isHibernateInstalled = { ->
-	if (!pluginManager.hasGrailsPlugin('hibernate')) {
+	if (!pluginManager.hasGrailsPlugin('hibernate') && !pluginManager.hasGrailsPlugin('hibernate4')) {
 		errorMessage "Hibernate plugin isn't installed; GORM-based scripts are not available"
 		return false
 	}
