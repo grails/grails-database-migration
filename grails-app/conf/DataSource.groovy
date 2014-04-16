@@ -44,7 +44,7 @@ environments {
 	}
 	dbdiff {
 		dataSource {
-			url = 'jdbc:h2:file:file:target/dbdiff'
+			url = 'jdbc:h2:file:target/dbdiff/dbdiff'
 		}
 	}
 }
