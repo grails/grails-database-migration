@@ -102,7 +102,7 @@ grails dbm-update --stacktrace --dataSource=reports
 verifyExitCode $? "dbm-update for reports datasource"
 
 # insert initial data
-grails populate-data --stacktrace
+grails run-script scripts/PopulateData.groovy --stacktrace
 verifyExitCode $? "populate-data"
 
 # fix Order.customer by making it a domain class
@@ -129,7 +129,7 @@ grails dbm-update --stacktrace
 verifyExitCode $? "dbm-update"
 
 #verify data after migrations
-grails verify-data --stacktrace
+grails run-script scripts/VerifyData.groovy --stacktrace
 verifyExitCode $? "verify-data"
 
 echo "SUCCESS!"
