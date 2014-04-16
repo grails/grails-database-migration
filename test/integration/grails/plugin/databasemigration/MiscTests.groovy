@@ -14,8 +14,8 @@ class MiscTests extends GroovyTestCase {
 
 	// for GPDATABASEMIGRATION-132
 	void testTableNames() {
-		executeUpdate('DROP TABLE XDATABASECHANGELOGX')
-		executeUpdate('DROP TABLE XDATABASECHANGELOGLOCKX')
+		try { executeUpdate('DROP TABLE XDATABASECHANGELOGX') } catch(e) {}
+		try { executeUpdate('DROP TABLE XDATABASECHANGELOGLOCKX') } catch(e) {}
 		def names = findTableNames()
 		assert !names.contains('DATABASECHANGELOG')
 		assert !names.contains('DATABASECHANGELOGLOCK')
