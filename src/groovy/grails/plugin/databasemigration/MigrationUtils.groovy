@@ -25,6 +25,7 @@ import liquibase.database.structure.UniqueConstraint
 import liquibase.diff.DiffResult
 
 import org.codehaus.groovy.grails.commons.GrailsApplication
+import org.codehaus.groovy.grails.support.PersistenceContextInterceptorExecutor
 import org.springframework.transaction.support.TransactionSynchronizationManager
 
 /**
@@ -126,44 +127,14 @@ class MigrationUtils {
 	}
 
 	static void executeInSession(String dsName = 'dataSource', Closure c) {
-		String dataSourceSuffix = extractSuffix(dsName)
-		boolean participate = initSession(dataSourceSuffix)
+		def appCtx = application.mainContext
+		PersistenceContextInterceptorExecutor.initPersistenceContext(appCtx)
 		try {
 			c()
 		}
 		finally {
-			if (!participate) {
-				flushAndClose(dataSourceSuffix)
-			}
+			PersistenceContextInterceptorExecutor.destroyPersistenceContext(appCtx)
 		}
-	}
-
-	protected static boolean initSession(String dataSourceSuffix) {
-		def sessionFactory = findSessionFactory(dataSourceSuffix)
-		if (TransactionSynchronizationManager.hasResource(sessionFactory)) {
-			return true
-		}
-
-		def SessionFactoryUtils = MigrationUtils.classForName('org.springframework.orm.hibernate3.SessionFactoryUtils')
-		def FlushMode = MigrationUtils.classForName('org.hibernate.FlushMode')
-		def SessionHolder = MigrationUtils.classForName('org.springframework.orm.hibernate3.SessionHolder')
-
-		/*org.hibernate.Session*/ def session = SessionFactoryUtils.getSession(sessionFactory, true)
-		session.flushMode = FlushMode.AUTO
-		TransactionSynchronizationManager.bindResource sessionFactory, SessionHolder.newInstance(session)
-		false
-	}
-
-	protected static void flushAndClose(String dataSourceSuffix) {
-		def SessionFactoryUtils = MigrationUtils.classForName('org.springframework.orm.hibernate3.SessionFactoryUtils')
-		def FlushMode = MigrationUtils.classForName('org.hibernate.FlushMode')
-
-		def sessionFactory = findSessionFactory(dataSourceSuffix)
-		def session = TransactionSynchronizationManager.unbindResource(sessionFactory).session
-		if (!FlushMode.MANUAL == session.flushMode) {
-			session.flush()
-		}
-		SessionFactoryUtils.closeSession session
 	}
 
 	protected static findSessionFactory(String dataSourceSuffix = '') {
