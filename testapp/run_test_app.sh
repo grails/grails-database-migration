@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# pass all arguments to this script in JAVA_OPTS to grails
+export JAVA_OPTS="${@} ${JAVA_OPTS}"
+
 # Creates a test app and installs the plugin, then changes domain classes and does the required
 # migrations. Change the hard-coded values in the variables below for your local system to use.
 # Create a MySQL database 'migrationtest' and another called 'migrationtest_reports' for the
