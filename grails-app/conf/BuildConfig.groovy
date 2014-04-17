@@ -28,7 +28,7 @@ grails.project.dependency.resolution = {
 			export = false
 		}
 
-		runtime ":hibernate:3.6.10.12", {
+		runtime "${System.getProperty('hibernatePluginVersion',':hibernate:3.6.10.12')}", {
 			export = false
 		}
 	}
