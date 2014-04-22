@@ -2,18 +2,20 @@ package grails.plugin.databasemigration
 
 import java.sql.Connection
 import java.sql.ResultSet
+import groovy.sql.Sql
 
 import liquibase.changelog.ChangeLogParameters
 import liquibase.database.Database
 import liquibase.parser.core.xml.XMLChangeLogSAXParser
 
-class MiscTests {
+class MiscTests extends GroovyTestCase {
 
 	def dataSource
 
 	// for GPDATABASEMIGRATION-132
 	void testTableNames() {
-
+		try { executeUpdate('DROP TABLE XDATABASECHANGELOGX') } catch(e) {}
+		try { executeUpdate('DROP TABLE XDATABASECHANGELOGLOCKX') } catch(e) {}
 		def names = findTableNames()
 		assert !names.contains('DATABASECHANGELOG')
 		assert !names.contains('DATABASECHANGELOGLOCK')
@@ -33,6 +35,17 @@ class MiscTests {
 		assert names.contains('XDATABASECHANGELOGX')
 		assert names.contains('XDATABASECHANGELOGLOCKX')
 	}
+
+	protected void executeUpdate(String sql, List values = null) {
+		Sql gsql = new Sql(dataSource)
+		if (values) {
+			gsql.executeUpdate sql, values
+		}
+		else {
+			gsql.executeUpdate sql
+		}
+		gsql.close()
+	}	
 
 	private List<String> findTableNames() {
 		Connection c = dataSource.connection
