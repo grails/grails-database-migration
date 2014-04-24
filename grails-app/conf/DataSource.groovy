@@ -10,7 +10,7 @@ dataSource {
 hibernate {
 	cache.use_second_level_cache = false
 	cache.use_query_cache = false
-	cache.provider_class = 'org.hibernate.cache.EhCacheProvider'
+	cache.region.factory_class = System.getProperty('hibernatePluginVersion')?.startsWith(':hibernate4') ? 'org.hibernate.cache.ehcache.EhCacheRegionFactory' : 'net.sf.ehcache.hibernate.EhCacheRegionFactory'
 }
 
 environments {
@@ -30,8 +30,16 @@ environments {
 	}
 	test {
 		dataSource {
-			dbCreate = 'update'
-			url = 'jdbc:h2:mem:testDb'
+			url = 'jdbc:h2:file:target/testdb'
+		}
+
+		dataSource_secondary {
+			pooled = true
+			driverClassName = 'org.h2.Driver'
+			username = 'sa'
+			password = ''
+			url = 'jdbc:h2:file:target/testdb-secondary'
+			dialect = org.hibernate.dialect.H2Dialect
 		}
 	}
 	dbdiff {
