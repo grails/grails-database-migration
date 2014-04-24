@@ -42,12 +42,14 @@ class MigrationRunner {
 			ConfigObject configObject = configAndName.value
 			
 			if (!MigrationUtils.canAutoMigrate(dsConfigName)) {
+				LOG.debug "Not running auto migrate for DataSource '$dsConfigName'"
 				continue
 			}
 
 			def config = MigrationUtils.getConfig(dsConfigName)
 
 			if (!config.updateOnStart) {
+				LOG.debug "updateOnStart disabled for $dsConfigName; not running migrations"
 				continue
 			}
 
@@ -93,7 +95,7 @@ class MigrationRunner {
 		}
 	}
 	
-	static void runMigrations(dsConfigName, schema, config, database, migrationCallbacks){
+	static void runMigrations(dsConfigName, schema, config, database, migrationCallbacks = null){
 		if (config.dropOnStart) {
 			LOG.warn "Dropping tables..."
 			MigrationUtils.getLiquibase(database).dropAll()
