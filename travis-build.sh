@@ -2,7 +2,7 @@
 set -e
 rm -rf *.zip
 ./grailsw refresh-dependencies --non-interactive
-./run_tests.sh 
+./run_tests.sh -c 
 ./grailsw package-plugin --non-interactive
 ./grailsw doc --pdf --non-interactive
 
