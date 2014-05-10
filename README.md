@@ -1,5 +1,7 @@
-grails-database-migration
-=========================
+[![Build Status](https://travis-ci.org/grails-plugins/grails-database-migration.svg)](https://travis-ci.org/grails-plugins/grails-database-migration)
+
+Grails Database Migration Plugin
+================================
 
 
 The Database Migration plugin helps you manage database changes while developing Grails applications. The plugin uses the Liquibase library.
