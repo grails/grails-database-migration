@@ -1,5 +1,5 @@
 #!/bin/bash +xe
-HIBERNATE4_PLUGIN=":hibernate4:4.3.4.2"
+HIBERNATE4_PLUGIN=":hibernate4:4.3.5.2"
 PREVIOUS_JAVA_OPTS="${JAVA_OPTS}"
 
 runall=0
@@ -26,12 +26,12 @@ shift $(($OPTIND - 1))
 run_tests() {
     set -e -x
     [ -d target ] && rm -rf target
-    grails clean
-    grails compile
-    grails maven-install
-    grails test-app :integration
+    ./grailsw clean --non-interactive
+    ./grailsw compile --non-interactive
+    ./grailsw maven-install --non-interactive
+    ./grailsw test-app :integration --non-interactive
     if [[ $skip_cli -ne 1 ]]; then
-        grails test-app :cli
+        ./grailsw test-app :cli --non-interactive
     fi
     set +e +x
 }

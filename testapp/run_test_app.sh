@@ -78,31 +78,31 @@ add_mysql_user $DB_REPORTS_NAME $DB_USERNAME $DB_PASSWORD
 
 cd "$APP_DIR"
 
-grails compile --stacktrace
+../grailsw compile --stacktrace --non-interactive
 
 # create the initial changelog and export to db
-grails dbm-create-changelog --stacktrace
+../grailsw dbm-create-changelog --stacktrace --non-interactive
 verifyExitCode $? "dbm-create-changelog"
 
 # create the initial changelog for reports datasource and export to db
-grails dbm-create-changelog --dataSource=reports --stacktrace
+../grailsw dbm-create-changelog --dataSource=reports --stacktrace --non-interactive
 verifyExitCode $? "dbm-create-changelog for reports datasource"
 
 
-grails dbm-generate-gorm-changelog initial.groovy --add --stacktrace
+../grailsw dbm-generate-gorm-changelog initial.groovy --add --stacktrace --non-interactive
 verifyExitCode $? "dbm-generate-gorm-changelog"
 
-grails dbm-generate-gorm-changelog initialReports.groovy --add --stacktrace --dataSource=reports
+../grailsw dbm-generate-gorm-changelog initialReports.groovy --add --stacktrace --dataSource=reports --non-interactive
 verifyExitCode $? "dbm-generate-gorm-changelog for reports datasource"
 
-grails dbm-update --stacktrace
+../grailsw dbm-update --stacktrace --non-interactive
 verifyExitCode $? "dbm-update"
 
-grails dbm-update --stacktrace --dataSource=reports
+../grailsw dbm-update --stacktrace --dataSource=reports --non-interactive
 verifyExitCode $? "dbm-update for reports datasource"
 
 # insert initial data
-grails run-script scripts/PopulateData.groovy --stacktrace
+../grailsw run-script scripts/PopulateData.groovy --stacktrace --non-interactive
 verifyExitCode $? "populate-data"
 
 # fix Order.customer by making it a domain class
@@ -112,9 +112,9 @@ cp Order.v2.groovy "$APP_DIR/grails-app/domain/migrationtests/Order.groovy"
 cp customer.changelog.groovy "$APP_DIR/grails-app/migrations"
 cd -
 
-grails dbm-register-changelog customer.changelog.groovy --stacktrace
+../grailsw dbm-register-changelog customer.changelog.groovy --stacktrace --non-interactive
 verifyExitCode $? "dbm-register-changelog"
-grails dbm-update --stacktrace
+../grailsw dbm-update --stacktrace --non-interactive
 verifyExitCode $? "dbm-update"
 
 # fix Product.prize -> Product.price
@@ -123,13 +123,13 @@ cp Product.v2.groovy "$APP_DIR/grails-app/domain/migrationtests/Product.groovy"
 cp price.changelog.groovy "$APP_DIR/grails-app/migrations"
 cd -
 
-grails dbm-register-changelog price.changelog.groovy --stacktrace
+../grailsw dbm-register-changelog price.changelog.groovy --stacktrace --non-interactive
 verifyExitCode $? "dbm-register-changelog"
-grails dbm-update --stacktrace
+../grailsw dbm-update --stacktrace --non-interactive
 verifyExitCode $? "dbm-update"
 
 #verify data after migrations
-grails run-script scripts/VerifyData.groovy --stacktrace
+../grailsw run-script scripts/VerifyData.groovy --stacktrace --non-interactive
 verifyExitCode $? "verify-data"
 
 echo "SUCCESS!"
