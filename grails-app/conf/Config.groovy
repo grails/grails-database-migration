@@ -27,4 +27,5 @@ log4j = {
 
 grails.plugin.databasemigration.multiSchema = false
 grails.plugin.databasemigration.multiSchemaPattern = 'test_.*'
+grails.plugin.databasemigration.meta.multiSchemaQuery = false
 grails.plugin.databasemigration.multiSchemaList = ['test_1', 'test_2', 'test_3']

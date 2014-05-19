@@ -15,6 +15,7 @@
 package grails.plugin.databasemigration
 
 import grails.util.GrailsUtil
+import groovy.sql.Sql
 import java.sql.ResultSet
 import liquibase.Liquibase
 import liquibase.database.Database
@@ -41,27 +42,37 @@ class MigrationRunner {
 			ConfigObject configObject = configAndName.value
 			
 			if (!MigrationUtils.canAutoMigrate(dsConfigName)) {
-				LOG.warn "Not running auto migrate for DataSource '$dsConfigName'"
+				LOG.debug "Not running auto migrate for DataSource '$dsConfigName'"
 				continue
 			}
 
 			def config = MigrationUtils.getConfig(dsConfigName)
 
 			if (!config.updateOnStart) {
-				LOG.info "updateOnStart disabled for $dsConfigName; not running migrations"
+				LOG.debug "updateOnStart disabled for $dsConfigName; not running migrations"
 				continue
 			}
 
+			LOG.info "updateOnStart enabled for '$dsConfigName'"
 			try {
 				MigrationUtils.executeInSession(dsConfigName) {
 					Database database
 					if(config.multiSchema){
 						database = MigrationUtils.getDatabase(null, dsConfigName)
-						ResultSet resultSet = database.connection.metaData.schemas
+						
 						List schemas = []
-						while (resultSet.next()) {
-							String schema = resultSet.getString(1)
-							if(schema ==~ config.multiSchemaPattern || schema in config.multiSchemaList){ schemas << schema } 
+						if(config.multiSchemaQuery){
+							new Sql(database.connection.wrappedConnection).eachRow(config.multiSchemaQuery){ row ->
+								String schema = row[0]
+								if(schema ==~ config.multiSchemaPattern || schema in config.multiSchemaList){ schemas << schema }
+							}
+						}
+						else {
+							ResultSet resultSet = database.connection.metaData.schemas
+							while (resultSet.next()) {
+								String schema = resultSet.getString(1)
+								if(schema ==~ config.multiSchemaPattern || schema in config.multiSchemaList){ schemas << schema } 
+							}
 						}
 						
 						LOG.info "Found ${schemas.size()} schemas to update"
@@ -84,7 +95,7 @@ class MigrationRunner {
 		}
 	}
 	
-	static void runMigrations(dsConfigName, schema, config, database, migrationCallbacks){
+	static void runMigrations(dsConfigName, schema, config, database, migrationCallbacks = null){
 		if (config.dropOnStart) {
 			LOG.warn "Dropping tables..."
 			MigrationUtils.getLiquibase(database).dropAll()
