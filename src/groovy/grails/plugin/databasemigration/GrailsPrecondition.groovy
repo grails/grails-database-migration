@@ -51,6 +51,7 @@ class GrailsPrecondition implements Precondition {
 	ChangeSet changeSet
 	ApplicationContext ctx
 	ResourceAccessor resourceAccessor
+    Sql sql
 
 	/**
 	 * {@inheritDoc}
@@ -121,15 +122,15 @@ class GrailsPrecondition implements Precondition {
 	Sql getSql() {
 		if (!connection) return null
 
-		if (!sql) {
-			sql = new Sql(connection) {
+		if (!this.sql) {
+			this.sql = new Sql(connection) {
 				protected void closeResources(Connection c) {
 					// do nothing, let Liquibase close the connection
 				}
 			}
 		}
 
-		sql
+		this.sql
 	}
 
 	/**
