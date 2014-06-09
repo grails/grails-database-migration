@@ -22,9 +22,7 @@ import grails.util.GrailsNameUtils
 includeTargets << grailsScript('_GrailsBootstrap')
 
 target(dbmInit: 'General initialization, also creates a Liquibase instance') {
-	depends(classpath, checkVersion, configureProxy, enableExpandoMetaClass, compile, bootstrap, loadApp)
-
-	configureApp()
+    depends(classpath, checkVersion, configureProxy, enableExpandoMetaClass, compile, bootstrapOnce)
 
 	try {
 		hyphenatedScriptName = GrailsNameUtils.getScriptName(scriptName)
