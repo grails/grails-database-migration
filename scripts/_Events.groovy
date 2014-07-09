@@ -5,7 +5,7 @@ eventPackageAppEnd = {
 		MigrationUtils.scriptName = binding.variables.scriptName
 	}
 	catch (Throwable t) {
-		println "\nERROR setting MigrationUtils.scriptName, auto-migrate not possible: $e.message\n"
+		println "\nERROR setting MigrationUtils.scriptName, auto-migrate not possible: $t.message\n"
 	}
 }
 
