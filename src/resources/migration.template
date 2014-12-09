@@ -1,0 +1,17 @@
+// example migration file
+databaseChangeLog = {
+
+	changeSet(author: "@author@", id: "@id@") {
+// liquibase changes
+//		addNotNullConstraint(tableName: "tableName", columnName: "date_created")
+
+// grails changes
+		grailsChange {
+			change {
+//				sql.execute("")
+			}
+			rollback {
+			}
+		}
+	}
+}
