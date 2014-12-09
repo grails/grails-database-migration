@@ -30,6 +30,7 @@ import liquibase.parser.ChangeLogParserFactory
 class DbdocController {
 
 	def migrationResourceAccessor
+	Map dbDocCache = [:]
 
 	def index = {
 
@@ -74,16 +75,16 @@ class DbdocController {
 			return
 		}
 
-		String sessionKey = '__DBDOC__' + changelogFileName
-		def files = session[sessionKey]
-		if (!files) {
-			files = generateHTML(changelogFileName)
-			session[sessionKey] = files
+		String cacheKey = '__DBDOC__' + changelogFileName
+		Map cacheEntry = dbDocCache[cacheKey]
+		if (!cacheEntry) {
+			cacheEntry = generateHTML(changelogFileName)
+			dbDocCache[cacheKey] = cacheEntry
 		}
 
 		if (!filename) {
-			if (files.containsKey(section)) {
-				render files[section]
+			if (cacheEntry.containsKey(section)) {
+				render cacheEntry[section]
 				return
 			}
 			render "no content for $section"
@@ -95,15 +96,15 @@ class DbdocController {
 		}
 
 		String key = table && column ? "columns/${table}.${column}" : "$section/$filename"
-		if (files.containsKey(key)) {
+		if (cacheEntry.containsKey(key)) {
 			if (key.endsWith('.xml')) {
-				render text: files[key], contentType: 'text/xml'
+				render text: cacheEntry[key], contentType: 'text/xml'
 			}
 			else if (key.endsWith('.groovy')) {
-				render text: '<pre>\n' + files[key] + '\n</pre>', contentType: 'text/html'
+				render text: '<pre>\n' + cacheEntry[key] + '\n</pre>', contentType: 'text/html'
 			}
 			else {
-				render files[key]
+				render cacheEntry[key]
 			}
 			return
 		}
