@@ -49,6 +49,10 @@ class DbmGenerateGormChangelogCommand implements ApplicationCommand, DatabaseMig
             doGenerateChangeLog(changeLogFile, database)
         }
 
+        if (filename && commandLine.hasOption('add')) {
+            appendToChangeLog(changeLogFile)
+        }
+
         return true
     }
 }

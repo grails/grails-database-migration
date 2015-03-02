@@ -63,6 +63,10 @@ class DbmDiffCommand implements ApplicationCommand, DatabaseMigrationCommand {
             }
         }
 
+        if (filename && commandLine.hasOption('add')) {
+            appendToChangeLog(changeLogFile)
+        }
+
         return true
     }
 }

@@ -50,6 +50,10 @@ class DbmGenerateChangelogCommand implements ApplicationCommand, DatabaseMigrati
             doGenerateChangeLog(changeLogFile, database)
         }
 
+        if (filename && commandLine.hasOption('add')) {
+            appendToChangeLog(changeLogFile)
+        }
+
         return true
     }
 }

@@ -30,6 +30,7 @@ import liquibase.integration.commandline.CommandLineResourceAccessor
 import liquibase.integration.commandline.CommandLineUtils
 import liquibase.resource.CompositeResourceAccessor
 import liquibase.resource.FileSystemResourceAccessor
+import liquibase.util.file.FilenameUtils
 import org.grails.config.PropertySourcesConfig
 import org.grails.plugins.databasemigration.liquibase.GormDatabase
 import org.hibernate.cfg.Configuration
@@ -202,5 +203,27 @@ trait DatabaseMigrationCommand {
             diffOutputControl,
             null
         )
+    }
+
+    void appendToChangeLog(File destChangeLogFile) {
+        def srcChangeLogFile = changeLogFile
+        if (!changeLogFile.exists() || srcChangeLogFile == destChangeLogFile) {
+            return
+        }
+
+        def relativePath = srcChangeLogFile.parentFile.toPath().relativize(destChangeLogFile.toPath()).toString()
+        def extension = FilenameUtils.getExtension(srcChangeLogFile.name)?.toLowerCase()
+
+        switch (extension) {
+            case ['yaml', 'yml']:
+                srcChangeLogFile << """
+                |- include:
+                |    file: ${relativePath}
+                """.stripMargin()
+                break;
+            case ['xml']:
+                srcChangeLogFile.write(srcChangeLogFile.text.replaceFirst('</databaseChangeLog>', "    <include file='$relativePath'/>\n\$0"))
+                break;
+        }
     }
 }
