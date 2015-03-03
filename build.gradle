@@ -74,7 +74,7 @@ dependencies {
     testCompile "org.grails:grails-plugin-testing"
     testCompile "org.grails.plugins:hibernate"
 
-    console "org.grails:grails-console"
+    provided "org.grails:grails-shell"
 }
 
 eclipse {

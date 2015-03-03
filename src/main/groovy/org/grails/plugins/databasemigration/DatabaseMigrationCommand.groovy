@@ -15,9 +15,7 @@
  */
 package org.grails.plugins.databasemigration
 
-import grails.config.Config
-import grails.util.Environment
-import grails.util.Holders
+import grails.config.ConfigMap
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.transform.stc.ClosureParams
@@ -31,11 +29,6 @@ import liquibase.integration.commandline.CommandLineUtils
 import liquibase.resource.CompositeResourceAccessor
 import liquibase.resource.FileSystemResourceAccessor
 import liquibase.util.file.FilenameUtils
-import org.grails.config.PropertySourcesConfig
-import org.grails.plugins.databasemigration.liquibase.GormDatabase
-import org.hibernate.cfg.Configuration
-import org.hibernate.dialect.Dialect
-import org.springframework.context.ConfigurableApplicationContext
 
 import java.text.ParseException
 
@@ -47,25 +40,30 @@ trait DatabaseMigrationCommand {
     static final String DEFAULT_CHANGE_LOG_LOCATION = 'grails-app/conf'
     static final String DEFAULT_CHANGE_LOG_FILE = 'db/changelog/db.changelog-master.yml'
 
+    abstract ConfigMap getConfig()
+
     File getChangeLogLocation() {
-        new File(Holders.config.getProperty("${CONFIG_PREFIX}.changelogLocation", DEFAULT_CHANGE_LOG_LOCATION))
+        new File(config.getProperty("${CONFIG_PREFIX}.changelogLocation", String) ?: DEFAULT_CHANGE_LOG_LOCATION)
     }
 
     File getChangeLogFile() {
-        new File(getChangeLogLocation(), Holders.config.getProperty("${CONFIG_PREFIX}.changelogFileName", DEFAULT_CHANGE_LOG_FILE))
+        new File(changeLogLocation, config.getProperty("${CONFIG_PREFIX}.changelogFileName", String) ?: DEFAULT_CHANGE_LOG_FILE)
     }
 
     File resolveChangeLogFile(String filename) {
         if (!filename) {
             return null
         }
-        new File(getChangeLogLocation(), filename)
+        new File(changeLogLocation, filename)
     }
 
-    Map<String, String> getDataSourceConfig(String dataSource, String environment = Environment.current.name) {
+    Map<String, String> getDataSourceConfig(String dataSource) {
+        getDataSourceConfig(dataSource, config)
+    }
+
+    Map<String, String> getDataSourceConfig(String dataSource, ConfigMap config) {
         def dataSourceName = dataSource ? "dataSource_$dataSource" : 'dataSource'
-        def config = getConfig(environment)
-        def dataSources = config.getProperty('dataSources', Map, [:])
+        def dataSources = config.getProperty('dataSources', Map) ?: [:]
         if (!dataSources) {
             def defaultDataSource = config.getProperty('dataSource', Map)
             if (defaultDataSource) {
@@ -73,16 +71,6 @@ trait DatabaseMigrationCommand {
             }
         }
         return (Map<String, String>) dataSources.get(dataSourceName)
-    }
-
-    private Config getConfig(String environment = null) {
-        if (!environment || Environment.currentEnvironment.name == environment) {
-            return Holders.config
-        }
-
-        return (Config) environmentWith(environment) {
-            new PropertySourcesConfig(((PropertySourcesConfig) Holders.config).getPropertySources())
-        }
     }
 
     void withFileOrSystemOutWriter(String filename, @ClosureParams(value = SimpleType, options = "java.io.Writer") Closure closure) {
@@ -100,16 +88,6 @@ trait DatabaseMigrationCommand {
         }
     }
 
-    private Object environmentWith(String environment, Closure closure) {
-        def originalEnvironment = Environment.currentEnvironment
-        System.setProperty(Environment.KEY, environment)
-        try {
-            return closure.call()
-        } finally {
-            System.setProperty(Environment.KEY, originalEnvironment.name)
-        }
-    }
-
     boolean isTimeFormat(String time) {
         time ==~ /\d{2}:\d{2}:\d{2}/
     }
@@ -119,12 +97,13 @@ trait DatabaseMigrationCommand {
         Date.parse('yyyy-MM-dd HH:mm:ss', "$date $time")
     }
 
-    void withLiquibase(File changeLogFile, String defaultSchema, Map<String, String> dataSourceConfig, @ClosureParams(value = SimpleType, options = 'liquibase.Liquibase') Closure closure) {
+    @CompileDynamic
+    void withLiquibase(String defaultSchema, String dataSource, @ClosureParams(value = SimpleType, options = 'liquibase.Liquibase') Closure closure) {
         def fsOpener = new FileSystemResourceAccessor()
         def clOpener = new CommandLineResourceAccessor(Thread.currentThread().contextClassLoader)
         def fileOpener = new CompositeResourceAccessor(fsOpener, clOpener)
 
-        withDatabase(defaultSchema, dataSourceConfig) { Database database ->
+        withDatabase(defaultSchema, getDataSourceConfig(dataSource)) { Database database ->
             def liquibase = new Liquibase(changeLogFile.path, fileOpener, database)
             closure.call(liquibase)
         }
@@ -134,16 +113,6 @@ trait DatabaseMigrationCommand {
         def database = null
         try {
             database = createDatabase(defaultSchema, dataSourceConfig)
-            closure.call(database)
-        } finally {
-            database?.close()
-        }
-    }
-
-    void withGormDatabase(ConfigurableApplicationContext applicationContext, String dataSource, @ClosureParams(value = SimpleType, options = 'liquibase.database.Database') Closure closure) {
-        def database = null
-        try {
-            database = createGormDatabase(applicationContext, dataSource)
             closure.call(database)
         } finally {
             database?.close()
@@ -167,17 +136,6 @@ trait DatabaseMigrationCommand {
             null,
             null,
         )
-    }
-
-    @CompileDynamic
-    private Database createGormDatabase(ConfigurableApplicationContext applicationContext, String dataSource = null) {
-        String sessionFactoryName = dataSource ? '&sessionFactory_' + dataSource : '&sessionFactory'
-
-        def sessionFactory = applicationContext.getBean(sessionFactoryName)
-        def configuration = (Configuration) sessionFactory.configuration
-        def dialect = (Dialect) applicationContext.classLoader.loadClass((String) configuration.getProperty('hibernate.dialect')).newInstance()
-
-        new GormDatabase(configuration, dialect)
     }
 
     void doGenerateChangeLog(File changeLogFile, Database originalDatabase) {
