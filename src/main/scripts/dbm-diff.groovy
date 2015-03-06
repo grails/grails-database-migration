@@ -7,6 +7,7 @@ description('Compares two databases and creates a changelog that will make the c
     flag name: 'filename', description: 'The path to the output file to write to. If not specified output is written to the console'
     flag name: 'defaultSchema', description: 'The default schema name to use'
     flag name: 'dataSource', description: 'If provided will run the script for the specified dataSource. Not needed for the default dataSource'
+    flag name: 'force', description: 'Whether to overwrite existing files'
     flag name: 'add', description: 'if provided will run the script for the specified dataSource. Not needed for the default dataSource.'
 }
 

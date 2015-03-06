@@ -32,7 +32,11 @@ class DbmGenerateChangelogCommand implements ScriptDatabaseMigrationCommand {
         def changeLogFile = resolveChangeLogFile(filename)
         if (changeLogFile) {
             if (changeLogFile.exists()) {
-                throw new DatabaseMigrationException("ChangeLogFile ${changeLogFile} already exists!")
+                if (commandLine.hasOption('force')) {
+                    changeLogFile.delete()
+                } else {
+                    throw new DatabaseMigrationException("ChangeLogFile ${changeLogFile} already exists!")
+                }
             }
             if (!changeLogFile.parentFile.exists()) {
                 changeLogFile.parentFile.mkdirs()

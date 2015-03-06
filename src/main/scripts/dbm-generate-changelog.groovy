@@ -6,6 +6,7 @@ description('Generates an initial changelog XML or Groovy DSL file from the data
     flag name: 'filename', description: 'The path to the output file to write to. If not specified output is written to the console'
     flag name: 'defaultSchema', description: 'The default schema name to use'
     flag name: 'dataSource', description: 'If provided will run the script for the specified dataSource. Not needed for the default dataSource'
+    flag name: 'force', description: 'Whether to overwrite existing files'
     flag name: 'add', description: 'if specified add an include in the root changelog file referencing the new file'
 }
 
