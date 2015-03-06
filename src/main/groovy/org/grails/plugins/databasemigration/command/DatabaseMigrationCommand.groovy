@@ -24,9 +24,7 @@ import liquibase.CatalogAndSchema
 import liquibase.Liquibase
 import liquibase.database.Database
 import liquibase.diff.output.DiffOutputControl
-import liquibase.integration.commandline.CommandLineResourceAccessor
 import liquibase.integration.commandline.CommandLineUtils
-import liquibase.resource.CompositeResourceAccessor
 import liquibase.resource.FileSystemResourceAccessor
 import liquibase.util.file.FilenameUtils
 
@@ -178,7 +176,12 @@ trait DatabaseMigrationCommand {
                 """.stripMargin().trim()
                 break;
             case ['xml']:
-                srcChangeLogFile.write(srcChangeLogFile.text.replaceFirst('</databaseChangeLog>', "    <include file='$relativePath'/>\n\$0"))
+                def text = srcChangeLogFile.text
+                if (text =~ '<databaseChangeLog[^>]*/>') {
+                    srcChangeLogFile.write(text.replaceFirst('(<databaseChangeLog[^>]*)/>', "\$1>\n    <include file=\"$relativePath\"/>\n</databaseChangeLog>"))
+                } else {
+                    srcChangeLogFile.write(text.replaceFirst('</databaseChangeLog>', "    <include file=\"$relativePath\"/>\n\$0"))
+                }
                 break;
         }
     }
