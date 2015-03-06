@@ -11,7 +11,7 @@ import liquibase.serializer.ChangeLogSerializerFactory
 import liquibase.servicelocator.ServiceLocator
 import org.grails.build.parsing.CommandLineParser
 import org.grails.config.PropertySourcesConfig
-import org.grails.plugins.databasemigration.liquibase.GormYamlChangeLogSerializer
+import org.grails.plugins.databasemigration.liquibase.GrailsYamlChangeLogSerializer
 import org.h2.Driver
 import org.springframework.boot.liquibase.CommonsLoggingLiquibaseLogger
 import org.springframework.context.support.GenericApplicationContext
@@ -30,8 +30,8 @@ abstract class ApplicationContextDatabaseMigrationCommandSpec extends DatabaseMi
         if (!ServiceLocator.instance.packages.contains(CommonsLoggingLiquibaseLogger)) {
             ServiceLocator.instance.addPackageToScan(CommonsLoggingLiquibaseLogger.package.name)
         }
-        if (!ChangeLogSerializerFactory.instance.serializers.any { String name, ChangeLogSerializer serializer -> serializer instanceof GormYamlChangeLogSerializer }) {
-            ChangeLogSerializerFactory.instance.register(new GormYamlChangeLogSerializer())
+        if (!ChangeLogSerializerFactory.instance.serializers.any { String name, ChangeLogSerializer serializer -> serializer instanceof GrailsYamlChangeLogSerializer }) {
+            ChangeLogSerializerFactory.instance.register(new GrailsYamlChangeLogSerializer())
         }
 
         applicationContext = new GenericApplicationContext()

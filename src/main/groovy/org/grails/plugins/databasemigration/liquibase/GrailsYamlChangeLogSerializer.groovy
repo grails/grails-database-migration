@@ -24,7 +24,7 @@ import liquibase.serializer.core.yaml.YamlChangeLogSerializer
 import liquibase.util.StringUtils
 
 @CompileStatic
-class GormYamlChangeLogSerializer extends YamlChangeLogSerializer {
+class GrailsYamlChangeLogSerializer extends YamlChangeLogSerializer {
 
     @Override
     String[] getValidFileExtensions() {

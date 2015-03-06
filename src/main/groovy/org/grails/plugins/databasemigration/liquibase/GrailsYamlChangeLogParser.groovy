@@ -13,7 +13,7 @@ import liquibase.util.StreamUtil
 import org.yaml.snakeyaml.Yaml
 
 @CompileStatic
-class GormYamlChangeLogParser extends YamlChangeLogParser {
+class GrailsYamlChangeLogParser extends YamlChangeLogParser {
 
     final int priority = 10
 

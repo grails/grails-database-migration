@@ -22,8 +22,8 @@ import liquibase.parser.ChangeLogParserFactory
 import liquibase.serializer.ChangeLogSerializer
 import liquibase.serializer.ChangeLogSerializerFactory
 import liquibase.servicelocator.ServiceLocator
-import org.grails.plugins.databasemigration.liquibase.GormYamlChangeLogParser
-import org.grails.plugins.databasemigration.liquibase.GormYamlChangeLogSerializer
+import org.grails.plugins.databasemigration.liquibase.GrailsYamlChangeLogParser
+import org.grails.plugins.databasemigration.liquibase.GrailsYamlChangeLogSerializer
 import org.springframework.boot.liquibase.CommonsLoggingLiquibaseLogger
 
 class DatabaseMigrationGrailsPlugin extends Plugin {
@@ -76,11 +76,11 @@ class DatabaseMigrationGrailsPlugin extends Plugin {
         if (!ServiceLocator.instance.packages.contains(CommonsLoggingLiquibaseLogger.package.name)) {
             ServiceLocator.instance.addPackageToScan(CommonsLoggingLiquibaseLogger.package.name)
         }
-        if (!ChangeLogSerializerFactory.instance.serializers.any { String name, ChangeLogSerializer serializer -> serializer instanceof GormYamlChangeLogSerializer }) {
-            ChangeLogSerializerFactory.instance.register(new GormYamlChangeLogSerializer())
+        if (!ChangeLogSerializerFactory.instance.serializers.any { String name, ChangeLogSerializer serializer -> serializer instanceof GrailsYamlChangeLogSerializer }) {
+            ChangeLogSerializerFactory.instance.register(new GrailsYamlChangeLogSerializer())
         }
-        if (!ChangeLogParserFactory.instance.parsers.any { ChangeLogParser parser -> parser instanceof GormYamlChangeLogParser }) {
-            ChangeLogParserFactory.instance.register(new GormYamlChangeLogParser())
+        if (!ChangeLogParserFactory.instance.parsers.any { ChangeLogParser parser -> parser instanceof GrailsYamlChangeLogParser }) {
+            ChangeLogParserFactory.instance.register(new GrailsYamlChangeLogParser())
         }
     }
 
