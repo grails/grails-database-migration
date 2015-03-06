@@ -37,8 +37,8 @@ trait DatabaseMigrationCommand {
 
     static final String CONFIG_PREFIX = 'grails.plugin.databasemigration'
 
-    static final String DEFAULT_CHANGE_LOG_LOCATION = 'grails-app/conf'
-    static final String DEFAULT_CHANGE_LOG_FILE = 'db/changelog/db.changelog-master.yml'
+    static final String DEFAULT_CHANGE_LOG_LOCATION = 'grails-app/migrations'
+    static final String DEFAULT_CHANGE_LOG_FILE = 'changelog.yml'
 
     abstract ConfigMap getConfig()
 
@@ -99,12 +99,10 @@ trait DatabaseMigrationCommand {
 
     @CompileDynamic
     void withLiquibase(String defaultSchema, String dataSource, @ClosureParams(value = SimpleType, options = 'liquibase.Liquibase') Closure closure) {
-        def fsOpener = new FileSystemResourceAccessor()
-        def clOpener = new CommandLineResourceAccessor(Thread.currentThread().contextClassLoader)
-        def fileOpener = new CompositeResourceAccessor(fsOpener, clOpener)
+        def fileSystemResourceAccessor = new FileSystemResourceAccessor(changeLogLocation.path)
 
         withDatabase(defaultSchema, getDataSourceConfig(dataSource)) { Database database ->
-            def liquibase = new Liquibase(changeLogFile.path, fileOpener, database)
+            def liquibase = new Liquibase(changeLogLocation.toPath().relativize(changeLogFile.toPath()).toString(), fileSystemResourceAccessor, database)
             closure.call(liquibase)
         }
     }
@@ -169,7 +167,7 @@ trait DatabaseMigrationCommand {
             return
         }
 
-        def relativePath = srcChangeLogFile.parentFile.toPath().relativize(destChangeLogFile.toPath()).toString()
+        def relativePath = changeLogLocation.toPath().relativize(destChangeLogFile.toPath()).toString()
         def extension = FilenameUtils.getExtension(srcChangeLogFile.name)?.toLowerCase()
 
         switch (extension) {
@@ -177,7 +175,7 @@ trait DatabaseMigrationCommand {
                 srcChangeLogFile << """
                 |- include:
                 |    file: ${relativePath}
-                """.stripMargin()
+                """.stripMargin().trim()
                 break;
             case ['xml']:
                 srcChangeLogFile.write(srcChangeLogFile.text.replaceFirst('</databaseChangeLog>', "    <include file='$relativePath'/>\n\$0"))

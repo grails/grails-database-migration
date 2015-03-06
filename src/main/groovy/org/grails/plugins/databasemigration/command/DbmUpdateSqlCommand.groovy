@@ -17,7 +17,9 @@ package org.grails.plugins.databasemigration.command
 
 import groovy.transform.CompileStatic
 import liquibase.Liquibase
+import liquibase.parser.ChangeLogParserFactory
 import org.grails.plugins.databasemigration.ScriptDatabaseMigrationCommand
+import org.grails.plugins.databasemigration.liquibase.GormYamlChangeLogParser
 
 @CompileStatic
 class DbmUpdateSqlCommand implements ScriptDatabaseMigrationCommand {

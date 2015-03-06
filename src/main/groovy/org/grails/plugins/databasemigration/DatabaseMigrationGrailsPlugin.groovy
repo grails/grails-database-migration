@@ -17,8 +17,12 @@ package org.grails.plugins.databasemigration
 
 import grails.plugins.Plugin
 import liquibase.integration.spring.SpringLiquibase
+import liquibase.parser.ChangeLogParser
+import liquibase.parser.ChangeLogParserFactory
+import liquibase.serializer.ChangeLogSerializer
 import liquibase.serializer.ChangeLogSerializerFactory
 import liquibase.servicelocator.ServiceLocator
+import org.grails.plugins.databasemigration.liquibase.GormYamlChangeLogParser
 import org.grails.plugins.databasemigration.liquibase.GormYamlChangeLogSerializer
 import org.springframework.boot.liquibase.CommonsLoggingLiquibaseLogger
 
@@ -48,10 +52,7 @@ class DatabaseMigrationGrailsPlugin extends Plugin {
 
     @Override
     Closure doWithSpring() {
-        def serviceLocator = ServiceLocator.instance
-        serviceLocator.addPackageToScan(CommonsLoggingLiquibaseLogger.package.name)
-
-        ChangeLogSerializerFactory.instance.register(new GormYamlChangeLogSerializer())
+        configureLiquibase()
 
         return { ->
             def dataSourceNames = getDataSourceNames()
@@ -61,13 +62,25 @@ class DatabaseMigrationGrailsPlugin extends Plugin {
                     "springLiquibase_${dataSourceName}"(SpringLiquibase) {
                         dropFirst = migrationConfig.containsKey('dropOnStart') ? migrationConfig.get('dropOnStart') : false
                         dataSource = ref(dataSourceName)
-                        changeLog = migrationConfig.get('updateOnStartFileName') ?: 'classpath:/db/changelog/db.changelog-master.yml'
+                        changeLog = migrationConfig.get('updateOnStartFileName') ?: 'classpath:/changelog.yml'
                         contexts = migrationConfig.get('updateOnStartContexts') ?: null
                         labels = migrationConfig.get('updateOnStartLabels') ?: null
                         defaultSchema = migrationConfig.get('updateOnStartDefaultSchema') ?: null
                     }
                 }
             }
+        }
+    }
+
+    private static void configureLiquibase() {
+        if (!ServiceLocator.instance.packages.contains(CommonsLoggingLiquibaseLogger.package.name)) {
+            ServiceLocator.instance.addPackageToScan(CommonsLoggingLiquibaseLogger.package.name)
+        }
+        if (!ChangeLogSerializerFactory.instance.serializers.any { String name, ChangeLogSerializer serializer -> serializer instanceof GormYamlChangeLogSerializer }) {
+            ChangeLogSerializerFactory.instance.register(new GormYamlChangeLogSerializer())
+        }
+        if (!ChangeLogParserFactory.instance.parsers.any { ChangeLogParser parser -> parser instanceof GormYamlChangeLogParser }) {
+            ChangeLogParserFactory.instance.register(new GormYamlChangeLogParser())
         }
     }
 

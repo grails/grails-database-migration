@@ -19,12 +19,15 @@ import grails.config.ConfigMap
 import grails.util.Environment
 import grails.util.GrailsNameUtils
 import groovy.transform.CompileStatic
+import liquibase.parser.ChangeLogParser
+import liquibase.parser.ChangeLogParserFactory
 import liquibase.serializer.ChangeLogSerializer
 import liquibase.serializer.ChangeLogSerializerFactory
 import liquibase.servicelocator.ServiceLocator
 import org.grails.build.parsing.CommandLine
 import org.grails.cli.profile.ExecutionContext
 import org.grails.config.CodeGenConfig
+import org.grails.plugins.databasemigration.liquibase.GormYamlChangeLogParser
 import org.grails.plugins.databasemigration.liquibase.GormYamlChangeLogSerializer
 import org.grails.plugins.databasemigration.liquibase.log.GrailsConsoleLogger
 
@@ -41,14 +44,20 @@ trait ScriptDatabaseMigrationCommand implements DatabaseMigrationCommand {
         setCommandLine(executionContext.commandLine)
         setConfig(executionContext.config)
 
+        configureLiquibase()
+        handle()
+    }
+
+    void configureLiquibase() {
         if (!ServiceLocator.instance.packages.contains(GrailsConsoleLogger.package.name)) {
             ServiceLocator.instance.addPackageToScan(GrailsConsoleLogger.package.name)
         }
         if (!ChangeLogSerializerFactory.instance.serializers.any { String name, ChangeLogSerializer serializer -> serializer instanceof GormYamlChangeLogSerializer }) {
             ChangeLogSerializerFactory.instance.register(new GormYamlChangeLogSerializer())
         }
-
-        handle()
+        if (!ChangeLogParserFactory.instance.parsers.any { ChangeLogParser parser -> parser instanceof GormYamlChangeLogParser }) {
+            ChangeLogParserFactory.instance.register(new GormYamlChangeLogParser())
+        }
     }
 
     abstract void handle()
