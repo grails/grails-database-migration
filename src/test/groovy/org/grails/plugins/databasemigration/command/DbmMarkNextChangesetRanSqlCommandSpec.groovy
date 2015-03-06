@@ -15,7 +15,6 @@
  */
 package org.grails.plugins.databasemigration.command
 
-import org.grails.plugins.databasemigration.ScriptDatabaseMigrationCommand
 import spock.lang.AutoCleanup
 
 class DbmMarkNextChangesetRanSqlCommandSpec extends ScriptDatabaseMigrationCommandSpec {

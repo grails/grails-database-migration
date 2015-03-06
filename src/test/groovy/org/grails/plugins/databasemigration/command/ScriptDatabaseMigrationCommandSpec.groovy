@@ -21,7 +21,6 @@ import org.grails.build.parsing.CommandLineParser
 import org.grails.cli.GrailsCli
 import org.grails.cli.profile.ExecutionContext
 import org.grails.config.CodeGenConfig
-import org.grails.plugins.databasemigration.ScriptDatabaseMigrationCommand
 import org.h2.Driver
 import org.springframework.boot.liquibase.CommonsLoggingLiquibaseLogger
 

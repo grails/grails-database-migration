@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.grails.plugins.databasemigration
+package org.grails.plugins.databasemigration.command
 
 import grails.config.ConfigMap
 import grails.util.Environment
@@ -27,6 +27,7 @@ import liquibase.servicelocator.ServiceLocator
 import org.grails.build.parsing.CommandLine
 import org.grails.cli.profile.ExecutionContext
 import org.grails.config.CodeGenConfig
+import org.grails.plugins.databasemigration.EnvironmentAwareCodeGenConfig
 import org.grails.plugins.databasemigration.liquibase.GormYamlChangeLogParser
 import org.grails.plugins.databasemigration.liquibase.GormYamlChangeLogSerializer
 import org.grails.plugins.databasemigration.liquibase.log.GrailsConsoleLogger

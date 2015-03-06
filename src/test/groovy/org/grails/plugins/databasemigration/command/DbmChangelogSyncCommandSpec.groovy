@@ -15,8 +15,6 @@
  */
 package org.grails.plugins.databasemigration.command
 
-import org.grails.plugins.databasemigration.ScriptDatabaseMigrationCommand
-
 class DbmChangelogSyncCommandSpec extends ScriptDatabaseMigrationCommandSpec {
 
     final Class<ScriptDatabaseMigrationCommand> commandClass = DbmChangelogSyncCommand

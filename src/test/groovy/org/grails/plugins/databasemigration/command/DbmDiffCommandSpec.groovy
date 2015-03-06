@@ -17,7 +17,6 @@ package org.grails.plugins.databasemigration.command
 
 import groovy.sql.Sql
 import org.grails.plugins.databasemigration.DatabaseMigrationException
-import org.grails.plugins.databasemigration.ScriptDatabaseMigrationCommand
 import org.h2.Driver
 import org.springframework.jdbc.datasource.DriverManagerDataSource
 import spock.lang.AutoCleanup

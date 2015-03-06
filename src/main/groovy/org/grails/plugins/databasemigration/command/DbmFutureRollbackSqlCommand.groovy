@@ -17,7 +17,6 @@ package org.grails.plugins.databasemigration.command
 
 import groovy.transform.CompileStatic
 import liquibase.Liquibase
-import org.grails.plugins.databasemigration.ScriptDatabaseMigrationCommand
 
 @CompileStatic
 class DbmFutureRollbackSqlCommand implements ScriptDatabaseMigrationCommand {

@@ -16,7 +16,6 @@
 package org.grails.plugins.databasemigration.command
 
 import liquibase.exception.ChangeLogParseException
-import org.grails.plugins.databasemigration.ScriptDatabaseMigrationCommand
 
 class DbmValidateCommandSpec extends ScriptDatabaseMigrationCommandSpec {
 

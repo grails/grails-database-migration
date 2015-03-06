@@ -19,7 +19,6 @@ import groovy.transform.CompileStatic
 import groovy.transform.stc.ClosureParams
 import groovy.transform.stc.SimpleType
 import liquibase.Liquibase
-import org.grails.plugins.databasemigration.ScriptDatabaseMigrationCommand
 
 @CompileStatic
 class DbmListLocksCommand implements ScriptDatabaseMigrationCommand {

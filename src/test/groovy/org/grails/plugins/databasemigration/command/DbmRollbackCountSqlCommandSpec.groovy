@@ -16,7 +16,6 @@
 package org.grails.plugins.databasemigration.command
 
 import org.grails.plugins.databasemigration.DatabaseMigrationException
-import org.grails.plugins.databasemigration.ScriptDatabaseMigrationCommand
 import spock.lang.AutoCleanup
 
 class DbmRollbackCountSqlCommandSpec extends ScriptDatabaseMigrationCommandSpec {
