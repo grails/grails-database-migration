@@ -15,11 +15,12 @@
  */
 package org.grails.plugins.databasemigration.command
 
+import grails.dev.commands.ApplicationCommand
 import spock.lang.AutoCleanup
 
-class DbmUpdateSqlCommandSpec extends ScriptDatabaseMigrationCommandSpec {
+class DbmUpdateSqlCommandSpec extends ApplicationContextDatabaseMigrationCommandSpec {
 
-    final Class<ScriptDatabaseMigrationCommand> commandClass = DbmUpdateSqlCommand
+    final Class<ApplicationCommand> commandClass = DbmUpdateSqlCommand
 
     @AutoCleanup('delete')
     File outputFile = File.createTempFile('update', 'sql')
@@ -33,11 +34,11 @@ class DbmUpdateSqlCommandSpec extends ScriptDatabaseMigrationCommandSpec {
 
         then:
             def output = outputCapture.toString()
-            output.contains('CREATE TABLE PUBLIC.author (id BIGINT AUTO_INCREMENT, version BIGINT, name VARCHAR(255));')
-            output.contains('CREATE TABLE PUBLIC.book (id BIGINT AUTO_INCREMENT, version BIGINT, author_id BIGINT, title VARCHAR(255));')
+            output.contains('CREATE TABLE PUBLIC.author (id BIGINT AUTO_INCREMENT NOT NULL, version BIGINT NOT NULL, name VARCHAR(255) NOT NULL, CONSTRAINT authorPK PRIMARY KEY (id));')
+            output.contains('CREATE TABLE PUBLIC.book (id BIGINT AUTO_INCREMENT NOT NULL, version BIGINT NOT NULL, author_id BIGINT NOT NULL, title VARCHAR(255) NOT NULL, CONSTRAINT bookPK PRIMARY KEY (id));')
             output.contains('ALTER TABLE PUBLIC.book ADD CONSTRAINT FK_4sac2ubmnqva85r8bk8fxdvbf FOREIGN KEY (author_id) REFERENCES PUBLIC.author (id);')
-            output.contains('INSERT INTO PUBLIC.author (name) VALUES (\'Mary\');')
-            output.contains('INSERT INTO PUBLIC.author (name) VALUES (\'Amelia\');')
+            output.contains('INSERT INTO PUBLIC.author (name, version) VALUES (\'Mary\', \'0\');')
+            output.contains('INSERT INTO PUBLIC.author (name, version) VALUES (\'Amelia\', \'0\');')
     }
 
     def "writes SQL to update database with contexts"() {
@@ -49,11 +50,11 @@ class DbmUpdateSqlCommandSpec extends ScriptDatabaseMigrationCommandSpec {
 
         then:
             def output = outputCapture.toString()
-            output.contains('CREATE TABLE PUBLIC.author (id BIGINT AUTO_INCREMENT, version BIGINT, name VARCHAR(255));')
-            output.contains('CREATE TABLE PUBLIC.book (id BIGINT AUTO_INCREMENT, version BIGINT, author_id BIGINT, title VARCHAR(255));')
+            output.contains('CREATE TABLE PUBLIC.author (id BIGINT AUTO_INCREMENT NOT NULL, version BIGINT NOT NULL, name VARCHAR(255) NOT NULL, CONSTRAINT authorPK PRIMARY KEY (id));')
+            output.contains('CREATE TABLE PUBLIC.book (id BIGINT AUTO_INCREMENT NOT NULL, version BIGINT NOT NULL, author_id BIGINT NOT NULL, title VARCHAR(255) NOT NULL, CONSTRAINT bookPK PRIMARY KEY (id));')
             output.contains('ALTER TABLE PUBLIC.book ADD CONSTRAINT FK_4sac2ubmnqva85r8bk8fxdvbf FOREIGN KEY (author_id) REFERENCES PUBLIC.author (id);')
-            !output.contains('INSERT INTO PUBLIC.author (name) VALUES (\'Mary\');')
-            output.contains('INSERT INTO PUBLIC.author (name) VALUES (\'Amelia\');')
+            !output.contains('INSERT INTO PUBLIC.author (name, version) VALUES (\'Mary\', \'0\');')
+            output.contains('INSERT INTO PUBLIC.author (name, version) VALUES (\'Amelia\', \'0\');')
     }
 
     def "writes SQL to update database to a file given as arguments"() {
@@ -65,108 +66,69 @@ class DbmUpdateSqlCommandSpec extends ScriptDatabaseMigrationCommandSpec {
 
         then:
             def output = outputFile.text
-            output.contains('CREATE TABLE PUBLIC.author (id BIGINT AUTO_INCREMENT, version BIGINT, name VARCHAR(255));')
-            output.contains('CREATE TABLE PUBLIC.book (id BIGINT AUTO_INCREMENT, version BIGINT, author_id BIGINT, title VARCHAR(255));')
+            output.contains('CREATE TABLE PUBLIC.author (id BIGINT AUTO_INCREMENT NOT NULL, version BIGINT NOT NULL, name VARCHAR(255) NOT NULL, CONSTRAINT authorPK PRIMARY KEY (id));')
+            output.contains('CREATE TABLE PUBLIC.book (id BIGINT AUTO_INCREMENT NOT NULL, version BIGINT NOT NULL, author_id BIGINT NOT NULL, title VARCHAR(255) NOT NULL, CONSTRAINT bookPK PRIMARY KEY (id));')
             output.contains('ALTER TABLE PUBLIC.book ADD CONSTRAINT FK_4sac2ubmnqva85r8bk8fxdvbf FOREIGN KEY (author_id) REFERENCES PUBLIC.author (id);')
-            output.contains('INSERT INTO PUBLIC.author (name) VALUES (\'Mary\');')
-            output.contains('INSERT INTO PUBLIC.author (name) VALUES (\'Amelia\');')
+            output.contains('INSERT INTO PUBLIC.author (name, version) VALUES (\'Mary\', \'0\');')
+            output.contains('INSERT INTO PUBLIC.author (name, version) VALUES (\'Amelia\', \'0\');')
     }
 
     static final String CHANGE_LOG_CONTENT = '''
-databaseChangeLog:
-- changeSet:
-    id: 1
-    author: John Smith
-    changes:
-    - createTable:
-        columns:
-        - column:
-            autoIncrement: true
-            constraints:
-              constraints:
-                primaryKey: true
-                primaryKeyName: authorPK
-            name: id
-            type: BIGINT
-        - column:
-            constraints:
-              constraints:
-                nullable: false
-            name: version
-            type: BIGINT
-        - column:
-            constraints:
-              constraints:
-                nullable: false
-            name: name
-            type: VARCHAR(255)
-        tableName: author
-- changeSet:
-    id: 2
-    author: John Smith
-    changes:
-    - createTable:
-        columns:
-        - column:
-            autoIncrement: true
-            constraints:
-              constraints:
-                primaryKey: true
-                primaryKeyName: bookPK
-            name: id
-            type: BIGINT
-        - column:
-            constraints:
-              constraints:
-                nullable: false
-            name: version
-            type: BIGINT
-        - column:
-            constraints:
-              constraints:
-                nullable: false
-            name: author_id
-            type: BIGINT
-        - column:
-            constraints:
-              constraints:
-                nullable: false
-            name: title
-            type: VARCHAR(255)
-        tableName: book
-- changeSet:
-    id: 3
-    author: John Smith
-    changes:
-    - addForeignKeyConstraint:
-        baseColumnNames: author_id
-        baseTableName: book
-        constraintName: FK_4sac2ubmnqva85r8bk8fxdvbf
-        deferrable: false
-        initiallyDeferred: false
-        referencedColumnNames: id
-        referencedTableName: author
-- changeSet:
-    id: 4
-    author: John Smith
-    context: development
-    changes:
-    - insert:
-        tableName: author
-        columns:
-        - column:
-            name: name
-            value: Mary
-- changeSet:
-    id: 5
-    author: John Smith
-    context: test
-    changes:
-    - insert:
-        tableName: author
-        columns:
-        - column:
-            name: name
-            value: Amelia
+databaseChangeLog = {
+
+    changeSet(author: "John Smith", id: "1") {
+        createTable(tableName: "author") {
+            column(autoIncrement: "true", name: "id", type: "BIGINT") {
+                constraints(primaryKey: "true", primaryKeyName: "authorPK")
+            }
+
+            column(name: "version", type: "BIGINT") {
+                constraints(nullable: "false")
+            }
+
+            column(name: "name", type: "VARCHAR(255)") {
+                constraints(nullable: "false")
+            }
+        }
+    }
+
+    changeSet(author: "John Smith", id: "2") {
+        createTable(tableName: "book") {
+            column(autoIncrement: "true", name: "id", type: "BIGINT") {
+                constraints(primaryKey: "true", primaryKeyName: "bookPK")
+            }
+
+            column(name: "version", type: "BIGINT") {
+                constraints(nullable: "false")
+            }
+
+            column(name: "author_id", type: "BIGINT") {
+                constraints(nullable: "false")
+            }
+
+            column(name: "title", type: "VARCHAR(255)") {
+                constraints(nullable: "false")
+            }
+        }
+    }
+
+    changeSet(author: "John Smith", id: "3") {
+        addForeignKeyConstraint(baseColumnNames: "author_id", baseTableName: "book", constraintName: "FK_4sac2ubmnqva85r8bk8fxdvbf", deferrable: "false", initiallyDeferred: "false", referencedColumnNames: "id", referencedTableName: "author")
+    }
+
+    changeSet(author: "John Smith", id: "4", context: "development") {
+        insert(tableName: "author") {
+            column(name: "name", value: "Mary")
+            column(name: "version", value: "0")
+        }
+    }
+
+    changeSet(author: "John Smith", id: "5", context: "test") {
+        insert(tableName: "author") {
+            column(name: "name", value: "Amelia")
+            column(name: "version", value: "0")
+        }
+    }
+}
 '''
 }

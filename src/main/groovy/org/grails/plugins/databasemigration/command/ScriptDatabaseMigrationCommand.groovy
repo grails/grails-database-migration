@@ -21,16 +21,13 @@ import grails.util.GrailsNameUtils
 import groovy.transform.CompileStatic
 import liquibase.parser.ChangeLogParser
 import liquibase.parser.ChangeLogParserFactory
-import liquibase.serializer.ChangeLogSerializer
-import liquibase.serializer.ChangeLogSerializerFactory
 import liquibase.servicelocator.ServiceLocator
 import org.grails.build.parsing.CommandLine
 import org.grails.cli.profile.ExecutionContext
 import org.grails.config.CodeGenConfig
 import org.grails.plugins.databasemigration.EnvironmentAwareCodeGenConfig
-import org.grails.plugins.databasemigration.liquibase.GrailsYamlChangeLogParser
-import org.grails.plugins.databasemigration.liquibase.GrailsYamlChangeLogSerializer
-import org.grails.plugins.databasemigration.liquibase.log.GrailsConsoleLogger
+import org.grails.plugins.databasemigration.liquibase.GormDatabase
+import org.grails.plugins.databasemigration.liquibase.GroovyChangeLogParser
 
 @CompileStatic
 trait ScriptDatabaseMigrationCommand implements DatabaseMigrationCommand {
@@ -50,15 +47,11 @@ trait ScriptDatabaseMigrationCommand implements DatabaseMigrationCommand {
     }
 
     void configureLiquibase() {
-        if (!ServiceLocator.instance.packages.contains(GrailsConsoleLogger.package.name)) {
-            ServiceLocator.instance.addPackageToScan(GrailsConsoleLogger.package.name)
+        if (!ServiceLocator.instance.packages.contains(GormDatabase.package.name)) {
+            ServiceLocator.instance.addPackageToScan(GormDatabase.package.name)
         }
-        if (!ChangeLogSerializerFactory.instance.serializers.any { String name, ChangeLogSerializer serializer -> serializer instanceof GrailsYamlChangeLogSerializer }) {
-            ChangeLogSerializerFactory.instance.register(new GrailsYamlChangeLogSerializer())
-        }
-        if (!ChangeLogParserFactory.instance.parsers.any { ChangeLogParser parser -> parser instanceof GrailsYamlChangeLogParser }) {
-            ChangeLogParserFactory.instance.register(new GrailsYamlChangeLogParser())
-        }
+        def groovyChangeLogParser = ChangeLogParserFactory.instance.parsers.find { ChangeLogParser changeLogParser -> changeLogParser instanceof GroovyChangeLogParser } as GroovyChangeLogParser
+        groovyChangeLogParser.config = config
     }
 
     abstract void handle()

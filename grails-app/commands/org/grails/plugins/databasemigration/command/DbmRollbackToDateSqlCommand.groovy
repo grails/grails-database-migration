@@ -15,22 +15,39 @@
  */
 package org.grails.plugins.databasemigration.command
 
+import grails.dev.commands.ApplicationCommand
+import grails.dev.commands.ExecutionContext
 import groovy.transform.CompileStatic
+import groovy.util.logging.Commons
 import liquibase.Liquibase
 import org.grails.plugins.databasemigration.DatabaseMigrationException
 
 import java.text.ParseException
 
+@Commons
 @CompileStatic
-class DbmRollbackToDateCommand implements ScriptDatabaseMigrationCommand {
+class DbmRollbackToDateSqlCommand implements ApplicationCommand, ApplicationContextDatabaseMigrationCommand {
 
-    void handle() {
-        def dateStr = args[0]
+    final String description = 'Writes SQL to roll back the database to the state it was in at the given date/time to STDOUT or a file'
+
+    @Override
+    boolean handle(ExecutionContext executionContext) {
+        def commandLine = executionContext.commandLine
+
+        def dateStr = commandLine.remainingArgs[0]
         if (!dateStr) {
             throw new DatabaseMigrationException('Date must be specified as two strings with the format "yyyy-MM-dd HH:mm:ss" or as one strings with the format "yyyy-MM-dd"')
         }
 
-        def timeStr = args[1]
+        String timeStr = null
+        String filename = null
+        if (commandLine.remainingArgs[1]) {
+            if (commandLine.remainingArgs.size() > 2 || isTimeFormat(commandLine.remainingArgs[1])) {
+                timeStr = commandLine.remainingArgs[1]
+            } else {
+                filename = commandLine.remainingArgs[1]
+            }
+        }
 
         def date = null
         try {
@@ -39,12 +56,17 @@ class DbmRollbackToDateCommand implements ScriptDatabaseMigrationCommand {
             throw new DatabaseMigrationException("Problem parsing '$dateStr${timeStr ? " $timeStr" : ''}' as a Date: $e.message")
         }
 
-        def contexts = optionValue('contexts')
-        def defaultSchema = optionValue('defaultSchema')
-        def dataSource = optionValue('dataSource')
+        filename = filename ?: commandLine.remainingArgs[2]
+        def contexts = commandLine.optionValue('contexts') as String
+        def defaultSchema = commandLine.optionValue('defaultSchema') as String
+        def dataSource = commandLine.optionValue('dataSource') as String
 
         withLiquibase(defaultSchema, dataSource) { Liquibase liquibase ->
-            liquibase.rollback(date, contexts)
+            withFileOrSystemOutWriter(filename) { Writer writer ->
+                liquibase.rollback(date, contexts, writer)
+            }
         }
+
+        return true
     }
 }

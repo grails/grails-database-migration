@@ -33,33 +33,38 @@ class DbmGormDiffCommandSpec extends ApplicationContextDatabaseMigrationCommandS
         then:
             def output = outputCapture.toString()
             output =~ '''
-<databaseChangeLog xmlns=".+?">
-    <changeSet author=".+?" id=".+?">
-        <createTable tableName="book">
-            <column autoIncrement="true" name="id" type="BIGINT">
-                <constraints primaryKey="true" primaryKeyName="bookPK"/>
-            </column>
-            <column name="version" type="BIGINT">
-                <constraints nullable="false"/>
-            </column>
-            <column name="author_id" type="BIGINT">
-                <constraints nullable="false"/>
-            </column>
-            <column name="title" type="VARCHAR\\(255\\)">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-    </changeSet>
-    <changeSet author=".+?" id=".+?">
-        <addForeignKeyConstraint baseColumnNames="author_id" baseTableName="book" constraintName="FK_4sac2ubmnqva85r8bk8fxdvbf" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="author"/>
-    </changeSet>
-</databaseChangeLog>
+databaseChangeLog = \\{
+
+    changeSet\\(author: ".+?", id: ".+?"\\) \\{
+        createTable\\(tableName: "book"\\) \\{
+            column\\(autoIncrement: "true", name: "id", type: "BIGINT"\\) \\{
+                constraints\\(primaryKey: "true", primaryKeyName: "bookPK"\\)
+            \\}
+
+            column\\(name: "version", type: "BIGINT"\\) \\{
+                constraints\\(nullable: "false"\\)
+            \\}
+
+            column\\(name: "author_id", type: "BIGINT"\\) \\{
+                constraints\\(nullable: "false"\\)
+            \\}
+
+            column\\(name: "title", type: "VARCHAR\\(255\\)"\\) \\{
+                constraints\\(nullable: "false"\\)
+            \\}
+        \\}
+    \\}
+
+    changeSet\\(author: ".+?", id: ".+?"\\) \\{
+        addForeignKeyConstraint\\(baseColumnNames: "author_id", baseTableName: "book", constraintName: "FK_4sac2ubmnqva85r8bk8fxdvbf", deferrable: "false", initiallyDeferred: "false", referencedColumnNames: "id", referencedTableName: "author"\\)
+    \\}
+\\}
 '''.trim()
     }
 
     def "diffs GORM classes against a database and generates a changelog to a file given as arguments"() {
         given:
-            def filename = 'changelog.yml'
+            def filename = 'changelog.groovy'
 
         when:
             command.handle(getExecutionContext(filename))
@@ -67,48 +72,32 @@ class DbmGormDiffCommandSpec extends ApplicationContextDatabaseMigrationCommandS
         then:
             def output = new File(changeLogLocation, filename).text
             output =~ '''
-databaseChangeLog:
-- changeSet:
-    id: .+?
-    author: .+?
-    changes:
-    - createTable:
-        columns:
-        - column:
-            autoIncrement: true
-            constraints:
-              primaryKey: true
-              primaryKeyName: bookPK
-            name: id
-            type: BIGINT
-        - column:
-            constraints:
-              nullable: false
-            name: version
-            type: BIGINT
-        - column:
-            constraints:
-              nullable: false
-            name: author_id
-            type: BIGINT
-        - column:
-            constraints:
-              nullable: false
-            name: title
-            type: VARCHAR\\(255\\)
-        tableName: book
-- changeSet:
-    id: .+?
-    author: .+?
-    changes:
-    - addForeignKeyConstraint:
-        baseColumnNames: author_id
-        baseTableName: book
-        constraintName: FK_4sac2ubmnqva85r8bk8fxdvbf
-        deferrable: false
-        initiallyDeferred: false
-        referencedColumnNames: id
-        referencedTableName: author
+databaseChangeLog = \\{
+
+    changeSet\\(author: ".+?", id: ".+?"\\) \\{
+        createTable\\(tableName: "book"\\) \\{
+            column\\(autoIncrement: "true", name: "id", type: "BIGINT"\\) \\{
+                constraints\\(primaryKey: "true", primaryKeyName: "bookPK"\\)
+            \\}
+
+            column\\(name: "version", type: "BIGINT"\\) \\{
+                constraints\\(nullable: "false"\\)
+            \\}
+
+            column\\(name: "author_id", type: "BIGINT"\\) \\{
+                constraints\\(nullable: "false"\\)
+            \\}
+
+            column\\(name: "title", type: "VARCHAR\\(255\\)"\\) \\{
+                constraints\\(nullable: "false"\\)
+            \\}
+        \\}
+    \\}
+
+    changeSet\\(author: ".+?", id: ".+?"\\) \\{
+        addForeignKeyConstraint\\(baseColumnNames: "author_id", baseTableName: "book", constraintName: "FK_4sac2ubmnqva85r8bk8fxdvbf", deferrable: "false", initiallyDeferred: "false", referencedColumnNames: "id", referencedTableName: "author"\\)
+    \\}
+\\}
 '''.trim()
     }
 

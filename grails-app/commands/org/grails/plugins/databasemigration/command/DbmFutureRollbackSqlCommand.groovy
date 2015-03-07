@@ -15,22 +15,31 @@
  */
 package org.grails.plugins.databasemigration.command
 
+import grails.dev.commands.ApplicationCommand
+import grails.dev.commands.ExecutionContext
 import groovy.transform.CompileStatic
 import liquibase.Liquibase
 
 @CompileStatic
-class DbmUpdateSqlCommand implements ScriptDatabaseMigrationCommand {
+class DbmFutureRollbackSqlCommand implements ApplicationCommand, ApplicationContextDatabaseMigrationCommand {
 
-    void handle() {
-        def filename = args[0]
-        def contexts = optionValue('contexts')
-        def defaultSchema = optionValue('defaultSchema')
-        def dataSource = optionValue('dataSource')
+    final String description = 'Writes SQL to roll back the database to the current state after the changes in the changeslog have been applied'
+
+    @Override
+    boolean handle(ExecutionContext executionContext) {
+        def commandLine = executionContext.commandLine
+
+        def filename = commandLine.remainingArgs[0]
+        def contexts = commandLine.optionValue('contexts') as String
+        def defaultSchema = commandLine.optionValue('defaultSchema') as String
+        def dataSource = commandLine.optionValue('dataSource') as String
 
         withLiquibase(defaultSchema, dataSource) { Liquibase liquibase ->
             withFileOrSystemOutWriter(filename) { Writer writer ->
-                liquibase.update(contexts, writer)
+                liquibase.futureRollbackSQL(contexts, writer)
             }
         }
+
+        return true
     }
 }

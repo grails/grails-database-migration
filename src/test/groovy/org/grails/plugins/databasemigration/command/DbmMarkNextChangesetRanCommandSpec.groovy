@@ -32,13 +32,12 @@ class DbmMarkNextChangesetRanCommandSpec extends ScriptDatabaseMigrationCommandS
     }
 
     static final String CHANGE_LOG_CONTENT = '''
-databaseChangeLog:
-  - changeSet:
-      id: changeSet1
-      author: John Smith
-  - changeSet:
-      id: changeSet2
-      author: John Smith
+databaseChangeLog = {
+    changeSet(author: "John Smith", id: "changeSet1") {
+    }
+    changeSet(author: "John Smith", id: "changeSet2") {
+    }
+}
 '''
 }
 

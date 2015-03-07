@@ -13,24 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.grails.plugins.databasemigration.command
+package org.grails.plugins.databasemigration.liquibase
 
 import groovy.transform.CompileStatic
-import liquibase.Liquibase
+import liquibase.logging.LogLevel
+import liquibase.logging.core.DefaultLogger
+import liquibase.util.StringUtils
+
+import java.text.DateFormat
 
 @CompileStatic
-class DbmFutureRollbackSqlCommand implements ScriptDatabaseMigrationCommand {
+class StandardOutLogger extends DefaultLogger {
 
-    void handle() {
-        def filename = args[0]
-        def contexts = optionValue('contexts')
-        def defaultSchema = optionValue('defaultSchema')
-        def dataSource = optionValue('dataSource')
+    final int priority = 5
 
-        withLiquibase(defaultSchema, dataSource) { Liquibase liquibase ->
-            withFileOrSystemOutWriter(filename) { Writer writer ->
-                liquibase.futureRollbackSQL(contexts, writer)
-            }
+    String name
+
+    protected void print(LogLevel logLevel, String message) {
+        if (StringUtils.trimToNull(message) == null) {
+            return
         }
+
+        println("${logLevel} ${DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(new Date())}: ${name}: ${buildMessage(message)}")
     }
 }

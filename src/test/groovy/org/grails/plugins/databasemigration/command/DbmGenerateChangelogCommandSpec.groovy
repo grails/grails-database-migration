@@ -32,87 +32,78 @@ CREATE TABLE author (id INT AUTO_INCREMENT NOT NULL, name VARCHAR(255) NOT NULL,
 
         then:
             outputCapture.toString() =~ '''
-<databaseChangeLog xmlns=".+?">
-    <changeSet author=".+?" id=".+?">
-        <createTable tableName="AUTHOR">
-            <column autoIncrement="true" name="ID" type="INT\\(10\\)">
-                <constraints primaryKey="true" primaryKeyName="PK_AUTHOR"/>
-            </column>
-            <column name="NAME" type="VARCHAR\\(255\\)">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-    </changeSet>
-    <changeSet author=".+?" id=".+?">
-        <createTable tableName="BOOK">
-            <column autoIncrement="true" name="ID" type="INT\\(10\\)">
-                <constraints primaryKey="true" primaryKeyName="PK_BOOK"/>
-            </column>
-            <column name="TITLE" type="VARCHAR\\(255\\)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="PRICE" type="INT\\(10\\)">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-    </changeSet>
-</databaseChangeLog>
+databaseChangeLog = \\{
+
+    changeSet\\(author: ".*?", id: ".*?"\\) \\{
+        createTable\\(tableName: "AUTHOR"\\) \\{
+            column\\(autoIncrement: "true", name: "ID", type: "INT\\(10\\)"\\) \\{
+                constraints\\(primaryKey: "true", primaryKeyName: "PK_AUTHOR"\\)
+            \\}
+
+            column\\(name: "NAME", type: "VARCHAR\\(255\\)"\\) \\{
+                constraints\\(nullable: "false"\\)
+            \\}
+        \\}
+    \\}
+
+    changeSet\\(author: ".*?", id: ".*?"\\) \\{
+        createTable\\(tableName: "BOOK"\\) \\{
+            column\\(autoIncrement: "true", name: "ID", type: "INT\\(10\\)"\\) \\{
+                constraints\\(primaryKey: "true", primaryKeyName: "PK_BOOK"\\)
+            \\}
+
+            column\\(name: "TITLE", type: "VARCHAR\\(255\\)"\\) \\{
+                constraints\\(nullable: "false"\\)
+            \\}
+
+            column\\(name: "PRICE", type: "INT\\(10\\)"\\) \\{
+                constraints\\(nullable: "false"\\)
+            \\}
+        \\}
+    \\}
+\\}
 '''.trim()
     }
 
     def "generates an initial changelog from the database to a file given as arguments"() {
         given:
-            def outputChangeLog = new File(changeLogLocation, 'changelog.yml')
+            def outputChangeLog = new File(changeLogLocation, 'changelog.groovy')
 
         when:
             command.handle(getExecutionContext(outputChangeLog.name))
 
         then:
             outputChangeLog.text =~ '''
-databaseChangeLog:
-- changeSet:
-    id: .+?
-    author: .+?
-    changes:
-    - createTable:
-        columns:
-        - column:
-            autoIncrement: true
-            constraints:
-              primaryKey: true
-              primaryKeyName: PK_AUTHOR
-            name: ID
-            type: INT\\(10\\)
-        - column:
-            constraints:
-              nullable: false
-            name: NAME
-            type: VARCHAR\\(255\\)
-        tableName: AUTHOR
-- changeSet:
-    id: .+?
-    author: .+?
-    changes:
-    - createTable:
-        columns:
-        - column:
-            autoIncrement: true
-            constraints:
-              primaryKey: true
-              primaryKeyName: PK_BOOK
-            name: ID
-            type: INT\\(10\\)
-        - column:
-            constraints:
-              nullable: false
-            name: TITLE
-            type: VARCHAR\\(255\\)
-        - column:
-            constraints:
-              nullable: false
-            name: PRICE
-            type: INT\\(10\\)
-        tableName: BOOK
+databaseChangeLog = \\{
+
+    changeSet\\(author: ".*?", id: ".*?"\\) \\{
+        createTable\\(tableName: "AUTHOR"\\) \\{
+            column\\(autoIncrement: "true", name: "ID", type: "INT\\(10\\)"\\) \\{
+                constraints\\(primaryKey: "true", primaryKeyName: "PK_AUTHOR"\\)
+            \\}
+
+            column\\(name: "NAME", type: "VARCHAR\\(255\\)"\\) \\{
+                constraints\\(nullable: "false"\\)
+            \\}
+        \\}
+    \\}
+
+    changeSet\\(author: ".*?", id: ".*?"\\) \\{
+        createTable\\(tableName: "BOOK"\\) \\{
+            column\\(autoIncrement: "true", name: "ID", type: "INT\\(10\\)"\\) \\{
+                constraints\\(primaryKey: "true", primaryKeyName: "PK_BOOK"\\)
+            \\}
+
+            column\\(name: "TITLE", type: "VARCHAR\\(255\\)"\\) \\{
+                constraints\\(nullable: "false"\\)
+            \\}
+
+            column\\(name: "PRICE", type: "INT\\(10\\)"\\) \\{
+                constraints\\(nullable: "false"\\)
+            \\}
+        \\}
+    \\}
+\\}
 '''.trim()
     }
 }

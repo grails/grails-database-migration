@@ -1,0 +1,270 @@
+/*
+ * Copyright 2010-2013 SpringSource.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License")
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.grails.plugins.databasemigration.liquibase
+
+import grails.config.Config
+import grails.core.GrailsApplication
+import groovy.sql.Sql
+import liquibase.change.AbstractChange
+import liquibase.change.ChangeMetaData
+import liquibase.change.CheckSum
+import liquibase.change.DatabaseChange
+import liquibase.database.Database
+import liquibase.database.DatabaseConnection
+import liquibase.database.jvm.JdbcConnection
+import liquibase.exception.RollbackImpossibleException
+import liquibase.exception.SetupException
+import liquibase.exception.ValidationErrors
+import liquibase.exception.Warnings
+import liquibase.executor.ExecutorService
+import liquibase.executor.LoggingExecutor
+import liquibase.parser.core.ParsedNode
+import liquibase.parser.core.ParsedNodeException
+import liquibase.resource.ResourceAccessor
+import liquibase.statement.SqlStatement
+import org.springframework.context.ApplicationContext
+
+import java.sql.Connection
+
+/**
+ * Custom Groovy-based change.
+ *
+ * @author <a href='mailto:burt@burtbeckwith.com'>Burt Beckwith</a>
+ * @author Kazuki YAMAMOTO
+ */
+@DatabaseChange(name = "grailsChange", description = "Adds creates a primary key out of an existing column or set of columns.", priority = ChangeMetaData.PRIORITY_DEFAULT)
+class GrailsChange extends AbstractChange {
+
+    String confirmationMessage = 'Executed GrailsChange'
+
+    ApplicationContext ctx
+
+    Closure initClosure
+
+    Closure validateClosure
+
+    Closure changeClosure
+
+    Closure rollbackClosure
+
+    String checksumString
+
+    Database database
+
+    Sql sql
+
+    ValidationErrors validationErrors = new ValidationErrors()
+
+    Warnings warnings = new Warnings()
+
+    List allStatements = []
+
+    boolean validateClosureCalled
+
+    @Override
+    void load(ParsedNode parsedNode, ResourceAccessor resourceAccessor) throws ParsedNodeException {
+        this.resourceAccessor = resourceAccessor
+
+        ctx = parsedNode.getChildValue(null, 'applicationContext', ApplicationContext)
+        initClosure = parsedNode.getChildValue(null, 'init', Closure)
+        validateClosure = parsedNode.getChildValue(null, 'validate', Closure)
+        changeClosure = parsedNode.getChildValue(null, 'change', Closure)
+        rollbackClosure = parsedNode.getChildValue(null, 'rollback', Closure)
+        confirmationMessage = parsedNode.getChildValue(null, 'confirm', String)
+        checksumString = parsedNode.getChildValue(null, 'checksum', String)
+    }
+
+    @Override
+    void finishInitialization() throws SetupException {
+        if (!initClosure) {
+            return
+        }
+
+        initClosure.delegate = this
+        try {
+            initClosure()
+        } catch (Exception e) {
+            throw new SetupException(e)
+        }
+    }
+
+    @Override
+    ValidationErrors validate(Database database) {
+        this.database = database
+
+        if (shouldRun() && validateClosure && !validateClosureCalled) {
+            validateClosure.delegate = this
+            validateClosure()
+            validateClosureCalled = true
+        }
+
+        validationErrors
+    }
+
+    @Override
+    Warnings warn(Database database) {
+        validate(database)
+        warnings
+    }
+
+    @Override
+    SqlStatement[] generateStatements(Database database) {
+        this.database = database
+
+        if (shouldRun() && changeClosure) {
+            changeClosure.delegate = this
+            changeClosure()
+        }
+
+        allStatements as SqlStatement[]
+    }
+
+    @Override
+    SqlStatement[] generateRollbackStatements(Database database) throws RollbackImpossibleException {
+        this.database = database
+
+        if (shouldRun() && rollbackClosure) {
+            rollbackClosure.delegate = this
+            rollbackClosure()
+        }
+
+        allStatements as SqlStatement[]
+    }
+
+    @Override
+    CheckSum generateCheckSum() {
+        CheckSum.compute checksumString ?: 'Grails Change'
+    }
+
+    @Override
+    boolean supportsRollback(Database database) {
+        this.database = database
+        shouldRun()
+    }
+
+    /**
+     * Called by the validate closure. Adds a validation error.
+     *
+     * @param message the error message
+     */
+    void error(String message) {
+        validationErrors.addError message
+    }
+
+    /**
+     * Called by the validate closure. Adds a warning message.
+     *
+     * @param warning the warning message
+     */
+    void warn(String warning) {
+        warnings.addWarning warning
+    }
+
+    /**
+     * Called by the change or rollback closure. Adds a statement to be executed.
+     *
+     * @param statement the statement
+     */
+    void sqlStatement(SqlStatement statement) {
+        if (statement) {
+            allStatements << statement
+        }
+    }
+
+    /**
+     * Called by the change or rollback closure. Adds multiple statements to be executed.
+     *
+     * @param statement the statement
+     */
+    void sqlStatements(List statements) {
+        if (statements) {
+            allStatements.addAll(statements as List)
+        }
+    }
+
+    /**
+     * Called by the change or rollback closure. Overrides the confirmation message.
+     *
+     * @param message the confirmation message
+     */
+    void confirm(String message) {
+        confirmationMessage = message
+    }
+
+    /**
+     * Called from the change or rollback closure. Creates a <code>Sql</code> instance from the current connection.
+     *
+     * @return the sql instance
+     */
+    Sql getSql() {
+        if (!connection) {
+            return null
+        }
+
+        if (!sql) {
+            sql = new Sql(connection) {
+                protected void closeResources(Connection c) {
+                    // do nothing, let Liquibase close the connection
+                }
+            }
+        }
+
+        sql
+    }
+
+    /**
+     * Called from the change or rollback closure. Shortcut to get the (wrapper) database connection.
+     *
+     * @return the connection or <code>null</code> if the database isn't set yet
+     */
+    DatabaseConnection getDatabaseConnection() {
+        database?.connection
+    }
+
+    /**
+     * Called from the change or rollback closure. Shortcut to get the real database connection.
+     *
+     * @return the connection or <code>null</code> if the database isn't set yet
+     */
+    Connection getConnection() {
+        if (databaseConnection instanceof JdbcConnection) {
+            return ((JdbcConnection) database.connection).underlyingConnection
+        }
+        return null
+    }
+
+    /**
+     * Called from the change or rollback closure. Shortcut for the current application.
+     *
+     * @return the application
+     */
+    GrailsApplication getApplication() {
+        ctx.getBean(GrailsApplication)
+    }
+
+    /**
+     * Called from the change or rollback closure. Shortcut for the current config.
+     *
+     * @return the config
+     */
+    Config getConfig() {
+        application.config
+    }
+
+    protected boolean shouldRun() {
+        !(ExecutorService.getInstance().getExecutor(database) instanceof LoggingExecutor)
+    }
+}

@@ -19,11 +19,9 @@ import grails.plugins.Plugin
 import liquibase.integration.spring.SpringLiquibase
 import liquibase.parser.ChangeLogParser
 import liquibase.parser.ChangeLogParserFactory
-import liquibase.serializer.ChangeLogSerializer
-import liquibase.serializer.ChangeLogSerializerFactory
 import liquibase.servicelocator.ServiceLocator
-import org.grails.plugins.databasemigration.liquibase.GrailsYamlChangeLogParser
-import org.grails.plugins.databasemigration.liquibase.GrailsYamlChangeLogSerializer
+import org.grails.plugins.databasemigration.liquibase.GormDatabase
+import org.grails.plugins.databasemigration.liquibase.GroovyChangeLogParser
 import org.springframework.boot.liquibase.CommonsLoggingLiquibaseLogger
 
 class DatabaseMigrationGrailsPlugin extends Plugin {
@@ -62,7 +60,7 @@ class DatabaseMigrationGrailsPlugin extends Plugin {
                     "springLiquibase_${dataSourceName}"(SpringLiquibase) {
                         dropFirst = migrationConfig.containsKey('dropOnStart') ? migrationConfig.get('dropOnStart') : false
                         dataSource = ref(dataSourceName)
-                        changeLog = migrationConfig.get('updateOnStartFileName') ?: 'classpath:/changelog.yml'
+                        changeLog = migrationConfig.get('updateOnStartFileName') ?: 'classpath:/changelog.groovy'
                         contexts = migrationConfig.get('updateOnStartContexts') ?: null
                         labels = migrationConfig.get('updateOnStartLabels') ?: null
                         defaultSchema = migrationConfig.get('updateOnStartDefaultSchema') ?: null
@@ -72,16 +70,16 @@ class DatabaseMigrationGrailsPlugin extends Plugin {
         }
     }
 
-    private static void configureLiquibase() {
+    private void configureLiquibase() {
         if (!ServiceLocator.instance.packages.contains(CommonsLoggingLiquibaseLogger.package.name)) {
             ServiceLocator.instance.addPackageToScan(CommonsLoggingLiquibaseLogger.package.name)
         }
-        if (!ChangeLogSerializerFactory.instance.serializers.any { String name, ChangeLogSerializer serializer -> serializer instanceof GrailsYamlChangeLogSerializer }) {
-            ChangeLogSerializerFactory.instance.register(new GrailsYamlChangeLogSerializer())
+        if (!ServiceLocator.instance.packages.contains(GormDatabase.package.name)) {
+            ServiceLocator.instance.addPackageToScan(GormDatabase.package.name)
         }
-        if (!ChangeLogParserFactory.instance.parsers.any { ChangeLogParser parser -> parser instanceof GrailsYamlChangeLogParser }) {
-            ChangeLogParserFactory.instance.register(new GrailsYamlChangeLogParser())
-        }
+        def groovyChangeLogParser = ChangeLogParserFactory.instance.parsers.find { ChangeLogParser changeLogParser -> changeLogParser instanceof GroovyChangeLogParser } as GroovyChangeLogParser
+        groovyChangeLogParser.applicationContext = applicationContext
+        groovyChangeLogParser.config = config
     }
 
     private Set<String> getDataSourceNames() {
@@ -96,6 +94,6 @@ class DatabaseMigrationGrailsPlugin extends Plugin {
         if (dataSourceName == 'dataSource') {
             return config.grails.plugin.databasemigration
         }
-        return config.grails.plugin.databasemigration."${dataSourceName.substring('dataSource_'.size())}"
+        return config.grails.plugin.databasemigration."${dataSourceName - 'dataSource_'}"
     }
 }

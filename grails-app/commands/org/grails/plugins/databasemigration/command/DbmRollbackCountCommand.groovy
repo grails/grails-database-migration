@@ -15,15 +15,24 @@
  */
 package org.grails.plugins.databasemigration.command
 
+import grails.dev.commands.ApplicationCommand
+import grails.dev.commands.ExecutionContext
 import groovy.transform.CompileStatic
+import groovy.util.logging.Commons
 import liquibase.Liquibase
 import org.grails.plugins.databasemigration.DatabaseMigrationException
 
+@Commons
 @CompileStatic
-class DbmUpdateCountCommand implements ScriptDatabaseMigrationCommand {
+class DbmRollbackCountCommand implements ApplicationCommand, ApplicationContextDatabaseMigrationCommand {
 
-    void handle() {
-        def number = args[0]
+    final String description = 'Rolls back the specified number of change sets'
+
+    @Override
+    boolean handle(ExecutionContext executionContext) {
+        def commandLine = executionContext.commandLine
+
+        def number = commandLine.remainingArgs[0]
         if (!number) {
             throw new DatabaseMigrationException("The $name command requires a change set number argument")
         }
@@ -31,12 +40,14 @@ class DbmUpdateCountCommand implements ScriptDatabaseMigrationCommand {
             throw new DatabaseMigrationException("The change set number argument '$number' isn't a number")
         }
 
-        def contexts = optionValue('contexts')
-        def defaultSchema = optionValue('defaultSchema')
-        def dataSource = optionValue('dataSource')
+        def contexts = commandLine.optionValue('contexts') as String
+        def defaultSchema = commandLine.optionValue('defaultSchema') as String
+        def dataSource = commandLine.optionValue('dataSource') as String
 
         withLiquibase(defaultSchema, dataSource) { Liquibase liquibase ->
-            liquibase.update(number.toInteger(), contexts)
+            liquibase.rollback(number.toInteger(), contexts)
         }
+
+        return true
     }
 }

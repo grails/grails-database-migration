@@ -32,6 +32,9 @@ class GormDatabase extends HibernateDatabase {
     private Configuration configuration
     private Dialect dialect
 
+    GormDatabase() {
+    }
+
     GormDatabase(Configuration configuration, Dialect dialect) {
         this.configuration = configuration
         this.dialect = dialect
@@ -54,6 +57,6 @@ class GormDatabase extends HibernateDatabase {
 
     @Override
     boolean isCorrectDatabaseImplementation(DatabaseConnection conn) throws DatabaseException {
-        throw new UnsupportedOperationException()
+        false
     }
 }

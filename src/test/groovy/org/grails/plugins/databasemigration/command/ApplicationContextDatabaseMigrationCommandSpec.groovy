@@ -1,17 +1,21 @@
 package org.grails.plugins.databasemigration.command
 
+import grails.config.Config
 import grails.core.GrailsApplication
 import grails.dev.commands.ApplicationCommand
 import grails.dev.commands.ExecutionContext
 import grails.orm.bootstrap.HibernateDatastoreSpringInitializer
 import grails.persistence.Entity
 import grails.util.GrailsNameUtils
-import liquibase.serializer.ChangeLogSerializer
-import liquibase.serializer.ChangeLogSerializerFactory
+import liquibase.parser.ChangeLogParser
+import liquibase.parser.ChangeLogParserFactory
 import liquibase.servicelocator.ServiceLocator
 import org.grails.build.parsing.CommandLineParser
+import org.grails.cli.GrailsCli
+import org.grails.config.CodeGenConfig
 import org.grails.config.PropertySourcesConfig
-import org.grails.plugins.databasemigration.liquibase.GrailsYamlChangeLogSerializer
+import org.grails.plugins.databasemigration.liquibase.GormDatabase
+import org.grails.plugins.databasemigration.liquibase.GroovyChangeLogParser
 import org.h2.Driver
 import org.springframework.boot.liquibase.CommonsLoggingLiquibaseLogger
 import org.springframework.context.support.GenericApplicationContext
@@ -26,12 +30,14 @@ abstract class ApplicationContextDatabaseMigrationCommandSpec extends DatabaseMi
 
     ApplicationCommand command
 
+    Config config
+
     def setup() {
-        if (!ServiceLocator.instance.packages.contains(CommonsLoggingLiquibaseLogger)) {
+        if (!ServiceLocator.instance.packages.contains(CommonsLoggingLiquibaseLogger.package.name)) {
             ServiceLocator.instance.addPackageToScan(CommonsLoggingLiquibaseLogger.package.name)
         }
-        if (!ChangeLogSerializerFactory.instance.serializers.any { String name, ChangeLogSerializer serializer -> serializer instanceof GrailsYamlChangeLogSerializer }) {
-            ChangeLogSerializerFactory.instance.register(new GrailsYamlChangeLogSerializer())
+        if (!ServiceLocator.instance.packages.contains(GormDatabase.package.name)) {
+            ServiceLocator.instance.addPackageToScan(GormDatabase.package.name)
         }
 
         applicationContext = new GenericApplicationContext()
@@ -48,7 +54,7 @@ abstract class ApplicationContextDatabaseMigrationCommandSpec extends DatabaseMi
             'dataSource.driverClassName'                       : Driver.name,
             'environments.other.dataSource.url'                : 'jdbc:h2:mem:otherDb',
         ]))
-        def config = new PropertySourcesConfig(mutablePropertySources)
+        config = new PropertySourcesConfig(mutablePropertySources)
 
         def datastoreInitializer = new HibernateDatastoreSpringInitializer(domainClasses)
         datastoreInitializer.configuration = config
@@ -58,6 +64,10 @@ abstract class ApplicationContextDatabaseMigrationCommandSpec extends DatabaseMi
 
         def grailsApplication = applicationContext.getBean(GrailsApplication)
         grailsApplication.config = config
+
+        def groovyChangeLogParser = ChangeLogParserFactory.instance.parsers.find { ChangeLogParser changeLogParser -> changeLogParser instanceof GroovyChangeLogParser } as GroovyChangeLogParser
+        groovyChangeLogParser.applicationContext = applicationContext
+        groovyChangeLogParser.config = config
 
         command = commandClass.newInstance()
         command.applicationContext = applicationContext
@@ -74,6 +84,15 @@ abstract class ApplicationContextDatabaseMigrationCommandSpec extends DatabaseMi
         new ExecutionContext(
             new CommandLineParser().parse(([GrailsNameUtils.getScriptName(GrailsNameUtils.getLogicalName(commandClass.name, 'Command'))] + args.toList()) as String[])
         )
+    }
+
+    protected org.grails.cli.profile.ExecutionContext getScriptExecutionContext(String... args) {
+        def codeGenConfig = new CodeGenConfig()
+        codeGenConfig.mergeMap(config.flatten())
+        codeGenConfig.mergeMap(config.flatten(), true)
+        def executionContext = new GrailsCli.ExecutionContextImpl(codeGenConfig)
+        executionContext.commandLine = new CommandLineParser().parse(([GrailsNameUtils.getScriptName(GrailsNameUtils.getLogicalName(commandClass.name, 'Command'))] + args.toList()) as String[])
+        executionContext
     }
 }
 

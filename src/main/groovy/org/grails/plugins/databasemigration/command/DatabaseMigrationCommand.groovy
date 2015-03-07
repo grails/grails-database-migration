@@ -20,13 +20,17 @@ import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.transform.stc.ClosureParams
 import groovy.transform.stc.SimpleType
-import liquibase.CatalogAndSchema
 import liquibase.Liquibase
+import liquibase.command.CommandExecutionException
 import liquibase.database.Database
+import liquibase.diff.compare.CompareControl
 import liquibase.diff.output.DiffOutputControl
+import liquibase.exception.LiquibaseException
 import liquibase.integration.commandline.CommandLineUtils
 import liquibase.resource.FileSystemResourceAccessor
 import liquibase.util.file.FilenameUtils
+import org.grails.plugins.databasemigration.liquibase.GroovyDiffToChangeLogCommand
+import org.grails.plugins.databasemigration.liquibase.GroovyGenerateChangeLogCommand
 
 import java.text.ParseException
 
@@ -36,7 +40,7 @@ trait DatabaseMigrationCommand {
     static final String CONFIG_PREFIX = 'grails.plugin.databasemigration'
 
     static final String DEFAULT_CHANGE_LOG_LOCATION = 'grails-app/migrations'
-    static final String DEFAULT_CHANGE_LOG_FILE = 'changelog.yml'
+    static final String DEFAULT_CHANGE_LOG_FILE = 'changelog.groovy'
 
     abstract ConfigMap getConfig()
 
@@ -135,28 +139,42 @@ trait DatabaseMigrationCommand {
     }
 
     void doGenerateChangeLog(File changeLogFile, Database originalDatabase) {
-        DiffOutputControl diffOutputControl = new DiffOutputControl(false, false, false)
-        CommandLineUtils.doGenerateChangeLog(
-            changeLogFile?.path,
-            originalDatabase,
-            [] as CatalogAndSchema[],
-            null,
-            null,
-            null,
-            null,
-            diffOutputControl,
-        )
+        def changeLogFilePath = changeLogFile?.path
+        def compareControl = new CompareControl([] as CompareControl.SchemaComparison[], null as String)
+        def diffOutputControl = new DiffOutputControl(false, false, false)
+
+        def command = new GroovyGenerateChangeLogCommand()
+        command.setReferenceDatabase(originalDatabase)
+            .setOutputStream(System.out)
+            .setCompareControl(compareControl)
+        command.setChangeLogFile(changeLogFilePath)
+            .setDiffOutputControl(diffOutputControl)
+
+        try {
+            command.execute()
+        } catch (CommandExecutionException e) {
+            throw new LiquibaseException(e)
+        }
     }
 
     void doDiffToChangeLog(File changeLogFile, Database referenceDatabase, Database targetDatabase) {
-        DiffOutputControl diffOutputControl = new DiffOutputControl(false, false, false)
-        CommandLineUtils.doDiffToChangeLog(
-            changeLogFile?.path,
-            referenceDatabase,
-            targetDatabase,
-            diffOutputControl,
-            null
-        )
+        def changeLogFilePath = changeLogFile?.path
+        def compareControl = new CompareControl([] as CompareControl.SchemaComparison[], null as String)
+        def diffOutputControl = new DiffOutputControl(false, false, false)
+
+        def command = new GroovyDiffToChangeLogCommand()
+        command.setReferenceDatabase(referenceDatabase)
+            .setTargetDatabase(targetDatabase)
+            .setCompareControl(compareControl)
+            .setOutputStream(System.out)
+        command.setChangeLogFile(changeLogFilePath)
+            .setDiffOutputControl(diffOutputControl)
+
+        try {
+            command.execute();
+        } catch (CommandExecutionException e) {
+            throw new LiquibaseException(e)
+        }
     }
 
     void appendToChangeLog(File destChangeLogFile) {
@@ -174,7 +192,7 @@ trait DatabaseMigrationCommand {
                 |- include:
                 |    file: ${relativePath}
                 """.stripMargin().trim()
-                break;
+                break
             case ['xml']:
                 def text = srcChangeLogFile.text
                 if (text =~ '<databaseChangeLog[^>]*/>') {
@@ -182,7 +200,11 @@ trait DatabaseMigrationCommand {
                 } else {
                     srcChangeLogFile.write(text.replaceFirst('</databaseChangeLog>', "    <include file=\"$relativePath\"/>\n\$0"))
                 }
-                break;
+                break
+            case ['groovy']:
+                def text = srcChangeLogFile.text
+                srcChangeLogFile.write(text.replaceFirst('}.*$', "    include file: '$relativePath'\n\$0"))
+                break
         }
     }
 }

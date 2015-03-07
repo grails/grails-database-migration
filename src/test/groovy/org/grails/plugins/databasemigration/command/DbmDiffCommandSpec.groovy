@@ -53,70 +53,62 @@ CREATE TABLE author (id INT AUTO_INCREMENT NOT NULL, name VARCHAR(255) NOT NULL,
 
         then:
             outputCapture.toString() =~ '''
-<\\?xml version="1\\.0" encoding="UTF-8" standalone="no"\\?>
-<databaseChangeLog .*?>
-    <changeSet author=".*?" id=".*?">
-        <createTable tableName="AUTHOR">
-            <column autoIncrement="true" name="ID" type="INT\\(10\\)">
-                <constraints primaryKey="true" primaryKeyName="PK_AUTHOR"/>
-            </column>
-            <column name="NAME" type="VARCHAR\\(255\\)">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-    </changeSet>
-    <changeSet author=".*?" id=".*?">
-        <addColumn tableName="BOOK">
-            <column name="PRICE" type="INTEGER\\(10\\)">
-                <constraints nullable="false"/>
-            </column>
-        </addColumn>
-    </changeSet>
-</databaseChangeLog>
+databaseChangeLog = \\{
+
+    changeSet\\(author: ".+?", id: ".+?"\\) \\{
+        createTable\\(tableName: "AUTHOR"\\) \\{
+            column\\(autoIncrement: "true", name: "ID", type: "INT\\(10\\)"\\) \\{
+                constraints\\(primaryKey: "true", primaryKeyName: "PK_AUTHOR"\\)
+            \\}
+
+            column\\(name: "NAME", type: "VARCHAR\\(255\\)"\\) \\{
+                constraints\\(nullable: "false"\\)
+            \\}
+        \\}
+    \\}
+
+    changeSet\\(author: ".+?", id: ".+?"\\) \\{
+        addColumn\\(tableName: "BOOK"\\) \\{
+            column\\(name: "PRICE", type: "INTEGER\\(10\\)"\\) \\{
+                constraints\\(nullable: "false"\\)
+            \\}
+        \\}
+    \\}
+\\}
 '''.trim()
     }
 
     def "writes Change Log to update the database to a file given as arguments"() {
         given:
-            def outputChangeLog = new File(changeLogLocation, 'diff.yml')
+            def outputChangeLog = new File(changeLogLocation, 'diff.groovy')
 
         when:
             command.handle(getExecutionContext('other', outputChangeLog.name))
 
         then:
             outputChangeLog.text =~ '''
-databaseChangeLog:
-- changeSet:
-    id: .*?
-    author: .*?
-    changes:
-    - createTable:
-        columns:
-        - column:
-            autoIncrement: true
-            constraints:
-              primaryKey: true
-              primaryKeyName: PK_AUTHOR
-            name: ID
-            type: INT\\(10\\)
-        - column:
-            constraints:
-              nullable: false
-            name: NAME
-            type: VARCHAR\\(255\\)
-        tableName: AUTHOR
-- changeSet:
-    id: .*?
-    author: .*?
-    changes:
-    - addColumn:
-        columns:
-        - column:
-            constraints:
-              nullable: false
-            name: PRICE
-            type: INTEGER\\(10\\)
-        tableName: BOOK
+databaseChangeLog = \\{
+
+    changeSet\\(author: ".+?", id: ".+?"\\) \\{
+        createTable\\(tableName: "AUTHOR"\\) \\{
+            column\\(autoIncrement: "true", name: "ID", type: "INT\\(10\\)"\\) \\{
+                constraints\\(primaryKey: "true", primaryKeyName: "PK_AUTHOR"\\)
+            \\}
+
+            column\\(name: "NAME", type: "VARCHAR\\(255\\)"\\) \\{
+                constraints\\(nullable: "false"\\)
+            \\}
+        \\}
+    \\}
+
+    changeSet\\(author: ".+?", id: ".+?"\\) \\{
+        addColumn\\(tableName: "BOOK"\\) \\{
+            column\\(name: "PRICE", type: "INTEGER\\(10\\)"\\) \\{
+                constraints\\(nullable: "false"\\)
+            \\}
+        \\}
+    \\}
+\\}
 '''.trim()
     }
 

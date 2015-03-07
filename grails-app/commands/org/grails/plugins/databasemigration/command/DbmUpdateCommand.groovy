@@ -15,30 +15,28 @@
  */
 package org.grails.plugins.databasemigration.command
 
+import grails.dev.commands.ApplicationCommand
+import grails.dev.commands.ExecutionContext
 import groovy.transform.CompileStatic
 import liquibase.Liquibase
-import org.grails.plugins.databasemigration.DatabaseMigrationException
 
 @CompileStatic
-class DbmUpdateCountSqlCommand implements ScriptDatabaseMigrationCommand {
+class DbmUpdateCommand implements ApplicationCommand, ApplicationContextDatabaseMigrationCommand {
 
-    void handle() {
-        def number = args[0]
-        if (!number) {
-            throw new DatabaseMigrationException("The $name command requires a change set number argument")
-        }
-        if (!number.isNumber()) {
-            throw new DatabaseMigrationException("The change set number argument '$number' isn't a number")
-        }
+    final String description = 'Updates a database to the current version'
 
-        def filename = args[1]
-        def contexts = optionValue('contexts')
-        def defaultSchema = optionValue('defaultSchema')
-        def dataSource = optionValue('dataSource')
+    @Override
+    boolean handle(ExecutionContext executionContext) {
+        def commandLine = executionContext.commandLine
+
+        def contexts = commandLine.optionValue('contexts') as String
+        def defaultSchema = commandLine.optionValue('defaultSchema') as String
+        def dataSource = commandLine.optionValue('dataSource') as String
+
         withLiquibase(defaultSchema, dataSource) { Liquibase liquibase ->
-            withFileOrSystemOutWriter(filename) { Writer writer ->
-                liquibase.update(number.toInteger(), contexts, writer)
-            }
+            liquibase.update(contexts)
         }
+
+        return true
     }
 }

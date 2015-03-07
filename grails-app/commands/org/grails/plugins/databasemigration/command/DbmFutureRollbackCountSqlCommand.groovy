@@ -15,15 +15,24 @@
  */
 package org.grails.plugins.databasemigration.command
 
+import grails.dev.commands.ApplicationCommand
+import grails.dev.commands.ExecutionContext
 import groovy.transform.CompileStatic
+import groovy.util.logging.Commons
 import liquibase.Liquibase
 import org.grails.plugins.databasemigration.DatabaseMigrationException
 
+@Commons
 @CompileStatic
-class DbmRollbackCountCommand implements ScriptDatabaseMigrationCommand {
+class DbmFutureRollbackCountSqlCommand implements ApplicationCommand, ApplicationContextDatabaseMigrationCommand {
 
-    void handle() {
-        def number = args[0]
+    final String description = 'Writes SQL to roll back the database to the current state after <number> changes in the changeslog have been applied'
+
+    @Override
+    boolean handle(ExecutionContext executionContext) {
+        def commandLine = executionContext.commandLine
+
+        def number = commandLine.remainingArgs[0]
         if (!number) {
             throw new DatabaseMigrationException("The $name command requires a change set number argument")
         }
@@ -31,12 +40,17 @@ class DbmRollbackCountCommand implements ScriptDatabaseMigrationCommand {
             throw new DatabaseMigrationException("The change set number argument '$number' isn't a number")
         }
 
-        def contexts = optionValue('contexts') as String
-        def defaultSchema = optionValue('defaultSchema') as String
-        def dataSource = optionValue('dataSource') as String
+        def filename = commandLine.remainingArgs[1]
+        def contexts = commandLine.optionValue('contexts') as String
+        def defaultSchema = commandLine.optionValue('defaultSchema') as String
+        def dataSource = commandLine.optionValue('dataSource') as String
 
         withLiquibase(defaultSchema, dataSource) { Liquibase liquibase ->
-            liquibase.rollback(number.toInteger(), contexts)
+            withFileOrSystemOutWriter(filename) { Writer writer ->
+                liquibase.futureRollbackSQL(number.toInteger(), contexts, writer)
+            }
         }
+
+        return true
     }
 }
