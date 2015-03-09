@@ -27,11 +27,11 @@ class DbmUpdateCommand implements ApplicationCommand, ApplicationContextDatabase
 
     @Override
     boolean handle(ExecutionContext executionContext) {
-        def commandLine = executionContext.commandLine
+        commandLine = executionContext.commandLine
 
-        def contexts = commandLine.optionValue('contexts') as String
-        def defaultSchema = commandLine.optionValue('defaultSchema') as String
-        def dataSource = commandLine.optionValue('dataSource') as String
+        def contexts = optionValue('contexts')
+        def defaultSchema = optionValue('defaultSchema')
+        def dataSource = optionValue('dataSource')
 
         withLiquibase(defaultSchema, dataSource) { Liquibase liquibase ->
             liquibase.update(contexts)

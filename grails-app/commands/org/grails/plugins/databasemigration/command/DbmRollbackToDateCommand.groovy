@@ -32,14 +32,14 @@ class DbmRollbackToDateCommand implements ApplicationCommand, ApplicationContext
 
     @Override
     boolean handle(ExecutionContext executionContext) {
-        def commandLine = executionContext.commandLine
+        commandLine = executionContext.commandLine
 
-        def dateStr = commandLine.remainingArgs[0]
+        def dateStr = args[0]
         if (!dateStr) {
             throw new DatabaseMigrationException('Date must be specified as two strings with the format "yyyy-MM-dd HH:mm:ss" or as one strings with the format "yyyy-MM-dd"')
         }
 
-        def timeStr = commandLine.remainingArgs[1]
+        def timeStr = args[1]
 
         def date = null
         try {
@@ -48,9 +48,9 @@ class DbmRollbackToDateCommand implements ApplicationCommand, ApplicationContext
             throw new DatabaseMigrationException("Problem parsing '$dateStr${timeStr ? " $timeStr" : ''}' as a Date: $e.message")
         }
 
-        def contexts = commandLine.optionValue('contexts') as String
-        def defaultSchema = commandLine.optionValue('defaultSchema') as String
-        def dataSource = commandLine.optionValue('dataSource') as String
+        def contexts = optionValue('contexts')
+        def defaultSchema = optionValue('defaultSchema')
+        def dataSource = optionValue('dataSource')
 
         withLiquibase(defaultSchema, dataSource) { Liquibase liquibase ->
             liquibase.rollback(date, contexts)

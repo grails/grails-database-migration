@@ -32,20 +32,20 @@ class DbmRollbackToDateSqlCommand implements ApplicationCommand, ApplicationCont
 
     @Override
     boolean handle(ExecutionContext executionContext) {
-        def commandLine = executionContext.commandLine
+        commandLine = executionContext.commandLine
 
-        def dateStr = commandLine.remainingArgs[0]
+        def dateStr = args[0]
         if (!dateStr) {
             throw new DatabaseMigrationException('Date must be specified as two strings with the format "yyyy-MM-dd HH:mm:ss" or as one strings with the format "yyyy-MM-dd"')
         }
 
         String timeStr = null
         String filename = null
-        if (commandLine.remainingArgs[1]) {
-            if (commandLine.remainingArgs.size() > 2 || isTimeFormat(commandLine.remainingArgs[1])) {
-                timeStr = commandLine.remainingArgs[1]
+        if (args[1]) {
+            if (args.size() > 2 || isTimeFormat(args[1])) {
+                timeStr = args[1]
             } else {
-                filename = commandLine.remainingArgs[1]
+                filename = args[1]
             }
         }
 
@@ -56,10 +56,10 @@ class DbmRollbackToDateSqlCommand implements ApplicationCommand, ApplicationCont
             throw new DatabaseMigrationException("Problem parsing '$dateStr${timeStr ? " $timeStr" : ''}' as a Date: $e.message")
         }
 
-        filename = filename ?: commandLine.remainingArgs[2]
-        def contexts = commandLine.optionValue('contexts') as String
-        def defaultSchema = commandLine.optionValue('defaultSchema') as String
-        def dataSource = commandLine.optionValue('dataSource') as String
+        filename = filename ?: args[2]
+        def contexts = optionValue('contexts')
+        def defaultSchema = optionValue('defaultSchema')
+        def dataSource = optionValue('dataSource')
 
         withLiquibase(defaultSchema, dataSource) { Liquibase liquibase ->
             withFileOrSystemOutWriter(filename) { Writer writer ->

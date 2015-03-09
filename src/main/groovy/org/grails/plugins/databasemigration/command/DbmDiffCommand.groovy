@@ -33,7 +33,10 @@ class DbmDiffCommand implements ScriptDatabaseMigrationCommand {
         }
 
         def filename = args[1]
-        def changeLogFile = resolveChangeLogFile(filename)
+        def defaultSchema = optionValue('defaultSchema')
+        def dataSource = optionValue('dataSource')
+
+        def changeLogFile = resolveChangeLogFile(filename, dataSource)
         if (changeLogFile) {
             if (changeLogFile.exists()) {
                 if (commandLine.hasOption('force')) {
@@ -47,17 +50,14 @@ class DbmDiffCommand implements ScriptDatabaseMigrationCommand {
             }
         }
 
-        def defaultSchema = optionValue('defaultSchema')
-        def dataSource = optionValue('dataSource')
-
         withDatabase(defaultSchema, getDataSourceConfig(dataSource)) { Database referenceDatabase ->
             withDatabase(defaultSchema, getDataSourceConfig(dataSource, getEnvironmentConfig(otherEnv))) { Database targetDatabase ->
                 doDiffToChangeLog(changeLogFile, referenceDatabase, targetDatabase)
             }
         }
 
-        if (filename && hasOption('add')) {
-            appendToChangeLog(changeLogFile)
+        if (changeLogFile && hasOption('add')) {
+            appendToChangeLog(getChangeLogFile(dataSource), changeLogFile)
         }
     }
 }

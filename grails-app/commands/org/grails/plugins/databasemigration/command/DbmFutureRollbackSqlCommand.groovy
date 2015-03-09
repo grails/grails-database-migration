@@ -27,12 +27,12 @@ class DbmFutureRollbackSqlCommand implements ApplicationCommand, ApplicationCont
 
     @Override
     boolean handle(ExecutionContext executionContext) {
-        def commandLine = executionContext.commandLine
+        commandLine = executionContext.commandLine
 
-        def filename = commandLine.remainingArgs[0]
-        def contexts = commandLine.optionValue('contexts') as String
-        def defaultSchema = commandLine.optionValue('defaultSchema') as String
-        def dataSource = commandLine.optionValue('dataSource') as String
+        def filename = args[0]
+        def contexts = optionValue('contexts')
+        def defaultSchema = optionValue('defaultSchema')
+        def dataSource = optionValue('dataSource')
 
         withLiquibase(defaultSchema, dataSource) { Liquibase liquibase ->
             withFileOrSystemOutWriter(filename) { Writer writer ->

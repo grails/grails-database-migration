@@ -29,6 +29,7 @@ import liquibase.exception.LiquibaseException
 import liquibase.integration.commandline.CommandLineUtils
 import liquibase.resource.FileSystemResourceAccessor
 import liquibase.util.file.FilenameUtils
+import org.grails.build.parsing.CommandLine
 import org.grails.plugins.databasemigration.liquibase.GroovyDiffToChangeLogCommand
 import org.grails.plugins.databasemigration.liquibase.GroovyGenerateChangeLogCommand
 
@@ -40,23 +41,48 @@ trait DatabaseMigrationCommand {
     static final String CONFIG_PREFIX = 'grails.plugin.databasemigration'
 
     static final String DEFAULT_CHANGE_LOG_LOCATION = 'grails-app/migrations'
-    static final String DEFAULT_CHANGE_LOG_FILE = 'changelog.groovy'
 
     abstract ConfigMap getConfig()
+
+    CommandLine commandLine
+
+    String optionValue(String name) {
+        commandLine.optionValue(name)?.toString()
+    }
+
+    boolean hasOption(String name) {
+        commandLine.hasOption(name)
+    }
+
+    List<String> getArgs() {
+        commandLine.remainingArgs
+    }
 
     File getChangeLogLocation() {
         new File(config.getProperty("${CONFIG_PREFIX}.changelogLocation", String) ?: DEFAULT_CHANGE_LOG_LOCATION)
     }
 
-    File getChangeLogFile() {
-        new File(changeLogLocation, config.getProperty("${CONFIG_PREFIX}.changelogFileName", String) ?: DEFAULT_CHANGE_LOG_FILE)
+    File getChangeLogFile(String dataSource = null) {
+        boolean isDefault = dataSource == 'dataSource'
+
+        if (isDefault) {
+            return new File(changeLogLocation, (String) config.getProperty("${CONFIG_PREFIX}.changelogFileName", String) ?: 'changelog.groovy')
+        }
+
+        return new File(changeLogLocation, (String) config.getProperty("${CONFIG_PREFIX}.${dataSource}.changelogFileName", String) ?: "changelog-${dataSource}.groovy")
     }
 
-    File resolveChangeLogFile(String filename) {
+    File resolveChangeLogFile(String filename, String dataSource = null) {
         if (!filename) {
             return null
         }
-        new File(changeLogLocation, filename)
+        if (FilenameUtils.getExtension(filename)) {
+            return new File(changeLogLocation, filename)
+        }
+        if (dataSource) {
+            return new File(changeLogLocation, "${filename}-${dataSource}.groovy")
+        }
+        return new File(changeLogLocation, "${filename}.groovy")
     }
 
     Map<String, String> getDataSourceConfig(String dataSource) {
@@ -104,7 +130,7 @@ trait DatabaseMigrationCommand {
         def fileSystemResourceAccessor = new FileSystemResourceAccessor(changeLogLocation.path)
 
         withDatabase(defaultSchema, getDataSourceConfig(dataSource)) { Database database ->
-            def liquibase = new Liquibase(changeLogLocation.toPath().relativize(changeLogFile.toPath()).toString(), fileSystemResourceAccessor, database)
+            def liquibase = new Liquibase(changeLogLocation.toPath().relativize(getChangeLogFile(dataSource).toPath()).toString(), fileSystemResourceAccessor, database)
             closure.call(liquibase)
         }
     }
@@ -177,9 +203,8 @@ trait DatabaseMigrationCommand {
         }
     }
 
-    void appendToChangeLog(File destChangeLogFile) {
-        def srcChangeLogFile = changeLogFile
-        if (!changeLogFile.exists() || srcChangeLogFile == destChangeLogFile) {
+    void appendToChangeLog(File srcChangeLogFile, File destChangeLogFile) {
+        if (!srcChangeLogFile.exists() || srcChangeLogFile == destChangeLogFile) {
             return
         }
 

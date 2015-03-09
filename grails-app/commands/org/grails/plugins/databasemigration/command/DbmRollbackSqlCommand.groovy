@@ -30,17 +30,17 @@ class DbmRollbackSqlCommand implements ApplicationCommand, ApplicationContextDat
 
     @Override
     boolean handle(ExecutionContext executionContext) {
-        def commandLine = executionContext.commandLine
+        commandLine = executionContext.commandLine
 
-        def tagName = commandLine.remainingArgs[0]
+        def tagName = args[0]
         if (!tagName) {
             throw new DatabaseMigrationException("The $name command requires a tag")
         }
 
-        def filename = commandLine.remainingArgs[1]
-        def contexts = commandLine.optionValue('contexts') as String
-        def defaultSchema = commandLine.optionValue('defaultSchema') as String
-        def dataSource = commandLine.optionValue('dataSource') as String
+        def filename = args[1]
+        def contexts = optionValue('contexts')
+        def defaultSchema = optionValue('defaultSchema')
+        def dataSource = optionValue('dataSource')
 
         withLiquibase(defaultSchema, dataSource) { Liquibase liquibase ->
             withFileOrSystemOutWriter(filename) { Writer writer ->

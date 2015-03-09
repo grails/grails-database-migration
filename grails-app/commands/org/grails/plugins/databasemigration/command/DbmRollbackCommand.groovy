@@ -30,16 +30,16 @@ class DbmRollbackCommand implements ApplicationCommand, ApplicationContextDataba
 
     @Override
     boolean handle(ExecutionContext executionContext) {
-        def commandLine = executionContext.commandLine
+        commandLine = executionContext.commandLine
 
-        def tagName = commandLine.remainingArgs[0]
+        def tagName = args[0]
         if (!tagName) {
             throw new DatabaseMigrationException("The $name command requires a tag")
         }
 
-        def contexts = commandLine.optionValue('contexts') as String
-        def defaultSchema = commandLine.optionValue('defaultSchema') as String
-        def dataSource = commandLine.optionValue('dataSource') as String
+        def contexts = optionValue('contexts')
+        def defaultSchema = optionValue('defaultSchema')
+        def dataSource = optionValue('dataSource')
 
         withLiquibase(defaultSchema, dataSource) { Liquibase liquibase ->
             liquibase.rollback(tagName, contexts)

@@ -28,13 +28,15 @@ class DbmGenerateGormChangelogCommand implements ApplicationCommand, Application
 
     @Override
     boolean handle(ExecutionContext executionContext) {
-        def commandLine = executionContext.commandLine
+        commandLine = executionContext.commandLine
 
-        def filename = commandLine.remainingArgs[0]
-        def changeLogFile = resolveChangeLogFile(filename)
+        def filename = args[0]
+        def dataSource = optionValue('dataSource')
+
+        def changeLogFile = resolveChangeLogFile(filename, dataSource)
         if (changeLogFile) {
             if (changeLogFile.exists()) {
-                if (commandLine.hasOption('force')) {
+                if (hasOption('force')) {
                     changeLogFile.delete()
                 } else {
                     throw new DatabaseMigrationException("ChangeLogFile ${changeLogFile} already exists!")
@@ -45,14 +47,12 @@ class DbmGenerateGormChangelogCommand implements ApplicationCommand, Application
             }
         }
 
-        def dataSource = commandLine.optionValue('dataSource') as String
-
         withGormDatabase(applicationContext, dataSource) { Database database ->
             doGenerateChangeLog(changeLogFile, database)
         }
 
-        if (filename && commandLine.hasOption('add')) {
-            appendToChangeLog(changeLogFile)
+        if (changeLogFile && hasOption('add')) {
+            appendToChangeLog(getChangeLogFile(dataSource), changeLogFile)
         }
 
         return true

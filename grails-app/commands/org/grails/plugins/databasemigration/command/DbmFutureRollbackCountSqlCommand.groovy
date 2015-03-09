@@ -30,9 +30,9 @@ class DbmFutureRollbackCountSqlCommand implements ApplicationCommand, Applicatio
 
     @Override
     boolean handle(ExecutionContext executionContext) {
-        def commandLine = executionContext.commandLine
+        commandLine = executionContext.commandLine
 
-        def number = commandLine.remainingArgs[0]
+        def number = args[0]
         if (!number) {
             throw new DatabaseMigrationException("The $name command requires a change set number argument")
         }
@@ -40,10 +40,10 @@ class DbmFutureRollbackCountSqlCommand implements ApplicationCommand, Applicatio
             throw new DatabaseMigrationException("The change set number argument '$number' isn't a number")
         }
 
-        def filename = commandLine.remainingArgs[1]
-        def contexts = commandLine.optionValue('contexts') as String
-        def defaultSchema = commandLine.optionValue('defaultSchema') as String
-        def dataSource = commandLine.optionValue('dataSource') as String
+        def filename = args[1]
+        def contexts = optionValue('contexts')
+        def defaultSchema = optionValue('defaultSchema')
+        def dataSource = optionValue('dataSource')
 
         withLiquibase(defaultSchema, dataSource) { Liquibase liquibase ->
             withFileOrSystemOutWriter(filename) { Writer writer ->

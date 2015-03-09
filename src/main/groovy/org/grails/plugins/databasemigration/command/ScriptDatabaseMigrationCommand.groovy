@@ -35,11 +35,10 @@ trait ScriptDatabaseMigrationCommand implements DatabaseMigrationCommand {
     ConfigMap config
     ConfigMap sourceConfig
     ExecutionContext executionContext
-    CommandLine commandLine
 
     void handle(ExecutionContext executionContext) {
         this.executionContext = executionContext
-        setCommandLine(executionContext.commandLine)
+        commandLine = executionContext.commandLine
         setConfig(executionContext.config)
 
         configureLiquibase()
@@ -63,18 +62,6 @@ trait ScriptDatabaseMigrationCommand implements DatabaseMigrationCommand {
     void setConfig(ConfigMap config) {
         this.sourceConfig = config
         this.config = new EnvironmentAwareCodeGenConfig(sourceConfig as CodeGenConfig, Environment.current.name)
-    }
-
-    String optionValue(String name) {
-        commandLine.optionValue(name)?.toString()
-    }
-
-    boolean hasOption(String name) {
-        commandLine.hasOption(name)
-    }
-
-    List<String> getArgs() {
-        executionContext.commandLine.remainingArgs
     }
 
     ConfigMap getEnvironmentConfig(String environment = Environment.current.name) {

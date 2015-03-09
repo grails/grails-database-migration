@@ -29,7 +29,10 @@ class DbmGenerateChangelogCommand implements ScriptDatabaseMigrationCommand {
 
     void handle() {
         def filename = args[0]
-        def changeLogFile = resolveChangeLogFile(filename)
+        def defaultSchema = commandLine.optionValue('defaultSchema') as String
+        def dataSource = commandLine.optionValue('dataSource') as String
+
+        def changeLogFile = resolveChangeLogFile(filename, dataSource)
         if (changeLogFile) {
             if (changeLogFile.exists()) {
                 if (commandLine.hasOption('force')) {
@@ -43,15 +46,12 @@ class DbmGenerateChangelogCommand implements ScriptDatabaseMigrationCommand {
             }
         }
 
-        def defaultSchema = commandLine.optionValue('defaultSchema') as String
-        def dataSource = commandLine.optionValue('dataSource') as String
-
         withDatabase(defaultSchema, getDataSourceConfig(dataSource)) { Database database ->
             doGenerateChangeLog(changeLogFile, database)
         }
 
-        if (filename && hasOption('add')) {
-            appendToChangeLog(changeLogFile)
+        if (changeLogFile && hasOption('add')) {
+            appendToChangeLog(getChangeLogFile(dataSource), changeLogFile)
         }
     }
 }

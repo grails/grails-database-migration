@@ -28,13 +28,16 @@ class DbmGormDiffCommand implements ApplicationCommand, ApplicationContextDataba
 
     @Override
     boolean handle(ExecutionContext executionContext) {
-        def commandLine = executionContext.commandLine
+        commandLine = executionContext.commandLine
 
-        def filename = commandLine.remainingArgs[0]
-        def changeLogFile = resolveChangeLogFile(filename)
+        def defaultSchema = optionValue('defaultSchema')
+        def dataSource = optionValue('dataSource')
+
+        def filename = args[0]
+        def changeLogFile = resolveChangeLogFile(filename, dataSource)
         if (changeLogFile) {
             if (changeLogFile.exists()) {
-                if (commandLine.hasOption('force')) {
+                if (hasOption('force')) {
                     changeLogFile.delete()
                 } else {
                     throw new DatabaseMigrationException("ChangeLogFile ${changeLogFile} already exists!")
@@ -45,17 +48,14 @@ class DbmGormDiffCommand implements ApplicationCommand, ApplicationContextDataba
             }
         }
 
-        def defaultSchema = commandLine.optionValue('defaultSchema') as String
-        def dataSource = commandLine.optionValue('dataSource') as String
-
         withGormDatabase(applicationContext, dataSource) { Database referenceDatabase ->
             withDatabase(defaultSchema, getDataSourceConfig(dataSource)) { Database targetDatabase ->
                 doDiffToChangeLog(changeLogFile, referenceDatabase, targetDatabase)
             }
         }
 
-        if (filename && commandLine.hasOption('add')) {
-            appendToChangeLog(changeLogFile)
+        if (changeLogFile && hasOption('add')) {
+            appendToChangeLog(getChangeLogFile(dataSource), changeLogFile)
         }
 
         return true
