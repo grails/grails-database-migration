@@ -50,8 +50,8 @@ class DbmDiffCommand implements ScriptDatabaseMigrationCommand {
             }
         }
 
-        withDatabase(defaultSchema, getDataSourceConfig(dataSource)) { Database referenceDatabase ->
-            withDatabase(defaultSchema, getDataSourceConfig(dataSource, getEnvironmentConfig(otherEnv))) { Database targetDatabase ->
+        withDatabase(defaultSchema, dataSource, getDataSourceConfig(dataSource)) { Database referenceDatabase ->
+            withDatabase(defaultSchema, dataSource, getDataSourceConfig(dataSource, getEnvironmentConfig(otherEnv))) { Database targetDatabase ->
                 doDiffToChangeLog(changeLogFile, referenceDatabase, targetDatabase)
             }
         }

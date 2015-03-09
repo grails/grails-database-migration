@@ -60,7 +60,7 @@ class GroovyChangeLogParser extends AbstractChangeLogParser {
 
         try {
             GroovyClassLoader classLoader = new GroovyClassLoader(Thread.currentThread().contextClassLoader, compilerConfiguration, false)
-            Script script = new GroovyShell(classLoader, new Binding(changeLogProperties), compilerConfiguration).parse(changeLogText)
+            Script script = new GroovyShell(classLoader, new Binding(changeLogProperties), compilerConfiguration).parse(changeLogText as String)
             script.run()
 
             setChangeLogProperties(changeLogProperties, changeLogParameters)

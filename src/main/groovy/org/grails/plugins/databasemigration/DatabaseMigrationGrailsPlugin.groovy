@@ -16,6 +16,8 @@
 package org.grails.plugins.databasemigration
 
 import grails.plugins.Plugin
+import liquibase.configuration.GlobalConfiguration
+import liquibase.configuration.LiquibaseConfiguration
 import liquibase.parser.ChangeLogParser
 import liquibase.parser.ChangeLogParserFactory
 import liquibase.servicelocator.ServiceLocator
@@ -73,6 +75,8 @@ class DatabaseMigrationGrailsPlugin extends Plugin {
                         contexts = migrationConfig.get('updateOnStartContexts') ?: null
                         labels = migrationConfig.get('updateOnStartLabels') ?: null
                         defaultSchema = migrationConfig.get('updateOnStartDefaultSchema') ?: null
+                        databaseChangeLogTableName = migrationConfig.get('databaseChangeLogTableName') ?: null
+                        databaseChangeLogLockTableName = migrationConfig.get('databaseChangeLogLockTableName') ?: null
                     }
                 }
             }
@@ -89,6 +93,15 @@ class DatabaseMigrationGrailsPlugin extends Plugin {
         def groovyChangeLogParser = ChangeLogParserFactory.instance.parsers.find { ChangeLogParser changeLogParser -> changeLogParser instanceof GroovyChangeLogParser } as GroovyChangeLogParser
         groovyChangeLogParser.applicationContext = applicationContext
         groovyChangeLogParser.config = config
+
+        def databaseChangeLogTableName = migrationConfig.get('databaseChangeLogTableName')
+        if (databaseChangeLogTableName) {
+            LiquibaseConfiguration.getInstance().getConfiguration(GlobalConfiguration).databaseChangeLogTableName = databaseChangeLogTableName
+        }
+        def databaseChangeLogLockTableName = migrationConfig.get('databaseChangeLogLockTableName')
+        if (databaseChangeLogLockTableName) {
+            LiquibaseConfiguration.getInstance().getConfiguration(GlobalConfiguration).databaseChangeLogLockTableName = databaseChangeLogLockTableName
+        }
     }
 
     private Set<String> getDataSourceNames() {
@@ -99,7 +112,7 @@ class DatabaseMigrationGrailsPlugin extends Plugin {
         return dataSources.keySet()
     }
 
-    private Map<String, Object> getMigrationConfig(String dataSourceName) {
+    private Map<String, Object> getMigrationConfig(String dataSourceName = 'dataSource') {
         if (dataSourceName == 'dataSource') {
             return config.grails.plugin.databasemigration
         }

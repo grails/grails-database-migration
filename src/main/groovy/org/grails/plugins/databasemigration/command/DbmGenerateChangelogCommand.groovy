@@ -46,7 +46,7 @@ class DbmGenerateChangelogCommand implements ScriptDatabaseMigrationCommand {
             }
         }
 
-        withDatabase(defaultSchema, getDataSourceConfig(dataSource)) { Database database ->
+        withDatabase(defaultSchema, dataSource, getDataSourceConfig(dataSource)) { Database database ->
             doGenerateChangeLog(changeLogFile, database)
         }
 

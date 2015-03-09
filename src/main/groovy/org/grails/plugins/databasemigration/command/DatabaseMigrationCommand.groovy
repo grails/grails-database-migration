@@ -23,10 +23,11 @@ import groovy.transform.stc.SimpleType
 import liquibase.Liquibase
 import liquibase.command.CommandExecutionException
 import liquibase.database.Database
+import liquibase.database.DatabaseFactory
 import liquibase.diff.compare.CompareControl
 import liquibase.diff.output.DiffOutputControl
 import liquibase.exception.LiquibaseException
-import liquibase.integration.commandline.CommandLineUtils
+import liquibase.resource.ClassLoaderResourceAccessor
 import liquibase.resource.FileSystemResourceAccessor
 import liquibase.util.file.FilenameUtils
 import org.grails.build.parsing.CommandLine
@@ -37,8 +38,6 @@ import java.text.ParseException
 
 @CompileStatic
 trait DatabaseMigrationCommand {
-
-    static final String CONFIG_PREFIX = 'grails.plugin.databasemigration'
 
     static final String DEFAULT_CHANGE_LOG_LOCATION = 'grails-app/migrations'
 
@@ -59,17 +58,14 @@ trait DatabaseMigrationCommand {
     }
 
     File getChangeLogLocation() {
-        new File(config.getProperty("${CONFIG_PREFIX}.changelogLocation", String) ?: DEFAULT_CHANGE_LOG_LOCATION)
+        new File(migrationConfig.get('changelogLocation', DEFAULT_CHANGE_LOG_LOCATION) as String)
     }
 
     File getChangeLogFile(String dataSource = null) {
-        boolean isDefault = dataSource == 'dataSource'
+        def migrationConfig = getMigrationConfig(dataSource)
 
-        if (isDefault) {
-            return new File(changeLogLocation, (String) config.getProperty("${CONFIG_PREFIX}.changelogFileName", String) ?: 'changelog.groovy')
-        }
-
-        return new File(changeLogLocation, (String) config.getProperty("${CONFIG_PREFIX}.${dataSource}.changelogFileName", String) ?: "changelog-${dataSource}.groovy")
+        boolean isDefault = (!dataSource || dataSource == 'dataSource')
+        new File(changeLogLocation, migrationConfig.get('changelogFileName', isDefault ? 'changelog.groovy' : "changelog-${dataSource}.groovy") as String)
     }
 
     File resolveChangeLogFile(String filename, String dataSource = null) {
@@ -129,39 +125,50 @@ trait DatabaseMigrationCommand {
     void withLiquibase(String defaultSchema, String dataSource, @ClosureParams(value = SimpleType, options = 'liquibase.Liquibase') Closure closure) {
         def fileSystemResourceAccessor = new FileSystemResourceAccessor(changeLogLocation.path)
 
-        withDatabase(defaultSchema, getDataSourceConfig(dataSource)) { Database database ->
+        withDatabase(defaultSchema, dataSource, getDataSourceConfig(dataSource)) { Database database ->
             def liquibase = new Liquibase(changeLogLocation.toPath().relativize(getChangeLogFile(dataSource).toPath()).toString(), fileSystemResourceAccessor, database)
             closure.call(liquibase)
         }
     }
 
-    void withDatabase(String defaultSchema, Map<String, String> dataSourceConfig, @ClosureParams(value = SimpleType, options = 'liquibase.database.Database') Closure closure) {
+    void withDatabase(String defaultSchema, String dataSource, Map<String, String> dataSourceConfig, @ClosureParams(value = SimpleType, options = 'liquibase.database.Database') Closure closure) {
         def database = null
         try {
-            database = createDatabase(defaultSchema, dataSourceConfig)
+            database = createDatabase(defaultSchema, dataSource, dataSourceConfig)
             closure.call(database)
         } finally {
             database?.close()
         }
     }
 
-    private Database createDatabase(String defaultSchema, Map<String, String> dataSourceConfig) {
-        return CommandLineUtils.createDatabaseObject(
-            Thread.currentThread().contextClassLoader,
+    Database createDatabase(String defaultSchema, String dataSource, Map<String, String> dataSourceConfig) {
+        Database database = DatabaseFactory.getInstance().openDatabase(
             dataSourceConfig.url,
             dataSourceConfig.username ?: null,
             dataSourceConfig.password ?: null,
             dataSourceConfig.driverClassName,
-            defaultSchema,
-            null,
-            true,
-            true,
             null,
             null,
             null,
-            null,
-            null,
+            new ClassLoaderResourceAccessor(Thread.currentThread().contextClassLoader)
         )
+        configureDatabase(database, defaultSchema, dataSource)
+        return database
+    }
+
+    void configureDatabase(Database database, String defaultSchema, String dataSource) {
+        def migrationConfig = getMigrationConfig(dataSource)
+
+        database.defaultSchemaName = defaultSchema
+        if (!database.supportsSchemas() && defaultSchema) {
+            database.defaultCatalogName = defaultSchema
+        }
+        if (migrationConfig.containsKey('databaseChangeLogTableName')) {
+            database.databaseChangeLogTableName = migrationConfig.get('databaseChangeLogTableName') as String
+        }
+        if (migrationConfig.containsKey('databaseChangeLogLockTableName')) {
+            database.databaseChangeLogLockTableName = migrationConfig.get('databaseChangeLogLockTableName') as String
+        }
     }
 
     void doGenerateChangeLog(File changeLogFile, Database originalDatabase) {
@@ -170,11 +177,8 @@ trait DatabaseMigrationCommand {
         def diffOutputControl = new DiffOutputControl(false, false, false)
 
         def command = new GroovyGenerateChangeLogCommand()
-        command.setReferenceDatabase(originalDatabase)
-            .setOutputStream(System.out)
-            .setCompareControl(compareControl)
-        command.setChangeLogFile(changeLogFilePath)
-            .setDiffOutputControl(diffOutputControl)
+        command.setReferenceDatabase(originalDatabase).setOutputStream(System.out).setCompareControl(compareControl)
+        command.setChangeLogFile(changeLogFilePath).setDiffOutputControl(diffOutputControl)
 
         try {
             command.execute()
@@ -189,12 +193,8 @@ trait DatabaseMigrationCommand {
         def diffOutputControl = new DiffOutputControl(false, false, false)
 
         def command = new GroovyDiffToChangeLogCommand()
-        command.setReferenceDatabase(referenceDatabase)
-            .setTargetDatabase(targetDatabase)
-            .setCompareControl(compareControl)
-            .setOutputStream(System.out)
-        command.setChangeLogFile(changeLogFilePath)
-            .setDiffOutputControl(diffOutputControl)
+        command.setReferenceDatabase(referenceDatabase).setTargetDatabase(targetDatabase).setCompareControl(compareControl).setOutputStream(System.out)
+        command.setChangeLogFile(changeLogFilePath).setDiffOutputControl(diffOutputControl)
 
         try {
             command.execute();
@@ -231,5 +231,14 @@ trait DatabaseMigrationCommand {
                 srcChangeLogFile.write(text.replaceFirst('}.*$', "    include file: '$relativePath'\n\$0"))
                 break
         }
+    }
+
+    @CompileDynamic
+    Map<String, Object> getMigrationConfig(String dataSourceName = null) {
+        def isDefault = (!dataSourceName || dataSourceName == 'dataSource')
+        if (isDefault) {
+            return config.grails.plugin.databasemigration
+        }
+        return config.grails.plugin.databasemigration."${dataSourceName - 'dataSource_'}"
     }
 }

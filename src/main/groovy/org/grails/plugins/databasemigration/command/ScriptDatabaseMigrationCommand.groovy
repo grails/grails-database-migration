@@ -19,10 +19,11 @@ import grails.config.ConfigMap
 import grails.util.Environment
 import grails.util.GrailsNameUtils
 import groovy.transform.CompileStatic
+import liquibase.configuration.GlobalConfiguration
+import liquibase.configuration.LiquibaseConfiguration
 import liquibase.parser.ChangeLogParser
 import liquibase.parser.ChangeLogParserFactory
 import liquibase.servicelocator.ServiceLocator
-import org.grails.build.parsing.CommandLine
 import org.grails.cli.profile.ExecutionContext
 import org.grails.config.CodeGenConfig
 import org.grails.plugins.databasemigration.EnvironmentAwareCodeGenConfig

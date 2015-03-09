@@ -49,7 +49,7 @@ class DbmGormDiffCommand implements ApplicationCommand, ApplicationContextDataba
         }
 
         withGormDatabase(applicationContext, dataSource) { Database referenceDatabase ->
-            withDatabase(defaultSchema, getDataSourceConfig(dataSource)) { Database targetDatabase ->
+            withDatabase(defaultSchema, dataSource, getDataSourceConfig(dataSource)) { Database targetDatabase ->
                 doDiffToChangeLog(changeLogFile, referenceDatabase, targetDatabase)
             }
         }

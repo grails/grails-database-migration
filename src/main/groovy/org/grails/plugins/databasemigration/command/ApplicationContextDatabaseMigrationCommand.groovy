@@ -55,6 +55,9 @@ trait ApplicationContextDatabaseMigrationCommand implements DatabaseMigrationCom
         def configuration = (Configuration) sessionFactory.configuration
         def dialect = (Dialect) applicationContext.classLoader.loadClass((String) configuration.getProperty('hibernate.dialect')).newInstance()
 
-        new GormDatabase(configuration, dialect)
+        Database database = new GormDatabase(configuration, dialect)
+        configureDatabase(database, null, dataSource)
+
+        return database
     }
 }

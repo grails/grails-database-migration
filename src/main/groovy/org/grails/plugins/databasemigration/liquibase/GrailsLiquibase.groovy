@@ -17,17 +17,39 @@ package org.grails.plugins.databasemigration.liquibase
 
 import groovy.transform.CompileStatic
 import liquibase.Liquibase
+import liquibase.database.Database
+import liquibase.exception.DatabaseException
 import liquibase.exception.LiquibaseException
 import liquibase.integration.spring.SpringLiquibase
 import org.springframework.context.ApplicationContext
+
+import java.sql.Connection
 
 @CompileStatic
 class GrailsLiquibase extends SpringLiquibase {
 
     private ApplicationContext applicationContext
 
+    String databaseChangeLogTableName
+
+    String databaseChangeLogLockTableName
+
     GrailsLiquibase(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext
+    }
+
+    @Override
+    protected Database createDatabase(Connection connection) throws DatabaseException {
+        Database database = super.createDatabase(connection)
+
+        if (databaseChangeLogTableName) {
+            database.databaseChangeLogTableName = databaseChangeLogTableName
+        }
+        if (databaseChangeLogLockTableName) {
+            database.databaseChangeLogLockTableName = databaseChangeLogLockTableName
+        }
+
+        database
     }
 
     @Override
