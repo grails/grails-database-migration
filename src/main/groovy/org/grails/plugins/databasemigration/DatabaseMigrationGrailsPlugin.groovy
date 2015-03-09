@@ -16,11 +16,11 @@
 package org.grails.plugins.databasemigration
 
 import grails.plugins.Plugin
-import liquibase.integration.spring.SpringLiquibase
 import liquibase.parser.ChangeLogParser
 import liquibase.parser.ChangeLogParserFactory
 import liquibase.servicelocator.ServiceLocator
 import org.grails.plugins.databasemigration.liquibase.GormDatabase
+import org.grails.plugins.databasemigration.liquibase.GrailsLiquibase
 import org.grails.plugins.databasemigration.liquibase.GroovyChangeLogParser
 import org.springframework.boot.liquibase.CommonsLoggingLiquibaseLogger
 
@@ -57,7 +57,7 @@ class DatabaseMigrationGrailsPlugin extends Plugin {
             dataSourceNames.each { String dataSourceName ->
                 def migrationConfig = getMigrationConfig(dataSourceName)
                 if (migrationConfig.get('updateOnStart')) {
-                    "springLiquibase_${dataSourceName}"(SpringLiquibase) {
+                    "springLiquibase_${dataSourceName}"(GrailsLiquibase, applicationContext) {
                         dropFirst = migrationConfig.containsKey('dropOnStart') ? migrationConfig.get('dropOnStart') : false
                         dataSource = ref(dataSourceName)
                         changeLog = migrationConfig.get('updateOnStartFileName') ?: 'classpath:/changelog.groovy'
