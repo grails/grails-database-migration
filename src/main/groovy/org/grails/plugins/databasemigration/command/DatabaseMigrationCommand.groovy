@@ -60,6 +60,20 @@ trait DatabaseMigrationCommand {
         commandLine.hasOption(name)
     }
 
+    String getContexts() {
+        if (contexts) {
+            return contexts
+        }
+        def contexts = migrationConfig.get('contexts')
+        if (!contexts) {
+            return null
+        }
+        if (contexts instanceof List) {
+            return contexts.join(',')
+        }
+        return contexts
+    }
+
     List<String> getArgs() {
         commandLine.remainingArgs
     }

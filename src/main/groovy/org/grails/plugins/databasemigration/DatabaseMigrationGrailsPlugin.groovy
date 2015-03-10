@@ -72,7 +72,7 @@ class DatabaseMigrationGrailsPlugin extends Plugin {
                                 changeLog = migrationConfig.get('updateOnStartFileName') ?: "classpath:/changelog-${dataSourceName - 'dataSource_'}.groovy"
                             }
                         }
-                        contexts = migrationConfig.get('updateOnStartContexts') ?: null
+                        contexts = getContexts(migrationConfig)
                         labels = migrationConfig.get('updateOnStartLabels') ?: null
                         defaultSchema = migrationConfig.get('updateOnStartDefaultSchema') ?: null
                         databaseChangeLogTableName = migrationConfig.get('databaseChangeLogTableName') ?: null
@@ -102,6 +102,17 @@ class DatabaseMigrationGrailsPlugin extends Plugin {
         if (databaseChangeLogLockTableName) {
             LiquibaseConfiguration.getInstance().getConfiguration(GlobalConfiguration).databaseChangeLogLockTableName = databaseChangeLogLockTableName
         }
+    }
+
+    private String getContexts(Map<String, Object> migrationConfig) {
+        def contexts = migrationConfig.get('updateOnStartContexts')
+        if (!contexts) {
+            return null
+        }
+        if (contexts instanceof List) {
+            return contexts.join(',')
+        }
+        return contexts
     }
 
     private Set<String> getDataSourceNames() {
