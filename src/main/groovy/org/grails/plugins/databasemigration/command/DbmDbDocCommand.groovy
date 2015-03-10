@@ -22,7 +22,7 @@ import liquibase.Liquibase
 class DbmDbDocCommand implements ScriptDatabaseMigrationCommand {
 
     void handle() {
-        def destination = args[0] ?: "build/dbdoc" as String
+        def destination = args[0] ?: migrationConfig.get('dbDocLocation', 'build/dbdoc') as String
 
         withLiquibase { Liquibase liquibase ->
             liquibase.generateDocumentation(destination, contexts)
