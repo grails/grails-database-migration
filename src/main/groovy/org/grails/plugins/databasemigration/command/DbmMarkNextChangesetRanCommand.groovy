@@ -22,11 +22,7 @@ import liquibase.Liquibase
 class DbmMarkNextChangesetRanCommand implements ScriptDatabaseMigrationCommand {
 
     void handle() {
-        def contexts = optionValue('contexts')
-        def defaultSchema = optionValue('defaultSchema')
-        def dataSource = optionValue('dataSource')
-
-        withLiquibase(defaultSchema, dataSource) { Liquibase liquibase ->
+        withLiquibase { Liquibase liquibase ->
             liquibase.markNextChangeSetRan(contexts)
         }
     }

@@ -23,11 +23,8 @@ class DbmDbDocCommand implements ScriptDatabaseMigrationCommand {
 
     void handle() {
         def destination = args[0] ?: "build/dbdoc" as String
-        def contexts = optionValue('contexts') as String
-        def defaultSchema = optionValue('defaultSchema')
-        def dataSource = optionValue('dataSource')
 
-        withLiquibase(defaultSchema, dataSource) { Liquibase liquibase ->
+        withLiquibase { Liquibase liquibase ->
             liquibase.generateDocumentation(destination, contexts)
         }
     }

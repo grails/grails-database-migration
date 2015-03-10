@@ -31,9 +31,7 @@ class DbmRollbackToDateCommand implements ApplicationCommand, ApplicationContext
     final String description = 'Rolls back the database to the state it was in at the given date/time'
 
     @Override
-    boolean handle(ExecutionContext executionContext) {
-        commandLine = executionContext.commandLine
-
+    void handle() {
         def dateStr = args[0]
         if (!dateStr) {
             throw new DatabaseMigrationException('Date must be specified as two strings with the format "yyyy-MM-dd HH:mm:ss" or as one strings with the format "yyyy-MM-dd"')
@@ -48,14 +46,8 @@ class DbmRollbackToDateCommand implements ApplicationCommand, ApplicationContext
             throw new DatabaseMigrationException("Problem parsing '$dateStr${timeStr ? " $timeStr" : ''}' as a Date: $e.message")
         }
 
-        def contexts = optionValue('contexts')
-        def defaultSchema = optionValue('defaultSchema')
-        def dataSource = optionValue('dataSource')
-
-        withLiquibase(defaultSchema, dataSource) { Liquibase liquibase ->
+        withLiquibase { Liquibase liquibase ->
             liquibase.rollback(date, contexts)
         }
-
-        return true
     }
 }

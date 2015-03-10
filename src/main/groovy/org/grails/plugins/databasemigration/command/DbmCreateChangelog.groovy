@@ -29,28 +29,26 @@ class DbmCreateChangelog implements ScriptDatabaseMigrationCommand {
             throw new DatabaseMigrationException("The $name command requires a filename")
         }
 
-        def dataSource = commandLine.optionValue('dataSource') as String
-
-        def changeLogFile = resolveChangeLogFile(filename, dataSource)
-        if (changeLogFile.exists()) {
-            if (commandLine.hasOption('force')) {
-                changeLogFile.delete()
+        def outputChangeLogFile = resolveChangeLogFile(filename)
+        if (outputChangeLogFile.exists()) {
+            if (hasOption('force')) {
+                outputChangeLogFile.delete()
             } else {
-                throw new DatabaseMigrationException("ChangeLogFile ${changeLogFile} already exists!")
+                throw new DatabaseMigrationException("ChangeLogFile ${outputChangeLogFile} already exists!")
             }
         }
-        if (!changeLogFile.parentFile.exists()) {
-            changeLogFile.parentFile.mkdirs()
+        if (!outputChangeLogFile.parentFile.exists()) {
+            outputChangeLogFile.parentFile.mkdirs()
         }
 
         def serializer = ChangeLogSerializerFactory.instance.getSerializer(filename)
 
-        changeLogFile.withOutputStream { OutputStream out ->
+        outputChangeLogFile.withOutputStream { OutputStream out ->
             serializer.write([], out)
         }
 
         if (hasOption('add')) {
-            appendToChangeLog(getChangeLogFile(dataSource), changeLogFile)
+            appendToChangeLog(changeLogFile, outputChangeLogFile)
         }
     }
 }

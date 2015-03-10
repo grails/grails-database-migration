@@ -28,10 +28,7 @@ class DbmTagCommand implements ScriptDatabaseMigrationCommand {
             throw new DatabaseMigrationException("The $name command requires a tag")
         }
 
-        def defaultSchema = optionValue('defaultSchema')
-        def dataSource = optionValue('dataSource')
-
-        withLiquibase(defaultSchema, dataSource) { Liquibase liquibase ->
+        withLiquibase { Liquibase liquibase ->
             liquibase.tag(tagName)
         }
     }

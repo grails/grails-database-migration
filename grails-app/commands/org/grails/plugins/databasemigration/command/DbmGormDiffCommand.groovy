@@ -27,37 +27,30 @@ class DbmGormDiffCommand implements ApplicationCommand, ApplicationContextDataba
     final String description = 'Diffs GORM classes against a database and generates a changelog XML or YAML file'
 
     @Override
-    boolean handle(ExecutionContext executionContext) {
-        commandLine = executionContext.commandLine
-
-        def defaultSchema = optionValue('defaultSchema')
-        def dataSource = optionValue('dataSource')
-
+    void handle() {
         def filename = args[0]
-        def changeLogFile = resolveChangeLogFile(filename, dataSource)
-        if (changeLogFile) {
-            if (changeLogFile.exists()) {
+        def outputChangeLogFile = resolveChangeLogFile(filename)
+        if (outputChangeLogFile) {
+            if (outputChangeLogFile.exists()) {
                 if (hasOption('force')) {
-                    changeLogFile.delete()
+                    outputChangeLogFile.delete()
                 } else {
-                    throw new DatabaseMigrationException("ChangeLogFile ${changeLogFile} already exists!")
+                    throw new DatabaseMigrationException("ChangeLogFile ${outputChangeLogFile} already exists!")
                 }
             }
-            if (!changeLogFile.parentFile.exists()) {
-                changeLogFile.parentFile.mkdirs()
+            if (!outputChangeLogFile.parentFile.exists()) {
+                outputChangeLogFile.parentFile.mkdirs()
             }
         }
 
         withGormDatabase(applicationContext, dataSource) { Database referenceDatabase ->
-            withDatabase(defaultSchema, dataSource, getDataSourceConfig(dataSource)) { Database targetDatabase ->
-                doDiffToChangeLog(changeLogFile, referenceDatabase, targetDatabase)
+            withDatabase { Database targetDatabase ->
+                doDiffToChangeLog(outputChangeLogFile, referenceDatabase, targetDatabase)
             }
         }
 
-        if (changeLogFile && hasOption('add')) {
-            appendToChangeLog(getChangeLogFile(dataSource), changeLogFile)
+        if (outputChangeLogFile && hasOption('add')) {
+            appendToChangeLog(changeLogFile, outputChangeLogFile)
         }
-
-        return true
     }
 }

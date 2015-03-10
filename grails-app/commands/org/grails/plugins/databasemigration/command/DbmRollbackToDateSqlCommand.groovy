@@ -31,9 +31,7 @@ class DbmRollbackToDateSqlCommand implements ApplicationCommand, ApplicationCont
     final String description = 'Writes SQL to roll back the database to the state it was in at the given date/time to STDOUT or a file'
 
     @Override
-    boolean handle(ExecutionContext executionContext) {
-        commandLine = executionContext.commandLine
-
+    void handle() {
         def dateStr = args[0]
         if (!dateStr) {
             throw new DatabaseMigrationException('Date must be specified as two strings with the format "yyyy-MM-dd HH:mm:ss" or as one strings with the format "yyyy-MM-dd"')
@@ -57,16 +55,11 @@ class DbmRollbackToDateSqlCommand implements ApplicationCommand, ApplicationCont
         }
 
         filename = filename ?: args[2]
-        def contexts = optionValue('contexts')
-        def defaultSchema = optionValue('defaultSchema')
-        def dataSource = optionValue('dataSource')
 
-        withLiquibase(defaultSchema, dataSource) { Liquibase liquibase ->
+        withLiquibase { Liquibase liquibase ->
             withFileOrSystemOutWriter(filename) { Writer writer ->
                 liquibase.rollback(date, contexts, writer)
             }
         }
-
-        return true
     }
 }

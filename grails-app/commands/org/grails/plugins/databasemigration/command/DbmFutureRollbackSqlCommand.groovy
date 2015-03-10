@@ -26,20 +26,13 @@ class DbmFutureRollbackSqlCommand implements ApplicationCommand, ApplicationCont
     final String description = 'Writes SQL to roll back the database to the current state after the changes in the changeslog have been applied'
 
     @Override
-    boolean handle(ExecutionContext executionContext) {
-        commandLine = executionContext.commandLine
-
+    void handle() {
         def filename = args[0]
-        def contexts = optionValue('contexts')
-        def defaultSchema = optionValue('defaultSchema')
-        def dataSource = optionValue('dataSource')
 
-        withLiquibase(defaultSchema, dataSource) { Liquibase liquibase ->
+        withLiquibase { Liquibase liquibase ->
             withFileOrSystemOutWriter(filename) { Writer writer ->
                 liquibase.futureRollbackSQL(contexts, writer)
             }
         }
-
-        return true
     }
 }

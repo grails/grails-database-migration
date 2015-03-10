@@ -17,6 +17,7 @@ package org.grails.plugins.databasemigration.command
 
 import grails.config.ConfigMap
 import grails.core.GrailsApplication
+import grails.dev.commands.ExecutionContext
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.transform.stc.ClosureParams
@@ -31,6 +32,19 @@ import org.springframework.context.ConfigurableApplicationContext
 trait ApplicationContextDatabaseMigrationCommand implements DatabaseMigrationCommand {
 
     ConfigurableApplicationContext applicationContext
+
+    boolean handle(ExecutionContext executionContext) {
+        commandLine = executionContext.commandLine
+        contexts = optionValue('contexts')
+        defaultSchema = optionValue('defaultSchema')
+        dataSource = optionValue('dataSource')
+
+        handle()
+
+        return true
+    }
+
+    abstract void handle()
 
     @Override
     ConfigMap getConfig() {
@@ -56,7 +70,7 @@ trait ApplicationContextDatabaseMigrationCommand implements DatabaseMigrationCom
         def dialect = (Dialect) applicationContext.classLoader.loadClass((String) configuration.getProperty('hibernate.dialect')).newInstance()
 
         Database database = new GormDatabase(configuration, dialect)
-        configureDatabase(database, null, dataSource)
+        configureDatabase(database)
 
         return database
     }

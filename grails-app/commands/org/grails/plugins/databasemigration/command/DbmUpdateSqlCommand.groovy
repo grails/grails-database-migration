@@ -26,20 +26,13 @@ class DbmUpdateSqlCommand implements ApplicationCommand, ApplicationContextDatab
     final String description = 'Writes the SQL that will update the database to the current version to STDOUT or a file'
 
     @Override
-    boolean handle(ExecutionContext executionContext) {
-        commandLine = executionContext.commandLine
-
+    void handle() {
         def filename = args[0]
-        def contexts = optionValue('contexts')
-        def defaultSchema = optionValue('defaultSchema')
-        def dataSource = optionValue('dataSource')
 
-        withLiquibase(defaultSchema, dataSource) { Liquibase liquibase ->
+        withLiquibase { Liquibase liquibase ->
             withFileOrSystemOutWriter(filename) { Writer writer ->
                 liquibase.update(contexts, writer)
             }
         }
-
-        return true
     }
 }

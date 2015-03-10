@@ -29,9 +29,7 @@ class DbmUpdateCountCommand implements ApplicationCommand, ApplicationContextDat
     final String description = 'Applies next NUM changes to the database'
 
     @Override
-    boolean handle(ExecutionContext executionContext) {
-        commandLine = executionContext.commandLine
-
+    void handle() {
         def number = args[0]
         if (!number) {
             throw new DatabaseMigrationException("The $name command requires a change set number argument")
@@ -40,14 +38,8 @@ class DbmUpdateCountCommand implements ApplicationCommand, ApplicationContextDat
             throw new DatabaseMigrationException("The change set number argument '$number' isn't a number")
         }
 
-        def contexts = optionValue('contexts')
-        def defaultSchema = optionValue('defaultSchema')
-        def dataSource = optionValue('dataSource')
-
-        withLiquibase(defaultSchema, dataSource) { Liquibase liquibase ->
+        withLiquibase { Liquibase liquibase ->
             liquibase.update(number.toInteger(), contexts)
         }
-
-        return true
     }
 }

@@ -25,10 +25,8 @@ class DbmListLocksCommand implements ScriptDatabaseMigrationCommand {
 
     void handle() {
         def filename = args[0]
-        def defaultSchema = optionValue('defaultSchema')
-        def dataSource = optionValue('dataSource')
 
-        withLiquibase(defaultSchema, dataSource) { Liquibase liquibase ->
+        withLiquibase { Liquibase liquibase ->
             withFilePrintStreamOrSystemOut(filename) { PrintStream printStream ->
                 liquibase.reportLocks(printStream)
             }

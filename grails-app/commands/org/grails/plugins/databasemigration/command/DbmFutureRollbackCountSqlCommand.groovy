@@ -29,9 +29,7 @@ class DbmFutureRollbackCountSqlCommand implements ApplicationCommand, Applicatio
     final String description = 'Writes SQL to roll back the database to the current state after <number> changes in the changeslog have been applied'
 
     @Override
-    boolean handle(ExecutionContext executionContext) {
-        commandLine = executionContext.commandLine
-
+    void handle() {
         def number = args[0]
         if (!number) {
             throw new DatabaseMigrationException("The $name command requires a change set number argument")
@@ -41,16 +39,11 @@ class DbmFutureRollbackCountSqlCommand implements ApplicationCommand, Applicatio
         }
 
         def filename = args[1]
-        def contexts = optionValue('contexts')
-        def defaultSchema = optionValue('defaultSchema')
-        def dataSource = optionValue('dataSource')
 
-        withLiquibase(defaultSchema, dataSource) { Liquibase liquibase ->
+        withLiquibase { Liquibase liquibase ->
             withFileOrSystemOutWriter(filename) { Writer writer ->
                 liquibase.futureRollbackSQL(number.toInteger(), contexts, writer)
             }
         }
-
-        return true
     }
 }

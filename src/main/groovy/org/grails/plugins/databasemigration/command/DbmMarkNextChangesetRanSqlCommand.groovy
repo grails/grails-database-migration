@@ -23,11 +23,8 @@ class DbmMarkNextChangesetRanSqlCommand implements ScriptDatabaseMigrationComman
 
     void handle() {
         def filename = args[0]
-        def contexts = optionValue('contexts')
-        def defaultSchema = optionValue('defaultSchema')
-        def dataSource = optionValue('dataSource')
 
-        withLiquibase(defaultSchema, dataSource) { Liquibase liquibase ->
+        withLiquibase { Liquibase liquibase ->
             withFileOrSystemOutWriter(filename) { Writer writer ->
                 liquibase.markNextChangeSetRan(contexts, writer)
             }

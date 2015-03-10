@@ -26,10 +26,7 @@ class DbmDropAllCommand implements ScriptDatabaseMigrationCommand {
         def schemaNames = args[0]
         def schemas = schemaNames?.split(',')?.collect { String schemaName -> new CatalogAndSchema(null, schemaName) }
 
-        def defaultSchema = optionValue('defaultSchema')
-        def dataSource = optionValue('dataSource')
-
-        withLiquibase(defaultSchema, dataSource) { Liquibase liquibase ->
+        withLiquibase { Liquibase liquibase ->
             if (schemas) {
                 liquibase.dropAll(schemas as CatalogAndSchema[])
             } else {

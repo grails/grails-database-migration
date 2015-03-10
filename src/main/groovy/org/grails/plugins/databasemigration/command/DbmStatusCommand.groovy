@@ -24,11 +24,8 @@ class DbmStatusCommand implements ScriptDatabaseMigrationCommand {
     void handle() {
         def filename = args[0]
         def verbose = hasOption('verbose') ? Boolean.parseBoolean(optionValue('verbose')) as Boolean : true
-        def contexts = optionValue('contexts')
-        def defaultSchema = optionValue('defaultSchema')
-        def dataSource = optionValue('dataSource')
 
-        withLiquibase(defaultSchema, dataSource) { Liquibase liquibase ->
+        withLiquibase { Liquibase liquibase ->
             withFileOrSystemOutWriter(filename) { Writer writer ->
                 liquibase.reportStatus(verbose, contexts, writer)
             }

@@ -26,14 +26,17 @@ import liquibase.database.Database
 import liquibase.database.DatabaseFactory
 import liquibase.diff.compare.CompareControl
 import liquibase.diff.output.DiffOutputControl
+import liquibase.diff.output.StandardObjectChangeFilter
 import liquibase.exception.LiquibaseException
 import liquibase.resource.ClassLoaderResourceAccessor
 import liquibase.resource.FileSystemResourceAccessor
 import liquibase.util.file.FilenameUtils
 import org.grails.build.parsing.CommandLine
+import org.grails.plugins.databasemigration.DatabaseMigrationException
 import org.grails.plugins.databasemigration.liquibase.GroovyDiffToChangeLogCommand
 import org.grails.plugins.databasemigration.liquibase.GroovyGenerateChangeLogCommand
 
+import java.nio.file.Path
 import java.text.ParseException
 
 @CompileStatic
@@ -41,9 +44,13 @@ trait DatabaseMigrationCommand {
 
     static final String DEFAULT_CHANGE_LOG_LOCATION = 'grails-app/migrations'
 
-    abstract ConfigMap getConfig()
-
     CommandLine commandLine
+
+    String defaultSchema
+    String dataSource
+    String contexts
+
+    abstract ConfigMap getConfig()
 
     String optionValue(String name) {
         commandLine.optionValue(name)?.toString()
@@ -61,14 +68,14 @@ trait DatabaseMigrationCommand {
         new File(migrationConfig.get('changelogLocation', DEFAULT_CHANGE_LOG_LOCATION) as String)
     }
 
-    File getChangeLogFile(String dataSource = null) {
+    File getChangeLogFile() {
         def migrationConfig = getMigrationConfig(dataSource)
 
         boolean isDefault = (!dataSource || dataSource == 'dataSource')
         new File(changeLogLocation, migrationConfig.get('changelogFileName', isDefault ? 'changelog.groovy' : "changelog-${dataSource}.groovy") as String)
     }
 
-    File resolveChangeLogFile(String filename, String dataSource = null) {
+    File resolveChangeLogFile(String filename) {
         if (!filename) {
             return null
         }
@@ -81,11 +88,7 @@ trait DatabaseMigrationCommand {
         return new File(changeLogLocation, "${filename}.groovy")
     }
 
-    Map<String, String> getDataSourceConfig(String dataSource) {
-        getDataSourceConfig(dataSource, config)
-    }
-
-    Map<String, String> getDataSourceConfig(String dataSource, ConfigMap config) {
+    Map<String, String> getDataSourceConfig(ConfigMap config = this.config) {
         def dataSourceName = dataSource ? "dataSource_$dataSource" : 'dataSource'
         def dataSources = config.getProperty('dataSources', Map) ?: [:]
         if (!dataSources) {
@@ -121,20 +124,23 @@ trait DatabaseMigrationCommand {
         Date.parse('yyyy-MM-dd HH:mm:ss', "$date $time")
     }
 
-    @CompileDynamic
-    void withLiquibase(String defaultSchema, String dataSource, @ClosureParams(value = SimpleType, options = 'liquibase.Liquibase') Closure closure) {
+    void withLiquibase(@ClosureParams(value = SimpleType, options = 'liquibase.Liquibase') Closure closure) {
         def fileSystemResourceAccessor = new FileSystemResourceAccessor(changeLogLocation.path)
 
-        withDatabase(defaultSchema, dataSource, getDataSourceConfig(dataSource)) { Database database ->
-            def liquibase = new Liquibase(changeLogLocation.toPath().relativize(getChangeLogFile(dataSource).toPath()).toString(), fileSystemResourceAccessor, database)
+        Path changeLogLocationPath = changeLogLocation.toPath()
+        Path changeLogFilePath = changeLogFile.toPath()
+        String relativePath = changeLogLocationPath.relativize(changeLogFilePath).toString()
+
+        withDatabase { Database database ->
+            def liquibase = new Liquibase(relativePath, fileSystemResourceAccessor, database)
             closure.call(liquibase)
         }
     }
 
-    void withDatabase(String defaultSchema, String dataSource, Map<String, String> dataSourceConfig, @ClosureParams(value = SimpleType, options = 'liquibase.database.Database') Closure closure) {
+    void withDatabase(Map<String, String> dataSourceConfig = null, @ClosureParams(value = SimpleType, options = 'liquibase.database.Database') Closure closure) {
         def database = null
         try {
-            database = createDatabase(defaultSchema, dataSource, dataSourceConfig)
+            database = createDatabase(defaultSchema, dataSource, dataSourceConfig ?: getDataSourceConfig())
             closure.call(database)
         } finally {
             database?.close()
@@ -152,11 +158,11 @@ trait DatabaseMigrationCommand {
             null,
             new ClassLoaderResourceAccessor(Thread.currentThread().contextClassLoader)
         )
-        configureDatabase(database, defaultSchema, dataSource)
+        configureDatabase(database)
         return database
     }
 
-    void configureDatabase(Database database, String defaultSchema, String dataSource) {
+    void configureDatabase(Database database) {
         def migrationConfig = getMigrationConfig(dataSource)
 
         database.defaultSchemaName = defaultSchema
@@ -174,11 +180,10 @@ trait DatabaseMigrationCommand {
     void doGenerateChangeLog(File changeLogFile, Database originalDatabase) {
         def changeLogFilePath = changeLogFile?.path
         def compareControl = new CompareControl([] as CompareControl.SchemaComparison[], null as String)
-        def diffOutputControl = new DiffOutputControl(false, false, false)
 
         def command = new GroovyGenerateChangeLogCommand()
         command.setReferenceDatabase(originalDatabase).setOutputStream(System.out).setCompareControl(compareControl)
-        command.setChangeLogFile(changeLogFilePath).setDiffOutputControl(diffOutputControl)
+        command.setChangeLogFile(changeLogFilePath).setDiffOutputControl(createDiffOutputControl())
 
         try {
             command.execute()
@@ -190,17 +195,36 @@ trait DatabaseMigrationCommand {
     void doDiffToChangeLog(File changeLogFile, Database referenceDatabase, Database targetDatabase) {
         def changeLogFilePath = changeLogFile?.path
         def compareControl = new CompareControl([] as CompareControl.SchemaComparison[], null as String)
-        def diffOutputControl = new DiffOutputControl(false, false, false)
 
         def command = new GroovyDiffToChangeLogCommand()
         command.setReferenceDatabase(referenceDatabase).setTargetDatabase(targetDatabase).setCompareControl(compareControl).setOutputStream(System.out)
-        command.setChangeLogFile(changeLogFilePath).setDiffOutputControl(diffOutputControl)
+        command.setChangeLogFile(changeLogFilePath).setDiffOutputControl(createDiffOutputControl())
 
         try {
             command.execute();
         } catch (CommandExecutionException e) {
             throw new LiquibaseException(e)
         }
+    }
+
+    private DiffOutputControl createDiffOutputControl() {
+        def diffOutputControl = new DiffOutputControl(false, false, false)
+
+        def migrationConfig = getMigrationConfig(dataSource)
+
+        String excludeObjects = migrationConfig.get('excludeObjects')
+        String includeObjects = migrationConfig.get('includeObjects')
+        if (excludeObjects && includeObjects) {
+            throw new DatabaseMigrationException("Cannot specify both excludeObjects and includeObjects")
+        }
+        if (excludeObjects) {
+            diffOutputControl.objectChangeFilter = new StandardObjectChangeFilter(StandardObjectChangeFilter.FilterType.EXCLUDE, excludeObjects)
+        }
+        if (includeObjects) {
+            diffOutputControl.objectChangeFilter = new StandardObjectChangeFilter(StandardObjectChangeFilter.FilterType.INCLUDE, includeObjects)
+        }
+
+        diffOutputControl
     }
 
     void appendToChangeLog(File srcChangeLogFile, File destChangeLogFile) {

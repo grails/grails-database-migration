@@ -29,29 +29,27 @@ class DbmGenerateChangelogCommand implements ScriptDatabaseMigrationCommand {
 
     void handle() {
         def filename = args[0]
-        def defaultSchema = commandLine.optionValue('defaultSchema') as String
-        def dataSource = commandLine.optionValue('dataSource') as String
 
-        def changeLogFile = resolveChangeLogFile(filename, dataSource)
-        if (changeLogFile) {
-            if (changeLogFile.exists()) {
-                if (commandLine.hasOption('force')) {
-                    changeLogFile.delete()
+        def outputChangeLogFile = resolveChangeLogFile(filename)
+        if (outputChangeLogFile) {
+            if (outputChangeLogFile.exists()) {
+                if (hasOption('force')) {
+                    outputChangeLogFile.delete()
                 } else {
-                    throw new DatabaseMigrationException("ChangeLogFile ${changeLogFile} already exists!")
+                    throw new DatabaseMigrationException("ChangeLogFile ${outputChangeLogFile} already exists!")
                 }
             }
-            if (!changeLogFile.parentFile.exists()) {
-                changeLogFile.parentFile.mkdirs()
+            if (!outputChangeLogFile.parentFile.exists()) {
+                outputChangeLogFile.parentFile.mkdirs()
             }
         }
 
-        withDatabase(defaultSchema, dataSource, getDataSourceConfig(dataSource)) { Database database ->
-            doGenerateChangeLog(changeLogFile, database)
+        withDatabase { Database database ->
+            doGenerateChangeLog(outputChangeLogFile, database)
         }
 
-        if (changeLogFile && hasOption('add')) {
-            appendToChangeLog(getChangeLogFile(dataSource), changeLogFile)
+        if (outputChangeLogFile && hasOption('add')) {
+            appendToChangeLog(changeLogFile, outputChangeLogFile)
         }
     }
 }

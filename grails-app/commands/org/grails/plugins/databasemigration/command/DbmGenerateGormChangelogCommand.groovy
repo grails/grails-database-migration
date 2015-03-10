@@ -27,34 +27,29 @@ class DbmGenerateGormChangelogCommand implements ApplicationCommand, Application
     final String description = 'Generates an initial changelog XML or YAML file from current GORM classes'
 
     @Override
-    boolean handle(ExecutionContext executionContext) {
-        commandLine = executionContext.commandLine
-
+    void handle() {
         def filename = args[0]
-        def dataSource = optionValue('dataSource')
 
-        def changeLogFile = resolveChangeLogFile(filename, dataSource)
-        if (changeLogFile) {
-            if (changeLogFile.exists()) {
+        def outputChangeLogFile = resolveChangeLogFile(filename)
+        if (outputChangeLogFile) {
+            if (outputChangeLogFile.exists()) {
                 if (hasOption('force')) {
-                    changeLogFile.delete()
+                    outputChangeLogFile.delete()
                 } else {
-                    throw new DatabaseMigrationException("ChangeLogFile ${changeLogFile} already exists!")
+                    throw new DatabaseMigrationException("ChangeLogFile ${outputChangeLogFile} already exists!")
                 }
             }
-            if (!changeLogFile.parentFile.exists()) {
-                changeLogFile.parentFile.mkdirs()
+            if (!outputChangeLogFile.parentFile.exists()) {
+                outputChangeLogFile.parentFile.mkdirs()
             }
         }
 
         withGormDatabase(applicationContext, dataSource) { Database database ->
-            doGenerateChangeLog(changeLogFile, database)
+            doGenerateChangeLog(outputChangeLogFile, database)
         }
 
-        if (changeLogFile && hasOption('add')) {
-            appendToChangeLog(getChangeLogFile(dataSource), changeLogFile)
+        if (outputChangeLogFile && hasOption('add')) {
+            appendToChangeLog(changeLogFile, outputChangeLogFile)
         }
-
-        return true
     }
 }

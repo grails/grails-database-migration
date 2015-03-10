@@ -22,10 +22,7 @@ import liquibase.Liquibase
 class DbmClearChecksumsCommand implements ScriptDatabaseMigrationCommand {
 
     void handle() {
-        def defaultSchema = optionValue('defaultSchema')
-        def dataSource = optionValue('dataSource')
-
-        withLiquibase(defaultSchema, dataSource) { Liquibase liquibase ->
+        withLiquibase { Liquibase liquibase ->
             liquibase.clearCheckSums()
         }
     }

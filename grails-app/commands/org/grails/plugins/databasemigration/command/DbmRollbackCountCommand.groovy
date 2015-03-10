@@ -29,9 +29,7 @@ class DbmRollbackCountCommand implements ApplicationCommand, ApplicationContextD
     final String description = 'Rolls back the specified number of change sets'
 
     @Override
-    boolean handle(ExecutionContext executionContext) {
-        commandLine = executionContext.commandLine
-
+    void handle() {
         def number = args[0]
         if (!number) {
             throw new DatabaseMigrationException("The $name command requires a change set number argument")
@@ -40,14 +38,8 @@ class DbmRollbackCountCommand implements ApplicationCommand, ApplicationContextD
             throw new DatabaseMigrationException("The change set number argument '$number' isn't a number")
         }
 
-        def contexts = optionValue('contexts')
-        def defaultSchema = optionValue('defaultSchema')
-        def dataSource = optionValue('dataSource')
-
-        withLiquibase(defaultSchema, dataSource) { Liquibase liquibase ->
+        withLiquibase { Liquibase liquibase ->
             liquibase.rollback(number.toInteger(), contexts)
         }
-
-        return true
     }
 }

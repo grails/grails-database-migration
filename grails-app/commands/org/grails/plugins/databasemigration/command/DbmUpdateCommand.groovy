@@ -26,17 +26,9 @@ class DbmUpdateCommand implements ApplicationCommand, ApplicationContextDatabase
     final String description = 'Updates a database to the current version'
 
     @Override
-    boolean handle(ExecutionContext executionContext) {
-        commandLine = executionContext.commandLine
-
-        def contexts = optionValue('contexts')
-        def defaultSchema = optionValue('defaultSchema')
-        def dataSource = optionValue('dataSource')
-
-        withLiquibase(defaultSchema, dataSource) { Liquibase liquibase ->
+    void handle() {
+        withLiquibase { Liquibase liquibase ->
             liquibase.update(contexts)
         }
-
-        return true
     }
 }

@@ -33,31 +33,29 @@ class DbmDiffCommand implements ScriptDatabaseMigrationCommand {
         }
 
         def filename = args[1]
-        def defaultSchema = optionValue('defaultSchema')
-        def dataSource = optionValue('dataSource')
 
-        def changeLogFile = resolveChangeLogFile(filename, dataSource)
-        if (changeLogFile) {
-            if (changeLogFile.exists()) {
-                if (commandLine.hasOption('force')) {
-                    changeLogFile.delete()
+        def outputChangeLogFile = resolveChangeLogFile(filename)
+        if (outputChangeLogFile) {
+            if (outputChangeLogFile.exists()) {
+                if (hasOption('force')) {
+                    outputChangeLogFile.delete()
                 } else {
-                    throw new DatabaseMigrationException("ChangeLogFile ${changeLogFile} already exists!")
+                    throw new DatabaseMigrationException("ChangeLogFile ${outputChangeLogFile} already exists!")
                 }
             }
-            if (!changeLogFile.parentFile.exists()) {
-                changeLogFile.parentFile.mkdirs()
+            if (!outputChangeLogFile.parentFile.exists()) {
+                outputChangeLogFile.parentFile.mkdirs()
             }
         }
 
-        withDatabase(defaultSchema, dataSource, getDataSourceConfig(dataSource)) { Database referenceDatabase ->
-            withDatabase(defaultSchema, dataSource, getDataSourceConfig(dataSource, getEnvironmentConfig(otherEnv))) { Database targetDatabase ->
-                doDiffToChangeLog(changeLogFile, referenceDatabase, targetDatabase)
+        withDatabase { Database referenceDatabase ->
+            withDatabase(getDataSourceConfig(getEnvironmentConfig(otherEnv))) { Database targetDatabase ->
+                doDiffToChangeLog(outputChangeLogFile, referenceDatabase, targetDatabase)
             }
         }
 
-        if (changeLogFile && hasOption('add')) {
-            appendToChangeLog(getChangeLogFile(dataSource), changeLogFile)
+        if (outputChangeLogFile && hasOption('add')) {
+            appendToChangeLog(changeLogFile, outputChangeLogFile)
         }
     }
 }

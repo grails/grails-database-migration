@@ -29,22 +29,14 @@ class DbmRollbackCommand implements ApplicationCommand, ApplicationContextDataba
     final String description = 'Rolls back the database to the state it was in when the tag was applied'
 
     @Override
-    boolean handle(ExecutionContext executionContext) {
-        commandLine = executionContext.commandLine
-
+    void handle() {
         def tagName = args[0]
         if (!tagName) {
             throw new DatabaseMigrationException("The $name command requires a tag")
         }
 
-        def contexts = optionValue('contexts')
-        def defaultSchema = optionValue('defaultSchema')
-        def dataSource = optionValue('dataSource')
-
-        withLiquibase(defaultSchema, dataSource) { Liquibase liquibase ->
+        withLiquibase { Liquibase liquibase ->
             liquibase.rollback(tagName, contexts)
         }
-
-        return true
     }
 }

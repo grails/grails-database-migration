@@ -19,8 +19,6 @@ import grails.config.ConfigMap
 import grails.util.Environment
 import grails.util.GrailsNameUtils
 import groovy.transform.CompileStatic
-import liquibase.configuration.GlobalConfiguration
-import liquibase.configuration.LiquibaseConfiguration
 import liquibase.parser.ChangeLogParser
 import liquibase.parser.ChangeLogParserFactory
 import liquibase.servicelocator.ServiceLocator
@@ -39,8 +37,12 @@ trait ScriptDatabaseMigrationCommand implements DatabaseMigrationCommand {
 
     void handle(ExecutionContext executionContext) {
         this.executionContext = executionContext
-        commandLine = executionContext.commandLine
         setConfig(executionContext.config)
+
+        commandLine = executionContext.commandLine
+        contexts = optionValue('contexts')
+        defaultSchema = optionValue('defaultSchema')
+        dataSource = optionValue('dataSource')
 
         configureLiquibase()
         handle()
