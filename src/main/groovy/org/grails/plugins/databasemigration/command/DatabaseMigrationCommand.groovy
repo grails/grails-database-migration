@@ -30,6 +30,7 @@ import liquibase.diff.output.StandardObjectChangeFilter
 import liquibase.exception.LiquibaseException
 import liquibase.resource.ClassLoaderResourceAccessor
 import liquibase.resource.FileSystemResourceAccessor
+import liquibase.resource.ResourceAccessor
 import liquibase.util.file.FilenameUtils
 import org.grails.build.parsing.CommandLine
 import org.grails.plugins.databasemigration.DatabaseMigrationException
@@ -139,16 +140,20 @@ trait DatabaseMigrationCommand {
     }
 
     void withLiquibase(@ClosureParams(value = SimpleType, options = 'liquibase.Liquibase') Closure closure) {
-        def fileSystemResourceAccessor = new FileSystemResourceAccessor(changeLogLocation.path)
+        def resourceAccessor = createResourceAccessor()
 
         Path changeLogLocationPath = changeLogLocation.toPath()
         Path changeLogFilePath = changeLogFile.toPath()
         String relativePath = changeLogLocationPath.relativize(changeLogFilePath).toString()
 
         withDatabase { Database database ->
-            def liquibase = new Liquibase(relativePath, fileSystemResourceAccessor, database)
+            def liquibase = new Liquibase(relativePath, resourceAccessor, database)
             closure.call(liquibase)
         }
+    }
+
+    ResourceAccessor createResourceAccessor() {
+        new FileSystemResourceAccessor(changeLogLocation.path)
     }
 
     void withDatabase(Map<String, String> dataSourceConfig = null, @ClosureParams(value = SimpleType, options = 'liquibase.database.Database') Closure closure) {
