@@ -15,15 +15,26 @@
  */
 package org.grails.plugins.databasemigration.command
 
+import grails.dev.commands.ApplicationCommand
 import groovy.transform.CompileStatic
+import liquibase.CatalogAndSchema
 import liquibase.Liquibase
 
 @CompileStatic
-class DbmChangelogSyncCommand implements ScriptDatabaseMigrationCommand {
+class DbmDropAllCommand implements ApplicationCommand, ApplicationContextDatabaseMigrationCommand {
+
+    final String description = 'Drops all database objects owned by the user'
 
     void handle() {
+        def schemaNames = args[0]
+        def schemas = schemaNames?.split(',')?.collect { String schemaName -> new CatalogAndSchema(null, schemaName) }
+
         withLiquibase { Liquibase liquibase ->
-            liquibase.changeLogSync(contexts)
+            if (schemas) {
+                liquibase.dropAll(schemas as CatalogAndSchema[])
+            } else {
+                liquibase.dropAll()
+            }
         }
     }
 }

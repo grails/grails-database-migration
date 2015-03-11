@@ -15,32 +15,26 @@
  */
 package org.grails.plugins.databasemigration.command
 
-import liquibase.exception.ChangeLogParseException
+import grails.dev.commands.ApplicationCommand
 
-class DbmValidateCommandSpec extends ScriptDatabaseMigrationCommandSpec {
+class DbmValidateCommandSpec extends ApplicationContextDatabaseMigrationCommandSpec {
 
-    final Class<ScriptDatabaseMigrationCommand> commandClass = DbmValidateCommand
+    final Class<ApplicationCommand> commandClass = DbmValidateCommand
 
     def "checks the valid changelog"() {
         given:
             command.changeLogFile << CHANGE_LOG_CONTENT
 
-        when:
+        expect:
             command.handle(getExecutionContext())
-
-        then:
-            noExceptionThrown()
     }
 
     def "checks the invalid changelog"() {
         given:
             command.changeLogFile << 'xxx'
 
-        when:
-            command.handle(getExecutionContext())
-
-        then:
-            thrown(ChangeLogParseException)
+        expect:
+            !command.handle(getExecutionContext())
     }
 
     static final String CHANGE_LOG_CONTENT = '''

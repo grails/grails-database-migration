@@ -16,7 +16,6 @@
 package org.grails.plugins.databasemigration.command
 
 import grails.config.ConfigMap
-import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.transform.stc.ClosureParams
 import groovy.transform.stc.SimpleType
@@ -65,14 +64,7 @@ trait DatabaseMigrationCommand {
         if (contexts) {
             return contexts
         }
-        def contexts = migrationConfig.get('contexts')
-        if (!contexts) {
-            return null
-        }
-        if (contexts instanceof List) {
-            return contexts.join(',')
-        }
-        return contexts
+        return config.getProperty("${configPrefix}.contexts", List)?.join(',')
     }
 
     List<String> getArgs() {
@@ -80,14 +72,21 @@ trait DatabaseMigrationCommand {
     }
 
     File getChangeLogLocation() {
-        new File(migrationConfig.get('changelogLocation', DEFAULT_CHANGE_LOG_LOCATION) as String)
+        new File(config.getProperty("${configPrefix}.changelogLocation", String) ?: DEFAULT_CHANGE_LOG_LOCATION)
     }
 
     File getChangeLogFile() {
-        def migrationConfig = getMigrationConfig(dataSource)
+        new File(changeLogLocation, changeLogFileName)
+    }
 
-        boolean isDefault = (!dataSource || dataSource == 'dataSource')
-        new File(changeLogLocation, migrationConfig.get('changelogFileName', isDefault ? 'changelog.groovy' : "changelog-${dataSource}.groovy") as String)
+    String getChangeLogFileName() {
+        def changelogFileName = config.getProperty("${configPrefix}.changelogFileName", String)
+        if (changelogFileName) {
+            return changelogFileName
+        }
+
+        boolean isDefault = !dataSource || dataSource == 'dataSource'
+        return isDefault ? 'changelog.groovy' : "changelog-${dataSource}.groovy"
     }
 
     File resolveChangeLogFile(String filename) {
@@ -104,7 +103,7 @@ trait DatabaseMigrationCommand {
     }
 
     Map<String, String> getDataSourceConfig(ConfigMap config = this.config) {
-        def dataSourceName = dataSource ? "dataSource_$dataSource" : 'dataSource'
+        def dataSourceName = dataSource ?: 'dataSource'
         def dataSources = config.getProperty('dataSources', Map) ?: [:]
         if (!dataSources) {
             def defaultDataSource = config.getProperty('dataSource', Map)
@@ -122,7 +121,7 @@ trait DatabaseMigrationCommand {
         }
 
         def outputFile = new File(filename)
-        if (!outputFile.parentFile.exists()) {
+        if (outputFile.parentFile && !outputFile.parentFile.exists()) {
             outputFile.parentFile.mkdirs()
         }
         outputFile.withWriter { Writer writer ->
@@ -182,18 +181,12 @@ trait DatabaseMigrationCommand {
     }
 
     void configureDatabase(Database database) {
-        def migrationConfig = getMigrationConfig(dataSource)
-
         database.defaultSchemaName = defaultSchema
         if (!database.supportsSchemas() && defaultSchema) {
             database.defaultCatalogName = defaultSchema
         }
-        if (migrationConfig.containsKey('databaseChangeLogTableName')) {
-            database.databaseChangeLogTableName = migrationConfig.get('databaseChangeLogTableName') as String
-        }
-        if (migrationConfig.containsKey('databaseChangeLogLockTableName')) {
-            database.databaseChangeLogLockTableName = migrationConfig.get('databaseChangeLogLockTableName') as String
-        }
+        database.databaseChangeLogTableName = config.getProperty("${configPrefix}.databaseChangeLogTableName", String)
+        database.databaseChangeLogLockTableName = config.getProperty("${configPrefix}.databaseChangeLogLockTableName", String)
     }
 
     void doGenerateChangeLog(File changeLogFile, Database originalDatabase) {
@@ -229,10 +222,8 @@ trait DatabaseMigrationCommand {
     private DiffOutputControl createDiffOutputControl() {
         def diffOutputControl = new DiffOutputControl(false, false, false)
 
-        def migrationConfig = getMigrationConfig(dataSource)
-
-        String excludeObjects = migrationConfig.get('excludeObjects')
-        String includeObjects = migrationConfig.get('includeObjects')
+        String excludeObjects = config.getProperty("${configPrefix}.excludeObjects", String)
+        String includeObjects = config.getProperty("${configPrefix}.includeObjects", String)
         if (excludeObjects && includeObjects) {
             throw new DatabaseMigrationException("Cannot specify both excludeObjects and includeObjects")
         }
@@ -276,12 +267,8 @@ trait DatabaseMigrationCommand {
         }
     }
 
-    @CompileDynamic
-    Map<String, Object> getMigrationConfig(String dataSourceName = null) {
-        def isDefault = (!dataSourceName || dataSourceName == 'dataSource')
-        if (isDefault) {
-            return config.grails.plugin.databasemigration
-        }
-        return config.grails.plugin.databasemigration."${dataSourceName - 'dataSource_'}"
+    String getConfigPrefix() {
+        def isDefault = !dataSource || dataSource == 'dataSource'
+        return isDefault ? 'grails.plugin.databasemigration' : "grails.plugin.databasemigration.${dataSource}"
     }
 }

@@ -18,14 +18,19 @@ package org.grails.plugins.databasemigration.command
 import grails.config.ConfigMap
 import grails.core.GrailsApplication
 import grails.dev.commands.ExecutionContext
+import grails.util.Environment
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.transform.stc.ClosureParams
 import groovy.transform.stc.SimpleType
 import liquibase.database.Database
+import org.grails.config.PropertySourcesConfig
+import org.grails.plugins.databasemigration.DatabaseMigrationException
 import org.grails.plugins.databasemigration.liquibase.GormDatabase
 import org.hibernate.cfg.Configuration
 import org.hibernate.dialect.Dialect
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.context.ConfigurableApplicationContext
 
 @CompileStatic
@@ -33,15 +38,28 @@ trait ApplicationContextDatabaseMigrationCommand implements DatabaseMigrationCom
 
     ConfigurableApplicationContext applicationContext
 
+    private static final Logger log = LoggerFactory.getLogger(getClass().name)
+
     boolean handle(ExecutionContext executionContext) {
+        this.executionContext = executionContext
+
+        try {
+            handle()
+        } catch (DatabaseMigrationException e) {
+            throw e
+        } catch (Exception e) {
+            log.error(e.message, e)
+            return false
+        }
+
+        return true
+    }
+
+    void setExecutionContext(ExecutionContext executionContext) {
         commandLine = executionContext.commandLine
         contexts = optionValue('contexts')
         defaultSchema = optionValue('defaultSchema')
         dataSource = optionValue('dataSource')
-
-        handle()
-
-        return true
     }
 
     abstract void handle()
@@ -73,5 +91,21 @@ trait ApplicationContextDatabaseMigrationCommand implements DatabaseMigrationCom
         configureDatabase(database)
 
         return database
+    }
+
+    ConfigMap getEnvironmentConfig(String environment) {
+        return (ConfigMap) environmentWith(environment) {
+            new PropertySourcesConfig(((PropertySourcesConfig) config).getPropertySources())
+        }
+    }
+
+    private Object environmentWith(String environment, Closure closure) {
+        def originalEnvironment = Environment.current
+        System.setProperty(Environment.KEY, environment)
+        try {
+            return closure.call()
+        } finally {
+            System.setProperty(Environment.KEY, originalEnvironment.name)
+        }
     }
 }

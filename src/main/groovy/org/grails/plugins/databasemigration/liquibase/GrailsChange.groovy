@@ -18,6 +18,7 @@ package org.grails.plugins.databasemigration.liquibase
 import grails.config.Config
 import grails.core.GrailsApplication
 import groovy.sql.Sql
+import groovy.transform.CompileStatic
 import liquibase.change.AbstractChange
 import liquibase.change.ChangeMetaData
 import liquibase.change.CheckSum
@@ -45,6 +46,7 @@ import java.sql.Connection
  * @author <a href='mailto:burt@burtbeckwith.com'>Burt Beckwith</a>
  * @author Kazuki YAMAMOTO
  */
+@CompileStatic
 @DatabaseChange(name = "grailsChange", description = "Adds creates a primary key out of an existing column or set of columns.", priority = ChangeMetaData.PRIORITY_DEFAULT)
 class GrailsChange extends AbstractChange {
 

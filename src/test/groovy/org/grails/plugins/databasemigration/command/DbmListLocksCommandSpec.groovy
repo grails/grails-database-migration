@@ -15,11 +15,12 @@
  */
 package org.grails.plugins.databasemigration.command
 
+import grails.dev.commands.ApplicationCommand
 import spock.lang.AutoCleanup
 
-class DbmListLocksCommandSpec extends ScriptDatabaseMigrationCommandSpec {
+class DbmListLocksCommandSpec extends ApplicationContextDatabaseMigrationCommandSpec {
 
-    final Class<ScriptDatabaseMigrationCommand> commandClass = DbmListLocksCommand
+    final Class<ApplicationCommand> commandClass = DbmListLocksCommand
 
     @AutoCleanup('delete')
     File outputFile = File.createTempFile('locks', 'txt')

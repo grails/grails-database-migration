@@ -15,20 +15,18 @@
  */
 package org.grails.plugins.databasemigration.command
 
+import grails.dev.commands.ApplicationCommand
 import groovy.transform.CompileStatic
 import liquibase.Liquibase
 
 @CompileStatic
-class DbmStatusCommand implements ScriptDatabaseMigrationCommand {
+class DbmMarkNextChangesetRanCommand implements ApplicationCommand, ApplicationContextDatabaseMigrationCommand {
+
+    final String description = 'Mark the next change set as executed in the database'
 
     void handle() {
-        def filename = args[0]
-        def verbose = hasOption('verbose') ? Boolean.parseBoolean(optionValue('verbose')) as Boolean : true
-
         withLiquibase { Liquibase liquibase ->
-            withFileOrSystemOutWriter(filename) { Writer writer ->
-                liquibase.reportStatus(verbose, contexts, writer)
-            }
+            liquibase.markNextChangeSetRan(contexts)
         }
     }
 }

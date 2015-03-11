@@ -15,13 +15,16 @@
  */
 package org.grails.plugins.databasemigration.command
 
+import grails.dev.commands.ApplicationCommand
 import grails.util.Environment
 import groovy.transform.CompileStatic
 import liquibase.database.Database
 import org.grails.plugins.databasemigration.DatabaseMigrationException
 
 @CompileStatic
-class DbmDiffCommand implements ScriptDatabaseMigrationCommand {
+class DbmDiffCommand implements ApplicationCommand, ApplicationContextDatabaseMigrationCommand {
+
+    final String description = 'Compares two databases and creates a changelog that will make the changes required to bring them into sync'
 
     void handle() {
         def otherEnv = args[0]

@@ -15,9 +15,11 @@
  */
 package org.grails.plugins.databasemigration.command
 
-class DbmReleaseLocksCommandSpec extends ScriptDatabaseMigrationCommandSpec {
+import grails.dev.commands.ApplicationCommand
 
-    final Class<ScriptDatabaseMigrationCommand> commandClass = DbmReleaseLocksCommand
+class DbmReleaseLocksCommandSpec extends ApplicationContextDatabaseMigrationCommandSpec {
+
+    final Class<ApplicationCommand> commandClass = DbmReleaseLocksCommand
 
     def "releases all locks on the database changelog"() {
         given:

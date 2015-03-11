@@ -15,11 +15,12 @@
  */
 package org.grails.plugins.databasemigration.command
 
+import grails.dev.commands.ApplicationCommand
 import spock.lang.AutoCleanup
 
-class DbmStatusCommandSpec extends ScriptDatabaseMigrationCommandSpec {
+class DbmStatusCommandSpec extends ApplicationContextDatabaseMigrationCommandSpec {
 
-    final Class<ScriptDatabaseMigrationCommand> commandClass = DbmStatusCommand
+    final Class<ApplicationCommand> commandClass = DbmStatusCommand
 
     @AutoCleanup('delete')
     File outputFile = File.createTempFile('update', 'sql')

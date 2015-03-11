@@ -15,9 +15,11 @@
  */
 package org.grails.plugins.databasemigration.command
 
-class DbmChangelogSyncCommandSpec extends ScriptDatabaseMigrationCommandSpec {
+import grails.dev.commands.ApplicationCommand
 
-    final Class<ScriptDatabaseMigrationCommand> commandClass = DbmChangelogSyncCommand
+class DbmChangelogSyncCommandSpec extends ApplicationContextDatabaseMigrationCommandSpec {
+
+    final Class<ApplicationCommand> commandClass = DbmChangelogSyncCommand
 
     def "marks all changes as executed in the database"() {
         given:

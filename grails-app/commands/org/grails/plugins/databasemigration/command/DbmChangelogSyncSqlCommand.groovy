@@ -15,17 +15,22 @@
  */
 package org.grails.plugins.databasemigration.command
 
+import grails.dev.commands.ApplicationCommand
 import groovy.transform.CompileStatic
 import liquibase.Liquibase
 
 @CompileStatic
-class DbmDbDocCommand implements ScriptDatabaseMigrationCommand {
+class DbmChangelogSyncSqlCommand implements ApplicationCommand, ApplicationContextDatabaseMigrationCommand {
+
+    final String description = 'Writes the SQL that will mark all changes as executed in the database to STDOUT or a file'
 
     void handle() {
-        def destination = args[0] ?: migrationConfig.get('dbDocLocation', 'build/dbdoc') as String
+        def filename = args[0]
 
         withLiquibase { Liquibase liquibase ->
-            liquibase.generateDocumentation(destination, contexts)
+            withFileOrSystemOutWriter(filename) { Writer writer ->
+                liquibase.changeLogSync(contexts, writer)
+            }
         }
     }
 }

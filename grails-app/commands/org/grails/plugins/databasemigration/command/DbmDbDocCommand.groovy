@@ -15,23 +15,19 @@
  */
 package org.grails.plugins.databasemigration.command
 
+import grails.dev.commands.ApplicationCommand
 import groovy.transform.CompileStatic
-import liquibase.CatalogAndSchema
 import liquibase.Liquibase
 
 @CompileStatic
-class DbmDropAllCommand implements ScriptDatabaseMigrationCommand {
+class DbmDbDocCommand implements ApplicationCommand, ApplicationContextDatabaseMigrationCommand {
+
+    final String description = 'Generates Javadoc-like documentation based on current database and change log'
 
     void handle() {
-        def schemaNames = args[0]
-        def schemas = schemaNames?.split(',')?.collect { String schemaName -> new CatalogAndSchema(null, schemaName) }
-
+        def destination = args[0] ?: config.getProperty("${configPrefix}.dbDocLocation", String) ?: 'build/dbdoc'
         withLiquibase { Liquibase liquibase ->
-            if (schemas) {
-                liquibase.dropAll(schemas as CatalogAndSchema[])
-            } else {
-                liquibase.dropAll()
-            }
+            liquibase.generateDocumentation(destination, contexts)
         }
     }
 }

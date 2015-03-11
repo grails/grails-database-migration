@@ -15,21 +15,18 @@
  */
 package org.grails.plugins.databasemigration.command
 
+import grails.dev.commands.ApplicationCommand
 import groovy.transform.CompileStatic
 import liquibase.Liquibase
-import org.grails.plugins.databasemigration.DatabaseMigrationException
 
 @CompileStatic
-class DbmTagCommand implements ScriptDatabaseMigrationCommand {
+class DbmReleaseLocksCommand implements ApplicationCommand, ApplicationContextDatabaseMigrationCommand {
+
+    final String description = 'Releases all locks on the database changelog'
 
     void handle() {
-        def tagName = args[0]
-        if (!tagName) {
-            throw new DatabaseMigrationException("The $name command requires a tag")
-        }
-
         withLiquibase { Liquibase liquibase ->
-            liquibase.tag(tagName)
+            liquibase.forceReleaseLocks()
         }
     }
 }

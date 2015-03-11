@@ -15,11 +15,13 @@
  */
 package org.grails.plugins.databasemigration.liquibase
 
+import groovy.transform.CompileStatic
 import liquibase.parser.core.ParsedNode
 import org.codehaus.groovy.runtime.InvokerHelper
 import org.grails.plugins.databasemigration.DatabaseMigrationException
 import org.springframework.context.ApplicationContext
 
+@CompileStatic
 class DatabaseChangeLogBuilder extends BuilderSupport {
 
     ApplicationContext applicationContext

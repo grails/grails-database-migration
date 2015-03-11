@@ -15,9 +15,11 @@
  */
 package org.grails.plugins.databasemigration.command
 
-class DbmGenerateChangelogCommandSpec extends ScriptDatabaseMigrationCommandSpec {
+import grails.dev.commands.ApplicationCommand
 
-    final Class<ScriptDatabaseMigrationCommand> commandClass = DbmGenerateChangelogCommand
+class DbmGenerateChangelogCommandSpec extends ApplicationContextDatabaseMigrationCommandSpec {
+
+    final Class<ApplicationCommand> commandClass = DbmGenerateChangelogCommand
 
     def setup() {
         sql.executeUpdate '''

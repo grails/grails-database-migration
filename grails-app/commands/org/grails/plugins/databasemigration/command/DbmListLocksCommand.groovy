@@ -15,13 +15,16 @@
  */
 package org.grails.plugins.databasemigration.command
 
+import grails.dev.commands.ApplicationCommand
 import groovy.transform.CompileStatic
 import groovy.transform.stc.ClosureParams
 import groovy.transform.stc.SimpleType
 import liquibase.Liquibase
 
 @CompileStatic
-class DbmListLocksCommand implements ScriptDatabaseMigrationCommand {
+class DbmListLocksCommand implements ApplicationCommand, ApplicationContextDatabaseMigrationCommand {
+
+    final String description = 'Lists who currently has locks on the database changelog to STDOUT or a file'
 
     void handle() {
         def filename = args[0]

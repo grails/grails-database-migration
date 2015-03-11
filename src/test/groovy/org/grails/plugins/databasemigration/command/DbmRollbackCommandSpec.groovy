@@ -26,7 +26,7 @@ class DbmRollbackCommandSpec extends ApplicationContextDatabaseMigrationCommandS
         command.changeLogFile << CHANGE_LOG_CONTENT
 
         new DbmUpdateCountCommand(applicationContext: applicationContext).handle(getExecutionContext('1'))
-        new DbmTagCommand().handle(getScriptExecutionContext('test-tag'))
+        new DbmTagCommand(applicationContext: applicationContext).handle(getExecutionContext('test-tag'))
         new DbmUpdateCommand(applicationContext: applicationContext).handle(getExecutionContext())
 
         def tables = sql.rows('SELECT table_name FROM information_schema.tables WHERE table_type = \'TABLE\'').collect { it.table_name.toLowerCase() }

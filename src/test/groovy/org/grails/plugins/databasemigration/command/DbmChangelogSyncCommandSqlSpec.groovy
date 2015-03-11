@@ -15,11 +15,12 @@
  */
 package org.grails.plugins.databasemigration.command
 
+import grails.dev.commands.ApplicationCommand
 import spock.lang.AutoCleanup
 
-class DbmChangelogSyncCommandSqlSpec extends ScriptDatabaseMigrationCommandSpec {
+class DbmChangelogSyncCommandSqlSpec extends ApplicationContextDatabaseMigrationCommandSpec {
 
-    final Class<ScriptDatabaseMigrationCommand> commandClass = DbmChangelogSyncSqlCommand
+    final Class<ApplicationCommand> commandClass = DbmChangelogSyncSqlCommand
 
     @AutoCleanup('delete')
     File outputFile = File.createTempFile('sync', 'sql')

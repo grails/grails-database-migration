@@ -15,9 +15,11 @@
  */
 package org.grails.plugins.databasemigration.command
 
-class DbmDropAllCommandSpec extends ScriptDatabaseMigrationCommandSpec {
+import grails.dev.commands.ApplicationCommand
 
-    final Class<ScriptDatabaseMigrationCommand> commandClass = DbmDropAllCommand
+class DbmDropAllCommandSpec extends ApplicationContextDatabaseMigrationCommandSpec {
+
+    final Class<ApplicationCommand> commandClass = DbmDropAllCommand
 
     def "drops all database objects"() {
         given:

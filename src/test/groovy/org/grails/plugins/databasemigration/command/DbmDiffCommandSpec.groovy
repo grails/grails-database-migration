@@ -15,6 +15,7 @@
  */
 package org.grails.plugins.databasemigration.command
 
+import grails.dev.commands.ApplicationCommand
 import groovy.sql.Sql
 import org.grails.plugins.databasemigration.DatabaseMigrationException
 import org.h2.Driver
@@ -23,9 +24,9 @@ import spock.lang.AutoCleanup
 
 import java.sql.Connection
 
-class DbmDiffCommandSpec extends ScriptDatabaseMigrationCommandSpec {
+class DbmDiffCommandSpec extends ApplicationContextDatabaseMigrationCommandSpec {
 
-    final Class<ScriptDatabaseMigrationCommand> commandClass = DbmDiffCommand
+    final Class<ApplicationCommand> commandClass = DbmDiffCommand
 
     @AutoCleanup
     Connection otherDbConnection

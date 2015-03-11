@@ -16,8 +16,6 @@
 package org.grails.plugins.databasemigration
 
 import grails.plugins.Plugin
-import liquibase.configuration.GlobalConfiguration
-import liquibase.configuration.LiquibaseConfiguration
 import liquibase.parser.ChangeLogParser
 import liquibase.parser.ChangeLogParserFactory
 import liquibase.servicelocator.ServiceLocator
@@ -55,29 +53,24 @@ class DatabaseMigrationGrailsPlugin extends Plugin {
         configureLiquibase()
 
         return { ->
-            def dataSourceNames = getDataSourceNames()
             dataSourceNames.each { String dataSourceName ->
-                def isDefaultDetaSource = 'dataSource' == dataSourceName
-                def migrationConfig = getMigrationConfig(dataSourceName)
-                if (migrationConfig.get('updateOnStart')) {
-                    "springLiquibase_${dataSourceName}"(GrailsLiquibase, applicationContext) {
-                        dropFirst = migrationConfig.containsKey('dropOnStart') ? migrationConfig.get('dropOnStart') : false
-                        dataSource = ref(dataSourceName)
-                        if (migrationConfig.get('updateOnStartFileName')) {
-                            changeLog = migrationConfig.get('updateOnStartFileName')
-                        } else {
-                            if (isDefaultDetaSource) {
-                                changeLog = migrationConfig.get('updateOnStartFileName') ?: 'classpath:/changelog.groovy'
-                            } else {
-                                changeLog = migrationConfig.get('updateOnStartFileName') ?: "classpath:/changelog-${dataSourceName - 'dataSource_'}.groovy"
-                            }
-                        }
-                        contexts = getContexts(migrationConfig)
-                        labels = migrationConfig.get('updateOnStartLabels') ?: null
-                        defaultSchema = migrationConfig.get('updateOnStartDefaultSchema') ?: null
-                        databaseChangeLogTableName = migrationConfig.get('databaseChangeLogTableName') ?: null
-                        databaseChangeLogLockTableName = migrationConfig.get('databaseChangeLogLockTableName') ?: null
-                    }
+                def isDefaultDataSource = 'dataSource' == dataSourceName
+                def configPrefix = isDefaultDataSource ? 'grails.plugin.databasemigration' : "grails.plugin.databasemigration.${dataSourceName}"
+
+                def updateOnStart = config.getProperty("${configPrefix}.updateOnStart", Boolean, false)
+                if (!updateOnStart) {
+                    return
+                }
+
+                "springLiquibase_${dataSourceName}"(GrailsLiquibase, applicationContext) {
+                    dataSource = ref(isDefaultDataSource ? dataSourceName : "dataSource_$dataSourceName")
+                    dropFirst = config.getProperty("${configPrefix}.dropOnStart", Boolean, false)
+                    changeLog = config.getProperty("${configPrefix}.updateOnStartFileName", String, isDefaultDataSource ? 'changelog.groovy' : "changelog-${dataSourceName}.groovy")
+                    contexts = config.getProperty("${configPrefix}.updateOnStartContexts", List, []).join(',')
+                    labels = config.getProperty("${configPrefix}.updateOnStartLabels", List, []).join(',')
+                    defaultSchema = config.getProperty("${configPrefix}.updateOnStartDefaultSchema", String)
+                    databaseChangeLogTableName = config.getProperty("${configPrefix}.databaseChangeLogTableName", String)
+                    databaseChangeLogLockTableName = config.getProperty("${configPrefix}.databaseChangeLogLockTableName", String)
                 }
             }
         }
@@ -93,26 +86,6 @@ class DatabaseMigrationGrailsPlugin extends Plugin {
         def groovyChangeLogParser = ChangeLogParserFactory.instance.parsers.find { ChangeLogParser changeLogParser -> changeLogParser instanceof GroovyChangeLogParser } as GroovyChangeLogParser
         groovyChangeLogParser.applicationContext = applicationContext
         groovyChangeLogParser.config = config
-
-        def databaseChangeLogTableName = migrationConfig.get('databaseChangeLogTableName')
-        if (databaseChangeLogTableName) {
-            LiquibaseConfiguration.getInstance().getConfiguration(GlobalConfiguration).databaseChangeLogTableName = databaseChangeLogTableName
-        }
-        def databaseChangeLogLockTableName = migrationConfig.get('databaseChangeLogLockTableName')
-        if (databaseChangeLogLockTableName) {
-            LiquibaseConfiguration.getInstance().getConfiguration(GlobalConfiguration).databaseChangeLogLockTableName = databaseChangeLogLockTableName
-        }
-    }
-
-    private String getContexts(Map<String, Object> migrationConfig) {
-        def contexts = migrationConfig.get('updateOnStartContexts')
-        if (!contexts) {
-            return null
-        }
-        if (contexts instanceof List) {
-            return contexts.join(',')
-        }
-        return contexts
     }
 
     private Set<String> getDataSourceNames() {
@@ -121,12 +94,5 @@ class DatabaseMigrationGrailsPlugin extends Plugin {
             return ['dataSource']
         }
         return dataSources.keySet()
-    }
-
-    private Map<String, Object> getMigrationConfig(String dataSourceName = 'dataSource') {
-        if (dataSourceName == 'dataSource') {
-            return config.grails.plugin.databasemigration
-        }
-        return config.grails.plugin.databasemigration."${dataSourceName - 'dataSource_'}"
     }
 }

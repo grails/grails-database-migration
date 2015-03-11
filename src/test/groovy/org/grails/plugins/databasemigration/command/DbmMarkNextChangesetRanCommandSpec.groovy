@@ -15,9 +15,11 @@
  */
 package org.grails.plugins.databasemigration.command
 
-class DbmMarkNextChangesetRanCommandSpec extends ScriptDatabaseMigrationCommandSpec {
+import grails.dev.commands.ApplicationCommand
 
-    final Class<ScriptDatabaseMigrationCommand> commandClass = DbmMarkNextChangesetRanCommand
+class DbmMarkNextChangesetRanCommandSpec extends ApplicationContextDatabaseMigrationCommandSpec {
+
+    final Class<ApplicationCommand> commandClass = DbmMarkNextChangesetRanCommand
 
     def "marks the next change changes as executed in the database"() {
         given:

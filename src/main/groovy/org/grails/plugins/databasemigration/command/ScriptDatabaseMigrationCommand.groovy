@@ -66,8 +66,4 @@ trait ScriptDatabaseMigrationCommand implements DatabaseMigrationCommand {
         this.sourceConfig = config
         this.config = new EnvironmentAwareCodeGenConfig(sourceConfig as CodeGenConfig, Environment.current.name)
     }
-
-    ConfigMap getEnvironmentConfig(String environment = Environment.current.name) {
-        new EnvironmentAwareCodeGenConfig(sourceConfig as CodeGenConfig, environment)
-    }
 }

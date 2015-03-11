@@ -16,7 +16,6 @@
 package org.grails.plugins.databasemigration.command
 
 import grails.dev.commands.ApplicationCommand
-import grails.dev.commands.ExecutionContext
 import groovy.transform.CompileStatic
 import liquibase.database.Database
 import org.grails.plugins.databasemigration.DatabaseMigrationException
@@ -24,7 +23,7 @@ import org.grails.plugins.databasemigration.DatabaseMigrationException
 @CompileStatic
 class DbmGormDiffCommand implements ApplicationCommand, ApplicationContextDatabaseMigrationCommand {
 
-    final String description = 'Diffs GORM classes against a database and generates a changelog XML or YAML file'
+    final String description = 'Diffs GORM classes against a database and generates a changelog XML or Groovy DSL file'
 
     @Override
     void handle() {
