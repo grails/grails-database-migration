@@ -74,7 +74,9 @@ dependencies {
     testCompile "org.grails:grails-plugin-testing"
     testCompile "org.grails.plugins:hibernate"
 
-    provided "org.grails:grails-shell"
+    provided("org.grails:grails-shell") {
+        exclude group: 'org.slf4j', module: 'slf4j-simple'
+    }
 }
 
 eclipse {
