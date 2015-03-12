@@ -2,12 +2,11 @@ language: groovy
 jdk:
 - openjdk7
 before_script:
-- rm -rf target
+- rm -rf build
 script: ./travis-build.sh
 env:
   global:
-  - GIT_NAME="Graeme Rocher"
-  - GIT_EMAIL="graeme.rocher@gmail.com"  
-  - secure: rJ9dcWHllb8KkZNMW+71E/cjHwdQldAyLQN12GSL/YKGYvK7tb1Tyj/Poy3u08JyvKTbQg0Jh+eXRytppRXod1qjlsT0em+5PQAgEt/ihgtSkQPNacJUlAf3iELlTCiSqOdSy35zW6kf7U00lcM/k7NA0BnlRTT4A4/3do7mDGA=
-  - secure: lKOkxxJVUTyDcq7WkP/6IXEdsFlLdefD044mc/GZm81PIW2qJ2EOsifcyKjXkymwSlw4f/9eChY22Z3W3ctLwcGy2YGyo0MZyzBTnlaTk8Z+KzUQK/disyzVa+0bq60tf/Dy21Sn539+jBrcRidik/j8HmH6As4cOndjPf0lcMk=
-  - secure: DDM8wpbwLozxU/wgS++lv+bJuI7qz5+mAtixBeOjluDElmnFwzilI/DEBTdVsc6OKJD0hBOHai3LAMwfaC0WW4DhxqGWS/4iTmPrOQY6VoHCRvEVO8s/YVIq++Ja0ehvV+YkLx/IbWQJ4d/FldN67Bg18jCcRap5zjnaZDsaOqI=
+  - GIT_NAME="Kazuki YAMAMOTO"
+  - GIT_EMAIL="yam.kazuki@gmail.com"
+  - secure: XsiOtsq2z6bQg7cD2xWcenGtMFtVkI84M1V7JLMwSH0ZV32YYl8LyL7TcieqhEj0/GPEXHgb4duatnxIFomOg1Jku6lP8wO06veLMOpXEZGF5dg+G1+SAqftQzLePsDmEPJW76o4jodWL3pkrTYpnrEn7KUX9olZrXX7lqcunf4=
+  - secure: MBJTKTMfBerHYKMeJBrL/R8FwK23BJXALrL477X1letpg2SUj0KN+UKahYqVOGtHRj/C1hbpU84qlovLfuCCbd8CJbtpWw85hnEjnQrDJdHAJs8/ByUhUllT7JxM/1/X/IdGMhxM/k7QulymFlte7HRTDoenHvSXYql5A5ns7YI=
