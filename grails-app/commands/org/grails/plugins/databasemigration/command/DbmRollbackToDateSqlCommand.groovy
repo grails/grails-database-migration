@@ -23,7 +23,6 @@ import org.grails.plugins.databasemigration.DatabaseMigrationException
 
 import java.text.ParseException
 
-@Commons
 @CompileStatic
 class DbmRollbackToDateSqlCommand implements ApplicationCommand, ApplicationContextDatabaseMigrationCommand {
 

@@ -21,7 +21,6 @@ import groovy.util.logging.Commons
 import liquibase.Liquibase
 import org.grails.plugins.databasemigration.DatabaseMigrationException
 
-@Commons
 @CompileStatic
 class DbmUpdateCountCommand implements ApplicationCommand, ApplicationContextDatabaseMigrationCommand {
 

@@ -17,11 +17,9 @@ package org.grails.plugins.databasemigration.command
 
 import grails.dev.commands.ApplicationCommand
 import groovy.transform.CompileStatic
-import groovy.util.logging.Commons
 import liquibase.Liquibase
 import org.grails.plugins.databasemigration.DatabaseMigrationException
 
-@Commons
 @CompileStatic
 class DbmRollbackCountSqlCommand implements ApplicationCommand, ApplicationContextDatabaseMigrationCommand {
 

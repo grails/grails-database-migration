@@ -17,13 +17,11 @@ package org.grails.plugins.databasemigration.command
 
 import grails.dev.commands.ApplicationCommand
 import groovy.transform.CompileStatic
-import groovy.util.logging.Commons
 import liquibase.Liquibase
 import org.grails.plugins.databasemigration.DatabaseMigrationException
 
 import java.text.ParseException
 
-@Commons
 @CompileStatic
 class DbmRollbackToDateCommand implements ApplicationCommand, ApplicationContextDatabaseMigrationCommand {
 
