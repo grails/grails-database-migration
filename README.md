@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/grails-plugins/grails-database-migration.svg)](https://travis-ci.org/grails-plugins/grails-database-migration)
+[![Build Status](https://travis-ci.org/yamkazu/database-migration.svg)](https://travis-ci.org/yamkazu/database-migration)
 
 Database Migration Plugin for Grails 3
 ======================================
