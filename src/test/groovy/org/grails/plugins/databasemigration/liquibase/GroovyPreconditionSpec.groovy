@@ -50,7 +50,7 @@ databaseChangeLog = {
 }
 """
         when:
-            command.handle(getExecutionContext())
+            command.handle(getExecutionContext(DbmUpdateCommand))
 
         then:
             executedChangeSets == ['1']
@@ -85,7 +85,7 @@ databaseChangeLog = {
 }
 """
         when:
-            command.handle(getExecutionContext())
+            command.handle(getExecutionContext(DbmUpdateCommand))
 
         then:
             executedChangeSets == ['2']
@@ -120,7 +120,7 @@ databaseChangeLog = {
 }
 """
         when:
-            command.handle(getExecutionContext())
+            command.handle(getExecutionContext(DbmUpdateCommand))
 
         then:
             executedChangeSets == ['2']
@@ -155,7 +155,7 @@ databaseChangeLog = {
 }
 """
         when:
-            command.handle(getExecutionContext())
+            command.handle(getExecutionContext(DbmUpdateCommand))
 
         then:
             executedChangeSets == ['2']
@@ -190,7 +190,7 @@ databaseChangeLog = {
 }
 """
         when:
-            command.handle(getExecutionContext())
+            command.handle(getExecutionContext(DbmUpdateCommand))
 
         then:
             executedChangeSets == ['2']
@@ -225,7 +225,7 @@ databaseChangeLog = {
 }
 """
         when:
-            command.handle(getExecutionContext())
+            command.handle(getExecutionContext(DbmUpdateCommand))
 
         then:
             def e = thrown(ValidationFailedException)
@@ -270,7 +270,7 @@ databaseChangeLog = {
 }
 """
         when:
-            command.handle(getExecutionContext())
+            command.handle(getExecutionContext(DbmUpdateCommand))
 
         then:
             executedChangeSets == ['1', '2']

@@ -8,4 +8,4 @@ appender('STDOUT', ConsoleAppender) {
     }
 }
 
-root(WARN, ['STDOUT'])
+root(INFO, ['STDOUT'])

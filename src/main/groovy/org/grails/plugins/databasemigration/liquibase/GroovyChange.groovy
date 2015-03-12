@@ -48,9 +48,7 @@ import java.sql.Connection
  */
 @CompileStatic
 @DatabaseChange(name = "grailsChange", description = "Adds creates a primary key out of an existing column or set of columns.", priority = ChangeMetaData.PRIORITY_DEFAULT)
-class GrailsChange extends AbstractChange {
-
-    String confirmationMessage = 'Executed GrailsChange'
+class GroovyChange extends AbstractChange {
 
     ApplicationContext ctx
 
@@ -61,6 +59,8 @@ class GrailsChange extends AbstractChange {
     Closure changeClosure
 
     Closure rollbackClosure
+
+    String confirmationMessage
 
     String checksumString
 
@@ -73,6 +73,8 @@ class GrailsChange extends AbstractChange {
     Warnings warnings = new Warnings()
 
     List allStatements = []
+
+    boolean initClosureCalled
 
     boolean validateClosureCalled
 
@@ -91,7 +93,7 @@ class GrailsChange extends AbstractChange {
 
     @Override
     void finishInitialization() throws SetupException {
-        if (!initClosure) {
+        if (!initClosure || initClosureCalled) {
             return
         }
 
@@ -100,6 +102,8 @@ class GrailsChange extends AbstractChange {
             initClosure()
         } catch (Exception e) {
             throw new SetupException(e)
+        } finally {
+            initClosureCalled = true
         }
     }
 
@@ -107,13 +111,18 @@ class GrailsChange extends AbstractChange {
     ValidationErrors validate(Database database) {
         this.database = database
 
-        if (shouldRun() && validateClosure && !validateClosureCalled) {
-            validateClosure.delegate = this
+        if (!validateClosure || validateClosureCalled || !shouldRun()) {
+            return validationErrors
+        }
+
+        validateClosure.delegate = this
+        try {
             validateClosure()
+        } finally {
             validateClosureCalled = true
         }
 
-        validationErrors
+        return validationErrors
     }
 
     @Override
@@ -144,6 +153,11 @@ class GrailsChange extends AbstractChange {
         }
 
         allStatements as SqlStatement[]
+    }
+
+    @Override
+    String getConfirmationMessage() {
+        confirmationMessage ?: 'Executed GrailsChange'
     }
 
     @Override

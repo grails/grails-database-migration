@@ -25,12 +25,9 @@ import groovy.transform.stc.ClosureParams
 import groovy.transform.stc.SimpleType
 import liquibase.database.Database
 import org.grails.config.PropertySourcesConfig
-import org.grails.plugins.databasemigration.DatabaseMigrationException
 import org.grails.plugins.databasemigration.liquibase.GormDatabase
 import org.hibernate.cfg.Configuration
 import org.hibernate.dialect.Dialect
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import org.springframework.context.ConfigurableApplicationContext
 
 @CompileStatic
@@ -38,20 +35,9 @@ trait ApplicationContextDatabaseMigrationCommand implements DatabaseMigrationCom
 
     ConfigurableApplicationContext applicationContext
 
-    private static final Logger log = LoggerFactory.getLogger(getClass().name)
-
     boolean handle(ExecutionContext executionContext) {
         this.executionContext = executionContext
-
-        try {
-            handle()
-        } catch (DatabaseMigrationException e) {
-            throw e
-        } catch (Exception e) {
-            log.error(e.message, e)
-            return false
-        }
-
+        handle()
         return true
     }
 

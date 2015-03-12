@@ -87,11 +87,8 @@ abstract class ApplicationContextDatabaseMigrationCommandSpec extends DatabaseMi
         null
     }
 
-    protected ExecutionContext getExecutionContext(String... args) {
-        def commandClassName = null
-        if (commandClass) {
-            commandClassName = GrailsNameUtils.getScriptName(GrailsNameUtils.getLogicalName(commandClass.name, 'Command'))
-        }
+    protected ExecutionContext getExecutionContext(Class<ApplicationCommand> clazz = commandClass, String... args) {
+        def commandClassName = GrailsNameUtils.getScriptName(GrailsNameUtils.getLogicalName(clazz.name, 'Command'))
         new ExecutionContext(
             new CommandLineParser().parse(([commandClassName] + args.toList()) as String[])
         )
