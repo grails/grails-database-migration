@@ -98,3 +98,4 @@ bintray {
         vcsUrl = "https://github.com/yamkazu/$project.name"
     }
 }
+
