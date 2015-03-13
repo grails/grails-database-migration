@@ -11,8 +11,6 @@ import liquibase.parser.ChangeLogParser
 import liquibase.parser.ChangeLogParserFactory
 import liquibase.servicelocator.ServiceLocator
 import org.grails.build.parsing.CommandLineParser
-import org.grails.cli.GrailsCli
-import org.grails.config.CodeGenConfig
 import org.grails.config.PropertySourcesConfig
 import org.grails.plugins.databasemigration.liquibase.GormDatabase
 import org.grails.plugins.databasemigration.liquibase.GroovyChangeLogParser
@@ -69,30 +67,34 @@ abstract class ApplicationContextDatabaseMigrationCommandSpec extends DatabaseMi
         groovyChangeLogParser.applicationContext = applicationContext
         groovyChangeLogParser.config = config
 
-        command = commandClass.newInstance()
+        if (commandClass) {
+            command = createCommand(commandClass)
+        }
+    }
+
+    protected ApplicationCommand createCommand(Class<ApplicationCommand> applicationCommand) {
+        def command = applicationCommand.newInstance()
         command.applicationContext = applicationContext
         command.changeLogFile.parentFile.mkdirs()
+        return command
     }
 
     protected Class[] getDomainClasses() {
         [] as Class[]
     }
 
-    abstract protected Class<ApplicationCommand> getCommandClass()
-
-    protected ExecutionContext getExecutionContext(String... args) {
-        new ExecutionContext(
-            new CommandLineParser().parse(([GrailsNameUtils.getScriptName(GrailsNameUtils.getLogicalName(commandClass.name, 'Command'))] + args.toList()) as String[])
-        )
+    protected Class<ApplicationCommand> getCommandClass() {
+        null
     }
 
-    protected org.grails.cli.profile.ExecutionContext getScriptExecutionContext(String... args) {
-        def codeGenConfig = new CodeGenConfig()
-        codeGenConfig.mergeMap(config.flatten())
-        codeGenConfig.mergeMap(config.flatten(), true)
-        def executionContext = new GrailsCli.ExecutionContextImpl(codeGenConfig)
-        executionContext.commandLine = new CommandLineParser().parse(([GrailsNameUtils.getScriptName(GrailsNameUtils.getLogicalName(commandClass.name, 'Command'))] + args.toList()) as String[])
-        executionContext
+    protected ExecutionContext getExecutionContext(String... args) {
+        def commandClassName = null
+        if (commandClass) {
+            commandClassName = GrailsNameUtils.getScriptName(GrailsNameUtils.getLogicalName(commandClass.name, 'Command'))
+        }
+        new ExecutionContext(
+            new CommandLineParser().parse(([commandClassName] + args.toList()) as String[])
+        )
     }
 }
 

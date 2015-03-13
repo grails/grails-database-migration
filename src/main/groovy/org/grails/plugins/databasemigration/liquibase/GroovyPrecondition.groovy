@@ -48,7 +48,7 @@ import java.sql.Connection
  * @author Kazuki YAMAMOTO
  */
 @CompileStatic
-class GrailsPrecondition extends AbstractPrecondition {
+class GroovyPrecondition extends AbstractPrecondition {
 
     final String serializedObjectNamespace = STANDARD_CHANGELOG_NAMESPACE
 
@@ -167,6 +167,15 @@ class GrailsPrecondition extends AbstractPrecondition {
      */
     Config getConfig() {
         application.config
+    }
+
+    /**
+     * Called from the check closure as a shortcut to throw a <code>PreconditionFailedException</code>.
+     *
+     * @param message the failure message
+     */
+    void fail(String message) {
+        throw new PreconditionFailedException(message, changeLog, this)
     }
 
     /**
