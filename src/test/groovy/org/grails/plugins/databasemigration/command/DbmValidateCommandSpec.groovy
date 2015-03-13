@@ -16,6 +16,7 @@
 package org.grails.plugins.databasemigration.command
 
 import grails.dev.commands.ApplicationCommand
+import liquibase.exception.ChangeLogParseException
 
 class DbmValidateCommandSpec extends ApplicationContextDatabaseMigrationCommandSpec {
 
@@ -33,8 +34,11 @@ class DbmValidateCommandSpec extends ApplicationContextDatabaseMigrationCommandS
         given:
             command.changeLogFile << 'xxx'
 
-        expect:
-            !command.handle(getExecutionContext())
+        when:
+            command.handle(getExecutionContext())
+
+        then:
+            thrown(ChangeLogParseException)
     }
 
     static final String CHANGE_LOG_CONTENT = '''
