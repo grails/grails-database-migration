@@ -124,7 +124,7 @@ databaseChangeLog = \\{
 
     def "an error occurs if other environment and current environment is same"() {
         when:
-            command.handle(getExecutionContext('development'))
+            command.handle(getExecutionContext('test'))
 
         then:
             def e = thrown(DatabaseMigrationException)
