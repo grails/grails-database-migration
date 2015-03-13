@@ -1,7 +1,7 @@
 grails:
-  profile: web-plugin
-  codegen:
-    defaultPackage: databasemigration
+    profile: web-plugin
+    codegen:
+        defaultPackage: databasemigration
 info:
     app:
         name: '@info.app.name@'
