@@ -3,6 +3,8 @@
 Database Migration Plugin for Grails 3
 ======================================
 
+This is a fork of grails migration plugin for grails 3.
+
 The Database Migration plugin helps you manage database changes while developing Grails applications.
 The plugin uses the Liquibase library.
 Using this plugin (and Liquibase in general) adds some structure and process to managing database changes.
@@ -24,14 +26,21 @@ Add a dependency for the plugin in build.gradle:
 ```
 buildscript {
     ...
-    dependencies {
-        classpath 'org.grails.plugins:database-migration:2.0.0'
+    repositories {
+        maven { url 'http://dl.bintray.com/yamkazu/plugins' }
     }
+    dependencies {
+        classpath 'org.grails.plugins:database-migration:2.0.0.M1'
+    }
+}
+
+repositories {
+    maven { url 'http://dl.bintray.com/yamkazu/plugins' }
 }
 
 dependencies {
     ...
-    runtime "org.grails.plugins:database-migration:2.0.0"
+    runtime 'org.grails.plugins:database-migration:2.0.0.M1'
 }
 ```
 
@@ -41,8 +50,9 @@ And add a path of Changelog directory to `sourceSets` in build.gradle:
 sourceSets {
     main {
         resources {
-            srcDir "grails-app/migrations"
+            srcDir 'grails-app/migrations'
         }
     }
 }
 ```
+
