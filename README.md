@@ -26,16 +26,9 @@ Add a dependency for the plugin in build.gradle:
 ```
 buildscript {
     ...
-    repositories {
-        maven { url 'http://dl.bintray.com/yamkazu/plugins' }
-    }
     dependencies {
         classpath 'org.grails.plugins:database-migration:2.0.0.M1'
     }
-}
-
-repositories {
-    maven { url 'http://dl.bintray.com/yamkazu/plugins' }
 }
 
 dependencies {
