@@ -52,10 +52,17 @@ class DatabaseMigrationGrailsPlugin extends Plugin {
     Closure doWithSpring() {
         configureLiquibase()
 
+        def mainClassName = deduceApplicationMainClassName()
+
         return { ->
             dataSourceNames.each { String dataSourceName ->
                 def isDefaultDataSource = 'dataSource' == dataSourceName
                 def configPrefix = isDefaultDataSource ? 'grails.plugin.databasemigration' : "grails.plugin.databasemigration.${dataSourceName}"
+
+                def skipMainClasses = config.getProperty("${configPrefix}.skipUpdateOnStartMainClasses", List, ['grails.ui.command.GrailsApplicationContextCommandRunner'])
+                if (skipMainClasses.contains(mainClassName)) {
+                    return
+                }
 
                 def updateOnStart = config.getProperty("${configPrefix}.updateOnStart", Boolean, false)
                 if (!updateOnStart) {
@@ -94,5 +101,9 @@ class DatabaseMigrationGrailsPlugin extends Plugin {
             return ['dataSource']
         }
         return dataSources.keySet()
+    }
+
+    private String deduceApplicationMainClassName() {
+        new RuntimeException().stackTrace.find { StackTraceElement stackTraceElement -> 'main' == stackTraceElement.methodName }?.className
     }
 }
