@@ -105,6 +105,10 @@ class MigrationUtils {
 		def connection = findSessionFactory(dataSourceSuffix).currentSession.connection()
 
 		def dialect = application.config."$dsName".dialect
+		//append default schema if specified in DataSource.groovy hibernate closure
+		if(application.config.hibernate.default_schema) {
+		   defaultSchema = application.config.hibernate.default_schema
+		}
 		if (dialect) {
 			if (dialect instanceof Class) {
 				dialect = dialect.name
