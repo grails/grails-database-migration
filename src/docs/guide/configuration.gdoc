@@ -18,6 +18,7 @@ grails.plugin.databasemigration. ignoredColumns | none | one or more database co
 grails.plugin.databasemigration. ignoredObjects | none | one or more database object names to ignore while performing a dbm-gorm-diff or dbm-generate-gorm-changelog
 grails.plugin.databasemigration. databaseChangeLogTableName | 'databasechangelog' | the Liquibase changelog record table name
 grails.plugin.databasemigration. databaseChangeLogLockTableName | 'databasechangeloglock' | the Liquibase lock table name
+grails.plugin.databasemigration. loadPluginMigrations | @false@ | if @true@, load migrations from the classpath (i.e. plugin migrations) using @GrailsClassLoaderResourceAccessor@ instead of @FileSystemResourceAccessor@ (War deployed mode always uses @GrailsClassLoaderResourceAccessor@)
 {table}
 
 {note}

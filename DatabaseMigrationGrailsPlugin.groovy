@@ -42,7 +42,7 @@ import liquibase.sqlgenerator.core.CreateTableGenerator
 class DatabaseMigrationGrailsPlugin {
 
 	String grailsVersion = '2.3.0 > *'
-	String version = '1.4.1-SNAPSHOT'
+	String version = '1.4.2'
 	String author = 'Burt Beckwith'
 	String authorEmail = 'burt@burtbeckwith.com'
 	String title = 'Grails Database Migration Plugin'
@@ -62,12 +62,13 @@ class DatabaseMigrationGrailsPlugin {
 	def scm = [url: 'https://github.com/grails-plugins/grails-database-migration']
 
 	def doWithSpring = {
+		def conf = application.config.grails.plugin.databasemigration
 
 		MigrationUtils.application = application
 
 		ResourceAccessor classLoaderResourceAccessor = new ClassLoaderResourceAccessor()
 
-		if (application.warDeployed) {
+		if (application.warDeployed || conf.loadPluginMigrations) {
 			migrationResourceAccessor(CompositeResourceAccessor, [new GrailsClassLoaderResourceAccessor(), classLoaderResourceAccessor])
 		}
 		else {
