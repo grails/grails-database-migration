@@ -1,0 +1,100 @@
+buildscript {
+    ext {
+        grailsVersion = project.grailsVersion
+    }
+    repositories {
+        mavenLocal()
+        maven { url "https://repo.grails.org/grails/core" }
+    }
+    dependencies {
+        classpath "org.grails:grails-gradle-plugin:$grailsVersion"
+        classpath 'com.bertramlabs.plugins:asset-pipeline-gradle:2.1.1'
+    }
+}
+
+plugins {
+    id "io.spring.dependency-management" version "0.3.1.RELEASE"
+    id "com.jfrog.bintray" version "1.1"
+}
+
+version "2.0.0.RC1"
+group "org.grails.plugins"
+
+apply plugin: "spring-boot"
+apply plugin: "asset-pipeline"
+apply plugin: "org.grails.grails-plugin"
+apply plugin: "org.grails.grails-gsp"
+apply plugin: 'maven-publish'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+// Used for publishing to central repository, remove if not needed
+apply from: 'https://raw.githubusercontent.com/grails/grails-profile-repository/master/profiles/plugin/templates/grailsCentralPublishing.gradle'
+apply from: 'https://raw.githubusercontent.com/grails/grails-profile-repository/master/profiles/plugin/templates/bintrayPublishing.gradle'
+
+ext {
+    grailsVersion = project.grailsVersion
+    gradleWrapperVersion = project.gradleWrapperVersion
+}
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    maven { url "https://repo.grails.org/grails/core" }
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.grails:grails-bom:$grailsVersion"
+    }
+    applyMavenExclusions false
+}
+
+dependencies {
+    compile 'org.liquibase:liquibase-core:3.3.2'
+    compile('org.liquibase.ext:liquibase-hibernate4:3.5') {
+        exclude group: 'org.hibernate', module: 'hibernate-core'
+        exclude group: 'org.hibernate.javax.persistence', module: 'hibernate-jpa-2.0-api'
+        exclude group: 'org.hibernate', module: 'hibernate-entitymanager'
+        exclude group: 'org.hibernate', module: 'hibernate-envers'
+    }
+    provided 'org.hibernate:hibernate-core:4.3.8.Final'
+
+    provided 'org.springframework.boot:spring-boot-starter-logging'
+    provided "org.springframework.boot:spring-boot-starter-actuator"
+    provided "org.springframework.boot:spring-boot-autoconfigure"
+    provided "org.springframework.boot:spring-boot-starter-tomcat"
+
+    provided "org.grails:grails-web-boot"
+    provided "org.grails:grails-dependencies"
+    provided 'javax.servlet:javax.servlet-api:3.1.0'
+
+    testCompile "org.grails:grails-plugin-testing"
+    testCompile "org.grails.plugins:hibernate"
+
+    provided("org.grails:grails-shell") {
+        exclude group: 'org.slf4j', module: 'slf4j-simple'
+    }
+}
+
+eclipse {
+    classpath {
+        plusConfigurations += [configurations.provided]
+    }
+}
+
+idea {
+    module {
+        scopes.PROVIDED.plus += [configurations.provided]
+    }
+}
+
+bintray {
+    pkg {
+        userOrg = '' // If you want to publish to an organization
+        issueTrackerUrl = "https://github.com/yamkazu/$project.name/issues"
+        vcsUrl = "https://github.com/yamkazu/$project.name"
+    }
+}
