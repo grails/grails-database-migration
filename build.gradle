@@ -90,11 +90,3 @@ idea {
         scopes.PROVIDED.plus += [configurations.provided]
     }
 }
-
-bintray {
-    pkg {
-        userOrg = '' // If you want to publish to an organization
-        issueTrackerUrl = "https://github.com/yamkazu/$project.name/issues"
-        vcsUrl = "https://github.com/yamkazu/$project.name"
-    }
-}
