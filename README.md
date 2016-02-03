@@ -31,6 +31,12 @@ dependencies {
 }
 ```
 
+If you get a startup error you may need to force the currently supported version of liquibase:
+
+```
+  compile 'org.liquibase:liquibase-core:3.3.2'
+```
+
 And add a path of Changelog directory to `sourceSets` in build.gradle:
 
 ```
