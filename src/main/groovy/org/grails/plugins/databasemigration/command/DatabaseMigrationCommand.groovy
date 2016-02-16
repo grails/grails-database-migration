@@ -16,6 +16,7 @@
 package org.grails.plugins.databasemigration.command
 
 import grails.config.ConfigMap
+import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.transform.stc.ClosureParams
 import groovy.transform.stc.SimpleType
@@ -165,11 +166,19 @@ trait DatabaseMigrationCommand {
         }
     }
 
+    @CompileDynamic
     Database createDatabase(String defaultSchema, String dataSource, Map<String, String> dataSourceConfig) {
+        String password = dataSourceConfig.password ?: null
+
+        if (password && dataSourceConfig.passwordEncryptionCodec) {
+            def clazz = Class.forName(dataSourceConfig.passwordEncryptionCodec)
+            password = clazz.decode(password)
+        }
+
         Database database = DatabaseFactory.getInstance().openDatabase(
             dataSourceConfig.url,
             dataSourceConfig.username ?: null,
-            dataSourceConfig.password ?: null,
+            password,
             dataSourceConfig.driverClassName,
             null,
             null,
