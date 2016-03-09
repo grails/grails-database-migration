@@ -23,6 +23,7 @@ import liquibase.exception.LiquibaseException
 import liquibase.integration.spring.SpringLiquibase
 import liquibase.resource.ClassLoaderResourceAccessor
 import liquibase.resource.CompositeResourceAccessor
+import liquibase.resource.ResourceAccessor
 import org.springframework.context.ApplicationContext
 
 import java.sql.Connection
@@ -42,7 +43,8 @@ class GrailsLiquibase extends SpringLiquibase {
 
     @Override
     protected Liquibase createLiquibase(Connection connection) throws LiquibaseException {
-        Liquibase liquibase = new Liquibase(getChangeLog(), new ClassLoaderResourceAccessor(), createDatabase(connection))
+        Liquibase liquibase = new Liquibase(getChangeLog(), new ClassLoaderResourceAccessor(), createDatabase
+                (connection, null))
         liquibase.setIgnoreClasspathPrefix(isIgnoreClasspathPrefix())
         if (parameters != null) {
             for (Map.Entry<String, String> entry : parameters.entrySet()) {
@@ -57,9 +59,10 @@ class GrailsLiquibase extends SpringLiquibase {
         return liquibase
     }
 
+
     @Override
-    protected Database createDatabase(Connection connection) throws DatabaseException {
-        Database database = super.createDatabase(connection)
+    protected Database createDatabase(Connection connection, ResourceAccessor accessor) throws DatabaseException {
+        Database database = super.createDatabase(connection, accessor)
 
         if (databaseChangeLogTableName) {
             database.databaseChangeLogTableName = databaseChangeLogTableName
