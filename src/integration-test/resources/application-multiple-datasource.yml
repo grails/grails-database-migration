@@ -15,7 +15,7 @@ dataSources:
         driverClassName: org.h2.Driver
         username: sa
         password:
-        dbCreate:
+        dbCreate: none
         url: jdbc:h2:mem:multipleFirstDb
     second:
         pooled: true
@@ -23,5 +23,5 @@ dataSources:
         driverClassName: org.h2.Driver
         username: sa
         password:
-        dbCreate:
+        dbCreate: none
         url: jdbc:h2:mem:multipleSecondDb

@@ -37,6 +37,7 @@ class AutoRunWithSingleDataSourceSpec extends Specification {
 
     def setup() {
         sql = new Sql(dataSource)
+        //sql.executeUpdate("drop table AUTHOR")
     }
 
     def "runs app with a single datasource"() {
