@@ -92,7 +92,7 @@ class GroovyChangeLogParser extends AbstractChangeLogParser {
                 databases = value.databases
                 value = value.value
             }
-            changeLogParameters.set(name as String, value as String, contexts as String, labels, databases, true, null)
+            changeLogParameters.set(name as String, value as String, contexts as String, labels, databases)
         }
     }
 }

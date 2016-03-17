@@ -66,7 +66,7 @@ trait ApplicationContextDatabaseMigrationCommand implements DatabaseMigrationCom
     }
 
     @CompileDynamic
-    private Database createGormDatabase(ConfigurableApplicationContext applicationContext, String dataSource) {
+    private Database createGormDatabase(ConfigurableApplicationContext applicationContext, String dataSource = null) {
         String sessionFactoryName = dataSource ? '&sessionFactory_' + dataSource : '&sessionFactory'
 
         def sessionFactory = applicationContext.getBean(sessionFactoryName)
