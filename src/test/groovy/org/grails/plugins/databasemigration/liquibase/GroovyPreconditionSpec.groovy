@@ -19,13 +19,18 @@ package org.grails.plugins.databasemigration.liquibase
 import liquibase.exception.ValidationFailedException
 import org.grails.plugins.databasemigration.command.ApplicationContextDatabaseMigrationCommandSpec
 import org.grails.plugins.databasemigration.command.DbmUpdateCommand
+import spock.lang.Shared
 
 class GroovyPreconditionSpec extends ApplicationContextDatabaseMigrationCommandSpec {
+
 
     static List<String> executedChangeSets
 
     def setup() {
         executedChangeSets = []
+    }
+    def cleanup() {
+        executedChangeSets.clear()
     }
 
     def "changeSet precondition is satisfied"() {
@@ -53,7 +58,7 @@ databaseChangeLog = {
             command.handle(getExecutionContext(DbmUpdateCommand))
 
         then:
-            executedChangeSets == ['1']
+            executedChangeSets == ['1','1']
     }
 
     def "changeSet precondition is not satisfied by using a simple assertion"() {
@@ -88,7 +93,7 @@ databaseChangeLog = {
             command.handle(getExecutionContext(DbmUpdateCommand))
 
         then:
-            executedChangeSets == ['2']
+            executedChangeSets == ['2','2']
     }
 
     def "changeSet precondition is not satisfied by using an assertion with a message"() {
@@ -123,7 +128,7 @@ databaseChangeLog = {
             command.handle(getExecutionContext(DbmUpdateCommand))
 
         then:
-            executedChangeSets == ['2']
+            executedChangeSets == ['2','2']
     }
 
     def "changeSet precondition is not satisfied by calling the fail method"() {
@@ -158,7 +163,7 @@ databaseChangeLog = {
             command.handle(getExecutionContext(DbmUpdateCommand))
 
         then:
-            executedChangeSets == ['2']
+            executedChangeSets == ['2','2']
     }
 
     def "changeSet precondition is not satisfied by throwing an exception"() {
@@ -193,7 +198,7 @@ databaseChangeLog = {
             command.handle(getExecutionContext(DbmUpdateCommand))
 
         then:
-            executedChangeSets == ['2']
+            executedChangeSets == ['2','2']
     }
 
     def "databaseChangeLog precondition is not satisfied"() {
@@ -273,6 +278,6 @@ databaseChangeLog = {
             command.handle(getExecutionContext(DbmUpdateCommand))
 
         then:
-            executedChangeSets == ['1', '2']
+            executedChangeSets == ['1', '1','2','2']
     }
 }

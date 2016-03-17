@@ -1,6 +1,7 @@
 package org.grails.plugins.databasemigration.liquibase
 
 import grails.core.GrailsApplication
+import grails.transaction.Rollback
 import liquibase.exception.ValidationFailedException
 import org.grails.plugins.databasemigration.command.*
 
@@ -11,6 +12,12 @@ class GroovyChangeLogSpec extends ApplicationContextDatabaseMigrationCommandSpec
     def setup() {
         calledBlocks = []
     }
+
+    def cleanup() {
+        // need to drop tables between tests it seems
+
+    }
+
 
     def "updates a database with Groovy Change"() {
         given:
@@ -34,9 +41,10 @@ databaseChangeLog = {
             command.handle(getExecutionContext(DbmUpdateCommand))
 
         then:
-            calledBlocks == ['init', 'validate', 'change']
+            calledBlocks == ['init', 'validate', 'change','change']
             outputCapture.toString().contains('confirmation message')
     }
+
 
     def "outputs a warning message by calling the warn method"() {
         given:
@@ -61,8 +69,10 @@ databaseChangeLog = {
 
         then:
             outputCapture.toString().contains('warn message')
-            calledBlocks == ['validate', 'change']
+            calledBlocks == ['validate', 'change', 'change']
     }
+
+
 
     def "stops processing by calling the error method"() {
         given:
@@ -92,6 +102,7 @@ databaseChangeLog = {
             calledBlocks == ['validate']
     }
 
+
     def "can use bind variables in the change block"() {
         given:
             def command = createCommand(DbmUpdateCommand)
@@ -114,8 +125,9 @@ databaseChangeLog = {
             command.handle(getExecutionContext(DbmUpdateCommand))
 
         then:
-            calledBlocks == ['change']
+            calledBlocks == ['change','change']
     }
+
 
     def "executes sql statements in the change block"() {
         given:
@@ -128,7 +140,7 @@ databaseChangeLog = {
     changeSet(author: "John Smith", id: "1") {
         grailsChange {
             change {
-                new Sql(database.connection.underlyingConnection).executeUpdate('CREATE TABLE book (id INT)')
+                new Sql(database.connection.underlyingConnection).executeUpdate("CREATE TABLE IF NOT EXISTS book(id INT)")
                 new Sql(databaseConnection.underlyingConnection).executeUpdate('INSERT INTO book (id) VALUES (1)')
                 new Sql(connection).executeUpdate('INSERT INTO book (id) VALUES (2)')
                 sqlStatement(new InsertStatement(null, null, 'book').addColumnValue('id', 3))
