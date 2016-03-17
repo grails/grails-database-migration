@@ -78,6 +78,8 @@ class GroovyChange extends AbstractChange {
 
     boolean validateClosureCalled
 
+    boolean changeClosureCalled
+
     @Override
     void load(ParsedNode parsedNode, ResourceAccessor resourceAccessor) throws ParsedNodeException {
         this.resourceAccessor = resourceAccessor
@@ -137,7 +139,13 @@ class GroovyChange extends AbstractChange {
 
         if (shouldRun() && changeClosure) {
             changeClosure.delegate = this
-            changeClosure()
+            try {
+                if(!changeClosureCalled) {
+                    changeClosure()
+                }
+            } finally {
+                changeClosureCalled = true
+            }
         }
 
         allStatements as SqlStatement[]

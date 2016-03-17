@@ -60,6 +60,7 @@ dependencies {
         exclude group: 'org.hibernate.javax.persistence', module: 'hibernate-jpa-2.0-api'
         exclude group: 'org.hibernate', module: 'hibernate-entitymanager'
         exclude group: 'org.hibernate', module: 'hibernate-envers'
+        exclude group: 'org.liquibase', module: 'liquibase-core'
     }
     provided 'org.hibernate:hibernate-core:4.3.8.Final'
 
