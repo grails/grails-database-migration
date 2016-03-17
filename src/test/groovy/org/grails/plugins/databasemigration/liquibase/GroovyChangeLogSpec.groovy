@@ -1,9 +1,9 @@
 package org.grails.plugins.databasemigration.liquibase
 
 import grails.core.GrailsApplication
-import grails.transaction.Rollback
 import liquibase.exception.ValidationFailedException
 import org.grails.plugins.databasemigration.command.*
+
 
 class GroovyChangeLogSpec extends ApplicationContextDatabaseMigrationCommandSpec {
 
@@ -12,12 +12,6 @@ class GroovyChangeLogSpec extends ApplicationContextDatabaseMigrationCommandSpec
     def setup() {
         calledBlocks = []
     }
-
-    def cleanup() {
-        // need to drop tables between tests it seems
-
-    }
-
 
     def "updates a database with Groovy Change"() {
         given:
@@ -41,7 +35,7 @@ databaseChangeLog = {
             command.handle(getExecutionContext(DbmUpdateCommand))
 
         then:
-            calledBlocks == ['init', 'validate', 'change','change']
+            calledBlocks == ['init', 'validate', 'change']
             outputCapture.toString().contains('confirmation message')
     }
 
@@ -51,7 +45,7 @@ databaseChangeLog = {
             def command = createCommand(DbmUpdateCommand)
             command.changeLogFile << """
 databaseChangeLog = {
-    changeSet(author: "John Smith", id: "1") {
+    changeSet(author: "John Smith", id: "2") {
         grailsChange {
             validate {
                 ${GroovyChangeLogSpec.name}.calledBlocks << 'validate'
@@ -69,7 +63,7 @@ databaseChangeLog = {
 
         then:
             outputCapture.toString().contains('warn message')
-            calledBlocks == ['validate', 'change', 'change']
+            calledBlocks == ['validate', 'change']
     }
 
 
@@ -97,6 +91,7 @@ databaseChangeLog = {
 
         then:
             def e = thrown(ValidationFailedException)
+
             e.message.contains('1 changes have validation failures')
             e.message.contains('error message, changelog.groovy::1::John Smith')
             calledBlocks == ['validate']
@@ -108,10 +103,10 @@ databaseChangeLog = {
             def command = createCommand(DbmUpdateCommand)
             command.changeLogFile << """
 databaseChangeLog = {
-    changeSet(author: "John Smith", id: "1") {
+    changeSet(author: "John Smith", id: "4") {
         grailsChange {
             change {
-                assert changeSet.id == '1'
+                assert changeSet.id == '4'
                 assert resourceAccessor.toString() == 'liquibase.resource.FileSystemResourceAccessor(${changeLogLocation.canonicalPath})'
                 assert ctx.hashCode() == ${applicationContext.hashCode()}
                 assert application.hashCode() == ${applicationContext.getBean(GrailsApplication).hashCode()}
@@ -125,7 +120,7 @@ databaseChangeLog = {
             command.handle(getExecutionContext(DbmUpdateCommand))
 
         then:
-            calledBlocks == ['change','change']
+            calledBlocks == ['change']
     }
 
 
@@ -137,10 +132,10 @@ import groovy.sql.Sql
 import liquibase.statement.core.InsertStatement
 
 databaseChangeLog = {
-    changeSet(author: "John Smith", id: "1") {
+    changeSet(author: "John Smith", id: "5") {
         grailsChange {
             change {
-                new Sql(database.connection.underlyingConnection).executeUpdate("CREATE TABLE IF NOT EXISTS book(id INT)")
+                new Sql(database.connection.underlyingConnection).executeUpdate('CREATE TABLE book (id INT)')
                 new Sql(databaseConnection.underlyingConnection).executeUpdate('INSERT INTO book (id) VALUES (1)')
                 new Sql(connection).executeUpdate('INSERT INTO book (id) VALUES (2)')
                 sqlStatement(new InsertStatement(null, null, 'book').addColumnValue('id', 3))
@@ -158,14 +153,15 @@ databaseChangeLog = {
             sql.rows('SELECT id FROM book').collect { it.id } as Set == [1, 2, 3, 4, 5] as Set
     }
 
+    
     def "rolls back a database with Groovy Change"() {
         given:
             def command = createCommand(DbmRollbackCommand)
             command.changeLogFile << """
 databaseChangeLog = {
-    changeSet(author: "John Smith", id: "1") {
+    changeSet(author: "John Smith", id: "6") {
     }
-    changeSet(author: "John Smith", id: "2") {
+    changeSet(author: "John Smith", id: "7") {
         grailsChange {
             init { ${GroovyChangeLogSpec.name}.calledBlocks << 'init' }
             validate { ${GroovyChangeLogSpec.name}.calledBlocks << 'validate' }
@@ -189,17 +185,18 @@ databaseChangeLog = {
             calledBlocks == ['init', 'rollback']
     }
 
+    
     def "can use bind variables in the rollback block"() {
         given:
             def command = createCommand(DbmRollbackCommand)
             command.changeLogFile << """
 databaseChangeLog = {
-    changeSet(author: "John Smith", id: "1") {
+    changeSet(author: "John Smith", id: "8") {
     }
-    changeSet(author: "John Smith", id: "2") {
+    changeSet(author: "John Smith", id: "9") {
         grailsChange {
             rollback {
-                assert changeSet.id == '2'
+                assert changeSet.id == '9'
                 assert resourceAccessor.toString() == 'liquibase.resource.FileSystemResourceAccessor(${changeLogLocation.canonicalPath})'
                 assert ctx.hashCode() == ${applicationContext.hashCode()}
                 assert application.hashCode() == ${applicationContext.getBean(GrailsApplication).hashCode()}

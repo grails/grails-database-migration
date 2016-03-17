@@ -93,6 +93,10 @@ abstract class ApplicationContextDatabaseMigrationCommandSpec extends DatabaseMi
             new CommandLineParser().parse(([commandClassName] + args.toList()) as String[])
         )
     }
+
+    void cleanup() {
+
+    }
 }
 
 @Entity

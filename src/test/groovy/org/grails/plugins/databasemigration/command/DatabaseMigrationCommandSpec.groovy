@@ -50,4 +50,6 @@ abstract class DatabaseMigrationCommandSpec extends Specification {
 
         changeLogLocation = File.createTempDir()
     }
+
+
 }
