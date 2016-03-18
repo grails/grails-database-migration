@@ -2,10 +2,11 @@ language: groovy
 jdk:
 - openjdk7
 before_install:
-  - cat /etc/hosts # optionally check the content *before*
-  - sudo hostname "$(hostname | cut -c1-63)"
-  - sed -e "s/^\\(127\\.0\\.0\\.1.*\\)/\\1 $(hostname | cut -c1-63)/" /etc/hosts | sudo tee /etc/hosts
-  - cat /etc/hosts # optionally check the content *after*
+- cat /etc/hosts
+- sudo hostname "$(hostname | cut -c1-63)"
+- sed -e "s/^\\(127\\.0\\.0\\.1.*\\)/\\1 $(hostname | cut -c1-63)/" /etc/hosts | sudo
+  tee /etc/hosts
+- cat /etc/hosts
 before_script:
 - rm -rf build
 script: ./travis-build.sh
@@ -16,3 +17,5 @@ env:
   - secure: rJ9dcWHllb8KkZNMW+71E/cjHwdQldAyLQN12GSL/YKGYvK7tb1Tyj/Poy3u08JyvKTbQg0Jh+eXRytppRXod1qjlsT0em+5PQAgEt/ihgtSkQPNacJUlAf3iELlTCiSqOdSy35zW6kf7U00lcM/k7NA0BnlRTT4A4/3do7mDGA=
   - secure: lKOkxxJVUTyDcq7WkP/6IXEdsFlLdefD044mc/GZm81PIW2qJ2EOsifcyKjXkymwSlw4f/9eChY22Z3W3ctLwcGy2YGyo0MZyzBTnlaTk8Z+KzUQK/disyzVa+0bq60tf/Dy21Sn539+jBrcRidik/j8HmH6As4cOndjPf0lcMk=
   - secure: DDM8wpbwLozxU/wgS++lv+bJuI7qz5+mAtixBeOjluDElmnFwzilI/DEBTdVsc6OKJD0hBOHai3LAMwfaC0WW4DhxqGWS/4iTmPrOQY6VoHCRvEVO8s/YVIq++Ja0ehvV+YkLx/IbWQJ4d/FldN67Bg18jCcRap5zjnaZDsaOqI=
+  - secure: JvVyn+WWJr9+L++cfpOdSu3+fArGchiCFozYNm5CfU2KFQp+M77EMdBm8vs3vbG/OesPNgUXBCyk70yhyIBvMBMv4F8FoB2vgJY33QIEUh7FJK8GbbFhuWWeKCFCWcN7FJjkPzE5SyMzyojEeEnBuNP+JznRa2ooAw0tXljDOxg=
+  - secure: ZccTQxra/Om9YqBDS70/gI6lZdtnr8SJoVXcRPzVaE27bKanuAHREvpU50Hnzeupy+F9nItcNUP+o0M9L5JcVq5SZsnoIHB1ib5BiQbxRYBXx8tfgHXbDAH/MYouXclV5T5wDIzqF6MIfyiCqy4snirRkQVLj70v0w+IMlmrO3s=
