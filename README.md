@@ -21,13 +21,13 @@ Add a dependency for the plugin in build.gradle:
 buildscript {
     ...
     dependencies {
-        classpath 'org.grails.plugins:database-migration:2.0.0.RC1'
+        classpath 'org.grails.plugins:database-migration:2.0.0.RC4'
     }
 }
 
 dependencies {
     ...
-    runtime 'org.grails.plugins:database-migration:2.0.0.RC1'
+    runtime 'org.grails.plugins:database-migration:2.0.0.RC4'
 }
 ```
 
