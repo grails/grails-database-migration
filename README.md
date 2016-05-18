@@ -21,20 +21,14 @@ Add a dependency for the plugin in build.gradle:
 buildscript {
     ...
     dependencies {
-        classpath 'org.grails.plugins:database-migration:2.0.0.RC1'
+        classpath 'org.grails.plugins:database-migration:2.0.0.RC4'
     }
 }
 
 dependencies {
     ...
-    runtime 'org.grails.plugins:database-migration:2.0.0.RC1'
+    runtime 'org.grails.plugins:database-migration:2.0.0.RC4'
 }
-```
-
-If you get a startup error you may need to force the currently supported version of liquibase:
-
-```
-  compile 'org.liquibase:liquibase-core:3.3.2'
 ```
 
 And add a path of Changelog directory to `sourceSets` in build.gradle:
