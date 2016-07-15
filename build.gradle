@@ -8,28 +8,17 @@ buildscript {
     }
     dependencies {
         classpath "org.grails:grails-gradle-plugin:$grailsVersion"
-        classpath 'com.bertramlabs.plugins:asset-pipeline-gradle:2.1.1'
     }
 }
 
-plugins {
-    id "io.spring.dependency-management" version "0.3.1.RELEASE"
-    id "com.jfrog.bintray" version "1.1"
-}
+apply plugin:"eclipse"
+apply plugin:"idea"
+apply plugin:"org.grails.grails-plugin"
+apply plugin:"org.grails.grails-plugin-publish"
+apply plugin:"org.grails.grails-gsp"
 
-version "2.0.0.RC4"
+version "2.0.0.BUILD-SNAPSHOT"
 group "org.grails.plugins"
-
-apply plugin: "spring-boot"
-apply plugin: "asset-pipeline"
-apply plugin: "org.grails.grails-plugin"
-apply plugin: "org.grails.grails-gsp"
-apply plugin: 'maven-publish'
-apply plugin: 'eclipse'
-apply plugin: 'idea'
-// Used for publishing to central repository, remove if not needed
-apply from: 'https://raw.githubusercontent.com/grails/grails-profile-repository/master/profiles/plugin/templates/grailsCentralPublishing.gradle'
-apply from: 'https://raw.githubusercontent.com/grails/grails-profile-repository/master/profiles/plugin/templates/bintrayPublishing.gradle'
 
 ext {
     grailsVersion = project.grailsVersion
@@ -38,6 +27,7 @@ ext {
 
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
+
 
 repositories {
     mavenLocal()
@@ -52,6 +42,10 @@ dependencyManagement {
     applyMavenExclusions false
 }
 
+configurations {
+    documentation
+}
+
 dependencies {
     compile 'org.liquibase:liquibase-core:3.4.2'
 
@@ -62,7 +56,7 @@ dependencies {
         exclude group: 'org.hibernate', module: 'hibernate-envers'
         exclude group: 'org.liquibase', module: 'liquibase-core'
     }
-    provided 'org.hibernate:hibernate-core:4.3.8.Final'
+    provided 'org.hibernate:hibernate-core:4.3.11.Final'
 
     provided 'org.springframework.boot:spring-boot-starter-logging'
     provided "org.springframework.boot:spring-boot-starter-actuator"
@@ -79,16 +73,49 @@ dependencies {
     provided("org.grails:grails-shell") {
         exclude group: 'org.slf4j', module: 'slf4j-simple'
     }
+
+    documentation "org.codehaus.groovy:groovy-all:2.4.6"
 }
 
-eclipse {
-    classpath {
-        plusConfigurations += [configurations.provided]
+grailsPublish {
+    userOrg = "grails"
+    githubSlug = 'grails-plugins/grails-database-migration'
+    license {
+        name = 'Apache-2.0'
     }
+    title = "Grails Database Migration Plugin"
+    desc = "Grails Database Migration Plugin"
+    developers = [kazukiyamamoto: "Kazuki YAMAMOTO"]
 }
 
-idea {
-    module {
-        scopes.PROVIDED.plus += [configurations.provided]
+asciidoctor {
+    resources {
+        from('src/docs/images')
+        into "./images"
     }
+
+    attributes 'experimental'  : 'true',
+            'compat-mode'   : 'true',
+            'toc'           : 'left',
+            'icons'         : 'font',
+            'version'       : project.version,
+            'groupId'       : project.group,
+            'artifactId'    : project.name,
+            'sourcedir'     : "${projectDir}/src/main/groovy"
+}
+
+task apidocs(type: Groovydoc) {
+    source project.files('src/main/groovy')
+
+    destinationDir = new File(buildDir, 'docs/api')
+    // Might need a classpath
+    docTitle = "Grails Database Migration Plugin ${version}"
+
+    classpath = configurations.documentation
+    groovyClasspath = configurations.documentation
+}
+
+task docs(type:Copy, dependsOn:[apidocs, asciidoctor])  {
+    from "$buildDir/asciidoc/html5"
+    into "$buildDir/docs"
 }

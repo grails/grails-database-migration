@@ -27,7 +27,9 @@ class DbmUpdateCommand implements ApplicationCommand, ApplicationContextDatabase
     @Override
     void handle() {
         withLiquibase { Liquibase liquibase ->
-            liquibase.update(contexts)
+            withTransaction {
+                liquibase.update(contexts)
+            }
         }
     }
 }

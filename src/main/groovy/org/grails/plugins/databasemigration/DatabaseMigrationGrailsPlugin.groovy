@@ -24,6 +24,8 @@ import org.grails.plugins.databasemigration.liquibase.GrailsLiquibase
 import org.grails.plugins.databasemigration.liquibase.GroovyChangeLogParser
 import org.springframework.boot.liquibase.CommonsLoggingLiquibaseLogger
 
+import javax.sql.DataSource
+
 class DatabaseMigrationGrailsPlugin extends Plugin {
 
     // the version or versions of Grails the plugin is designed for
@@ -51,34 +53,38 @@ class DatabaseMigrationGrailsPlugin extends Plugin {
     @Override
     Closure doWithSpring() {
         configureLiquibase()
+        return { -> }
+    }
 
+    @Override
+    void doWithApplicationContext() {
         def mainClassName = deduceApplicationMainClassName()
 
-        return { ->
-            dataSourceNames.each { String dataSourceName ->
-                def isDefaultDataSource = 'dataSource' == dataSourceName
-                def configPrefix = isDefaultDataSource ? 'grails.plugin.databasemigration' : "grails.plugin.databasemigration.${dataSourceName}"
+        dataSourceNames.each { String dataSourceName ->
+            def isDefaultDataSource = 'dataSource' == dataSourceName
+            def configPrefix = isDefaultDataSource ? 'grails.plugin.databasemigration' : "grails.plugin.databasemigration.${dataSourceName}"
 
-                def skipMainClasses = config.getProperty("${configPrefix}.skipUpdateOnStartMainClasses", List, ['grails.ui.command.GrailsApplicationContextCommandRunner'])
-                if (skipMainClasses.contains(mainClassName)) {
-                    return
-                }
+            def skipMainClasses = config.getProperty("${configPrefix}.skipUpdateOnStartMainClasses", List, ['grails.ui.command.GrailsApplicationContextCommandRunner'])
+            if (skipMainClasses.contains(mainClassName)) {
+                return
+            }
 
-                def updateOnStart = config.getProperty("${configPrefix}.updateOnStart", Boolean, false)
-                if (!updateOnStart) {
-                    return
-                }
+            def updateOnStart = config.getProperty("${configPrefix}.updateOnStart", Boolean, false)
+            if (!updateOnStart) {
+                return
+            }
 
-                "springLiquibase_${dataSourceName}"(GrailsLiquibase, applicationContext) {
-                    dataSource = ref(isDefaultDataSource ? dataSourceName : "dataSource_$dataSourceName")
-                    dropFirst = config.getProperty("${configPrefix}.dropOnStart", Boolean, false)
-                    changeLog = config.getProperty("${configPrefix}.updateOnStartFileName", String, isDefaultDataSource ? 'changelog.groovy' : "changelog-${dataSourceName}.groovy")
-                    contexts = config.getProperty("${configPrefix}.updateOnStartContexts", List, []).join(',')
-                    labels = config.getProperty("${configPrefix}.updateOnStartLabels", List, []).join(',')
-                    defaultSchema = config.getProperty("${configPrefix}.updateOnStartDefaultSchema", String)
-                    databaseChangeLogTableName = config.getProperty("${configPrefix}.databaseChangeLogTableName", String)
-                    databaseChangeLogLockTableName = config.getProperty("${configPrefix}.databaseChangeLogLockTableName", String)
-                }
+            new DatabaseMigrationTransactionManager(applicationContext, dataSourceName).withTransaction {
+                GrailsLiquibase gl = new GrailsLiquibase(applicationContext)
+                gl.dataSource = applicationContext.getBean(isDefaultDataSource ? dataSourceName : "dataSource_$dataSourceName", DataSource)
+                gl.dropFirst = config.getProperty("${configPrefix}.dropOnStart", Boolean, false)
+                gl.changeLog = config.getProperty("${configPrefix}.updateOnStartFileName", String, isDefaultDataSource ? 'changelog.groovy' : "changelog-${dataSourceName}.groovy")
+                gl.contexts = config.getProperty("${configPrefix}.updateOnStartContexts", List, []).join(',')
+                gl.labels = config.getProperty("${configPrefix}.updateOnStartLabels", List, []).join(',')
+                gl.defaultSchema = config.getProperty("${configPrefix}.updateOnStartDefaultSchema", String)
+                gl.databaseChangeLogTableName = config.getProperty("${configPrefix}.databaseChangeLogTableName", String)
+                gl.databaseChangeLogLockTableName = config.getProperty("${configPrefix}.databaseChangeLogLockTableName", String)
+                gl.afterPropertiesSet()
             }
         }
     }

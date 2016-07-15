@@ -25,6 +25,7 @@ import groovy.transform.stc.ClosureParams
 import groovy.transform.stc.SimpleType
 import liquibase.database.Database
 import org.grails.config.PropertySourcesConfig
+import org.grails.plugins.databasemigration.DatabaseMigrationTransactionManager
 import org.grails.plugins.databasemigration.liquibase.GormDatabase
 import org.hibernate.cfg.Configuration
 import org.hibernate.dialect.Dialect
@@ -34,6 +35,8 @@ import org.springframework.context.ConfigurableApplicationContext
 trait ApplicationContextDatabaseMigrationCommand implements DatabaseMigrationCommand {
 
     ConfigurableApplicationContext applicationContext
+
+    Boolean skipBootstrap = true
 
     boolean handle(ExecutionContext executionContext) {
         this.executionContext = executionContext
@@ -93,5 +96,9 @@ trait ApplicationContextDatabaseMigrationCommand implements DatabaseMigrationCom
         } finally {
             System.setProperty(Environment.KEY, originalEnvironment.name)
         }
+    }
+
+    void withTransaction(Closure callable) {
+        new DatabaseMigrationTransactionManager(applicationContext, dataSource).withTransaction(callable)
     }
 }

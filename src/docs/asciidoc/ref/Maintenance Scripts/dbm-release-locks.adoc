@@ -1,0 +1,33 @@
+==== dbm-release-locks
+
+===== Purpose
+
+Releases all locks on the database changelog.
+
+===== Description
+
+Usage:
+[source,java]
+----
+grails <<environment>> dbm-release-locks --defaultSchema=<<defaultSchema>> --dataSource=<<dataSource>>
+----
+
+Required arguments: _none_ .
+
+Optional arguments:
+
+* `defaultSchema` - The default schema name to use
+* `dataSource` - if provided will run the script for the specified dataSource.  Not needed for the default dataSource.
+
+NOTE: Note that the `defaultSchema` and `dataSource` parameter name and value must be quoted if executed in Windows, e.g.
+[source,groovy]
+----
+grails dbm-release-locks "--defaultSchema=<<defaultSchema>>" "--dataSource=<<dataSource>>"
+----
+
+NOTE: For the `dataSource` parameter if the data source is configured as `dataSource_reports` in DataSource.groovy
+the suffix of `reports` will be used as the parameter value.
+[source,groovy]
+----
+--dataSource=reports
+----
