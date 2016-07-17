@@ -107,7 +107,7 @@ databaseChangeLog = {
         grailsChange {
             change {
                 assert changeSet.id == '4'
-                assert resourceAccessor.toString() == 'liquibase.resource.FileSystemResourceAccessor(${changeLogLocation.canonicalPath})'
+                assert resourceAccessor.toString() == 'liquibase.resource.FileSystemResourceAccessor(${changeLogLocation.canonicalPath.replace('\\', '\\\\')})'
                 assert ctx.hashCode() == ${applicationContext.hashCode()}
                 assert application.hashCode() == ${applicationContext.getBean(GrailsApplication).hashCode()}
                 ${GroovyChangeLogSpec.name}.calledBlocks << 'change'
@@ -197,7 +197,7 @@ databaseChangeLog = {
         grailsChange {
             rollback {
                 assert changeSet.id == '9'
-                assert resourceAccessor.toString() == 'liquibase.resource.FileSystemResourceAccessor(${changeLogLocation.canonicalPath})'
+                assert resourceAccessor.toString() == 'liquibase.resource.FileSystemResourceAccessor(${changeLogLocation.canonicalPath.replace('\\', '\\\\')})'
                 assert ctx.hashCode() == ${applicationContext.hashCode()}
                 assert application.hashCode() == ${applicationContext.getBean(GrailsApplication).hashCode()}
                 ${GroovyChangeLogSpec.name}.calledBlocks << 'rollback'
