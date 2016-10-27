@@ -21,7 +21,7 @@ apply plugin:"org.grails.grails-plugin"
 apply plugin:"org.grails.grails-plugin-publish"
 apply plugin:"org.grails.grails-gsp"
 
-version "2.0.0.BUILD-SNAPSHOT"
+version "3.0.0.BUILD-SNAPSHOT"
 group "org.grails.plugins"
 
 ext {
@@ -51,16 +51,15 @@ configurations {
 }
 
 dependencies {
-    compile 'org.liquibase:liquibase-core:3.4.2'
+    compile 'org.liquibase:liquibase-core:3.5.3'
 
-    compile('org.liquibase.ext:liquibase-hibernate4:3.5') {
+    compile('org.liquibase.ext:liquibase-hibernate5:3.6') {
         exclude group: 'org.hibernate', module: 'hibernate-core'
-        exclude group: 'org.hibernate.javax.persistence', module: 'hibernate-jpa-2.0-api'
         exclude group: 'org.hibernate', module: 'hibernate-entitymanager'
         exclude group: 'org.hibernate', module: 'hibernate-envers'
         exclude group: 'org.liquibase', module: 'liquibase-core'
     }
-    provided 'org.hibernate:hibernate-core:4.3.11.Final'
+    provided 'org.hibernate:hibernate-core:5.1.1.Final'
 
     provided 'org.springframework.boot:spring-boot-starter-logging'
     provided "org.springframework.boot:spring-boot-starter-actuator"
@@ -70,15 +69,16 @@ dependencies {
     provided "org.grails:grails-web-boot"
     provided "org.grails:grails-dependencies"
     provided 'javax.servlet:javax.servlet-api:3.1.0'
+    provided "org.grails.plugins:hibernate5"
+
 
     testCompile "org.grails:grails-plugin-testing"
-    testCompile "org.grails.plugins:hibernate"
 
     provided("org.grails:grails-shell") {
         exclude group: 'org.slf4j', module: 'slf4j-simple'
     }
 
-    documentation "org.codehaus.groovy:groovy-all:2.4.6"
+    documentation "org.codehaus.groovy:groovy-all:2.4.8"
 }
 
 grailsPublish {

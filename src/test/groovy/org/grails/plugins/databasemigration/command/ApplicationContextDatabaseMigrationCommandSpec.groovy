@@ -54,8 +54,7 @@ abstract class ApplicationContextDatabaseMigrationCommandSpec extends DatabaseMi
         ]))
         config = new PropertySourcesConfig(mutablePropertySources)
 
-        def datastoreInitializer = new HibernateDatastoreSpringInitializer(domainClasses)
-        datastoreInitializer.configuration = config
+        def datastoreInitializer = new HibernateDatastoreSpringInitializer(config, domainClasses)
         datastoreInitializer.configureForBeanDefinitionRegistry(applicationContext)
 
         applicationContext.refresh()

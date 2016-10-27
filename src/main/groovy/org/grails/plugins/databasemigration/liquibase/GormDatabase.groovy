@@ -19,44 +19,52 @@ import groovy.transform.CompileStatic
 import liquibase.database.DatabaseConnection
 import liquibase.exception.DatabaseException
 import liquibase.ext.hibernate.database.HibernateDatabase
-import liquibase.ext.hibernate.database.connection.HibernateConnection
-import org.hibernate.cfg.Configuration
+import org.hibernate.boot.MetadataSources
 import org.hibernate.dialect.Dialect
+import org.hibernate.service.ServiceRegistry
 
 @CompileStatic
 class GormDatabase extends HibernateDatabase {
 
-    final String DefaultDatabaseProductName = 'getDefaultDatabaseProductName'
     final String shortName = 'GORM'
+    final String DefaultDatabaseProductName = 'getDefaultDatabaseProductName'
 
-    private Configuration configuration
+    private ServiceRegistry serviceRegistry
     private Dialect dialect
 
-    GormDatabase() {
-    }
-
-    GormDatabase(Configuration configuration, Dialect dialect) {
-        this.configuration = configuration
+    GormDatabase(Dialect dialect, ServiceRegistry serviceRegistry) {
         this.dialect = dialect
+        this.serviceRegistry = serviceRegistry
     }
 
     @Override
-    Configuration getConfiguration() throws DatabaseException {
-        configuration
-    }
-
-    @Override
-    Dialect getDialect() throws DatabaseException {
+    public Dialect getDialect() {
         dialect
     }
 
+
     @Override
-    protected Configuration buildConfiguration(HibernateConnection conn) throws DatabaseException {
-        throw new UnsupportedOperationException()
+    protected void configureSources(MetadataSources sources) throws DatabaseException {
+        //no op
     }
+
 
     @Override
     boolean isCorrectDatabaseImplementation(DatabaseConnection conn) throws DatabaseException {
-        false
+        return false
     }
+
+    /**
+     * Creates the base {@link MetadataSources} to use for this database.
+     * Normally, the result of this method is passed through {@link #configureSources(MetadataSources)}.
+     */
+    protected MetadataSources createMetadataSources() throws DatabaseException {
+        return new MetadataSources(serviceRegistry)
+    }
+
 }
+
+
+
+
+
