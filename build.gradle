@@ -78,7 +78,7 @@ dependencies {
         exclude group: 'org.slf4j', module: 'slf4j-simple'
     }
 
-    documentation "org.codehaus.groovy:groovy-all:2.4.8"
+    documentation "org.codehaus.groovy:groovy-all:2.4.7"
 }
 
 grailsPublish {
