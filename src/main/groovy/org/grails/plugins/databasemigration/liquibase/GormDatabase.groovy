@@ -19,7 +19,9 @@ import groovy.transform.CompileStatic
 import liquibase.database.DatabaseConnection
 import liquibase.exception.DatabaseException
 import liquibase.ext.hibernate.database.HibernateDatabase
+import org.hibernate.boot.Metadata
 import org.hibernate.boot.MetadataSources
+import org.hibernate.boot.registry.BootstrapServiceRegistryBuilder
 import org.hibernate.dialect.Dialect
 import org.hibernate.service.ServiceRegistry
 
@@ -29,12 +31,12 @@ class GormDatabase extends HibernateDatabase {
     final String shortName = 'GORM'
     final String DefaultDatabaseProductName = 'getDefaultDatabaseProductName'
 
-    private ServiceRegistry serviceRegistry
     private Dialect dialect
+    private Metadata metadata
 
     GormDatabase(Dialect dialect, ServiceRegistry serviceRegistry) {
         this.dialect = dialect
-        this.serviceRegistry = serviceRegistry
+        this.metadata = new MetadataSources(serviceRegistry).getMetadataBuilder().build();
     }
 
     @Override
@@ -42,6 +44,13 @@ class GormDatabase extends HibernateDatabase {
         dialect
     }
 
+    /**
+     * Return the hibernate {@link Metadata} used by this database.
+     */
+    @Override
+    public Metadata getMetadata() {
+        metadata
+    }
 
     @Override
     protected void configureSources(MetadataSources sources) throws DatabaseException {
@@ -52,14 +61,6 @@ class GormDatabase extends HibernateDatabase {
     @Override
     boolean isCorrectDatabaseImplementation(DatabaseConnection conn) throws DatabaseException {
         return false
-    }
-
-    /**
-     * Creates the base {@link MetadataSources} to use for this database.
-     * Normally, the result of this method is passed through {@link #configureSources(MetadataSources)}.
-     */
-    protected MetadataSources createMetadataSources() throws DatabaseException {
-        return new MetadataSources(serviceRegistry)
     }
 
 }

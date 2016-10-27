@@ -67,7 +67,7 @@ databaseChangeLog = \\{
     \\}
 
     changeSet\\(author: ".+?", id: ".+?"\\) \\{
-        addForeignKeyConstraint\\(baseColumnNames: "author_id", baseTableName: "book", constraintName: "FK_4sac2ubmnqva85r8bk8fxdvbf", deferrable: "false", initiallyDeferred: "false", referencedColumnNames: "id", referencedTableName: "author"\\)
+        addForeignKeyConstraint\\(baseColumnNames: "author_id", baseTableName: "book", constraintName: "FK.+?", deferrable: "false", initiallyDeferred: "false", referencedColumnNames: "id", referencedTableName: "author"\\)
     \\}
 \\}
 '''.trim()
@@ -122,7 +122,7 @@ databaseChangeLog = \\{
     \\}
 
     changeSet\\(author: ".+?", id: ".+?"\\) \\{
-        addForeignKeyConstraint\\(baseColumnNames: "author_id", baseTableName: "book", constraintName: "FK_4sac2ubmnqva85r8bk8fxdvbf", deferrable: "false", initiallyDeferred: "false", referencedColumnNames: "id", referencedTableName: "author"\\)
+        addForeignKeyConstraint\\(baseColumnNames: "author_id", baseTableName: "book", constraintName: "FK.+?", deferrable: "false", initiallyDeferred: "false", referencedColumnNames: "id", referencedTableName: "author"\\)
     \\}
 \\}
 '''.trim()
