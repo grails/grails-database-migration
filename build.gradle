@@ -51,7 +51,7 @@ configurations {
 }
 
 dependencies {
-    compile 'org.liquibase:liquibase-core:3.5.3'
+    compile "org.liquibase:liquibase-core:$liquibaseVersion"
 
     compile('org.liquibase.ext:liquibase-hibernate5:3.6') {
         exclude group: 'org.hibernate', module: 'hibernate-core'
@@ -105,7 +105,8 @@ asciidoctor {
             'version'       : project.version,
             'groupId'       : project.group,
             'artifactId'    : project.name,
-            'sourcedir'     : "${projectDir}/src/main/groovy"
+            'sourcedir'     : "${projectDir}/src/main/groovy",
+            'liquibaseVersion': liquibaseVersion
 }
 
 task apidocs(type: Groovydoc) {
