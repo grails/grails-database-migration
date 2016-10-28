@@ -20,5 +20,6 @@ One popular approach is to have a root changelog named changlog.groovy (or chang
 
 ## Documentation
 * Grails 2: http://grails-plugins.github.io/grails-database-migration/docs/manual/index.html
-* Grails 3: http://grails-plugins.github.io/grails-database-migration/latest/index.html
+* Grails 3 (Hibernate 4): http://grails-plugins.github.io/grails-database-migration/2.0.x/index.html
+* Grails 3 (Hibernate 5): http://grails-plugins.github.io/grails-database-migration/3.0.x/index.html
 
