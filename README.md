@@ -44,5 +44,6 @@ sourceSets {
 ```
 
 ## Documentation
+* Grails 2: http://grails-plugins.github.io/grails-database-migration/docs/manual/index.html
+* Grails 3: http://grails-plugins.github.io/grails-database-migration/snapshot/index.html
 
-http://grails-plugins.github.io/grails-database-migration/docs/manual/index.html
