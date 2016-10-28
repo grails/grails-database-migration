@@ -60,8 +60,12 @@ dependencies {
         exclude group: 'org.hibernate', module: 'hibernate-envers'
         exclude group: 'org.liquibase', module: 'liquibase-core'
     }
-
     provided 'org.hibernate:hibernate-core:4.3.11.Final'
+
+    provided 'org.springframework.boot:spring-boot-starter-logging'
+    provided "org.springframework.boot:spring-boot-starter-actuator"
+    provided "org.springframework.boot:spring-boot-autoconfigure"
+    provided "org.springframework.boot:spring-boot-starter-tomcat"
 
     provided "org.grails:grails-web-boot"
     provided "org.grails:grails-dependencies"
@@ -120,5 +124,3 @@ task docs(type:Copy, dependsOn:[apidocs, asciidoctor])  {
     from "$buildDir/asciidoc/html5"
     into "$buildDir/docs"
 }
-
-configurations.testCompile.extendsFrom(configurations.compileOnly)
