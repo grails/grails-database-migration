@@ -26,7 +26,7 @@ NOTE: Note that the `dataSource` parameter name and value must be quoted if exec
 grails dbm-diff  "--dataSource=<<dataSource>>"
 ----
 
-NOTE: For the `dataSource` parameter, if the data source is configured as `dataSource_reports` in DataSource.groovy
+NOTE: For the `dataSource` parameter, if the data source is configured as `reports` underneath the `dataSources` key in `application.[yml|groovy]`
 the suffix of `reports` will be used as the parameter value.
 [source,groovy]
 ----

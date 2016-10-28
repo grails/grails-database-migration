@@ -28,8 +28,8 @@ NOTE: Note that the `dataSource` parameter name and value must be quoted if exec
 grails dbm-create-changelog "--dataSource=<<dataSource>>"
 ----
 
-NOTE: For the `dataSource` parameter if the data source is configured as `dataSource_reports` in DataSource.groovy
-the suffix of `reports` will be used as the parameter value.
+NOTE: For the `dataSource` parameter; If the data source is configured as `reports` underneath the `dataSources` key in `application.[yml|groovy]`, the value should be `reports`.
+
 [source,groovy]
 ----
 --dataSource=reports

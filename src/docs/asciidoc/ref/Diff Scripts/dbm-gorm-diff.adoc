@@ -10,7 +10,7 @@ Creates a Groovy DSL file if the filename is specified and it ends with .groovy.
 
 File are written to the migrations folder, so specify the filename relative to the migrations folder (`grails-app/migrations` by default).
 
-Similar to <<ref-diff-scripts-dbm-diff,dbm-diff>> but diffs the current configuration based on the application's domain classes with the database configured in `DataSource.groovy` for the current environment (defaults to `dev`).
+Similar to <<ref-diff-scripts-dbm-diff,dbm-diff>> but diffs the current configuration based on the application's domain classes with the database configured in `application.[yml|groovy]` for the current environment (defaults to `dev`).
 
 Doesn't modify any existing files - you need to manually merge the output into the changeset along with any necessary modifications.
 
@@ -37,8 +37,8 @@ NOTE: Note that the `defaultSchema` and `dataSource` parameter name and value mu
 grails dbm-gorm-diff "--defaultSchema=<<defaultSchema>>" "--dataSource=<<dataSource>>"
 ----
 
-NOTE: For the `dataSource` parameter if the data source is configured as `dataSource_reports` in DataSource.groovy
-the suffix of `reports` will be used as the parameter value.
+NOTE: For the `dataSource` parameter; If the data source is configured as `reports` underneath the `dataSources` key in `application.[yml|groovy]`, the value should be `reports`.
+
 [source,groovy]
 ----
 --dataSource=reports

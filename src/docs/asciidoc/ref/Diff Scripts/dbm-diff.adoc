@@ -6,7 +6,7 @@ Compares two databases and creates a changelog that will make the changes requir
 
 ===== Description
 
-Executes against the database configured in `DataSource.groovy` for the current environment (defaults to `dev`) and another configured datasource in `DataSource.groovy`.
+Executes against the database configured in `application.[yml|groovy]`  for the current environment (defaults to `dev`) and another configured datasource in `application.[yml|groovy]`.
 
 If a filename parameter is specified then the output will be written to the named file, otherwise it will write to the console. If the filename ends with .groovy a Groovy DSL file will be created, otherwise a standard XML file will be created.
 
@@ -35,8 +35,8 @@ NOTE: Note that the `defaultSchema` and `dataSource` parameter name and value mu
 grails dbm-diff "--defaultSchema=<<defaultSchema>>" "--dataSource=<<dataSource>>"
 ----
 
-NOTE: For the `dataSource` parameter if the data source is configured as `dataSource_reports` in DataSource.groovy
-the suffix of `reports` will be used as the parameter value.
+NOTE: For the `dataSource` parameter; If the data source is configured as `reports` underneath the `dataSources` key in `application.[yml|groovy]`, the value should be `reports`.
+
 [source,groovy]
 ----
 --dataSource=reports

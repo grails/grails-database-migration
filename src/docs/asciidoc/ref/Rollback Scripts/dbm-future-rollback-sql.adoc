@@ -27,8 +27,8 @@ NOTE: Note that the `contexts`, `defaultSchema`, and `dataSource` parameter name
 grails dbm-future-rollback-sql "--contexts=<<contexts>>" "--defaultSchema=<<defaultSchema>>" "--dataSource=<<dataSource>>"
 ----
 
-NOTE: For the `dataSource` parameter if the data source is configured as `dataSource_reports` in DataSource.groovy
-the suffix of `reports` will be used as the parameter value.
+NOTE: For the `dataSource` parameter; If the data source is configured as `reports` underneath the `dataSources` key in `application.[yml|groovy]`, the value should be `reports`.
+
 [source,groovy]
 ----
 --dataSource=reports

@@ -6,7 +6,7 @@ Partially updates a database.
 
 ===== Description
 
-Runs the specifed number of un-run changesets from the Changelog. Executes against the database configured in `DataSource.groovy` for the current environment (defaults to `dev`).
+Runs the specifed number of un-run changesets from the Changelog. Executes against the database configured in `application.[yml|groovy]` for the current environment (defaults to `dev`).
 
 Usage:
 [source,java]
@@ -30,8 +30,8 @@ NOTE: Note that the `contexts`, `defaultSchema`, `dataSource` parameter name and
 grails dbm-update-count "--contexts=<<contexts>>" "--defaultSchema=<<defaultSchema>>" "--dataSource=<<dataSource>>"
 ----
 
-NOTE: For the `dataSource` parameter if the data source is configured as `dataSource_reports` in DataSource.groovy
-the suffix of `reports` will be used as the parameter value.
+NOTE: For the `dataSource` parameter; If the data source is configured as `reports` underneath the `dataSources` key in `application.[yml|groovy]`, the value should be `reports`.
+
 [source,groovy]
 ----
 --dataSource=reports

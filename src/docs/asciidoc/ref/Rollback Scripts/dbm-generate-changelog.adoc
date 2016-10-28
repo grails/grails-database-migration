@@ -10,7 +10,7 @@ Creates a Groovy DSL file if the filename is specified and it ends with .groovy.
 
 File are written to the migrations folder, so specify the filename relative to the migrations folder (`grails-app/migrations` by default).
 
-Executes against the database configured in `DataSource.groovy` for the current environment (defaults to `dev`).
+Executes against the database configured in `application.[yml|groovy]` for the current environment (defaults to `dev`).
 
 Usage:
 [source,java]
@@ -34,8 +34,8 @@ NOTE: Note that the `diffTypes`, `defaultSchema`, and `dataSource` parameter nam
 grails dbm-generate-changelog "--diffTypes=<<diffTypes>>" "--defaultSchema=<<defaultSchema>>" "--dataSource=<<dataSource>>"
 ----
 
-NOTE: For the `dataSource` parameter if the data source is configured as `dataSource_reports` in DataSource.groovy
-the suffix of `reports` will be used as the parameter value.
+NOTE: For the `dataSource` parameter; If the data source is configured as `reports` underneath the `dataSources` key in `application.[yml|groovy]`, the value should be `reports`.
+
 [source,groovy]
 ----
 --dataSource=reports

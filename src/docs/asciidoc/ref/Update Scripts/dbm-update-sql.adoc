@@ -6,7 +6,7 @@ Writes the SQL that will update the database to the current version to STDOUT or
 
 ===== Description
 
-Generates SQL for all un-run changeSets from the changelog. Executes against the database configured in `DataSource.groovy` for the current environment (defaults to `dev`).
+Generates SQL for all un-run changeSets from the changelog. Executes against the database configured in `application.[yml|groovy]` for the current environment (defaults to `dev`).
 
 This is useful for inspecting the generated SQL before running an update, or to generate SQL which can be tuned before running manually.
 
@@ -31,8 +31,8 @@ NOTE: Note that the `contexts`, `defaultSchema`, and `dataSource` parameter name
 grails dbm-update-sql "--contexts=<<contexts>>" "--defaultSchema=<<defaultSchema>>" --dataSource=<<dataSource>>
 ----
 
-NOTE: For the `dataSource` parameter if the data source is configured as `dataSource_reports` in DataSource.groovy
-the suffix of `reports` will be used as the parameter value.
+NOTE: For the `dataSource` parameter; If the data source is configured as `reports` underneath the `dataSources` key in `application.[yml|groovy]`, the value should be `reports`.
+
 [source,groovy]
 ----
 --dataSource=reports
