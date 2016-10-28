@@ -51,7 +51,7 @@ configurations {
 }
 
 dependencies {
-    compile 'org.liquibase:liquibase-core:3.5.3'
+    compile "org.liquibase:liquibase-core:$liquibaseVersion"
 
     compile('org.liquibase.ext:liquibase-hibernate4:3.6') {
         exclude group: 'org.hibernate', module: 'hibernate-core'
@@ -60,12 +60,8 @@ dependencies {
         exclude group: 'org.hibernate', module: 'hibernate-envers'
         exclude group: 'org.liquibase', module: 'liquibase-core'
     }
-    provided 'org.hibernate:hibernate-core:4.3.11.Final'
 
-    provided 'org.springframework.boot:spring-boot-starter-logging'
-    provided "org.springframework.boot:spring-boot-starter-actuator"
-    provided "org.springframework.boot:spring-boot-autoconfigure"
-    provided "org.springframework.boot:spring-boot-starter-tomcat"
+    provided 'org.hibernate:hibernate-core:4.3.11.Final'
 
     provided "org.grails:grails-web-boot"
     provided "org.grails:grails-dependencies"
@@ -105,7 +101,8 @@ asciidoctor {
             'version'       : project.version,
             'groupId'       : project.group,
             'artifactId'    : project.name,
-            'sourcedir'     : "${projectDir}/src/main/groovy"
+            'sourcedir'     : "${projectDir}/src/main/groovy",
+            'liquibaseVersion': liquibaseVersion
 }
 
 task apidocs(type: Groovydoc) {
@@ -123,3 +120,5 @@ task docs(type:Copy, dependsOn:[apidocs, asciidoctor])  {
     from "$buildDir/asciidoc/html5"
     into "$buildDir/docs"
 }
+
+configurations.testCompile.extendsFrom(configurations.compileOnly)
