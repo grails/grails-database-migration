@@ -602,6 +602,17 @@ dependencies {
 </div>
 </div>
 <div class="paragraph">
+<p>It is also recommended to add a direct dependency to liquibase because Spring Boot overrides the one provided by this plugin</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">dependencies {
+   ...
+     compile 'org.liquibase:liquibase-core:3.5.3'
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
 <p><strong>Typical initial workflow</strong></p>
 </div>
 <div class="paragraph">
@@ -3808,7 +3819,7 @@ For the <code>dataSource</code> parameter; If the data source is configured as <
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-10-28 16:37:15 +00:00
+Last updated 2016-10-28 18:06:08 +00:00
 </div>
 </div>
 </body>
