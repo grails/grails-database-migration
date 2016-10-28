@@ -28,7 +28,7 @@ Since Liquibase maintains a record of changes that have been applied, you can av
 grails.plugin.databasemigration.updateOnStart = true
 ----
 
-to Config.groovy. In addition you must specify the file containing changes; specify the name using the `updateOnStartFileName` property, e.g.:
+to application.groovy. In addition you must specify the file containing changes; specify the name using the `updateOnStartFileName` property, e.g.:
 
 [source,groovy]
 ----

@@ -25,12 +25,12 @@ grails.plugin.databasemigration. databaseChangeLogLockTableName,'databasechangel
 grails.plugin.databasemigration. loadPluginMigrations,`false`,if `true`, load migrations from the classpath (i.e. plugin migrations) using `GrailsClassLoaderResourceAccessor` instead of `FileSystemResourceAccessor` (War deployed mode always uses `GrailsClassLoaderResourceAccessor`)
 |===
 
-NOTE: All of the above configs can be used for a multiple datasources in Grails 2.0.x.
+NOTE: All of the above configs can be used for a multiple datasources in Grails 3.x
 
 
 *Multiple DataSource Example:*
 
-If a reports dataSource is configured in DataSource.groovy
+If a reports dataSource is configured in application.yml or application.groovy
 [source,groovy]
 ----
 dataSource_reports {

@@ -1,7 +1,7 @@
 === History
 * March 18, 2016
 ** 2.0.0.RC4 
-*** Grails 3.x
+*** Grails >= 3.0.0
 * April 22, 2014
 ** 1.4.0 release
 *** Grails >= 2.3.0
