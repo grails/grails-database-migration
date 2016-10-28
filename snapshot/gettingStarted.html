@@ -461,6 +461,20 @@ dependencies {
 </div>
 </div>
 <div class="paragraph">
+<p>You should also tell Gradle about the migrations folder</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">sourceSets {
+    main {
+        resources {
+            srcDir 'grails-app/migrations'
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
 <p><strong>Typical initial workflow</strong></p>
 </div>
 <div class="paragraph">
@@ -559,7 +573,7 @@ If you use the XML format (or use a non-default Groovy filename), be sure to cha
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-10-28 18:06:08 +00:00
+Last updated 2016-10-28 18:14:44 +00:00
 </div>
 </div>
 </body>
