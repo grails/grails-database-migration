@@ -1,43 +1,43 @@
 == Configuration
 
-There are a few configuration options for the plugin:
+There are a few configuration options for the plugin. All configurations are prefixed with `grails.plugin.databasemigration`:
 
-[format="csv", options="header"]
-|===
+[options="header"]
+|==================================
+|Property |Default |Meaning
+|changelogLocation |`grails-app/migrations` |the folder containing the main changelog file (which can include one or more other files)
+|changelogFileName |`changelog.groovy` |the name of the main changelog file
+|changelogProperties |none |a map of properties to use for property substitution in Groovy DSL changelogs
+|contexts |none |A comma-delimited list of http://www.liquibase.org/manual/contexts[context] names. If specified, only changesets tagged with one of the context names will be run
+|dbDocLocation |`target/dbdoc` |the directory where the output from the <<ref-documentation-scripts-dbm-db-doc,dbm-db-doc>> script is written
+|dbDocController.enabled |`true` in dev mode |whether the /dbdoc/ url is accessible at runtime
+|dropOnStart |`false` |if `true` then drops all tables before auto-running migrations (if updateOnStart is true)
+|updateOnStart |`false` |if `true` then changesets from the specified list of names will be run at startup
+|updateOnStartFileName |none |the file name (relative to `changelogLocation`) to run at startup if `updateOnStart` is `true`
+|updateOnStartDefaultSchema |none |the default schema to use when running auto-migrate on start
+|updateOnStartContexts |none |A comma-delimited list of http://www.liquibase.org/manual/contexts[context] names. If specified, only changesets tagged with one of the context names will be run
+|autoMigrateScripts |['RunApp'] |the scripts when running auto-migrate. Useful to run auto-migrate during test phase with: ['RunApp', 'TestApp']
+|excludeObjects |none |A comma-delimited list of database object names to ignore while performing a dbm-gorm-diff or dbm-generate-gorm-changelog
+|includeObjects |none |A comma-delimited list of database object names to look for while performing a dbm-gorm-diff or dbm-generate-gorm-changelog
+|databaseChangeLogTableName |'databasechangelog' |the Liquibase changelog record table name
+|databaseChangeLogLockTableName |'databasechangeloglock' |the Liquibase lock table name
+|loadPluginMigrations |`false` |if `true`, load migrations from the classpath (i.e. plugin migrations) using `GrailsClassLoaderResourceAccessor` instead of `FileSystemResourceAccessor` (War deployed mode always uses `GrailsClassLoaderResourceAccessor`)
+|==================================
 
-*Property*,*Default*,*Meaning*
-grails.plugin.databasemigration. changelogLocation,`grails-app/migrations`,the folder containing the main changelog file (which can include one or more other files)
-grails.plugin.databasemigration. changelogFileName,`changelog.groovy`,the name of the main changelog file
-grails.plugin.databasemigration. changelogProperties,none,a map of properties to use for property substitution in Groovy DSL changelogs
-grails.plugin.databasemigration. contexts,none,A comma-delimited list of http://www.liquibase.org/manual/contexts[context] names. If specified, only changesets tagged with one of the context names will be run
-grails.plugin.databasemigration. dbDocLocation,`target/dbdoc`,the directory where the output from the <<ref-documentation-scripts-dbm-db-doc,dbm-db-doc>> script is written
-grails.plugin.databasemigration. dbDocController.enabled,`true` in dev mode,whether the /dbdoc/ url is accessible at runtime
-grails.plugin.databasemigration. dropOnStart,`false`,if `true` then drops all tables before auto-running migrations (if updateOnStart is true)
-grails.plugin.databasemigration. updateOnStart,`false`,if `true` then changesets from the specified list of names will be run at startup
-grails.plugin.databasemigration. updateOnStartFileName,none,the file name (relative to `changelogLocation`) to run at startup if `updateOnStart` is `true`
-grails.plugin.databasemigration. updateOnStartDefaultSchema,none,the default schema to use when running auto-migrate on start
-grails.plugin.databasemigration. updateOnStartContexts,none,A comma-delimited list of http://www.liquibase.org/manual/contexts[context] names. If specified, only changesets tagged with one of the context names will be run
-grails.plugin.databasemigration. autoMigrateScripts,['RunApp'],the scripts when running auto-migrate. Useful to run auto-migrate during test phase with: ['RunApp', 'TestApp']
-grails.plugin.databasemigration. ignoredColumns,none,one or more database column names (regexes) to ignore while performing a dbm-gorm-diff or dbm-generate-gorm-changelog
-grails.plugin.databasemigration. ignoredObjects,none,one or more database object names to ignore while performing a dbm-gorm-diff or dbm-generate-gorm-changelog
-grails.plugin.databasemigration. databaseChangeLogTableName,'databasechangelog',the Liquibase changelog record table name
-grails.plugin.databasemigration. databaseChangeLogLockTableName,'databasechangeloglock',the Liquibase lock table name
-grails.plugin.databasemigration. loadPluginMigrations,`false`,if `true`, load migrations from the classpath (i.e. plugin migrations) using `GrailsClassLoaderResourceAccessor` instead of `FileSystemResourceAccessor` (War deployed mode always uses `GrailsClassLoaderResourceAccessor`)
-|===
-
-NOTE: All of the above configs can be used for a multiple datasources in Grails 3.x
+NOTE: All of the above configs can be used for a multiple datasources
 
 
 *Multiple DataSource Example:*
 
-If a reports dataSource is configured in application.yml or application.groovy
+If a reports dataSource is configured in application.yml
 [source,groovy]
 ----
-dataSource_reports {
-   url = ...
-   driverClassName = ...
-   ...
-}
+dataSources:
+    dataSource:
+        ...
+    reports:
+        url: ...
+        driverClassName: ...
 ----
 
 The configuration for this data source would be:
