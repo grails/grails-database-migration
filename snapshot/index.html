@@ -1126,11 +1126,11 @@ changeSet(<span class="key">id</span>:<span class="string"><span class="delimite
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>false</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">if <code>true</code> then changesets from the specified list of names will be run at startup</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">grails.plugin.databasemigration. updateOnStartFileNames</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">grails.plugin.databasemigration. updateOnStartFileName</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">none</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">one or more file names (relative to <code>changelogLocation</code>) to run at startup if <code>updateOnStart</code> is <code>true</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">the file name (relative to <code>changelogLocation</code>) to run at startup if <code>updateOnStart</code> is <code>true</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">grails.plugin.databasemigration. updateOnStartDefaultSchema</p></td>
 </tr>
 <tr>
@@ -1258,11 +1258,11 @@ When running migration scripts on non-development databases, it&#8217;s importan
 </div>
 </div>
 <div class="paragraph">
-<p>to Config.groovy. In addition you must specify the file(s) containing changes; specify the name(s) using the <code>updateOnStartFileNames</code> property, e.g.:</p>
+<p>to Config.groovy. In addition you must specify the file containing changes; specify the name using the <code>updateOnStartFileName</code> property, e.g.:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">grails.plugin.databasemigration.updateOnStartFileNames = [<span class="string"><span class="delimiter">'</span><span class="content">changelog.groovy</span><span class="delimiter">'</span></span>]</code></pre>
+<pre class="CodeRay highlight"><code data-lang="groovy">grails.plugin.databasemigration.updateOnStartFileName = <span class="string"><span class="delimiter">'</span><span class="content">changelog.groovy</span><span class="delimiter">'</span></span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -4203,7 +4203,7 @@ the suffix of <code>reports</code> will be used as the parameter value.
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-10-27 18:57:26 +00:00
+Last updated 2016-10-28 15:10:26 +00:00
 </div>
 </div>
 </body>
