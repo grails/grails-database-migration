@@ -28,11 +28,11 @@ Since Liquibase maintains a record of changes that have been applied, you can av
 grails.plugin.databasemigration.updateOnStart = true
 ----
 
-to Config.groovy. In addition you must specify the file(s) containing changes; specify the name(s) using the `updateOnStartFileNames` property, e.g.:
+to Config.groovy. In addition you must specify the file containing changes; specify the name using the `updateOnStartFileName` property, e.g.:
 
 [source,groovy]
 ----
-grails.plugin.databasemigration.updateOnStartFileNames = ['changelog.groovy']
+grails.plugin.databasemigration.updateOnStartFileName = 'changelog.groovy'
 ----
 
 Since changelogs can contain changelogs you'll most often just specify the root changelog, changelog.groovy by convention. Any changes that haven't been executed (in the specified file(s) or files included by them) will be run in the order specified.
