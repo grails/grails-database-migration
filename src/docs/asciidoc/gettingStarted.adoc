@@ -27,6 +27,18 @@ dependencies {
 }
 ----
 
+You should also tell Gradle about the migrations folder
+
+[source,groovy,subs="attributes"]
+----
+sourceSets {
+    main {
+        resources {
+            srcDir 'grails-app/migrations'
+        }
+    }
+}
+----
 
 *Typical initial workflow*
 
