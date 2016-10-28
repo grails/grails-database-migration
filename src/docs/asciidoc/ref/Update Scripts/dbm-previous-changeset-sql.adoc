@@ -6,7 +6,7 @@ Writes the SQL to STDOUT or a file for the specified number of previous changese
 
 ===== Description
 
-Generates SQL for the specifed number of changeSets from the changelog. Executes against the database configured in `DataSource.groovy` for the current environment (defaults to `dev`).
+Generates SQL for the specifed number of changeSets from the changelog. Executes against the database configured in `application.[yml|groovy]` for the current environment (defaults to `dev`).
 
 Usage:
 [source,java]

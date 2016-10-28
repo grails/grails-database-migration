@@ -1,12 +1,19 @@
 == Getting Started
 
-*The first step is to add a dependency for the plugin in `BuildConfig.groovy`:*
+*The first step is to add a dependency for the plugin in `build.gradle`:*
 
 [source,groovy,subs="attributes"]
 ----
-plugins {
+buildscript {
+   dependencies {
+      ...
+      classpath '{groupId}:{artifactId}:{version}'
+   }
+}
+
+dependencies {
    ...
-   runtime "{groupId}:{artifactId}:{version}"
+     compile '{groupId}:{artifactId}:{version}'
 }
 ----
 
@@ -31,7 +38,7 @@ grails dbm-generate-changelog changelog.xml
 
 depending on whether you prefer the Groovy DSL or XML. The filename is relative to the changelog base folder, which defaults to `grails-app/migrations`.
 
-NOTE: If you use the XML format (or use a non-default Groovy filename), be sure to change the name of the file in `Config.groovy` so `dbm-update` and other scripts find the file:
+NOTE: If you use the XML format (or use a non-default Groovy filename), be sure to change the name of the file in `application.groovy` so `dbm-update` and other scripts find the file:
 [source,groovy]
 ----
 grails.plugin.databasemigration.changelogFileName = 'changelog.xml'
@@ -73,36 +80,6 @@ or the <<ref-maintenance-scripts-dbm-changelog-sync,dbm-changelog-sync>> script 
 grails dbm-changelog-sync
 ----
 
-NOTE: If you use the searchable plugin you need to configure it to run after the database migrations have run. Either in `Searchable.groovy` or in `Config.groovy` (if that's where you configure Searchable):
-[source,groovy]
-----
-// disable the plugin's operations here.  we'll re-enable them in the Bootstrap to avoid conflicts with database-migration
-mirrorChanges = false
-bulkIndexOnStartup = false
-----
-
-[source,groovy]
-.Bootstrap.groovy
-----
-class BootStrap {
-
-   def searchableService
-
-   def init = { servletContext ->
-      // do any data loading you would normally do
-
-      // Manually start the mirroring process to ensure that it comes after the automated migrations.
-      println "Performing bulk index"
-      searchableService.reindex()
-      println "Starting mirror service"
-      searchableService.startMirroring()
-   }
-}
-----
-
 *Source control*
 
 Now you can commit the changelog and the corresponding application code to source control. Other developers can then update and synchronize their databases, and start doing migrations themselves.
-
-[[autobase]]
-include::gettingStarted/autobase.adoc[]
