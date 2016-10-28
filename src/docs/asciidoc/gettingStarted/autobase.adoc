@@ -4,7 +4,7 @@ Autobase is another plugin for managing database migrations. It uses Groovy migr
 
 ==== Location of migration scripts
 
-Autobase defaulted to putting its migration scripts into a `./migrations` directory, whereas the Database Migration plugin uses `./grails-app/migrations` as the default. So, you can either move your scripts or add this setting to your `grails-app/conf/Config.groovy` file:
+Autobase defaulted to putting its migration scripts into a `./migrations` directory, whereas the Database Migration plugin uses `./grails-app/migrations` as the default. So, you can either move your scripts or add this setting to your `grails-app/conf/application.groovy` file:
 [source,groovy]
 ----
 grails.plugin.databasemigration.changelogLocation = "migrations"
