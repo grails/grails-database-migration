@@ -59,17 +59,17 @@ dependencies {
         exclude group: 'org.hibernate', module: 'hibernate-envers'
         exclude group: 'org.liquibase', module: 'liquibase-core'
     }
-    provided 'org.hibernate:hibernate-core:5.1.1.Final'
+    compileOnly 'org.hibernate:hibernate-core:5.1.1.Final'
 
-    provided 'org.springframework.boot:spring-boot-starter-logging'
-    provided "org.springframework.boot:spring-boot-starter-actuator"
-    provided "org.springframework.boot:spring-boot-autoconfigure"
-    provided "org.springframework.boot:spring-boot-starter-tomcat"
+    compileOnly 'org.springframework.boot:spring-boot-starter-logging'
+    compileOnly "org.springframework.boot:spring-boot-starter-actuator"
+    compileOnly "org.springframework.boot:spring-boot-autoconfigure"
+    compileOnly "org.springframework.boot:spring-boot-starter-tomcat"
 
-    provided "org.grails:grails-web-boot"
-    provided "org.grails:grails-dependencies"
-    provided 'javax.servlet:javax.servlet-api:3.1.0'
-    provided "org.grails.plugins:hibernate5"
+    compileOnly "org.grails:grails-web-boot"
+    compileOnly "org.grails:grails-dependencies"
+    compileOnly 'javax.servlet:javax.servlet-api:3.1.0'
+    compileOnly "org.grails.plugins:hibernate5"
 
 
     testCompile "org.grails:grails-plugin-testing"
@@ -124,3 +124,5 @@ task docs(type:Copy, dependsOn:[apidocs, asciidoctor])  {
     from "$buildDir/asciidoc/html5"
     into "$buildDir/docs"
 }
+
+configurations.testCompile.extendsFrom(configurations.compileOnly)

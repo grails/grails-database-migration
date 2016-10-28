@@ -18,6 +18,7 @@ package org.grails.plugins.databasemigration.command
 import grails.config.ConfigMap
 import grails.core.GrailsApplication
 import grails.dev.commands.ExecutionContext
+import grails.orm.bootstrap.HibernateDatastoreSpringInitializer
 import grails.util.Environment
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
@@ -25,6 +26,7 @@ import groovy.transform.stc.ClosureParams
 import groovy.transform.stc.SimpleType
 import liquibase.database.Database
 import org.grails.config.PropertySourcesConfig
+import org.grails.datastore.mapping.config.Entity
 import org.grails.datastore.mapping.core.connections.ConnectionSource
 import org.grails.orm.hibernate.HibernateDatastore
 import org.grails.plugins.databasemigration.DatabaseMigrationTransactionManager
@@ -71,14 +73,17 @@ trait ApplicationContextDatabaseMigrationCommand implements DatabaseMigrationCom
         }
     }
 
-    @CompileDynamic
     private Database createGormDatabase(ConfigurableApplicationContext applicationContext, String dataSource) {
+        final String defaultDataSource = "DEFAULT"
+        String dataSourceName = dataSource ? dataSource : defaultDataSource
 
-        String dataSourceName = dataSource ? dataSource : ConnectionSource.DEFAULT
+        boolean isDefault = dataSourceName == defaultDataSource
+        String sessionFactoryName = "sessionFactory"
+        if (!isDefault) {
+            sessionFactoryName = sessionFactoryName + '_' + dataSourceName
+        }
 
-        HibernateDatastore hibernateDatastore = applicationContext.getBean("hibernateDatastore", HibernateDatastore).getDatastoreForConnection(dataSourceName)
-
-        def serviceRegistry = ((SessionFactoryImplementor)hibernateDatastore.sessionFactory).serviceRegistry.parentServiceRegistry
+        def serviceRegistry = applicationContext.getBean(sessionFactoryName, SessionFactoryImplementor).serviceRegistry.parentServiceRegistry
 
         Dialect dialect = serviceRegistry.getService(JdbcServices.class).dialect
 
