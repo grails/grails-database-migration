@@ -15,6 +15,3 @@ As you make changes in your code (typically domain classes) that require changes
 Your primary interaction with the plugin will be using the provided scripts. For the most part these correspond to the many Liquibase commands that are typically executed directly from the commandline or with its Ant targets, but there are also a few Grails-specific scripts that take advantage of the information available from the GORM mappings.
 
 All of the scripts start with `dbm-` to ensure that they're unique and don't clash with scripts from Grails or other plugins.
-
-[[history]]
-include::introduction/history.adoc[]
