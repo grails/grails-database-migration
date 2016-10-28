@@ -83,6 +83,3 @@ grails dbm-changelog-sync
 *Source control*
 
 Now you can commit the changelog and the corresponding application code to source control. Other developers can then update and synchronize their databases, and start doing migrations themselves.
-
-[[autobase]]
-include::gettingStarted/autobase.adoc[]
