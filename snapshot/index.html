@@ -516,11 +516,7 @@ table.CodeRay td.code>pre{padding:0}
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
 <li><a href="#introduction">1. Introduction to the Database Migration Plugin</a></li>
-<li><a href="#gettingStarted">2. Getting Started</a>
-<ul class="sectlevel2">
-<li><a href="#autobase">2.1. Migration from Autobase</a></li>
-</ul>
-</li>
+<li><a href="#gettingStarted">2. Getting Started</a></li>
 <li><a href="#configuration">3. Configuration</a></li>
 <li><a href="#generalUsage">4. General Usage</a>
 <ul class="sectlevel2">
@@ -588,13 +584,20 @@ table.CodeRay td.code>pre{padding:0}
 <h2 id="gettingStarted">2. Getting Started</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><strong>The first step is to add a dependency for the plugin in <code>BuildConfig.groovy</code>:</strong></p>
+<p><strong>The first step is to add a dependency for the plugin in <code>build.gradle</code>:</strong></p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">plugins {
+<pre class="CodeRay highlight"><code data-lang="groovy">buildscript {
+   dependencies {
+      ...
+      classpath 'org.grails.plugins:database-migration:3.0.0.BUILD-SNAPSHOT'
+   }
+}
+
+dependencies {
    ...
-   runtime "org.grails.plugins:database-migration:3.0.0.BUILD-SNAPSHOT"
+     compile 'org.grails.plugins:database-migration:3.0.0.BUILD-SNAPSHOT'
 }</code></pre>
 </div>
 </div>
@@ -633,7 +636,7 @@ table.CodeRay td.code>pre{padding:0}
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-If you use the XML format (or use a non-default Groovy filename), be sure to change the name of the file in <code>Config.groovy</code> so <code>dbm-update</code> and other scripts find the file:
+If you use the XML format (or use a non-default Groovy filename), be sure to change the name of the file in <code>application.groovy</code> so <code>dbm-update</code> and other scripts find the file:
 </td>
 </tr>
 </table>
@@ -686,166 +689,11 @@ If you use the XML format (or use a non-default Groovy filename), be sure to cha
 <pre class="CodeRay highlight"><code data-lang="groovy">grails dbm-changelog-sync</code></pre>
 </div>
 </div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-If you use the searchable plugin you need to configure it to run after the database migrations have run. Either in <code>Searchable.groovy</code> or in <code>Config.groovy</code> (if that&#8217;s where you configure Searchable):
-</td>
-</tr>
-</table>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="comment">// disable the plugin's operations here.  we'll re-enable them in the Bootstrap to avoid conflicts with database-migration</span>
-mirrorChanges = <span class="predefined-constant">false</span>
-bulkIndexOnStartup = <span class="predefined-constant">false</span></code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">Bootstrap.groovy</div>
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">BootStrap</span> {
-
-   <span class="keyword">def</span> searchableService
-
-   <span class="keyword">def</span> init = { servletContext -&gt;
-      <span class="comment">// do any data loading you would normally do</span>
-
-      <span class="comment">// Manually start the mirroring process to ensure that it comes after the automated migrations.</span>
-      println <span class="string"><span class="delimiter">&quot;</span><span class="content">Performing bulk index</span><span class="delimiter">&quot;</span></span>
-      searchableService.reindex()
-      println <span class="string"><span class="delimiter">&quot;</span><span class="content">Starting mirror service</span><span class="delimiter">&quot;</span></span>
-      searchableService.startMirroring()
-   }
-}</code></pre>
-</div>
-</div>
 <div class="paragraph">
 <p><strong>Source control</strong></p>
 </div>
 <div class="paragraph">
 <p>Now you can commit the changelog and the corresponding application code to source control. Other developers can then update and synchronize their databases, and start doing migrations themselves.</p>
-</div>
-<div class="sect2">
-<h3 id="autobase">2.1. Migration from Autobase</h3>
-<div class="paragraph">
-<p>Autobase is another plugin for managing database migrations. It uses Groovy migration scripts that have a similar syntax to this plugin&#8217;s ones, but there are some differences that mean you will have to do a little bit of work to migrate your existing scripts. The following notes are applicable to Autobase 0.11 and earlier.</p>
-</div>
-<div class="sect3">
-<h4 id="_location_of_migration_scripts">2.1.1. Location of migration scripts</h4>
-<div class="paragraph">
-<p>Autobase defaulted to putting its migration scripts into a <code>./migrations</code> directory, whereas the Database Migration plugin uses <code>./grails-app/migrations</code> as the default. So, you can either move your scripts or add this setting to your <code>grails-app/conf/Config.groovy</code> file:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">grails.plugin.databasemigration.changelogLocation = <span class="string"><span class="delimiter">&quot;</span><span class="content">migrations</span><span class="delimiter">&quot;</span></span></code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_new_syntax_for_all_scripts">2.1.2. New syntax for all scripts</h4>
-<div class="paragraph">
-<p>Autobase allowed you to write changelog files that just included the change sets one after the other. This isn&#8217;t supported by the Database Migration plugin, so <em>all</em> changelogs must put their change set definitions inside a block like so:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">databaseChangeLog = {
-   changeSet(...) { ... }
-   changeSet(...) { ... }
-   ...
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>In addition, if your main Autobase changelog specifies a logical file path (see next section), you will have to use the syntax:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">databaseChangeLog = {
-   logicalFilePath <span class="string"><span class="delimiter">&quot;</span><span class="content">app-autobase</span><span class="delimiter">&quot;</span></span>
-   ...
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>in all the changelog files. If you don&#8217;t do this, the plugin won&#8217;t recognise that existing migrations have already been applied to a database and all of them will be reapplied.</p>
-</div>
-<div class="paragraph">
-<p>These changes also apply to the main changelog, but there are some other differences to cover for that.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_parent_changelog_differences">2.1.3. Parent changelog differences</h4>
-<div class="paragraph">
-<p>The syntax for the main (or parent) Autobase changelog file looks like:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">databaseChangeLog(<span class="key">logicalFilePath</span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">appName-autobase</span><span class="delimiter">&quot;</span></span>) {
-   include <span class="string"><span class="delimiter">&quot;</span><span class="content">./migrations/batch/SomeBigChanges.groovy</span><span class="delimiter">&quot;</span></span>
-   include <span class="string"><span class="delimiter">&quot;</span><span class="content">./migrations/changelog-1.0.1.groovy</span><span class="delimiter">&quot;</span></span>
-   include <span class="string"><span class="delimiter">&quot;</span><span class="content">./migrations/changelog-1.0.5.groovy</span><span class="delimiter">&quot;</span></span>
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The new format is noticeably different:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">databaseChangeLog = {
-   logicalFilePath <span class="string"><span class="delimiter">&quot;</span><span class="content">site-autobase</span><span class="delimiter">&quot;</span></span>
-
-   include <span class="key">file</span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">batch/SomeBigChanges.groovy</span><span class="delimiter">&quot;</span></span>
-   include <span class="key">file</span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">changelog-1.0.1.groovy</span><span class="delimiter">&quot;</span></span>
-   include <span class="key">file</span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">changelog-1.0.5.groovy</span><span class="delimiter">&quot;</span></span>
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>In particular, note that:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>The <code>databaseChangeLog</code> line is different</p>
-</li>
-<li>
-<p>The logical file path must be defined inside the block</p>
-</li>
-<li>
-<p><code>include</code> takes a named <code>file</code> argument</p>
-</li>
-<li>
-<p>The file paths passed to <code>include</code> are relative to the configured migrations directory</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>Fortunately, these changes are highly localised and pretty trivial to implement.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_modifycolumn_refactoring_no_longer_available">2.1.4. modifyColumn refactoring no longer available</h4>
-<div class="paragraph">
-<p>The <code>modifyColumn</code> refactoring has been removed in the version of Liquibase that comes with the Database Migration plugin. Instead you should use the new <code>modifyDataType</code> refactoring like so:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">...
-changeSet(<span class="key">id</span>:<span class="string"><span class="delimiter">'</span><span class="content">IncreaseCommentBodySize</span><span class="delimiter">'</span></span>, <span class="key">author</span>:<span class="string"><span class="delimiter">'</span><span class="content">someone</span><span class="delimiter">'</span></span>) {
-   modifyDataType <span class="key">tableName</span>: <span class="string"><span class="delimiter">'</span><span class="content">comment</span><span class="delimiter">'</span></span>, <span class="key">columnName</span>: <span class="string"><span class="delimiter">'</span><span class="content">body</span><span class="delimiter">'</span></span>, <span class="key">newDataType</span>: <span class="string"><span class="delimiter">'</span><span class="content">TEXT</span><span class="delimiter">'</span></span>
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The parameters are the same as for <code>modifyColumn</code>, but the syntax is somewhat different.</p>
-</div>
-</div>
 </div>
 </div>
 </div>
@@ -1040,7 +888,7 @@ When running migration scripts on non-development databases, it&#8217;s importan
 </div>
 </div>
 <div class="paragraph">
-<p>to Config.groovy. In addition you must specify the file containing changes; specify the name using the <code>updateOnStartFileName</code> property, e.g.:</p>
+<p>to application.groovy. In addition you must specify the file containing changes; specify the name using the <code>updateOnStartFileName</code> property, e.g.:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1462,7 +1310,7 @@ beans = {
 <p>You can use the <a href="#ref-documentation-scripts-dbm-db-doc">dbm-db-doc</a> script to generate static HTML files to view changelog information, but another option is to use the <code>DbDocController</code> at runtime. By default this controller is mapped to <code>/appname/dbdoc/</code> but this can be customized with <code>UrlMappings</code> like any controller.</p>
 </div>
 <div class="paragraph">
-<p>You probably don&#8217;t want to expose this information to all of your application&#8217;s users so by default the controller is only enabled in the development environment. But you can enable or disable it for any environment in <code>Config.groovy</code> with the <code>dbDocController.enabled</code> config option. For example to enable for all environments (be sure to guard the URL with a security plugin in prod):</p>
+<p>You probably don&#8217;t want to expose this information to all of your application&#8217;s users so by default the controller is only enabled in the development environment. But you can enable or disable it for any environment in <code>application.groovy</code> with the <code>dbDocController.enabled</code> config option. For example to enable for all environments (be sure to guard the URL with a security plugin in prod):</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1500,7 +1348,7 @@ beans = {
 <div class="sect4">
 <h5 id="_description">Description</h5>
 <div class="paragraph">
-<p>Executes against the database configured in <code>DataSource.groovy</code> for the current environment (defaults to <code>dev</code>) and another configured datasource in <code>DataSource.groovy</code>.</p>
+<p>Executes against the database configured in <code>application.[yml|groovy]</code>  for the current environment (defaults to <code>dev</code>) and another configured datasource in <code>application.[yml|groovy]</code>.</p>
 </div>
 <div class="paragraph">
 <p>If a filename parameter is specified then the output will be written to the named file, otherwise it will write to the console. If the filename ends with .groovy a Groovy DSL file will be created, otherwise a standard XML file will be created.</p>
@@ -1569,8 +1417,7 @@ Note that the <code>defaultSchema</code> and <code>dataSource</code> parameter n
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-For the <code>dataSource</code> parameter if the data source is configured as <code>dataSource_reports</code> in DataSource.groovy
-the suffix of <code>reports</code> will be used as the parameter value.
+For the <code>dataSource</code> parameter; If the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
 </td>
 </tr>
 </table>
@@ -1599,7 +1446,7 @@ the suffix of <code>reports</code> will be used as the parameter value.
 <p>File are written to the migrations folder, so specify the filename relative to the migrations folder (<code>grails-app/migrations</code> by default).</p>
 </div>
 <div class="paragraph">
-<p>Similar to <a href="#ref-diff-scripts-dbm-diff">dbm-diff</a> but diffs the current configuration based on the application&#8217;s domain classes with the database configured in <code>DataSource.groovy</code> for the current environment (defaults to <code>dev</code>).</p>
+<p>Similar to <a href="#ref-diff-scripts-dbm-diff">dbm-diff</a> but diffs the current configuration based on the application&#8217;s domain classes with the database configured in <code>application.[yml|groovy]</code> for the current environment (defaults to <code>dev</code>).</p>
 </div>
 <div class="paragraph">
 <p>Doesn&#8217;t modify any existing files - you need to manually merge the output into the changeset along with any necessary modifications.</p>
@@ -1661,8 +1508,7 @@ Note that the <code>defaultSchema</code> and <code>dataSource</code> parameter n
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-For the <code>dataSource</code> parameter if the data source is configured as <code>dataSource_reports</code> in DataSource.groovy
-the suffix of <code>reports</code> will be used as the parameter value.
+For the <code>dataSource</code> parameter; If the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
 </td>
 </tr>
 </table>
@@ -1741,8 +1587,7 @@ Note that the <code>contexts</code> and <code>dataSource</code> parameter name a
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-For the <code>dataSource</code> parameter if the data source is configured as <code>dataSource_reports</code> in DataSource.groovy
-the suffix of <code>reports</code> will be used as the parameter value.
+For the <code>dataSource</code> parameter; If the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
 </td>
 </tr>
 </table>
@@ -1870,7 +1715,7 @@ Note that the <code>contexts</code>, <code>defaultSchema</code>, and <code>dataS
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-For the <code>dataSource</code> parameter if the data source is configured as <code>dataSource_reports</code> in DataSource.groovy
+For the <code>dataSource</code> parameter if the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key` in <code>application.[yml|groovy]</code>
 the suffix of <code>reports</code> will be used as the parameter value.
 </td>
 </tr>
@@ -1947,8 +1792,7 @@ Note that the <code>contexts</code>, <code>defaultSchema</code>, and <code>dataS
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-For the <code>dataSource</code> parameter if the data source is configured as <code>dataSource_reports</code> in DataSource.groovy
-the suffix of <code>reports</code> will be used as the parameter value.
+For the <code>dataSource</code> parameter; If the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
 </td>
 </tr>
 </table>
@@ -2058,8 +1902,7 @@ Note that the <code>dataSource</code> parameter name and value must be quoted if
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-For the <code>dataSource</code> parameter if the data source is configured as <code>dataSource_reports</code> in DataSource.groovy
-the suffix of <code>reports</code> will be used as the parameter value.
+For the <code>dataSource</code> parameter; If the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
 </td>
 </tr>
 </table>
@@ -2136,8 +1979,7 @@ Note that the <code>dataSource</code> parameter name and value must be quoted if
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-For the <code>dataSource</code> parameter if the data source is configured as <code>dataSource_reports</code> in DataSource.groovy
-the suffix of <code>reports</code> will be used as the parameter value.
+For the <code>dataSource</code> parameter; If the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
 </td>
 </tr>
 </table>
@@ -2210,8 +2052,7 @@ Note that the <code>defaultSchema</code> and <code>dataSource</code> parameter n
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-For the <code>dataSource</code> parameter if the data source is configured as <code>dataSource_reports</code> in DataSource.groovy
-the suffix of <code>reports</code> will be used as the parameter value.
+For the <code>dataSource</code> parameter; If the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
 </td>
 </tr>
 </table>
@@ -2284,8 +2125,7 @@ Note that the <code>defaultSchema</code> and <code>dataSource</code> parameter n
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-For the <code>dataSource</code> parameter if the data source is configured as <code>dataSource_reports</code> in DataSource.groovy
-the suffix of <code>reports</code> will be used as the parameter value.
+For the <code>dataSource</code> parameter; If the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
 </td>
 </tr>
 </table>
@@ -2417,8 +2257,7 @@ Note that the <code>contexts</code>, <code>defaultSchema</code>, and <code>dataS
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-For the <code>dataSource</code> parameter if the data source is configured as <code>dataSource_reports</code> in DataSource.groovy
-the suffix of <code>reports</code> will be used as the parameter value.
+For the <code>dataSource</code> parameter; If the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
 </td>
 </tr>
 </table>
@@ -2492,7 +2331,7 @@ Note that the <code>dataSource</code> parameter name and value must be quoted if
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-For the <code>dataSource</code> parameter, if the data source is configured as <code>dataSource_reports</code> in DataSource.groovy
+For the <code>dataSource</code> parameter, if the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>
 the suffix of <code>reports</code> will be used as the parameter value.
 </td>
 </tr>
@@ -2563,8 +2402,7 @@ Note that the <code>defaultSchema</code> and <code>dataSource</code> parameter n
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-For the <code>dataSource</code> parameter if the data source is configured as <code>dataSource_reports</code> in DataSource.groovy
-the suffix of <code>reports</code> will be used as the parameter value.
+For the <code>dataSource</code> parameter; If the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
 </td>
 </tr>
 </table>
@@ -2643,8 +2481,7 @@ Note that the <code>verbose</code>, <code>contexts</code>, <code>defaultSchema</
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-For the <code>dataSource</code> parameter if the data source is configured as <code>dataSource_reports</code> in DataSource.groovy
-the suffix of <code>reports</code> will be used as the parameter value.
+For the <code>dataSource</code> parameter; If the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
 </td>
 </tr>
 </table>
@@ -2724,8 +2561,7 @@ Note that the <code>defaultSchema</code> and <code>dataSource</code> parameter n
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-For the <code>dataSource</code> parameter if the data source is configured as <code>dataSource_reports</code> in DataSource.groovy
-the suffix of <code>reports</code> will be used as the parameter value.
+For the <code>dataSource</code> parameter; If the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
 </td>
 </tr>
 </table>
@@ -2795,8 +2631,7 @@ Note that the <code>dataSource</code> parameter name and value must be quoted if
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-For the <code>dataSource</code> parameter if the data source is configured as <code>dataSource_reports</code> in DataSource.groovy
-the suffix of <code>reports</code> will be used as the parameter value.
+For the <code>dataSource</code> parameter; If the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
 </td>
 </tr>
 </table>
@@ -2875,8 +2710,7 @@ Note that the <code>contexts</code>, <code>defaultSchema</code>, and <code>dataS
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-For the <code>dataSource</code> parameter if the data source is configured as <code>dataSource_reports</code> in DataSource.groovy
-the suffix of <code>reports</code> will be used as the parameter value.
+For the <code>dataSource</code> parameter; If the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
 </td>
 </tr>
 </table>
@@ -2905,7 +2739,7 @@ the suffix of <code>reports</code> will be used as the parameter value.
 <p>File are written to the migrations folder, so specify the filename relative to the migrations folder (<code>grails-app/migrations</code> by default).</p>
 </div>
 <div class="paragraph">
-<p>Executes against the database configured in <code>DataSource.groovy</code> for the current environment (defaults to <code>dev</code>).</p>
+<p>Executes against the database configured in <code>application.[yml|groovy]</code> for the current environment (defaults to <code>dev</code>).</p>
 </div>
 <div class="paragraph">
 <p>Usage:</p>
@@ -2964,8 +2798,7 @@ Note that the <code>diffTypes</code>, <code>defaultSchema</code>, and <code>data
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-For the <code>dataSource</code> parameter if the data source is configured as <code>dataSource_reports</code> in DataSource.groovy
-the suffix of <code>reports</code> will be used as the parameter value.
+For the <code>dataSource</code> parameter; If the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
 </td>
 </tr>
 </table>
@@ -3047,8 +2880,7 @@ Note that the <code>dataSource</code> parameter name and value must be quoted if
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-For the <code>dataSource</code> parameter if the data source is configured as <code>dataSource_reports</code> in DataSource.groovy
-the suffix of <code>reports</code> will be used as the parameter value.
+For the <code>dataSource</code> parameter; If the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
 </td>
 </tr>
 </table>
@@ -3131,8 +2963,7 @@ Note that the <code>contexts</code>, <code>defaultSchema</code>, and <code>dataS
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-For the <code>dataSource</code> parameter if the data source is configured as <code>dataSource_reports</code> in DataSource.groovy
-the suffix of <code>reports</code> will be used as the parameter value.
+For the <code>dataSource</code> parameter; If the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
 </td>
 </tr>
 </table>
@@ -3212,8 +3043,7 @@ Note that the <code>contexts</code>, <code>defaultSchema</code>, and <code>dataS
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-For the <code>dataSource</code> parameter if the data source is configured as <code>dataSource_reports</code> in DataSource.groovy
-the suffix of <code>reports</code> will be used as the parameter value.
+For the <code>dataSource</code> parameter; If the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
 </td>
 </tr>
 </table>
@@ -3299,8 +3129,7 @@ Note that the <code>contexts</code>, <code>defaultSchema</code>, and <code>dataS
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-For the <code>dataSource</code> parameter if the data source is configured as <code>dataSource_reports</code> in DataSource.groovy
-the suffix of <code>reports</code> will be used as the parameter value.
+For the <code>dataSource</code> parameter; If the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
 </td>
 </tr>
 </table>
@@ -3389,8 +3218,8 @@ Note that the <code>contexts</code>, <code>defaultSchema</code>, <code>dataSourc
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-For the <code>dataSource</code> parameter if the data source is configured as <code>dataSource_reports</code> in DataSource.groovy
-the suffix of <code>reports</code> will be used as the parameter value.
+For the <code>dataSource</code> parameter; If the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>,
+the value should be <code>reports</code>.
 </td>
 </tr>
 </table>
@@ -3476,8 +3305,7 @@ Note that the <code>contexts</code>, <code>defaultSchema</code>, and <code>dataS
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-For the <code>dataSource</code> parameter if the data source is configured as <code>dataSource_reports</code> in DataSource.groovy
-the suffix of <code>reports</code> will be used as the parameter value.
+For the <code>dataSource</code> parameter; If the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
 </td>
 </tr>
 </table>
@@ -3560,8 +3388,7 @@ Note that the <code>contexts</code>, <code>defaultSchema</code>, and <code>dataS
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-For the <code>dataSource</code> parameter if the data source is configured as <code>dataSource_reports</code> in DataSource.groovy
-the suffix of <code>reports</code> will be used as the parameter value.
+For the <code>dataSource</code> parameter; If the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
 </td>
 </tr>
 </table>
@@ -3587,7 +3414,7 @@ the suffix of <code>reports</code> will be used as the parameter value.
 <div class="sect4">
 <h5 id="_description_28">Description</h5>
 <div class="paragraph">
-<p>Generates SQL for the specifed number of changeSets from the changelog. Executes against the database configured in <code>DataSource.groovy</code> for the current environment (defaults to <code>dev</code>).</p>
+<p>Generates SQL for the specifed number of changeSets from the changelog. Executes against the database configured in <code>application.[yml|groovy]</code> for the current environment (defaults to <code>dev</code>).</p>
 </div>
 <div class="paragraph">
 <p>Usage:</p>
@@ -3656,7 +3483,7 @@ Note that the <code>contexts</code> and <code>defaultSchema</code> parameter nam
 <div class="sect4">
 <h5 id="_description_29">Description</h5>
 <div class="paragraph">
-<p>Generates SQL for the specifed number of changeSets from the changelog. Executes against the database configured in <code>DataSource.groovy</code> for the current environment (defaults to <code>dev</code>).</p>
+<p>Generates SQL for the specifed number of changeSets from the changelog. Executes against the database configured in <code>application.[yml|groovy]</code> for the current environment (defaults to <code>dev</code>).</p>
 </div>
 <div class="paragraph">
 <p>This is useful for inspecting the generated SQL before running an update, or to generate SQL which can be tuned before running manually.</p>
@@ -3722,8 +3549,7 @@ Note that the <code>contexts</code>, <code>defaultSchema</code>, and <code>dataS
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-For the <code>dataSource</code> parameter if the data source is configured as <code>dataSource_reports</code> in DataSource.groovy
-the suffix of <code>reports</code> will be used as the parameter value.
+For the <code>dataSource</code> parameter; If the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
 </td>
 </tr>
 </table>
@@ -3746,7 +3572,7 @@ the suffix of <code>reports</code> will be used as the parameter value.
 <div class="sect4">
 <h5 id="_description_30">Description</h5>
 <div class="paragraph">
-<p>Runs the specifed number of un-run changesets from the Changelog. Executes against the database configured in <code>DataSource.groovy</code> for the current environment (defaults to <code>dev</code>).</p>
+<p>Runs the specifed number of un-run changesets from the Changelog. Executes against the database configured in <code>application.[yml|groovy]</code> for the current environment (defaults to <code>dev</code>).</p>
 </div>
 <div class="paragraph">
 <p>Usage:</p>
@@ -3806,8 +3632,7 @@ Note that the <code>contexts</code>, <code>defaultSchema</code>, <code>dataSourc
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-For the <code>dataSource</code> parameter if the data source is configured as <code>dataSource_reports</code> in DataSource.groovy
-the suffix of <code>reports</code> will be used as the parameter value.
+For the <code>dataSource</code> parameter; If the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
 </td>
 </tr>
 </table>
@@ -3830,7 +3655,7 @@ the suffix of <code>reports</code> will be used as the parameter value.
 <div class="sect4">
 <h5 id="_description_31">Description</h5>
 <div class="paragraph">
-<p>Generates SQL for all un-run changeSets from the changelog. Executes against the database configured in <code>DataSource.groovy</code> for the current environment (defaults to <code>dev</code>).</p>
+<p>Generates SQL for all un-run changeSets from the changelog. Executes against the database configured in <code>application.[yml|groovy]</code> for the current environment (defaults to <code>dev</code>).</p>
 </div>
 <div class="paragraph">
 <p>This is useful for inspecting the generated SQL before running an update, or to generate SQL which can be tuned before running manually.</p>
@@ -3889,8 +3714,7 @@ Note that the <code>contexts</code>, <code>defaultSchema</code>, and <code>dataS
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-For the <code>dataSource</code> parameter if the data source is configured as <code>dataSource_reports</code> in DataSource.groovy
-the suffix of <code>reports</code> will be used as the parameter value.
+For the <code>dataSource</code> parameter; If the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
 </td>
 </tr>
 </table>
@@ -3913,7 +3737,7 @@ the suffix of <code>reports</code> will be used as the parameter value.
 <div class="sect4">
 <h5 id="_description_32">Description</h5>
 <div class="paragraph">
-<p>Runs all un-run changeSets from the changelog. Executes against the database configured in <code>DataSource.groovy</code> for the current environment (defaults to <code>dev</code>).</p>
+<p>Runs all un-run changeSets from the changelog. Executes against the database configured in <code>application.[yml|groovy]</code> for the current environment (defaults to <code>dev</code>).</p>
 </div>
 <div class="paragraph">
 <p>Usage:</p>
@@ -3966,8 +3790,7 @@ Note that the <code>contexts</code> and <code>defaultSchema</code> parameter nam
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-For the <code>dataSource</code> parameter if the data source is configured as <code>dataSource_reports</code> in DataSource.groovy
-the suffix of <code>reports</code> will be used as the parameter value.
+For the <code>dataSource</code> parameter; If the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
 </td>
 </tr>
 </table>
@@ -3985,7 +3808,7 @@ the suffix of <code>reports</code> will be used as the parameter value.
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-10-28 16:00:47 +00:00
+Last updated 2016-10-28 16:37:15 +00:00
 </div>
 </div>
 </body>

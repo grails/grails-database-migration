@@ -423,11 +423,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#_getting_started">Getting Started</a>
-<ul class="sectlevel2">
-<li><a href="#autobase">Migration from Autobase</a></li>
-</ul>
-</li>
+<li><a href="#_getting_started">Getting Started</a></li>
 </ul>
 </div>
 </div>
@@ -436,13 +432,20 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="_getting_started">Getting Started</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><strong>The first step is to add a dependency for the plugin in <code>BuildConfig.groovy</code>:</strong></p>
+<p><strong>The first step is to add a dependency for the plugin in <code>build.gradle</code>:</strong></p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">plugins {
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">buildscript {
+   dependencies {
+      ...
+      classpath 'org.grails.plugins:database-migration:3.0.0.BUILD-SNAPSHOT'
+   }
+}
+
+dependencies {
    ...
-   runtime "org.grails.plugins:database-migration:3.0.0.BUILD-SNAPSHOT"
+     compile 'org.grails.plugins:database-migration:3.0.0.BUILD-SNAPSHOT'
 }</code></pre>
 </div>
 </div>
@@ -481,7 +484,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-If you use the XML format (or use a non-default Groovy filename), be sure to change the name of the file in <code>Config.groovy</code> so <code>dbm-update</code> and other scripts find the file:
+If you use the XML format (or use a non-default Groovy filename), be sure to change the name of the file in <code>application.groovy</code> so <code>dbm-update</code> and other scripts find the file:
 </td>
 </tr>
 </table>
@@ -534,173 +537,18 @@ If you use the XML format (or use a non-default Groovy filename), be sure to cha
 <pre class="highlight"><code class="language-groovy" data-lang="groovy">grails dbm-changelog-sync</code></pre>
 </div>
 </div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-If you use the searchable plugin you need to configure it to run after the database migrations have run. Either in <code>Searchable.groovy</code> or in <code>Config.groovy</code> (if that&#8217;s where you configure Searchable):
-</td>
-</tr>
-</table>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">// disable the plugin's operations here.  we'll re-enable them in the Bootstrap to avoid conflicts with database-migration
-mirrorChanges = false
-bulkIndexOnStartup = false</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">Bootstrap.groovy</div>
-<div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">class BootStrap {
-
-   def searchableService
-
-   def init = { servletContext -&gt;
-      // do any data loading you would normally do
-
-      // Manually start the mirroring process to ensure that it comes after the automated migrations.
-      println "Performing bulk index"
-      searchableService.reindex()
-      println "Starting mirror service"
-      searchableService.startMirroring()
-   }
-}</code></pre>
-</div>
-</div>
 <div class="paragraph">
 <p><strong>Source control</strong></p>
 </div>
 <div class="paragraph">
 <p>Now you can commit the changelog and the corresponding application code to source control. Other developers can then update and synchronize their databases, and start doing migrations themselves.</p>
 </div>
-<div class="sect2">
-<h3 id="autobase">Migration from Autobase</h3>
-<div class="paragraph">
-<p>Autobase is another plugin for managing database migrations. It uses Groovy migration scripts that have a similar syntax to this plugin&#8217;s ones, but there are some differences that mean you will have to do a little bit of work to migrate your existing scripts. The following notes are applicable to Autobase 0.11 and earlier.</p>
-</div>
-<div class="sect3">
-<h4 id="_location_of_migration_scripts">Location of migration scripts</h4>
-<div class="paragraph">
-<p>Autobase defaulted to putting its migration scripts into a <code>./migrations</code> directory, whereas the Database Migration plugin uses <code>./grails-app/migrations</code> as the default. So, you can either move your scripts or add this setting to your <code>grails-app/conf/Config.groovy</code> file:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">grails.plugin.databasemigration.changelogLocation = "migrations"</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_new_syntax_for_all_scripts">New syntax for all scripts</h4>
-<div class="paragraph">
-<p>Autobase allowed you to write changelog files that just included the change sets one after the other. This isn&#8217;t supported by the Database Migration plugin, so <em>all</em> changelogs must put their change set definitions inside a block like so:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">databaseChangeLog = {
-   changeSet(...) { ... }
-   changeSet(...) { ... }
-   ...
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>In addition, if your main Autobase changelog specifies a logical file path (see next section), you will have to use the syntax:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">databaseChangeLog = {
-   logicalFilePath "app-autobase"
-   ...
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>in all the changelog files. If you don&#8217;t do this, the plugin won&#8217;t recognise that existing migrations have already been applied to a database and all of them will be reapplied.</p>
-</div>
-<div class="paragraph">
-<p>These changes also apply to the main changelog, but there are some other differences to cover for that.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_parent_changelog_differences">Parent changelog differences</h4>
-<div class="paragraph">
-<p>The syntax for the main (or parent) Autobase changelog file looks like:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">databaseChangeLog(logicalFilePath: "appName-autobase") {
-   include "./migrations/batch/SomeBigChanges.groovy"
-   include "./migrations/changelog-1.0.1.groovy"
-   include "./migrations/changelog-1.0.5.groovy"
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The new format is noticeably different:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">databaseChangeLog = {
-   logicalFilePath "site-autobase"
-
-   include file: "batch/SomeBigChanges.groovy"
-   include file: "changelog-1.0.1.groovy"
-   include file: "changelog-1.0.5.groovy"
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>In particular, note that:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>The <code>databaseChangeLog</code> line is different</p>
-</li>
-<li>
-<p>The logical file path must be defined inside the block</p>
-</li>
-<li>
-<p><code>include</code> takes a named <code>file</code> argument</p>
-</li>
-<li>
-<p>The file paths passed to <code>include</code> are relative to the configured migrations directory</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>Fortunately, these changes are highly localised and pretty trivial to implement.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_modifycolumn_refactoring_no_longer_available">modifyColumn refactoring no longer available</h4>
-<div class="paragraph">
-<p>The <code>modifyColumn</code> refactoring has been removed in the version of Liquibase that comes with the Database Migration plugin. Instead you should use the new <code>modifyDataType</code> refactoring like so:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">...
-changeSet(id:'IncreaseCommentBodySize', author:'someone') {
-   modifyDataType tableName: 'comment', columnName: 'body', newDataType: 'TEXT'
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The parameters are the same as for <code>modifyColumn</code>, but the syntax is somewhat different.</p>
-</div>
-</div>
-</div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-10-28 16:00:47 +00:00
+Last updated 2016-10-28 16:37:15 +00:00
 </div>
 </div>
 </body>

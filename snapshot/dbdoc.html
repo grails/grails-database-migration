@@ -435,7 +435,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p>You can use the <a href="#ref-documentation-scripts-dbm-db-doc">dbm-db-doc</a> script to generate static HTML files to view changelog information, but another option is to use the <code>DbDocController</code> at runtime. By default this controller is mapped to <code>/appname/dbdoc/</code> but this can be customized with <code>UrlMappings</code> like any controller.</p>
 </div>
 <div class="paragraph">
-<p>You probably don&#8217;t want to expose this information to all of your application&#8217;s users so by default the controller is only enabled in the development environment. But you can enable or disable it for any environment in <code>Config.groovy</code> with the <code>dbDocController.enabled</code> config option. For example to enable for all environments (be sure to guard the URL with a security plugin in prod):</p>
+<p>You probably don&#8217;t want to expose this information to all of your application&#8217;s users so by default the controller is only enabled in the development environment. But you can enable or disable it for any environment in <code>application.groovy</code> with the <code>dbDocController.enabled</code> config option. For example to enable for all environments (be sure to guard the URL with a security plugin in prod):</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -460,7 +460,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-10-28 16:00:47 +00:00
+Last updated 2016-10-28 16:37:15 +00:00
 </div>
 </div>
 </body>
