@@ -6,7 +6,7 @@ Compares two databases and creates a changelog that will make the changes requir
 
 ===== Description
 
-Executes against the database configured in `application.[yml|groovy]`  for the current environment (defaults to `dev`) and another configured datasource in `DataSource.groovy`.
+Executes against the database configured in `application.[yml|groovy]`  for the current environment (defaults to `dev`) and another configured datasource in `application.[yml|groovy]`.
 
 If a filename parameter is specified then the output will be written to the named file, otherwise it will write to the console. If the filename ends with .groovy a Groovy DSL file will be created, otherwise a standard XML file will be created.
 
