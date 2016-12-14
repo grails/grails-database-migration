@@ -9,6 +9,8 @@ After creating the initial changelog, the typical workflow will be along the lin
 
 WARNING: When running migration scripts on non-development databases, it's important that you backup the database before running the migration in case anything goes wrong. You could also make a copy of the database and run the script against that, and if there's a problem the real database will be unaffected.
 
+WARNING: Setting the dbCreate setting to "none" is recommended when executing the dbm migration commands. Otherwise you might run into troubles and the commands could not be executed.
+
 To create the changelog additions, you can either manually create the changes or with the <<ref-diff-scripts-dbm-gorm-diff,dbm-gorm-diff>> script (you can also use the <<ref-diff-scripts-dbm-diff,dbm-diff>> script but it's far less convenient and requires a 2nd temporary database).
 
 You have a few options with `dbm-gorm-diff`:
