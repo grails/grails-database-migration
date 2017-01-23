@@ -1,6 +1,7 @@
 == General Usage
 
 After creating the initial changelog, the typical workflow will be along the lines of:
+
 * make domain class changes that affect the schema
 * add changes to the changelog for them
 * backup your database in case something goes wrong
@@ -12,6 +13,7 @@ WARNING: When running migration scripts on non-development databases, it's impor
 To create the changelog additions, you can either manually create the changes or with the <<ref-diff-scripts-dbm-gorm-diff,dbm-gorm-diff>> script (you can also use the <<ref-diff-scripts-dbm-diff,dbm-diff>> script but it's far less convenient and requires a 2nd temporary database).
 
 You have a few options with `dbm-gorm-diff`:
+
 * `dbm-gorm-diff` will dump to the console if no filename is specified, so you can copy/paste from there
 * if you include the `--add` parameter when running the script with a filename it will register an include for the the filename in the main changelog for you
 
