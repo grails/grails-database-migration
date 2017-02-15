@@ -106,7 +106,11 @@ class DatabaseMigrationGrailsPlugin extends Plugin {
         if (!dataSources) {
             return ['dataSource']
         }
-        return dataSources.keySet()
+        Set<String> dataSourceNames = dataSources.keySet()
+        if(!dataSourceNames.contains('dataSource')){
+            dataSourceNames = ['dataSource']+dataSourceNames
+        }
+        dataSourceNames
     }
 
     private String deduceApplicationMainClassName() {
