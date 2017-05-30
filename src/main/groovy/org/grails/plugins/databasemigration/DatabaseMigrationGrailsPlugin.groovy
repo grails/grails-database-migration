@@ -28,6 +28,9 @@ import org.springframework.context.ApplicationContext
 import javax.sql.DataSource
 
 class DatabaseMigrationGrailsPlugin extends Plugin {
+
+    static final String CONFIG_MAIN_PREFIX = 'grails.plugin.databasemigration'
+
     def grailsVersion = "3.0.0.BUILD-SNAPSHOT > *"
     def pluginExcludes = [
             "**/testapp/**",
@@ -40,7 +43,7 @@ class DatabaseMigrationGrailsPlugin extends Plugin {
     def description = 'Grails Database Migration Plugin'
     def documentation = "http://grails.org/plugin/database-migration"
     def license = "APACHE"
-    def scm = [url: "http://svn.codehaus.org/grails-plugins/"]
+    def scm = [url: "https://github.com/grails-plugins/grails-database-migration"]
 
     @Override
     Closure doWithSpring() {
@@ -52,17 +55,22 @@ class DatabaseMigrationGrailsPlugin extends Plugin {
     void doWithApplicationContext() {
         def mainClassName = deduceApplicationMainClassName()
 
-        dataSourceNames.each { String dataSourceName ->
-            String configPrefix = isDefaultDataSource(dataSourceName) ? 'grails.plugin.databasemigration' : "grails.plugin.databasemigration.${dataSourceName}"
+        def updateAllOnStart = config.getProperty("${CONFIG_MAIN_PREFIX}.updateAllOnStart", Boolean, false)
 
+        dataSourceNames.each { String dataSourceName ->
+            String configPrefix = isDefaultDataSource(dataSourceName) ? CONFIG_MAIN_PREFIX : "${CONFIG_MAIN_PREFIX}.${dataSourceName}"
             def skipMainClasses = config.getProperty("${configPrefix}.skipUpdateOnStartMainClasses", List, ['grails.ui.command.GrailsApplicationContextCommandRunner'])
             if (skipMainClasses.contains(mainClassName)) {
                 return
             }
 
-            def updateOnStart = config.getProperty("${configPrefix}.updateOnStart", Boolean, false)
-            if (!updateOnStart) {
-                return
+            if(!updateAllOnStart) {
+                def updateOnStart = config.getProperty("${configPrefix}.updateOnStart", Boolean, false)
+                if (!updateOnStart) {
+                    return
+                }
+            } else {
+                configPrefix = CONFIG_MAIN_PREFIX
             }
 
             new DatabaseMigrationTransactionManager(applicationContext, dataSourceName).withTransaction {
