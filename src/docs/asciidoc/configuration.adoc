@@ -16,6 +16,7 @@ There are a few configuration options for the plugin. All configurations are pre
 |updateOnStartFileName |none |the file name (relative to `changelogLocation`) to run at startup if `updateOnStart` is `true`
 |updateOnStartDefaultSchema |none |the default schema to use when running auto-migrate on start
 |updateOnStartContexts |none |A comma-delimited list of http://www.liquibase.org/manual/contexts[context] names. If specified, only changesets tagged with one of the context names will be run
+|updateAllOnStart |false |if `true` then changesets from the specified list of names will be run at startup for all dataSources. Useful for Grails Multitenancy with Multiple Databases (same db schema)
 |autoMigrateScripts |['RunApp'] |the scripts when running auto-migrate. Useful to run auto-migrate during test phase with: ['RunApp', 'TestApp']
 |excludeObjects |none |A comma-delimited list of database object names to ignore while performing a dbm-gorm-diff or dbm-generate-gorm-changelog
 |includeObjects |none |A comma-delimited list of database object names to look for while performing a dbm-gorm-diff or dbm-generate-gorm-changelog
@@ -45,4 +46,10 @@ The configuration for this data source would be:
 ----
 grails.plugin.databasemigration.reports.updateOnStart = true
 grails.plugin.databasemigration.reports.changelogFileName = changelog-reports.groovy
+----
+The configuration for all data sources with same db schema would be:
+[source,groovy]
+----
+grails.plugin.databasemigration.updateAllOnStart = true
+grails.plugin.databasemigration.changelogFileName = changelog.groovy
 ----
