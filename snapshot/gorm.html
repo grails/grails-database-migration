@@ -447,27 +447,45 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p>The plugin provides a script that will compare your GORM current domain model with a database that you specify, and the result is a Liquibase changeset - <code>dbm-gorm-diff</code>. This is the same changeset you would get if you exported your domain model to a scratch database and diffed it with the other database, but it&#8217;s more convenient.</p>
 </div>
 <div class="paragraph">
-<p>So a good workflow would be:
-* make whatever domain class changes you need (add new ones, delete unneeded ones, add/change/remove properties, etc.)
-* once your tests pass and you&#8217;re ready to commit your changes to source control, run the script to generate the changeset that will bring your database back in line with your code
-* add the changeset to an existing changelog file, or use the <code>include</code> tag to include the whole file
-* run the changeset on your functional test database
-* assuming your functional tests pass, check everything in as one commit
-* the other members of your team will get both the code and database changes when they next update, and will know to run the update script to sync their database with the latest code
-* once you&#8217;re ready to deploy to QA for testing (or staging or production), you can run all of the un-run changes since the last deployment</p>
+<p>So a good workflow would be:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>make whatever domain class changes you need (add new ones, delete unneeded ones, add/change/remove properties, etc.)</p>
+</li>
+<li>
+<p>once your tests pass and you&#8217;re ready to commit your changes to source control, run the script to generate the changeset that will bring your database back in line with your code</p>
+</li>
+<li>
+<p>add the changeset to an existing changelog file, or use the <code>include</code> tag to include the whole file</p>
+</li>
+<li>
+<p>run the changeset on your functional test database</p>
+</li>
+<li>
+<p>assuming your functional tests pass, check everything in as one commit</p>
+</li>
+<li>
+<p>the other members of your team will get both the code and database changes when they next update, and will know to run the update script to sync their database with the latest code</p>
+</li>
+<li>
+<p>once you&#8217;re ready to deploy to QA for testing (or staging or production), you can run all of the un-run changes since the last deployment</p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
 <p><strong>dbm-generate-gorm-changelog</strong></p>
 </div>
 <div class="paragraph">
-<p>The <a href="#ref-rollback-scripts-dbm-generate-gorm-changelog">dbm-generate-gorm-changelog</a> script is useful for when you want to switch from <code>create-drop</code> mode to doing proper migrations. It&#8217;s not very useful if you already have a database that&#8217;s in sync with your code, since you can just use the <a href="#ref-rollback-scripts-dbm-generate-changelog">dbm-generate-changelog</a> script that creates a changelog from your databse.</p>
+<p>The <a href="#ref-rollback-scripts-dbm-generate-gorm-changelog">dbm-generate-gorm-changelog</a> script is useful for when you want to switch from <code>create-drop</code> mode to doing proper migrations. It&#8217;s not very useful if you already have a database that&#8217;s in sync with your code, since you can just use the <a href="#ref-rollback-scripts-dbm-generate-changelog">dbm-generate-changelog</a> script that creates a changelog from your database.</p>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-03-08 14:18:07 +00:00
+Last updated 2017-06-07 13:00:04 +00:00
 </div>
 </div>
 </body>

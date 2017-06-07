@@ -591,13 +591,13 @@ table.CodeRay td.code>pre{padding:0}
 <pre class="CodeRay highlight"><code data-lang="groovy">buildscript {
    dependencies {
       ...
-      classpath 'org.grails.plugins:database-migration:3.0.1.BUILD-SNAPSHOT'
+      classpath 'org.grails.plugins:database-migration:3.0.1'
    }
 }
 
 dependencies {
    ...
-     compile 'org.grails.plugins:database-migration:3.0.1.BUILD-SNAPSHOT'
+     compile 'org.grails.plugins:database-migration:3.0.1'
 }</code></pre>
 </div>
 </div>
@@ -901,6 +901,18 @@ grails.plugin.databasemigration.reports.changelogFileName = changelog-reports.gr
 </td>
 <td class="content">
 When running migration scripts on non-development databases, it&#8217;s important that you backup the database before running the migration in case anything goes wrong. You could also make a copy of the database and run the script against that, and if there&#8217;s a problem the real database will be unaffected.
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+Setting the dbCreate setting to "none" is recommended when executing the dbm migration commands. Otherwise you might run into troubles and the commands could not be executed.
 </td>
 </tr>
 </table>
@@ -1333,20 +1345,38 @@ beans = {
 <p>The plugin provides a script that will compare your GORM current domain model with a database that you specify, and the result is a Liquibase changeset - <code>dbm-gorm-diff</code>. This is the same changeset you would get if you exported your domain model to a scratch database and diffed it with the other database, but it&#8217;s more convenient.</p>
 </div>
 <div class="paragraph">
-<p>So a good workflow would be:
-* make whatever domain class changes you need (add new ones, delete unneeded ones, add/change/remove properties, etc.)
-* once your tests pass and you&#8217;re ready to commit your changes to source control, run the script to generate the changeset that will bring your database back in line with your code
-* add the changeset to an existing changelog file, or use the <code>include</code> tag to include the whole file
-* run the changeset on your functional test database
-* assuming your functional tests pass, check everything in as one commit
-* the other members of your team will get both the code and database changes when they next update, and will know to run the update script to sync their database with the latest code
-* once you&#8217;re ready to deploy to QA for testing (or staging or production), you can run all of the un-run changes since the last deployment</p>
+<p>So a good workflow would be:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>make whatever domain class changes you need (add new ones, delete unneeded ones, add/change/remove properties, etc.)</p>
+</li>
+<li>
+<p>once your tests pass and you&#8217;re ready to commit your changes to source control, run the script to generate the changeset that will bring your database back in line with your code</p>
+</li>
+<li>
+<p>add the changeset to an existing changelog file, or use the <code>include</code> tag to include the whole file</p>
+</li>
+<li>
+<p>run the changeset on your functional test database</p>
+</li>
+<li>
+<p>assuming your functional tests pass, check everything in as one commit</p>
+</li>
+<li>
+<p>the other members of your team will get both the code and database changes when they next update, and will know to run the update script to sync their database with the latest code</p>
+</li>
+<li>
+<p>once you&#8217;re ready to deploy to QA for testing (or staging or production), you can run all of the un-run changes since the last deployment</p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
 <p><strong>dbm-generate-gorm-changelog</strong></p>
 </div>
 <div class="paragraph">
-<p>The <a href="#ref-rollback-scripts-dbm-generate-gorm-changelog">dbm-generate-gorm-changelog</a> script is useful for when you want to switch from <code>create-drop</code> mode to doing proper migrations. It&#8217;s not very useful if you already have a database that&#8217;s in sync with your code, since you can just use the <a href="#ref-rollback-scripts-dbm-generate-changelog">dbm-generate-changelog</a> script that creates a changelog from your databse.</p>
+<p>The <a href="#ref-rollback-scripts-dbm-generate-gorm-changelog">dbm-generate-gorm-changelog</a> script is useful for when you want to switch from <code>create-drop</code> mode to doing proper migrations. It&#8217;s not very useful if you already have a database that&#8217;s in sync with your code, since you can just use the <a href="#ref-rollback-scripts-dbm-generate-changelog">dbm-generate-changelog</a> script that creates a changelog from your database.</p>
 </div>
 </div>
 </div>
@@ -3855,7 +3885,7 @@ For the <code>dataSource</code> parameter; If the data source is configured as <
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-03-08 14:18:07 +00:00
+Last updated 2017-06-07 13:00:04 +00:00
 </div>
 </div>
 </body>
