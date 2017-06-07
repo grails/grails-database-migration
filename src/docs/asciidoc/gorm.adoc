@@ -21,4 +21,4 @@ So a good workflow would be:
 
 *dbm-generate-gorm-changelog*
 
-The <<ref-rollback-scripts-dbm-generate-gorm-changelog,dbm-generate-gorm-changelog>> script is useful for when you want to switch from `create-drop` mode to doing proper migrations. It's not very useful if you already have a database that's in sync with your code, since you can just use the <<ref-rollback-scripts-dbm-generate-changelog,dbm-generate-changelog>> script that creates a changelog from your databse.
+The <<ref-rollback-scripts-dbm-generate-gorm-changelog,dbm-generate-gorm-changelog>> script is useful for when you want to switch from `create-drop` mode to doing proper migrations. It's not very useful if you already have a database that's in sync with your code, since you can just use the <<ref-rollback-scripts-dbm-generate-changelog,dbm-generate-changelog>> script that creates a changelog from your database.
