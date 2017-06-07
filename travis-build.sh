@@ -43,7 +43,7 @@ if [[ -n $TRAVIS_TAG ]] || [[ $TRAVIS_BRANCH == 'master' && $TRAVIS_PULL_REQUEST
         cp -r ../build/docs/. ./latest/
         git add latest/*
 
-        version="$TRAVIS_TAG"
+        version="3.0.1"
         version=${version:1}
         majorVersion=${version:0:4}
         majorVersion="${majorVersion}x"
