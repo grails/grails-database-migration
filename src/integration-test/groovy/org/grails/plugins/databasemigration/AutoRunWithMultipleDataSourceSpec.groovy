@@ -18,6 +18,7 @@ package org.grails.plugins.databasemigration
 import grails.test.mixin.integration.Integration
 import groovy.sql.Sql
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ActiveProfiles
 import spock.lang.AutoCleanup
 import spock.lang.Specification
@@ -26,6 +27,7 @@ import javax.sql.DataSource
 
 @Integration
 @ActiveProfiles('multiple-datasource')
+@DirtiesContext
 class AutoRunWithMultipleDataSourceSpec extends Specification {
 
     @Autowired
