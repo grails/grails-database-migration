@@ -77,6 +77,36 @@ provideChildsOf("changeSet") {
 	method name: "sql", params: [query:"java.lang.String"], type: void
 }
 
+provideChildsOf("changeSet") {
+    method name: "sqlFile", params: [
+            args: [
+                    parameter(name: "dbms", type: String.name),
+                    parameter(name: "encoding", type: String.name),
+                    parameter(name: "endDelimiter", type: String.name),
+                    parameter(name: "path", type: String.name),
+                    parameter(name: "relativeToChangelogFile", type: String.name),
+                    parameter(name: "splitStatements", type: String.name),
+                    parameter(name: "stripComments", type: String.name),
+            ]
+    ], type: void
+}
+
+provideChildsOf("changeSet") {
+    method name: "createSequence", params: [
+            args: [
+                    parameter(name: "catalogName", type: String.name),
+                    parameter(name: "cycle", type: String.name),
+                    parameter(name: "incrementBy", type: String.name),
+                    parameter(name: "maxValue", type: String.name),
+                    parameter(name: "minValue", type: String.name),
+                    parameter(name: "ordered", type: String.name),
+                    parameter(name: "schemaName", type: String.name),
+                    parameter(name: "sequenceName", type: String.name),
+                    parameter(name: "startValue", type: String.name)
+            ]
+    ], type: void
+}
+
 //liquibase changes
 
 provideChildsOf("changeSet") {
