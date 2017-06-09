@@ -591,13 +591,13 @@ table.CodeRay td.code>pre{padding:0}
 <pre class="CodeRay highlight"><code data-lang="groovy">buildscript {
    dependencies {
       ...
-      classpath 'org.grails.plugins:database-migration:2.0.1'
+      classpath 'org.grails.plugins:database-migration:3.0.3'
    }
 }
 
 dependencies {
    ...
-     compile 'org.grails.plugins:database-migration:2.0.1'
+     compile 'org.grails.plugins:database-migration:3.0.3'
 }</code></pre>
 </div>
 </div>
@@ -872,12 +872,26 @@ grails.plugin.databasemigration.reports.changelogFileName = changelog-reports.gr
 <h2 id="generalUsage">4. General Usage</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>After creating the initial changelog, the typical workflow will be along the lines of:
-* make domain class changes that affect the schema
-* add changes to the changelog for them
-* backup your database in case something goes wrong
-* run <code>grails dbm-update</code> to update your development environment (or wherever you&#8217;re applying the changes)
-* check the updated domain class(es) and changelog(s) into source control</p>
+<p>After creating the initial changelog, the typical workflow will be along the lines of:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>make domain class changes that affect the schema</p>
+</li>
+<li>
+<p>add changes to the changelog for them</p>
+</li>
+<li>
+<p>backup your database in case something goes wrong</p>
+</li>
+<li>
+<p>run <code>grails dbm-update</code> to update your development environment (or wherever you&#8217;re applying the changes)</p>
+</li>
+<li>
+<p>check the updated domain class(es) and changelog(s) into source control</p>
+</li>
+</ul>
 </div>
 <div class="admonitionblock warning">
 <table>
@@ -891,13 +905,33 @@ When running migration scripts on non-development databases, it&#8217;s importan
 </tr>
 </table>
 </div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+Setting the dbCreate setting to "none" is recommended when executing the dbm migration commands. Otherwise you might run into troubles and the commands could not be executed.
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
 <p>To create the changelog additions, you can either manually create the changes or with the <a href="#ref-diff-scripts-dbm-gorm-diff">dbm-gorm-diff</a> script (you can also use the <a href="#ref-diff-scripts-dbm-diff">dbm-diff</a> script but it&#8217;s far less convenient and requires a 2nd temporary database).</p>
 </div>
 <div class="paragraph">
-<p>You have a few options with <code>dbm-gorm-diff</code>:
-* <code>dbm-gorm-diff</code> will dump to the console if no filename is specified, so you can copy/paste from there
-* if you include the <code>--add</code> parameter when running the script with a filename it will register an include for the the filename in the main changelog for you</p>
+<p>You have a few options with <code>dbm-gorm-diff</code>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>dbm-gorm-diff</code> will dump to the console if no filename is specified, so you can copy/paste from there</p>
+</li>
+<li>
+<p>if you include the <code>--add</code> parameter when running the script with a filename it will register an include for the the filename in the main changelog for you</p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
 <p>Regardless of which approach you use, be sure to inspect generated changes and adjust as necessary.</p>
@@ -3851,7 +3885,7 @@ For the <code>dataSource</code> parameter; If the data source is configured as <
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-06-09 17:52:24 UTC
+Last updated 2017-06-09 18:36:44 +00:00
 </div>
 </div>
 </body>
