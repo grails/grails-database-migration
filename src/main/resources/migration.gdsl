@@ -1,4 +1,4 @@
-package org.grails.plugins.databasemigration
+
 
 migrationDir = ".*/grails-app/migrations/.*"
 
