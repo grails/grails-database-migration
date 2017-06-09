@@ -135,28 +135,36 @@ provideChildsOf("changeSet") {
 
 }
 
+List columnArgs = [
+		parameter(name:'name', type:String.name),
+		parameter(name:'type', type:String.name),
+		parameter(name:'value', type:String.name),
+		parameter(name:'valueNumeric', type:String.name),
+		parameter(name:'valueBoolean', type:String.name),
+		parameter(name:'valueDate', type:String.name),
+		parameter(name:'defaultValue', type:String.name),
+		parameter(name:'defaultValueNumeric', type:String.name),
+		parameter(name:'defaultValueBoolean', type:String.name),
+		parameter(name:'defaultValueDate', type:String.name),
+		parameter(name:'autoIncrement', type:String.name),
+
+]
 
 columnType = {
 	method name: "column", params: [
-			args: [
-					parameter(name:'name', type:String.name),
-					parameter(name:'type', type:String.name),
-					parameter(name:'value', type:String.name),
-					parameter(name:'valueNumeric', type:String.name),
-					parameter(name:'valueBoolean', type:String.name),
-					parameter(name:'valueDate', type:String.name),
-					parameter(name:'defaultValue', type:String.name),
-					parameter(name:'defaultValueNumeric', type:String.name),
-					parameter(name:'defaultValueBoolean', type:String.name),
-					parameter(name:'defaultValueDate', type:String.name),
-					parameter(name:'autoIncrement', type:String.name),
-
-			],
+			args: columnArgs,
 			body: {}
 	], type: void
 }
 
+columnTypeNoBody = {
+	method name: "column", params: [
+			args: columnArgs
+	], type: void
+}
+
 provideChildsOf("createTable", columnType)
+provideChildsOf("createTable", columnTypeNoBody)
 
 provideChildsOf("column") {
 	method name: "constraints", params: [
@@ -172,8 +180,7 @@ provideChildsOf("column") {
 					parameter(name:'deferrable', type:String.name),
 					parameter(name:'initiallyDeferred', type:String.name)
 
-			],
-			body: {}
+			]
 	], type: void
 }
 
@@ -244,8 +251,7 @@ provideChildsOf("changeSet") {
 					parameter(name:'referencesUniqueColumn', type:String.name),
 					parameter(name:'baseTableCatalogName', type:String.name),
 					parameter(name:'referencedTableCatalogName', type:String.name)
-			],
-			body: {}
+			]
 	], type: void
 }
 
@@ -271,8 +277,7 @@ provideChildsOf("changeSet") {
 					parameter(name:'constraintName', type:String.name),
 					parameter(name:'schemaName', type:String.name),
 					parameter(name:'tablespace', type:String.name)
-			],
-			body: {}
+			]
 	], type: void
 }
 
@@ -287,22 +292,7 @@ provideChildsOf("changeSet") {
 					parameter(name:'deferrable', type:String.name),
 					parameter(name:'disabled', type:String.name),
 					parameter(name:'initiallyDeferred', type:String.name)
-			],
-			body: {}
-	], type: void
-}
-
-provideChildsOf("changeSet") {
-	method name: "createIndex", params: [
-			args: [
-					parameter(name:'catalogName', type:String.name),
-					parameter(name:'indexName', type:String.name),
-					parameter(name:'schemaName', type:String.name),
-					parameter(name:'tableName', type:String.name),
-					parameter(name:'tablespace', type:String.name),
-					parameter(name:'unique', type:String.name),
-			],
-			body: {}
+			]
 	], type: void
 }
 
@@ -321,6 +311,7 @@ provideChildsOf("changeSet") {
 }
 
 provideChildsOf("createIndex", columnType)
+provideChildsOf("createIndex", columnTypeNoBody)
 
 provideChildsOf("changeSet") {
 	method name: "delete", params: [
