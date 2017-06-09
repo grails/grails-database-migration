@@ -3,19 +3,17 @@ jdk:
 - openjdk7
 addons:
   hosts:
-    - grailsdbm
+  - grailsdbm
   hostname: grailsdbm
 before_script:
 - rm -rf build
 script: ./travis-build.sh
 env:
   global:
-  - GIT_NAME="Graeme Rocher"
-  - GIT_EMAIL="graeme.rocher@gmail.com"
-  - secure: JffYb94te1EKxKKbh/ZA25d5ZkjlY7t8oDKx3JmzvlO6YUm6LsbEeisGrnWczev6AhDtFOnp5ffBcGZH9k4v9FGeAqhBP02fGeeBgZzMV0u93S9RX4gGU0mY/Obrii0ON+lQX3WgKSiUk69PKWu6aeAO4V4cdkr18U5puSvZ5lk=
-  - secure: Oph2jryCw7rN3TR3ioFB7vRxZvDKRpIM0JyS826upgO5ga6LVJUKNi3ru74DIXMvCi4AvXOFXaUTlzw1Vw5r/uby3vNFhWZ/KjLiGgLFU5w/U0kEnE+w6njSX4R5bB3mZz3rROpUr7qM7CtaWmWYoGxX2xUCPS8RfzknJOOepnQ=
-  - secure: JzG76/YlFH04pzqa3gKV2XN/n5+JU9CAztmyu5J8DpfpNmsE8dLngRDASpLd0v67A2PO4sATpTqZ8SC+WhyBgjnHd2FTP81OYVOGX4F5jd/E3Q5tZs0LMDOnb6jcqXVK6okZ0Nihtq02N97JCXca89bPneWAwrIUF7lnDPDmpjY=
-  - secure: F1fvm2e27nA6AqRZXd9vYKlOxVCE5wodaKGIdrO2YqyW7FA/51osDn7Makxf+UgsLKE7Fyl6uRfUsetQ5PXMV5aeJ5NGGb3vDs7Mb2vWIyCRjwbHYjR6Lq81PeKxTKo4aUwak2rr+oRcpoP18nuwNik/oHeeYbxPc+JYT4uDPZo=
-  - secure: NThP9/ycLtm9BHrmUoNbS4FbG+kl3lqdnkvzHf1QzhU9mVwnWDE/yJJxIkR1IS09Omk5McYi5aXuRFCfq3qUYWFvQetv/36rEpIQKqjgZvYPfES8JLrzIdab9A6ZDII3OSrnZTYMhFcX33bHtQDcMryniBH+FUsXhekY63JqrnI=
-  - secure: EpkFVOeBXSJibdm6vEC4AmDvHNtdodb1upl0/v4souBVpCYLnB8x6kFmzsHXVF3ophDgEVrp/9E572FhybiwLYCEUMBC8pLW4M4q7UoYznfKkJHgnzJclMtApPkwq8FCsBPEoHOxr3iwXUnsQdvPQtQlYxM6P3b1CuCXkRxrCa8=
-  - secure: WUEaOd746TZVHwnVDoLDCsr6PI2dHCt/43KN74JPRnrX3w9ROaW9LxuyFuHI6EhASEFuaD+2gmx2Y+OYsPhtUhRNMKtRvbeS7W3u65rOTa883BAyPKowzaR07yS4M6f1rv8+l8+xqAewyOLRkW6t/N6ADvcAE1DlDQVSmX2lLCU=
+  - GIT_NAME="James Kleeh"
+  - GIT_EMAIL="james.kleeh@gmail.com"
+  - secure: bhWM+p4y19ktz2dikLhCa5HgQfwYTit6mMFqEv90xaBCwFFMhCvo0TNZwS/bAi/bpyS/m4VnVbdRd+VpNYzO50MYNXbfjwgHvApEH/93TNmyQtsVUjjrZBIGE398a8c1EJceUinq/T4IJECvqrB93N/50qpuqGBdi65ZHg6tr+8=
+  - secure: rPGCJpgy/DL4pJrHdAcRioZRMhovh9hMYs0i9rDI+C9k0UK4ksciM4rrMUqgVJRnANQdjri+VOpuM7AlyISYtCfCu17C/SvVqayTWluNHUhHxD9lvW8WPE9iSBNLTRFvHnx43/+9/jcT4y5ikK9GjorBG9tDrZsmsgP8tjquTeE=
+  - secure: h/PK5MLhCHIEtuhd+R/j8asUi48PlPUd25Qtxl29lkqhXQ7h/U6RySZxD4f9xKXB5M3x1vi0wJMxJ0K7tJdy315w/bK7wq6J9Zjd5EoVY5EOG4pgdYd6YMbUXT/41Ng7fIx39xuy5ZMhLWQORA9Jiq4TULGiFd0FPtQRtEbOmwc=
+  - secure: a8kV4ZFoqhdRpKV1K0FqiNZwa/XHP6/vf+eTfIJxqehwHNVGJIiuGaU65hb2kyPF0HDHVSYyRl4O3Z+rzFgD1Rc4EtEXl0056JtMIcQzOEaHTo5nM4+tshieN8TFLTm0kpBORwjHsrBQ9VtUHLhnASKylBKTtHfdItGuzbWnrQM=
+  - secure: maymdVzpsFfshzEd2Cx1Sl4kG+y2VStqBDQbFcvmuHtg98qS3kDkwUS+ss4Lie4WQGXG/S5ha7D+oY9ST0FV7u9lZZq34hno1/hHvQmv6YRX3+RV8mEH+RZk4ZbWug6IlqrdwbnFFRKhzBYtdNlIt+WdfFdnxFv7qgpw+MzbFGI=
