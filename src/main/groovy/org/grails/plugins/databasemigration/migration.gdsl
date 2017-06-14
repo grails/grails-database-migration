@@ -73,22 +73,22 @@ provideChildsOf("rollback") {
 }
 
 
-//provideChildsOf("changeSet") {
-//	method name: "sql", params: [query:"java.lang.String"], type: void
-//}
-
 provideChildsOf("changeSet") {
-	method name: "sql", params: [
-			args: [
-					parameter(name: "comment", type: String.name),
-					parameter(name: "dbms", type: String.name),
-					parameter(name: "endDelimiter", type: String.name),
-					parameter(name: "splitStatements", type: String.name),
-					parameter(name: "sql", type: String.name),
-					parameter(name: "stripComments", type: String.name),
-			]
-	], type: void
+	method name: "sql", params: [query:"java.lang.String"], type: void
 }
+
+//provideChildsOf("changeSet") {
+//	method name: "sql", params: [
+//			args: [
+//					parameter(name: "comment", type: String.name),
+//					parameter(name: "dbms", type: String.name),
+//					parameter(name: "endDelimiter", type: String.name),
+//					parameter(name: "splitStatements", type: String.name),
+//					parameter(name: "sql", type: String.name),
+//					parameter(name: "stripComments", type: String.name),
+//			]
+//	], type: void
+//}
 
 provideChildsOf("changeSet") {
     method name: "sqlFile", params: [
@@ -149,19 +149,6 @@ columnTypeNoBody = {
 	], type: void
 }
 
-//provideChildsOf("changeSet") {
-//	method name: "createTable", params: [
-//			args: [
-//					parameter(name:'schemaName', type:String.name),
-//					parameter(name:'tableName', type:String.name),
-//					parameter(name:'catalogName', type:String.name)
-//			],
-//			body: {}
-//	], type: void
-//
-//}
-
-// TODO: NESTED PROPERTIES
 provideChildsOf("changeSet") {
 	method name: "createTable", params: [
 			args: [
@@ -175,7 +162,6 @@ provideChildsOf("changeSet") {
 	], type: void
 
 }
-
 provideChildsOf("createTable", columnType)
 provideChildsOf("createTable", columnTypeNoBody)
 
@@ -187,8 +173,7 @@ provideChildsOf("changeSet") {
 					parameter(name:'schemaName', type:String.name),
 					parameter(name:'selectQuery', type:String.name),
 					parameter(name:'viewName', type:String.name)
-			],
-			body: {}
+			]
 	], type: void
 
 }
@@ -206,7 +191,6 @@ provideChildsOf("column") {
 					parameter(name:'deleteCascade', type:String.name),
 					parameter(name:'deferrable', type:String.name),
 					parameter(name:'initiallyDeferred', type:String.name)
-
 			]
 	], type: void
 }
@@ -222,13 +206,11 @@ provideChildsOf("changeSet") {
 					parameter(name:'schemaName', type:String.name),
 					parameter(name:'startWith', type:String.name),
 					parameter(name:'tableName', type:String.name)
-			],
-			body: {}
+			]
 	], type: void
 
 }
 
-// TODO: NESTED PROPERTIES
 provideChildsOf("changeSet") {
 	method name: "addColumn", params: [
 			args: [
@@ -239,8 +221,8 @@ provideChildsOf("changeSet") {
 			body: {}
 	], type: void
 }
-
 provideChildsOf("addColumn", columnType)
+provideChildsOf("addColumn", columnTypeNoBody)
 
 provideChildsOf("changeSet") {
 	method name: "addDefaultValue", params: [
@@ -256,8 +238,7 @@ provideChildsOf("changeSet") {
 					parameter(name:'schemaName', type:String.name),
 					parameter(name:'tableName', type:String.name)
 
-			],
-			body: {}
+			]
 	], type: void
 }
 
@@ -286,8 +267,7 @@ provideChildsOf("changeSet") {
 					parameter(name:'defaultNullValue', type:String.name),
 					parameter(name:'schemaName', type:String.name),
 					parameter(name:'tableName', type:String.name)
-			],
-			body: {}
+			]
 	], type: void
 }
 
@@ -320,7 +300,6 @@ provideChildsOf("changeSet") {
 	], type: void
 }
 
-// TODO: NESTED PROPERTIES
 provideChildsOf("changeSet") {
 	method name: "createIndex", params: [
 			args: [
@@ -334,7 +313,6 @@ provideChildsOf("changeSet") {
 			body: {}
 	], type: void
 }
-
 provideChildsOf("createIndex", columnType)
 provideChildsOf("createIndex", columnTypeNoBody)
 
@@ -345,8 +323,7 @@ provideChildsOf("changeSet") {
 					parameter(name:'schemaName', type:String.name),
 					parameter(name:'tableName', type:String.name),
 					parameter(name:'where', type:String.name)
-			],
-			body: {}
+			]
 	], type: void
 }
 
@@ -354,8 +331,7 @@ provideChildsOf("changeSet") {
 	method name: "dropAllForeignKeyConstraints", params: [
 			args: [
 					parameter(name:'baseTableName', type:String.name)
-			],
-			body: {}
+			]
 	], type: void
 }
 
@@ -366,8 +342,7 @@ provideChildsOf("changeSet") {
 					parameter(name:'columnName', type:String.name),
 					parameter(name:'schemaName', type:String.name),
 					parameter(name:'tableName', type:String.name)
-			],
-			body: {}
+			]
 	], type: void
 }
 
@@ -379,8 +354,7 @@ provideChildsOf("changeSet") {
 					parameter(name:'columnName', type:String.name),
 					parameter(name:'schemaName', type:String.name),
 					parameter(name:'tableName', type:String.name)
-			],
-			body: {}
+			]
 	], type: void
 }
 
@@ -389,8 +363,7 @@ provideChildsOf("changeSet") {
 			args: [
 					parameter(name:'baseTableName', type:String.name),
 					parameter(name:'constraintName', type:String.name)
-			],
-			body: {}
+			]
 	], type: void
 }
 
@@ -401,8 +374,7 @@ provideChildsOf("changeSet") {
 					parameter(name:'indexName', type:String.name),
 					parameter(name:'schemaName', type:String.name),
 					parameter(name:'tableName', type:String.name)
-			],
-			body: {}
+			]
 	], type: void
 }
 
@@ -414,8 +386,7 @@ provideChildsOf("changeSet") {
 					parameter(name:'columnName', type:String.name),
 					parameter(name:'schemaName', type:String.name),
 					parameter(name:'tableName', type:String.name)
-			],
-			body: {}
+			]
 	], type: void
 }
 
@@ -426,8 +397,7 @@ provideChildsOf("changeSet") {
 					parameter(name:'constraintName', type:String.name),
 					parameter(name:'schemaName', type:String.name),
 					parameter(name:'tableName', type:String.name)
-			],
-			body: {}
+			]
 	], type: void
 }
 
@@ -438,8 +408,7 @@ provideChildsOf("changeSet") {
 					parameter(name:'catalogName', type:String.name),
 					parameter(name:'schemaName', type:String.name),
 					parameter(name:'tableName', type:String.name)
-			],
-			body: {}
+			]
 	], type: void
 }
 
@@ -451,8 +420,7 @@ provideChildsOf("changeSet") {
 					parameter(name:'schemaName', type:String.name),
 					parameter(name:'tableName', type:String.name),
 					parameter(name:'uniqueColumns', type:String.name)
-			],
-			body: {}
+			]
 	], type: void
 }
 
@@ -463,8 +431,7 @@ provideChildsOf("changeSet") {
 					parameter(name:'schemaName', type:String.name),
 					parameter(name:'viewName', type:String.name)
 
-			],
-			body: {}
+			]
 	], type: void
 }
 
@@ -477,8 +444,7 @@ provideChildsOf("changeSet") {
 					parameter(name:'schemaName', type:String.name),
 					parameter(name:'tableName', type:String.name)
 
-			],
-			body: {}
+			]
 	], type: void
 }
 
@@ -491,8 +457,7 @@ provideChildsOf("changeSet") {
 					parameter(name:'oldColumnName', type:String.name),
 					parameter(name:'schemaName', type:String.name),
 					parameter(name:'tableName', type:String.name)
-			],
-			body: {}
+			]
 	], type: void
 }
 
@@ -503,8 +468,7 @@ provideChildsOf("changeSet") {
 					parameter(name:'newTableName', type:String.name),
 					parameter(name:'oldTableName', type:String.name),
 					parameter(name:'schemaName', type:String.name)
-			],
-			body: {}
+			]
 	], type: void
 }
 
@@ -515,8 +479,7 @@ provideChildsOf("changeSet") {
 					parameter(name:'newViewName', type:String.name),
 					parameter(name:'oldViewName', type:String.name),
 					parameter(name:'schemaName', type:String.name)
-			],
-			body: {}
+			]
 	], type: void
 }
 
@@ -531,8 +494,7 @@ provideChildsOf("changeSet") {
 					parameter(name:'newColumnDataType', type:String.name),
 					parameter(name:'newColumnName', type:String.name),
 					parameter(name:'newTableName', type:String.name)
-			],
-			body: {}
+			]
 	], type: void
 }
 
@@ -546,8 +508,7 @@ provideChildsOf("changeSet") {
 					parameter(name:'ordered', type:String.name),
 					parameter(name:'schemaName', type:String.name),
 					parameter(name:'sequenceName', type:String.name),
-			],
-			body: {}
+			]
 	], type: void
 }
 
@@ -563,8 +524,7 @@ provideChildsOf("changeSet") {
 					parameter(name:'procedureText', type:String.name),
 					parameter(name:'relativeToChangelogFile', type:String.name),
 					parameter(name:'schemaName', type:String.name)
-			],
-			body: {}
+			]
 	], type: void
 }
 
@@ -580,8 +540,7 @@ provideChildsOf("changeSet") {
 					parameter(name:'catalogName', type:String.name),
 					parameter(name:'procedureName', type:String.name),
 					parameter(name:'schemaName', type:String.name)
-			],
-			body: {}
+			]
 	], type: void
 }
 
@@ -591,8 +550,7 @@ provideChildsOf("changeSet") {
 					parameter(name:'catalogName', type:String.name),
 					parameter(name:'schemaName', type:String.name),
 					parameter(name:'sequenceName', type:String.name)
-			],
-			body: {}
+			]
 	], type: void
 }
 
@@ -604,12 +562,10 @@ provideChildsOf("changeSet") {
 	method name: "executeCommand", params: [
 			args: [
 					parameter(name:'executable', type:String.name)
-			],
-			body: {}
+			]
 	], type: void
 }
 
-// TODO: NESTED PROPERTIES
 provideChildsOf("changeSet") {
 	method name: "insert", params: [
 			args: [
@@ -621,11 +577,9 @@ provideChildsOf("changeSet") {
 			body: {}
 	], type: void
 }
-
 provideChildsOf("insert", columnType)
 provideChildsOf("insert", columnTypeNoBody)
 
-// TODO: NESTED PROPERTIES
 provideChildsOf("changeSet") {
 	method name: "loadData", params: [
 			args: [
@@ -640,11 +594,9 @@ provideChildsOf("changeSet") {
 			body: {}
 	], type: void
 }
-
 provideChildsOf("loadData", columnType)
 provideChildsOf("loadData", columnTypeNoBody)
 
-// TODO: NESTED PROPERTIES
 provideChildsOf("changeSet") {
 	method name: "loadUpdateData", params: [
 			args: [
@@ -660,7 +612,6 @@ provideChildsOf("changeSet") {
 			body: {}
 	], type: void
 }
-
 provideChildsOf("loadUpdateData", columnType)
 provideChildsOf("loadUpdateData", columnTypeNoBody)
 
@@ -675,8 +626,7 @@ provideChildsOf("changeSet") {
 					parameter(name:'joinString', type:String.name),
 					parameter(name:'schemaName', type:String.name),
 					parameter(name:'tableName', type:String.name)
-			],
-			body: {}
+			]
 	], type: void
 }
 
@@ -684,8 +634,7 @@ provideChildsOf("changeSet") {
 	method name: "stop", params: [
 			args: [
 					parameter(name:'message', type:String.name)
-			],
-			body: {}
+			]
 	], type: void
 }
 
@@ -693,12 +642,10 @@ provideChildsOf("changeSet") {
 	method name: "tagDatabase", params: [
 			args: [
 					parameter(name:'tag', type:String.name)
-			],
-			body: {}
+			]
 	], type: void
 }
 
-// TODO: NESTED PROPERTIES
 provideChildsOf("changeSet") {
 	method name: "update", params: [
 			args: [
@@ -710,6 +657,5 @@ provideChildsOf("changeSet") {
 			body: {}
 	], type: void
 }
-
 provideChildsOf("update", columnType)
 provideChildsOf("update", columnTypeNoBody)
