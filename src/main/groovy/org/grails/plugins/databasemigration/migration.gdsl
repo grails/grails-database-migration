@@ -149,9 +149,10 @@ columnTypeNoBody = {
 	], type: void
 }
 
-param = {
-	method name: "param", type: void
-}
+List param = [
+	parameter(name:'name', type:String.name),
+	parameter(name:'value', type:String.name)
+]
 
 provideChildsOf("changeSet") {
 	method name: "createTable", params: [
@@ -535,10 +536,11 @@ provideChildsOf("changeSet") {
 provideChildsOf("changeSet") {
 	method name: "customChange", params: [
 			args: [
-
+					parameter(name:'param', type:String.name),
 			]
 	], type: void
 }
+//provideChildsOf("customChange", param)
 
 provideChildsOf("changeSet") {
 	method name: "dropProcedure", params: [
