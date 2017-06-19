@@ -73,22 +73,22 @@ provideChildsOf("rollback") {
 }
 
 
-provideChildsOf("changeSet") {
-	method name: "sql", params: [query:"java.lang.String"], type: void
-}
-
 //provideChildsOf("changeSet") {
-//	method name: "sql", params: [
-//			args: [
-//					parameter(name: "comment", type: String.name),
-//					parameter(name: "dbms", type: String.name),
-//					parameter(name: "endDelimiter", type: String.name),
-//					parameter(name: "splitStatements", type: String.name),
-//					parameter(name: "sql", type: String.name),
-//					parameter(name: "stripComments", type: String.name),
-//			]
-//	], type: void
+//	method name: "sql", params: [query:"java.lang.String"], type: void
 //}
+
+provideChildsOf("changeSet") {
+	method name: "runSql", params: [
+			args: [
+					parameter(name: "comment", type: String.name),
+					parameter(name: "dbms", type: String.name),
+					parameter(name: "endDelimiter", type: String.name),
+					parameter(name: "splitStatements", type: String.name),
+					parameter(name: "sql", type: String.name),
+					parameter(name: "stripComments", type: String.name),
+			]
+	], type: void
+}
 
 provideChildsOf("changeSet") {
     method name: "sqlFile", params: [
@@ -147,6 +147,10 @@ columnTypeNoBody = {
 	method name: "column", params: [
 			args: columnArgs
 	], type: void
+}
+
+param = {
+	method name: "param", type: void
 }
 
 provideChildsOf("changeSet") {
@@ -529,8 +533,10 @@ provideChildsOf("changeSet") {
 }
 
 provideChildsOf("changeSet") {
-	method name: "customChange", params: [
+	method name: "runCustomChange", params: [
+			args: [
 
+			]
 	], type: void
 }
 
@@ -559,7 +565,7 @@ provideChildsOf("changeSet") {
 }
 
 provideChildsOf("changeSet") {
-	method name: "executeCommand", params: [
+	method name: "runExecuteCommand", params: [
 			args: [
 					parameter(name:'executable', type:String.name)
 			]
@@ -631,7 +637,7 @@ provideChildsOf("changeSet") {
 }
 
 provideChildsOf("changeSet") {
-	method name: "stop", params: [
+	method name: "stopMessage", params: [
 			args: [
 					parameter(name:'message', type:String.name)
 			]
