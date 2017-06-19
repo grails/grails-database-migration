@@ -540,7 +540,6 @@ provideChildsOf("changeSet") {
 			]
 	], type: void
 }
-//provideChildsOf("customChange", param)
 
 provideChildsOf("changeSet") {
 	method name: "dropProcedure", params: [
