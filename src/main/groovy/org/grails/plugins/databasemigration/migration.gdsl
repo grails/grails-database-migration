@@ -78,7 +78,7 @@ provideChildsOf("rollback") {
 //}
 
 provideChildsOf("changeSet") {
-	method name: "runSql", params: [
+	method name: "sql", params: [
 			args: [
 					parameter(name: "comment", type: String.name),
 					parameter(name: "dbms", type: String.name),
@@ -533,7 +533,7 @@ provideChildsOf("changeSet") {
 }
 
 provideChildsOf("changeSet") {
-	method name: "runCustomChange", params: [
+	method name: "customChange", params: [
 			args: [
 
 			]
@@ -565,7 +565,7 @@ provideChildsOf("changeSet") {
 }
 
 provideChildsOf("changeSet") {
-	method name: "runExecuteCommand", params: [
+	method name: "executeCommand", params: [
 			args: [
 					parameter(name:'executable', type:String.name)
 			]
@@ -637,7 +637,7 @@ provideChildsOf("changeSet") {
 }
 
 provideChildsOf("changeSet") {
-	method name: "stopMessage", params: [
+	method name: "stop", params: [
 			args: [
 					parameter(name:'message', type:String.name)
 			]
