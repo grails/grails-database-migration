@@ -6,7 +6,7 @@
 
 **master** Version of the plugin compatible with Grails 3 and Hibernate 5.
 
-**2.x**. Version of the plugin compatible with Grails 3 and Hiberante 4.
+**2.x**. Version of the plugin compatible with Grails 3 and Hibernate 4.
 
 **1.x** There is a 1.x branch for on-going maintenance of 1.x versions of the plugin compatible with Grails 2. 
 
