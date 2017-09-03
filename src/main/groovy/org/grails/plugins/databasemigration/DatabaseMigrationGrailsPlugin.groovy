@@ -47,6 +47,8 @@ class DatabaseMigrationGrailsPlugin extends Plugin {
     // License: one of 'APACHE', 'GPL2', 'GPL3'
     def license = "APACHE"
 
+    def static final String CONFIG_MAIN_PREFIX = 'grails.plugin.databasemigration'
+
     // Online location of the plugin's browseable source code.
     //def scm = [url: "http://svn.codehaus.org/grails-plugins/"]
 
@@ -60,18 +62,24 @@ class DatabaseMigrationGrailsPlugin extends Plugin {
     void doWithApplicationContext() {
         def mainClassName = deduceApplicationMainClassName()
 
+        def updateAllOnStart = config.getProperty("${CONFIG_MAIN_PREFIX}.updateAllOnStart", Boolean, false)
+
         dataSourceNames.each { String dataSourceName ->
             def isDefaultDataSource = 'dataSource' == dataSourceName
-            def configPrefix = isDefaultDataSource ? 'grails.plugin.databasemigration' : "grails.plugin.databasemigration.${dataSourceName}"
+            def configPrefix = isDefaultDataSource ? CONFIG_MAIN_PREFIX : "${CONFIG_MAIN_PREFIX}.${dataSourceName}"
 
             def skipMainClasses = config.getProperty("${configPrefix}.skipUpdateOnStartMainClasses", List, ['grails.ui.command.GrailsApplicationContextCommandRunner'])
             if (skipMainClasses.contains(mainClassName)) {
                 return
             }
 
-            def updateOnStart = config.getProperty("${configPrefix}.updateOnStart", Boolean, false)
-            if (!updateOnStart) {
-                return
+            if(!updateAllOnStart) {
+                def updateOnStart = config.getProperty("${configPrefix}.updateOnStart", Boolean, false)
+                if (!updateOnStart) {
+                    return
+                }
+            } else {
+                configPrefix = CONFIG_MAIN_PREFIX
             }
 
             new DatabaseMigrationTransactionManager(applicationContext, dataSourceName).withTransaction {
