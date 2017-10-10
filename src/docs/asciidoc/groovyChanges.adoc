@@ -53,24 +53,18 @@ databaseChangeLog = {
 === Available variables
 
 These variables are available throughout the change closure:
-* `changeSet`
-** the current Liquibase `ChangeSet` instance
-* `resourceAccessor`
-** the current Liquibase `ResourceAccessor` instance
-* `ctx`
-** the Spring `ApplicationContext`
-* `application`
-** the `GrailsApplication`
+
+`changeSet`:: the current Liquibase `ChangeSet` instance
+`resourceAccessor`:: the current Liquibase `ResourceAccessor` instance
+`ctx`:: the Spring `ApplicationContext`
+`application`:: the `GrailsApplication`
 
 The `change` and `rollback` closures also have the following available:
-* `database`
-** the current Liquibase `Database` instance
-* `databaseConnection`
-** the current Liquibase `DatabaseConnection` instance, which is a wrapper around the JDBC `Connection` (but doesn't implement the `Connection` interface)
-* `connection`
-** the real JDBC `Connection` instance (a shortcut for `database.connection.wrappedConnection`)
-* `sql`
-** a `groovy.sql.Sql` instance which uses the current `connection` and can be used for arbitrary queries and updates
+
+`database`:: the current Liquibase `Database` instance
+`databaseConnection`:: the current Liquibase `DatabaseConnection` instance, which is a wrapper around the JDBC `Connection` (but doesn't implement the `Connection` interface)
+`connection`:: the real JDBC `Connection` instance (a shortcut for `database.connection.wrappedConnection`)
+`sql`:: a `groovy.sql.Sql` instance which uses the current `connection` and can be used for arbitrary queries and updates
 
 *init*
 
