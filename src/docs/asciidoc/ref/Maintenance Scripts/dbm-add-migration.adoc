@@ -7,7 +7,7 @@ Adds a template migration file to your project and to the changelog file.
 ===== Description
 
 This script provides a template in which to place your migration behaviour code, whether
-grails code or raw SQL.
+Grails code or raw SQL.
 
 Usage:
 [source,java]

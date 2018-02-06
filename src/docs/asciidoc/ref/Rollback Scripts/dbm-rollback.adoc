@@ -30,7 +30,7 @@ NOTE: Note that the `contexts`, `defaultSchema`, and `dataSource` parameter name
 grails dbm-rollback "--contexts=<<contexts>>" "--defaultSchema=<<defaultSchema>>" "--dataSource=<<dataSource>>"
 ----
 
-NOTE: For the `dataSource` parameter; If the data source is configured as `reports` underneath the `dataSources` key in `application.[yml|groovy]`, the value should be `reports`.
+NOTE: For the `dataSource` parameter, if the data source is configured as `reports` underneath the `dataSources` key in `application.[yml|groovy]`, the value should be `reports`.
 
 [source,groovy]
 ----

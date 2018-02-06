@@ -24,7 +24,7 @@ There are a few configuration options for the plugin. All configurations are pre
 |loadPluginMigrations |`false` |if `true`, load migrations from the classpath (i.e. plugin migrations) using `GrailsClassLoaderResourceAccessor` instead of `FileSystemResourceAccessor` (War deployed mode always uses `GrailsClassLoaderResourceAccessor`)
 |==================================
 
-NOTE: All of the above configs can be used for a multiple datasources
+NOTE: All of the above configs can be used for multiple datasources
 
 
 *Multiple DataSource Example:*
