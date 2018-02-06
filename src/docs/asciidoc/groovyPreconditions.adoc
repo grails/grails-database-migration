@@ -4,7 +4,7 @@ In addition to the built-in Liquibase preconditions (see http://www.liquibase.or
 
 === General format
 
-This is general format of a Groovy-based precondition:
+This is the general format of a Groovy-based precondition:
 
 [source,groovy]
 ----
@@ -43,6 +43,7 @@ databaseChangeLog = {
 ----
 
 As you can see there are a few ways to indicate that a precondition wasn't met:
+
 * use a simple assertion
 * use an assertion with a message
 * call the `fail(String message)` method (throws a `PreconditionFailedException`)
@@ -50,29 +51,18 @@ As you can see there are a few ways to indicate that a precondition wasn't met:
 
 === Available variables
 
-* `database`
-** the current Liquibase `Database` instance
-* `databaseConnection`
-** the current Liquibase `DatabaseConnection` instance, which is a wrapper around the JDBC `Connection` (but doesn't implement the `Connection` interface)
-* `connection`
-** the real JDBC `Connection` instance (a shortcut for `database.connection.wrappedConnection`)
-* `sql`
-** a `groovy.sql.Sql` instance which uses the current `connection` and can be used for arbitrary queries and updates
-* `resourceAccessor`
-** the current Liquibase `ResourceAccessor` instance
-* `ctx`
-** the Spring `ApplicationContext`
-* `application`
-** the `GrailsApplication`
-* `changeSet`
-** the current Liquibase `ChangeSet` instance
-* `changeLog`
-** the current Liquibase `DatabaseChangeLog` instance
+* `database` - the current Liquibase `Database` instance
+* `databaseConnection` - the current Liquibase `DatabaseConnection` instance, which is a wrapper around the JDBC `Connection` (but doesn't implement the `Connection` interface)
+* `connection` - the real JDBC `Connection` instance (a shortcut for `database.connection.wrappedConnection`)
+* `sql` - a `groovy.sql.Sql` instance which uses the current `connection` and can be used for arbitrary queries and updates
+* `resourceAccessor` - the current Liquibase `ResourceAccessor` instance
+* `ctx` - the Spring `ApplicationContext`
+* `application` - the `GrailsApplication`
+* `changeSet` - the current Liquibase `ChangeSet` instance
+* `changeLog` - the current Liquibase `DatabaseChangeLog` instance
 
 === Utility methods
 
-* `createDatabaseSnapshotGenerator()`
-** retrieves the `DatabaseSnapshotGenerator` for the current `Database`
-* `createDatabaseSnapshot(String schemaName = null)`
-** creates a `DatabaseSnapshot` for the current `Database` (and schema if specified)
+* `createDatabaseSnapshotGenerator()` - retrieves the `DatabaseSnapshotGenerator` for the current `Database`
+* `createDatabaseSnapshot(String schemaName = null)` - creates a `DatabaseSnapshot` for the current `Database` (and schema if specified)
 
