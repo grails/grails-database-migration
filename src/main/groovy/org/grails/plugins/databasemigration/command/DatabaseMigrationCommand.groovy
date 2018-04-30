@@ -222,7 +222,7 @@ trait DatabaseMigrationCommand {
         def changeLogFilePath = changeLogFile?.path
         def compareControl = new CompareControl([] as CompareControl.SchemaComparison[], null as String)
 
-        def command = new GroovyDiffToChangeLogCommand()
+        def command = new GroovyDiffToChangeLogCommand(config.getProperty("${configPrefix}.diffCallback", Closure))
         command.setReferenceDatabase(referenceDatabase).setTargetDatabase(targetDatabase).setCompareControl(compareControl).setOutputStream(System.out)
         command.setChangeLogFile(changeLogFilePath).setDiffOutputControl(createDiffOutputControl())
 
