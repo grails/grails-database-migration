@@ -65,7 +65,7 @@ trait DatabaseMigrationCommand {
         if (contexts) {
             return contexts
         }
-        return config.getProperty("${configPrefix}.contexts", List)?.join(',')
+        return config.getProperty("${configPrefix}.contexts".toString(), List)?.join(',')
     }
 
     List<String> getArgs() {
@@ -73,7 +73,7 @@ trait DatabaseMigrationCommand {
     }
 
     File getChangeLogLocation() {
-        new File(config.getProperty("${configPrefix}.changelogLocation", String) ?: DEFAULT_CHANGE_LOG_LOCATION)
+        new File(config.getProperty("${configPrefix}.changelogLocation".toString(), String) ?: DEFAULT_CHANGE_LOG_LOCATION)
     }
 
     File getChangeLogFile() {
@@ -81,7 +81,7 @@ trait DatabaseMigrationCommand {
     }
 
     String getChangeLogFileName() {
-        def changelogFileName = config.getProperty("${configPrefix}.changelogFileName", String)
+        def changelogFileName = config.getProperty("${configPrefix}.changelogFileName".toString(), String)
         if (changelogFileName) {
             return changelogFileName
         }
@@ -194,8 +194,8 @@ trait DatabaseMigrationCommand {
         if (!database.supportsSchemas() && defaultSchema) {
             database.defaultCatalogName = defaultSchema
         }
-        database.databaseChangeLogTableName = config.getProperty("${configPrefix}.databaseChangeLogTableName", String)
-        database.databaseChangeLogLockTableName = config.getProperty("${configPrefix}.databaseChangeLogLockTableName", String)
+        database.databaseChangeLogTableName = config.getProperty("${configPrefix}.databaseChangeLogTableName".toString(), String)
+        database.databaseChangeLogLockTableName = config.getProperty("${configPrefix}.databaseChangeLogLockTableName".toString(), String)
     }
 
     void doGenerateChangeLog(File changeLogFile, Database originalDatabase) {
@@ -222,7 +222,7 @@ trait DatabaseMigrationCommand {
         command.setChangeLogFile(changeLogFilePath).setDiffOutputControl(createDiffOutputControl())
 
         try {
-            command.execute();
+            command.execute()
         } catch (CommandExecutionException e) {
             throw new LiquibaseException(e)
         }
@@ -231,8 +231,8 @@ trait DatabaseMigrationCommand {
     private DiffOutputControl createDiffOutputControl() {
         def diffOutputControl = new DiffOutputControl(false, false, false)
 
-        String excludeObjects = config.getProperty("${configPrefix}.excludeObjects", String)
-        String includeObjects = config.getProperty("${configPrefix}.includeObjects", String)
+        String excludeObjects = config.getProperty("${configPrefix}.excludeObjects".toString(), String)
+        String includeObjects = config.getProperty("${configPrefix}.includeObjects".toString(), String)
         if (excludeObjects && includeObjects) {
             throw new DatabaseMigrationException("Cannot specify both excludeObjects and includeObjects")
         }
