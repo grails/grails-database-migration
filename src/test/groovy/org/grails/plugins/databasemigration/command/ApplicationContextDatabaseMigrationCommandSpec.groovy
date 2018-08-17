@@ -12,16 +12,19 @@ import liquibase.parser.ChangeLogParserFactory
 import liquibase.servicelocator.ServiceLocator
 import org.grails.build.parsing.CommandLineParser
 import org.grails.config.PropertySourcesConfig
+import org.grails.orm.hibernate.cfg.Settings
 import org.grails.plugins.databasemigration.liquibase.GormDatabase
 import org.grails.plugins.databasemigration.liquibase.GroovyChangeLogParser
+import org.grails.testing.GrailsUnitTest
 import org.h2.Driver
 import org.springframework.boot.liquibase.CommonsLoggingLiquibaseLogger
 import org.springframework.context.support.GenericApplicationContext
 import org.springframework.core.env.MapPropertySource
 import org.springframework.core.env.MutablePropertySources
+import org.springframework.core.env.PropertyResolver
 import spock.lang.AutoCleanup
 
-abstract class ApplicationContextDatabaseMigrationCommandSpec extends DatabaseMigrationCommandSpec {
+abstract class ApplicationContextDatabaseMigrationCommandSpec extends DatabaseMigrationCommandSpec implements GrailsUnitTest {
 
     @AutoCleanup
     GenericApplicationContext applicationContext
@@ -41,21 +44,15 @@ abstract class ApplicationContextDatabaseMigrationCommandSpec extends DatabaseMi
         applicationContext = new GenericApplicationContext()
 
         applicationContext.beanFactory.registerSingleton('dataSource', dataSource)
+        applicationContext.beanFactory.registerSingleton('grailsApplication', grailsApplication)
 
-        def mutablePropertySources = new MutablePropertySources()
-        mutablePropertySources.addFirst(new MapPropertySource('TestConfig', [
-            'grails.plugin.databasemigration.changelogLocation': changeLogLocation.canonicalPath,
-            'dataSource.dbCreate'                              : '',
-            'dataSource.url'                                   : 'jdbc:h2:mem:testDb',
-            'dataSource.username'                              : 'sa',
-            'dataSource.password'                              : '',
-            'dataSource.driverClassName'                       : Driver.name,
-            'environments.other.dataSource.url'                : 'jdbc:h2:mem:otherDb',
-        ]))
-        config = new PropertySourcesConfig(mutablePropertySources)
+        MutablePropertySources propertySources = new MutablePropertySources()
+        propertySources.addFirst(new MapPropertySource("TestConfig", getConfiguration()))
+        List<Class> domainClasses = getDomainClasses()
+        config = new PropertySourcesConfig(propertySources)
 
-        def datastoreInitializer = new HibernateDatastoreSpringInitializer(config, domainClasses)
-        datastoreInitializer.configureForBeanDefinitionRegistry(applicationContext)
+        def datastoreInitializer = new HibernateDatastoreSpringInitializer((PropertyResolver) config, domainClasses)
+        datastoreInitializer.configureForBeanDefinitionRegistry((GenericApplicationContext) applicationContext)
 
         applicationContext.refresh()
 
@@ -73,7 +70,7 @@ abstract class ApplicationContextDatabaseMigrationCommandSpec extends DatabaseMi
 
     protected ApplicationCommand createCommand(Class<ApplicationCommand> applicationCommand) {
         def command = applicationCommand.newInstance()
-        command.applicationContext = applicationContext
+        command.setApplicationContext(applicationContext)
         command.changeLogFile.parentFile.mkdirs()
         return command
     }
@@ -89,12 +86,23 @@ abstract class ApplicationContextDatabaseMigrationCommandSpec extends DatabaseMi
     protected ExecutionContext getExecutionContext(Class<ApplicationCommand> clazz = commandClass, String... args) {
         def commandClassName = GrailsNameUtils.getScriptName(GrailsNameUtils.getLogicalName(clazz.name, 'Command'))
         new ExecutionContext(
-            new CommandLineParser().parse(([commandClassName] + args.toList()) as String[])
+                new CommandLineParser().parse(([commandClassName] + args.toList()) as String[])
         )
     }
 
-    void cleanup() {
+    void cleanup() { }
 
+    private Map getConfiguration() {
+        [
+                'grails.plugin.databasemigration.changelogLocation'                      : changeLogLocation.canonicalPath,
+                (Settings.SETTING_DATASOURCE + '.dbCreate')                              : '',
+                (Settings.SETTING_DATASOURCE + '.username')                              : 'sa',
+                (Settings.SETTING_DATASOURCE + '.password')                              : '',
+                (Settings.SETTING_DATASOURCE + '.driverClassName')                       : Driver.name,
+                ('environments.test' + '.' + Settings.SETTING_DATASOURCE + '.url'): 'jdbc:h2:mem:testDb',
+                ('environments.development' + '.' + Settings.SETTING_DATASOURCE + '.url'): 'jdbc:h2:mem:testDb',
+                ('environments.other' + '.' + Settings.SETTING_DATASOURCE + '.url')      : 'jdbc:h2:mem:otherDb',
+        ]
     }
 }
 

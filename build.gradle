@@ -71,6 +71,7 @@ dependencies {
     compileOnly 'javax.servlet:javax.servlet-api:3.1.0'
     compileOnly "org.grails.plugins:hibernate5"
 
+    testCompile "org.grails:grails-gorm-testing-support"
     testCompile "org.grails:grails-plugin-testing"
 
     provided("org.grails:grails-shell") {
