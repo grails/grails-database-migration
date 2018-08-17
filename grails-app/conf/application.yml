@@ -2,6 +2,11 @@ grails:
     profile: web-plugin
     codegen:
         defaultPackage: databasemigration
+    gorm:
+            reactor:
+                # Whether to translate GORM events into Reactor events
+                # Disabled by default for performance reasons
+                events: false
 info:
     app:
         name: '@info.app.name@'
