@@ -105,6 +105,11 @@ trait DatabaseMigrationCommand {
 
     Map<String, String> getDataSourceConfig(ConfigMap config = this.config) {
         def dataSourceName = dataSource ?: 'dataSource'
+
+        if (dataSourceName == 'dataSource') {
+            return (Map<String, String>)(config.getProperty(dataSourceName, Map) ?: [:])
+        }
+
         def dataSources = config.getProperty('dataSources', Map) ?: [:]
         if (!dataSources) {
             def defaultDataSource = config.getProperty('dataSource', Map)
