@@ -106,8 +106,8 @@ trait DatabaseMigrationCommand {
     Map<String, String> getDataSourceConfig(ConfigMap config = this.config) {
         def dataSourceName = dataSource ?: 'dataSource'
 
-        if (dataSourceName == 'dataSource') {
-            return (Map<String, String>)(config.getProperty(dataSourceName, Map) ?: [:])
+        if (dataSourceName == 'dataSource' && config.containsKey(dataSourceName)) {
+            return (Map<String, String>) (config.getProperty(dataSourceName, Map) ?: [:])
         }
 
         def dataSources = config.getProperty('dataSources', Map) ?: [:]
@@ -181,14 +181,14 @@ trait DatabaseMigrationCommand {
         }
 
         Database database = DatabaseFactory.getInstance().openDatabase(
-            dataSourceConfig.url,
-            dataSourceConfig.username ?: null,
-            password,
-            dataSourceConfig.driverClassName,
-            null,
-            null,
-            null,
-            new ClassLoaderResourceAccessor(Thread.currentThread().contextClassLoader)
+                dataSourceConfig.url,
+                dataSourceConfig.username ?: null,
+                password,
+                dataSourceConfig.driverClassName,
+                null,
+                null,
+                null,
+                new ClassLoaderResourceAccessor(Thread.currentThread().contextClassLoader)
         )
         configureDatabase(database)
         return database

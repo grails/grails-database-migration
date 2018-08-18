@@ -18,7 +18,7 @@ package org.grails.plugins.databasemigration.command
 import groovy.sql.Sql
 import org.h2.Driver
 import org.junit.Rule
-import org.springframework.boot.test.OutputCapture
+import org.springframework.boot.test.rule.OutputCapture
 import org.springframework.jdbc.datasource.DriverManagerDataSource
 import spock.lang.AutoCleanup
 import spock.lang.Specification
@@ -50,6 +50,5 @@ abstract class DatabaseMigrationCommandSpec extends Specification {
 
         changeLogLocation = File.createTempDir()
     }
-
 
 }
