@@ -21,7 +21,6 @@ There are a few configuration options for the plugin. All configurations are pre
 |includeObjects |none |A comma-delimited list of database object names to look for while performing a dbm-gorm-diff or dbm-generate-gorm-changelog
 |databaseChangeLogTableName |'databasechangelog' |the Liquibase changelog record table name
 |databaseChangeLogLockTableName |'databasechangeloglock' |the Liquibase lock table name
-|loadPluginMigrations |`false` |if `true`, load migrations from the classpath (i.e. plugin migrations) using `GrailsClassLoaderResourceAccessor` instead of `FileSystemResourceAccessor` (War deployed mode always uses `GrailsClassLoaderResourceAccessor`)
 |==================================
 
 NOTE: All of the above configs can be used for a multiple datasources
