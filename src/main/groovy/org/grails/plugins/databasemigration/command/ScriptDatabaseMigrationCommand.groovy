@@ -42,7 +42,7 @@ trait ScriptDatabaseMigrationCommand implements DatabaseMigrationCommand {
         commandLine = executionContext.commandLine
         contexts = optionValue('contexts')
         defaultSchema = optionValue('defaultSchema')
-        dataSource = optionValue('dataSource')
+        dataSource = optionValue('dataSource') ?: DEFAULT_DATASOURCE_NAME
 
         configureLiquibase()
         handle()
@@ -52,7 +52,7 @@ trait ScriptDatabaseMigrationCommand implements DatabaseMigrationCommand {
         if (!ServiceLocator.instance.packages.contains(GormDatabase.package.name)) {
             ServiceLocator.instance.addPackageToScan(GormDatabase.package.name)
         }
-        def groovyChangeLogParser = ChangeLogParserFactory.instance.parsers.find { ChangeLogParser changeLogParser -> changeLogParser instanceof GroovyChangeLogParser } as GroovyChangeLogParser
+        GroovyChangeLogParser groovyChangeLogParser = ChangeLogParserFactory.instance.parsers.find { ChangeLogParser changeLogParser -> changeLogParser instanceof GroovyChangeLogParser } as GroovyChangeLogParser
         groovyChangeLogParser.config = config
     }
 
