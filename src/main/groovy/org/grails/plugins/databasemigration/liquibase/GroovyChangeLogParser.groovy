@@ -28,6 +28,8 @@ import liquibase.util.StreamUtil
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.springframework.context.ApplicationContext
 
+import static org.grails.plugins.databasemigration.PluginConstants.DATA_SOURCE_NAME_KEY
+
 @CompileStatic
 class GroovyChangeLogParser extends AbstractChangeLogParser {
 
@@ -65,9 +67,10 @@ class GroovyChangeLogParser extends AbstractChangeLogParser {
 
             setChangeLogProperties(changeLogProperties, changeLogParameters)
 
-            def databaseChangeLogBlock = script.getProperty('databaseChangeLog') as Closure
+            Closure databaseChangeLogBlock = script.getProperty('databaseChangeLog') as Closure
 
-            def builder = new DatabaseChangeLogBuilder()
+            DatabaseChangeLogBuilder builder = new DatabaseChangeLogBuilder()
+            builder.dataSourceName = changeLogParameters.getValue(DATA_SOURCE_NAME_KEY, null)
             builder.applicationContext = applicationContext
             builder.databaseChangeLog(databaseChangeLogBlock) as ParsedNode
         } catch (Exception e) {
