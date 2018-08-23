@@ -41,13 +41,12 @@ import java.nio.file.Path
 import java.text.ParseException
 
 import static org.grails.plugins.databasemigration.DatabaseMigrationGrailsPlugin.getDataSourceName
+import static org.grails.plugins.databasemigration.DatabaseMigrationGrailsPlugin.isDefaultDataSource
 import static org.grails.plugins.databasemigration.PluginConstants.DATA_SOURCE_NAME_KEY
+import static org.grails.plugins.databasemigration.PluginConstants.DEFAULT_CHANGE_LOG_LOCATION
 
 @CompileStatic
 trait DatabaseMigrationCommand {
-
-    static final String DEFAULT_CHANGE_LOG_LOCATION = 'grails-app/migrations'
-    static final String DEFAULT_DATASOURCE_NAME = 'dataSource'
 
     CommandLine commandLine
 
@@ -89,9 +88,7 @@ trait DatabaseMigrationCommand {
         if (changelogFileName) {
             return changelogFileName
         }
-
-        boolean isDefault = !dataSource || dataSource == 'dataSource'
-        return isDefault ? 'changelog.groovy' : "changelog-${dataSource}.groovy"
+        return isDefaultDataSource(dataSource) ? 'changelog.groovy' : "changelog-${dataSource}.groovy"
     }
 
     File resolveChangeLogFile(String filename) {
@@ -287,7 +284,7 @@ trait DatabaseMigrationCommand {
     }
 
     String getConfigPrefix() {
-        def isDefault = !dataSource || dataSource == 'dataSource'
-        return isDefault ? 'grails.plugin.databasemigration' : "grails.plugin.databasemigration.${dataSource}"
+        return isDefaultDataSource(dataSource) ?
+                'grails.plugin.databasemigration' : "grails.plugin.databasemigration.${dataSource}"
     }
 }
