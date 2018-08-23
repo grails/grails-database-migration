@@ -36,9 +36,12 @@ import liquibase.parser.core.ParsedNode
 import liquibase.parser.core.ParsedNodeException
 import liquibase.resource.ResourceAccessor
 import liquibase.statement.SqlStatement
+import org.grails.plugins.databasemigration.DatabaseMigrationTransactionManager
 import org.springframework.context.ApplicationContext
 
 import java.sql.Connection
+
+import static org.grails.plugins.databasemigration.PluginConstants.DATA_SOURCE_NAME_KEY
 
 /**
  * Custom Groovy-based change.
@@ -51,6 +54,8 @@ import java.sql.Connection
 class GroovyChange extends AbstractChange {
 
     ApplicationContext ctx
+
+    String dataSourceName
 
     Closure initClosure
 
@@ -85,6 +90,7 @@ class GroovyChange extends AbstractChange {
         this.resourceAccessor = resourceAccessor
 
         ctx = parsedNode.getChildValue(null, 'applicationContext', ApplicationContext)
+        dataSourceName = parsedNode.getChildValue(null, DATA_SOURCE_NAME_KEY, String)
         initClosure = parsedNode.getChildValue(null, 'init', Closure)
         validateClosure = parsedNode.getChildValue(null, 'validate', Closure)
         changeClosure = parsedNode.getChildValue(null, 'change', Closure)
@@ -141,7 +147,7 @@ class GroovyChange extends AbstractChange {
             changeClosure.delegate = this
             try {
                 if(!changeClosureCalled) {
-                    changeClosure()
+                    withNewTransaction(changeClosure)
                 }
             } finally {
                 changeClosureCalled = true
@@ -288,7 +294,22 @@ class GroovyChange extends AbstractChange {
         application.config
     }
 
+    /**
+     *
+     * @return Whether the database executor is instance of LoggingExecutor
+     */
     protected boolean shouldRun() {
         !(ExecutorService.getInstance().getExecutor(database) instanceof LoggingExecutor)
+    }
+
+    /**
+     * Executes the grailsChange>change block within the context of a new transaction
+     *
+     * @param callable The changeClosure to call
+     * @return The result of the closure execution
+     */
+    protected void withNewTransaction(Closure callable) {
+        new DatabaseMigrationTransactionManager(ctx, dataSourceName)
+                .withNewTransaction callable
     }
 }
