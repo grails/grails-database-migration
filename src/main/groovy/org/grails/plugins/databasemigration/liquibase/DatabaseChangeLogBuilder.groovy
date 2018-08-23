@@ -21,10 +21,14 @@ import org.codehaus.groovy.runtime.InvokerHelper
 import org.grails.plugins.databasemigration.DatabaseMigrationException
 import org.springframework.context.ApplicationContext
 
+import static org.grails.plugins.databasemigration.PluginConstants.DATA_SOURCE_NAME_KEY
+
 @CompileStatic
 class DatabaseChangeLogBuilder extends BuilderSupport {
 
     ApplicationContext applicationContext
+
+    String dataSourceName
 
     @Override
     protected void setParent(Object parent, Object child) {
@@ -35,6 +39,7 @@ class DatabaseChangeLogBuilder extends BuilderSupport {
         def node = new ParsedNode(null, (String) name)
         if (name == 'grailsChange' || name == 'grailsPrecondition') {
             node.addChild(null, 'applicationContext', applicationContext)
+            node.addChild(null, DATA_SOURCE_NAME_KEY, dataSourceName)
         }
         if (currentNode) {
             currentNode.addChild(node)
