@@ -22,16 +22,19 @@ import liquibase.exception.DatabaseException
 import liquibase.exception.LiquibaseException
 import liquibase.integration.spring.SpringLiquibase
 import liquibase.resource.ClassLoaderResourceAccessor
-import liquibase.resource.CompositeResourceAccessor
 import liquibase.resource.ResourceAccessor
 import org.springframework.context.ApplicationContext
 
 import java.sql.Connection
 
+import static org.grails.plugins.databasemigration.PluginConstants.DATA_SOURCE_NAME_KEY
+
 @CompileStatic
 class GrailsLiquibase extends SpringLiquibase {
 
     private ApplicationContext applicationContext
+
+    String dataSourceName
 
     String databaseChangeLogTableName
 
@@ -51,7 +54,7 @@ class GrailsLiquibase extends SpringLiquibase {
                 liquibase.setChangeLogParameter(entry.getKey(), entry.getValue())
             }
         }
-
+        liquibase.setChangeLogParameter(DATA_SOURCE_NAME_KEY, dataSourceName)
         if (isDropFirst()) {
             liquibase.dropAll()
         }
