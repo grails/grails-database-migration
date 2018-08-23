@@ -48,7 +48,7 @@ trait ApplicationContextDatabaseMigrationCommand implements DatabaseMigrationCom
         commandLine = executionContext.commandLine
         contexts = optionValue('contexts')
         defaultSchema = optionValue('defaultSchema')
-        dataSource = optionValue('dataSource') ?: 'dataSource'
+        dataSource = optionValue('dataSource') ?: DEFAULT_DATASOURCE_NAME
     }
 
     abstract void handle()

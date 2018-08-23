@@ -47,6 +47,7 @@ import static org.grails.plugins.databasemigration.PluginConstants.DATA_SOURCE_N
 trait DatabaseMigrationCommand {
 
     static final String DEFAULT_CHANGE_LOG_LOCATION = 'grails-app/migrations'
+    static final String DEFAULT_DATASOURCE_NAME = 'dataSource'
 
     CommandLine commandLine
 
