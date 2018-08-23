@@ -40,6 +40,9 @@ import org.grails.plugins.databasemigration.liquibase.GroovyGenerateChangeLogCom
 import java.nio.file.Path
 import java.text.ParseException
 
+import static org.grails.plugins.databasemigration.DatabaseMigrationGrailsPlugin.getDataSourceName
+import static org.grails.plugins.databasemigration.PluginConstants.DATA_SOURCE_NAME_KEY
+
 @CompileStatic
 trait DatabaseMigrationCommand {
 
@@ -152,7 +155,8 @@ trait DatabaseMigrationCommand {
         String relativePath = changeLogLocationPath.relativize(changeLogFilePath).toString()
 
         withDatabase { Database database ->
-            def liquibase = new Liquibase(relativePath, resourceAccessor, database)
+            Liquibase liquibase = new Liquibase(relativePath, resourceAccessor, database)
+            liquibase.changeLogParameters.set(DATA_SOURCE_NAME_KEY, getDataSourceName(dataSource))
             closure.call(liquibase)
         }
     }

@@ -84,14 +84,6 @@ class DatabaseMigrationGrailsPlugin extends Plugin {
         applicationContext.getBean(getDataSourceName(dataSourceName), DataSource)
     }
 
-    private String getDataSourceName(String dataSourceName) {
-        isDefaultDataSource(dataSourceName) ? dataSourceName : "dataSource_$dataSourceName"
-    }
-
-    private Boolean isDefaultDataSource(String dataSourceName) {
-        'dataSource' == dataSourceName
-    }
-
     private void configureLiquibase() {
         if (!ServiceLocator.instance.packages.contains(CommonsLoggingLiquibaseLogger.package.name)) {
             ServiceLocator.instance.addPackageToScan(CommonsLoggingLiquibaseLogger.package.name)
@@ -118,5 +110,13 @@ class DatabaseMigrationGrailsPlugin extends Plugin {
 
     private String deduceApplicationMainClassName() {
         new RuntimeException().stackTrace.find { StackTraceElement stackTraceElement -> 'main' == stackTraceElement.methodName }?.className
+    }
+
+    static String getDataSourceName(String dataSourceName) {
+        isDefaultDataSource(dataSourceName) ? dataSourceName : "dataSource_$dataSourceName"
+    }
+
+    static Boolean isDefaultDataSource(String dataSourceName) {
+        'dataSource' == dataSourceName
     }
 }
