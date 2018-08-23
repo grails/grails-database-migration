@@ -124,4 +124,8 @@ task docs(type:Copy, dependsOn:[apidocs, asciidoctor])  {
     into "$buildDir/docs"
 }
 
+jar {
+    exclude "testapp/**/**"
+}
+
 configurations.testCompile.extendsFrom(configurations.compileOnly)

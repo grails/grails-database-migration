@@ -28,6 +28,8 @@ import org.grails.plugins.databasemigration.EnvironmentAwareCodeGenConfig
 import org.grails.plugins.databasemigration.liquibase.GormDatabase
 import org.grails.plugins.databasemigration.liquibase.GroovyChangeLogParser
 
+import static org.grails.plugins.databasemigration.PluginConstants.DEFAULT_DATASOURCE_NAME
+
 @CompileStatic
 trait ScriptDatabaseMigrationCommand implements DatabaseMigrationCommand {
 

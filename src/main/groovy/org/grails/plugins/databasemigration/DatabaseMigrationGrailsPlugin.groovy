@@ -30,6 +30,7 @@ import javax.sql.DataSource
 class DatabaseMigrationGrailsPlugin extends Plugin {
     def grailsVersion = "3.0.0.BUILD-SNAPSHOT > *"
     def pluginExcludes = [
+            "**/testapp/**",
             "grails-app/views/error.gsp"
     ]
 
@@ -117,6 +118,6 @@ class DatabaseMigrationGrailsPlugin extends Plugin {
     }
 
     static Boolean isDefaultDataSource(String dataSourceName) {
-        'dataSource' == dataSourceName
+        !dataSourceName || 'dataSource' == dataSourceName
     }
 }

@@ -7,11 +7,9 @@ appender('STDOUT', ConsoleAppender) {
         pattern = CONSOLE_LOG_PATTERN
     }
 }
-
-root(INFO, ['STDOUT'])
+root(ERROR, ['STDOUT'])
 
 logger("org.grails", DEBUG, ['STDOUT'], false)
-
 logger("liquibase", DEBUG, ['STDOUT'], false)
 
 

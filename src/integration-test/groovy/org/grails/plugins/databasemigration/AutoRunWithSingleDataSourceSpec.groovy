@@ -18,7 +18,6 @@ package org.grails.plugins.databasemigration
 import grails.test.mixin.integration.Integration
 import groovy.sql.Sql
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.context.annotation.Primary
 import org.springframework.test.context.ActiveProfiles
 import spock.lang.AutoCleanup
 import spock.lang.Specification
