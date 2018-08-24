@@ -23,12 +23,17 @@ import groovy.transform.CompileStatic
 import groovy.transform.stc.ClosureParams
 import groovy.transform.stc.SimpleType
 import liquibase.database.Database
+import liquibase.parser.ChangeLogParser
+import liquibase.parser.ChangeLogParserFactory
+import liquibase.servicelocator.ServiceLocator
 import org.grails.config.PropertySourcesConfig
 import org.grails.plugins.databasemigration.DatabaseMigrationTransactionManager
 import org.grails.plugins.databasemigration.liquibase.GormDatabase
+import org.grails.plugins.databasemigration.liquibase.GroovyChangeLogParser
 import org.hibernate.dialect.Dialect
 import org.hibernate.engine.jdbc.spi.JdbcServices
 import org.hibernate.engine.spi.SessionFactoryImplementor
+import org.springframework.boot.liquibase.CommonsLoggingLiquibaseLogger
 import org.springframework.context.ConfigurableApplicationContext
 
 import static org.grails.plugins.databasemigration.DatabaseMigrationGrailsPlugin.getDataSourceName
@@ -62,7 +67,8 @@ trait ApplicationContextDatabaseMigrationCommand implements DatabaseMigrationCom
         applicationContext.getBean(GrailsApplication).config
     }
 
-    void withGormDatabase(ConfigurableApplicationContext applicationContext, String dataSource, @ClosureParams(value = SimpleType, options = 'liquibase.database.Database') Closure closure) {
+    void withGormDatabase(ConfigurableApplicationContext applicationContext, String dataSource,
+                          @ClosureParams(value = SimpleType, options = 'liquibase.database.Database') Closure closure) {
         def database = null
         try {
             database = createGormDatabase(applicationContext, dataSource)
@@ -107,5 +113,17 @@ trait ApplicationContextDatabaseMigrationCommand implements DatabaseMigrationCom
 
     void withTransaction(Closure callable) {
         new DatabaseMigrationTransactionManager(applicationContext, dataSource).withTransaction(callable)
+    }
+
+    void configureLiquibase() {
+        if (!ServiceLocator.instance.packages.contains(CommonsLoggingLiquibaseLogger.package.name)) {
+            ServiceLocator.instance.addPackageToScan(CommonsLoggingLiquibaseLogger.package.name)
+        }
+        if (!ServiceLocator.instance.packages.contains(GormDatabase.package.name)) {
+            ServiceLocator.instance.addPackageToScan(GormDatabase.package.name)
+        }
+        def groovyChangeLogParser = ChangeLogParserFactory.instance.parsers.find { ChangeLogParser changeLogParser -> changeLogParser instanceof GroovyChangeLogParser } as GroovyChangeLogParser
+        groovyChangeLogParser.applicationContext = applicationContext
+        groovyChangeLogParser.config = config
     }
 }
