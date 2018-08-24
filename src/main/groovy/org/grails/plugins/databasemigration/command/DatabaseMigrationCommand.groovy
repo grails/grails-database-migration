@@ -20,24 +20,49 @@ import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.transform.stc.ClosureParams
 import groovy.transform.stc.SimpleType
+import liquibase.Contexts
+import liquibase.LabelExpression
 import liquibase.Liquibase
+import liquibase.RuntimeEnvironment
+import liquibase.changelog.ChangeLogIterator
+import liquibase.changelog.DatabaseChangeLog
+import liquibase.changelog.filter.ContextChangeSetFilter
+import liquibase.changelog.filter.CountChangeSetFilter
+import liquibase.changelog.filter.DbmsChangeSetFilter
 import liquibase.command.CommandExecutionException
 import liquibase.database.Database
+import liquibase.database.DatabaseConnection
 import liquibase.database.DatabaseFactory
+import liquibase.database.core.MSSQLDatabase
+import liquibase.database.core.OracleDatabase
 import liquibase.diff.compare.CompareControl
 import liquibase.diff.output.DiffOutputControl
 import liquibase.diff.output.StandardObjectChangeFilter
+import liquibase.exception.DatabaseException
 import liquibase.exception.LiquibaseException
+import liquibase.exception.LockException
+import liquibase.executor.Executor
+import liquibase.executor.ExecutorService
+import liquibase.executor.LoggingExecutor
+import liquibase.lockservice.LockService
+import liquibase.lockservice.LockServiceFactory
+import liquibase.parser.ChangeLogParserFactory
 import liquibase.resource.ClassLoaderResourceAccessor
 import liquibase.resource.FileSystemResourceAccessor
 import liquibase.resource.ResourceAccessor
+import liquibase.statement.core.RawSqlStatement
+import liquibase.structure.core.Catalog
+import liquibase.util.LiquibaseUtil
+import liquibase.util.StreamUtil
 import liquibase.util.file.FilenameUtils
 import org.grails.build.parsing.CommandLine
 import org.grails.plugins.databasemigration.DatabaseMigrationException
+import org.grails.plugins.databasemigration.NoopVisitor
 import org.grails.plugins.databasemigration.liquibase.GroovyDiffToChangeLogCommand
 import org.grails.plugins.databasemigration.liquibase.GroovyGenerateChangeLogCommand
 
 import java.nio.file.Path
+import java.text.DateFormat
 import java.text.ParseException
 
 import static org.grails.plugins.databasemigration.DatabaseMigrationGrailsPlugin.getDataSourceName
@@ -216,7 +241,7 @@ trait DatabaseMigrationCommand {
         try {
             command.execute()
         } catch (CommandExecutionException e) {
-            throw new LiquibaseException(e)
+            throw new LiquibaseException(e.message, e.cause)
         }
     }
 
@@ -231,7 +256,68 @@ trait DatabaseMigrationCommand {
         try {
             command.execute()
         } catch (CommandExecutionException e) {
-            throw new LiquibaseException(e)
+            throw new LiquibaseException(e.message, e.cause)
+        }
+    }
+
+    void doGeneratePreviousChangesetSql(Writer output, Database database, Liquibase liquibase, String count, String skip) {
+        Contexts contexts = new Contexts(contexts)
+        LabelExpression labelExpression = liquibase.changeLogParameters.labels
+        liquibase.changeLogParameters.setContexts(contexts)
+        LoggingExecutor outputTemplate = new LoggingExecutor(ExecutorService.getInstance().getExecutor(database), output, database)
+        Executor oldTemplate = ExecutorService.getInstance().getExecutor(database)
+        ExecutorService.getInstance().setExecutor(database, outputTemplate)
+
+        outputHeader((String) "Previous $count SQL Changeset(s) Skipping $skip Script", liquibase, database)
+
+        LockService lockService = LockServiceFactory.getInstance().getLockService(database)
+        lockService.waitForLock()
+
+        try {
+            def parser = ChangeLogParserFactory.instance.getParser(liquibase.changeLogFile, liquibase.resourceAccessor)
+            DatabaseChangeLog changeLog = parser.parse(liquibase.changeLogFile, liquibase.changeLogParameters, liquibase.resourceAccessor)
+            liquibase.checkLiquibaseTables(true, changeLog, contexts, labelExpression)
+            changeLog.validate(database, contexts, labelExpression)
+            changeLog.changeSets.reverse(true)
+            skip.toInteger().times { changeLog.changeSets.remove(0) }
+
+            ChangeLogIterator logIterator = new ChangeLogIterator(changeLog,
+                    new ContextChangeSetFilter(contexts),
+                    new DbmsChangeSetFilter(database),
+                    new CountChangeSetFilter(count.toInteger()))
+
+            logIterator.run(new NoopVisitor(database), new RuntimeEnvironment(database, contexts, labelExpression))
+
+            output.flush()
+        } finally {
+            try {
+                lockService.releaseLock()
+                ExecutorService.instance.setExecutor(database, oldTemplate)
+            } catch (LockException e) {
+                throw new LiquibaseException(e.message, e.cause)
+            }
+        }
+    }
+
+    void outputHeader(String message, Liquibase liquibase, Database database) throws DatabaseException {
+        Executor executor = ExecutorService.getInstance().getExecutor(database)
+        executor.comment("*********************************************************************")
+        executor.comment(message)
+        executor.comment("*********************************************************************")
+        executor.comment("Change Log: " + liquibase.changeLogFile)
+        executor.comment("Ran at: " + DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(new Date()))
+        DatabaseConnection connection = liquibase.getDatabase().getConnection()
+        if (connection != null) {
+            executor.comment("Against: " + connection.getConnectionUserName() + "@" + connection.getURL())
+        }
+        executor.comment("Liquibase version: " + LiquibaseUtil.getBuildVersion())
+        executor.comment("*********************************************************************" + StreamUtil.getLineSeparator())
+
+        if (database instanceof OracleDatabase) {
+            executor.execute(new RawSqlStatement("SET DEFINE OFF;"))
+        }
+        if (database instanceof MSSQLDatabase && database.getDefaultCatalogName() != null) {
+            executor.execute(new RawSqlStatement("USE " + database.escapeObjectName(database.getDefaultCatalogName(), Catalog.class) + ";"))
         }
     }
 

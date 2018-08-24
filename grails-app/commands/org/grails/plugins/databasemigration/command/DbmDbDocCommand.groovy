@@ -25,7 +25,7 @@ class DbmDbDocCommand implements ApplicationCommand, ApplicationContextDatabaseM
     final String description = 'Generates Javadoc-like documentation based on current database and change log'
 
     void handle() {
-        def destination = args[0] ?: config.getProperty("${configPrefix}.dbDocLocation", String) ?: 'build/dbdoc'
+        def destination = args[0] ?: config.getProperty((String) "${configPrefix}.dbDocLocation", String) ?: 'build/dbdoc'
         withLiquibase { Liquibase liquibase ->
             liquibase.generateDocumentation(destination, contexts)
         }
