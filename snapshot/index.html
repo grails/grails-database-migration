@@ -798,6 +798,11 @@ If you use the XML format (or use a non-default Groovy filename), be sure to cha
 <td class="tableblock halign-left valign-top"><p class="tableblock">A comma-delimited list of <a href="http://www.liquibase.org/manual/contexts">context</a> names. If specified, only changesets tagged with one of the context names will be run</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">updateAllOnStart</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">if <code>true</code> then changesets from the specified list of names will be run at startup for all dataSources. Useful for Grails Multitenancy with Multiple Databases (same db schema)</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">autoMigrateScripts</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">[<em>RunApp</em>]</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">the scripts when running auto-migrate. Useful to run auto-migrate during test phase with: [<em>RunApp</em>, <em>TestApp</em>]</p></td>
@@ -859,6 +864,15 @@ dataSources:
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">grails.plugin.databasemigration.reports.updateOnStart = <span class="predefined-constant">true</span>
 grails.plugin.databasemigration.reports.changelogFileName = changelog-reports.groovy</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The configuration for all data sources with same db schema would be:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">grails.plugin.databasemigration.updateAllOnStart = <span class="predefined-constant">true</span>
+grails.plugin.databasemigration.changelogFileName = changelog.groovy</code></pre>
 </div>
 </div>
 </div>
@@ -3831,7 +3845,7 @@ For the <code>dataSource</code> parameter, if the data source is configured as <
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-08-27 09:43:39 +00:00
+Last updated 2018-08-27 14:24:05 +00:00
 </div>
 </div>
 </body>
