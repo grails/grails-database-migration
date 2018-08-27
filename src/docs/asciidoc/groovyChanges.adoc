@@ -53,6 +53,7 @@ databaseChangeLog = {
 === Available variables
 
 These variables are available throughout the change closure:
+
 * `changeSet`
 ** the current Liquibase `ChangeSet` instance
 * `resourceAccessor`
@@ -63,6 +64,7 @@ These variables are available throughout the change closure:
 ** the `GrailsApplication`
 
 The `change` and `rollback` closures also have the following available:
+
 * `database`
 ** the current Liquibase `Database` instance
 * `databaseConnection`
