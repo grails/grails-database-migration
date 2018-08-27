@@ -23,7 +23,7 @@ There are a few configuration options for the plugin. All configurations are pre
 |databaseChangeLogLockTableName |'databasechangeloglock' |the Liquibase lock table name
 |==================================
 
-NOTE: All of the above configs can be used for a multiple datasources
+NOTE: All of the above configs can be used for multiple datasources
 
 
 *Multiple DataSource Example:*

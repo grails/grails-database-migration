@@ -17,7 +17,7 @@ To create the changelog additions, you can either manually create the changes or
 You have a few options with `dbm-gorm-diff`:
 
 * `dbm-gorm-diff` will dump to the console if no filename is specified, so you can copy/paste from there
-* if you include the `--add` parameter when running the script with a filename it will register an include for the the filename in the main changelog for you
+* if you include the `--add` parameter when running the script with a filename it will register an include for the filename in the main changelog for you
 
 Regardless of which approach you use, be sure to inspect generated changes and adjust as necessary.
 

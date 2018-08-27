@@ -14,7 +14,7 @@ grails <<environment>> dbm-list-tags --defaultSchema=<<defaultSchema>>
 
 Required arguments:
 
-Required arguments: _none_ .
+Required arguments: __none__.
 
 Optional arguments:
 

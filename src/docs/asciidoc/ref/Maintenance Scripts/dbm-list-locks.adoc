@@ -12,7 +12,7 @@ Usage:
 grails <<environment>> dbm-list-locks <<filename>> --defaultSchema=<<defaultSchema>> --dataSource=<<dataSource>>
 ----
 
-Required arguments: _none_ .
+Required arguments: __none__.
 
 Optional arguments:
 
@@ -26,7 +26,7 @@ NOTE: Note that the `defaultSchema` and `dataSource` parameter name and value mu
 grails dbm-list-locks "--defaultSchema=<<defaultSchema>>" "--dataSource=<<dataSource>>"
 ----
 
-NOTE: For the `dataSource` parameter; If the data source is configured as `reports` underneath the `dataSources` key in `application.[yml|groovy]`, the value should be `reports`.
+NOTE: For the `dataSource` parameter, if the data source is configured as `reports` underneath the `dataSources` key in `application.[yml|groovy]`, the value should be `reports`.
 
 [source,groovy]
 ----
