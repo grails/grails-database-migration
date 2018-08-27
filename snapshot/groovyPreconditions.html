@@ -443,7 +443,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect2">
 <h3 id="_general_format">General format</h3>
 <div class="paragraph">
-<p>This is general format of a Groovy-based precondition:</p>
+<p>This is the general format of a Groovy-based precondition:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -482,11 +482,23 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="paragraph">
-<p>As you can see there are a few ways to indicate that a precondition wasn&#8217;t met:
-* use a simple assertion
-* use an assertion with a message
-* call the <code>fail(String message)</code> method (throws a <code>PreconditionFailedException</code>)
-* throw an exception (shouldn&#8217;t be necessary - use <code>assert</code> or <code>fail()</code> instead)</p>
+<p>As you can see there are a few ways to indicate that a precondition wasn&#8217;t met:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>use a simple assertion</p>
+</li>
+<li>
+<p>use an assertion with a message</p>
+</li>
+<li>
+<p>call the <code>fail(String message)</code> method (throws a <code>PreconditionFailedException</code>)</p>
+</li>
+<li>
+<p>throw an exception (shouldn&#8217;t be necessary - use <code>assert</code> or <code>fail()</code> instead)</p>
+</li>
+</ul>
 </div>
 </div>
 <div class="sect2">
@@ -494,94 +506,31 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="ulist">
 <ul>
 <li>
-<p><code>database</code></p>
-<div class="ulist">
-<ul>
-<li>
-<p>the current Liquibase <code>Database</code> instance</p>
-</li>
-</ul>
-</div>
+<p><code>database</code> - the current Liquibase <code>Database</code> instance</p>
 </li>
 <li>
-<p><code>databaseConnection</code></p>
-<div class="ulist">
-<ul>
-<li>
-<p>the current Liquibase <code>DatabaseConnection</code> instance, which is a wrapper around the JDBC <code>Connection</code> (but doesn&#8217;t implement the <code>Connection</code> interface)</p>
-</li>
-</ul>
-</div>
+<p><code>databaseConnection</code> - the current Liquibase <code>DatabaseConnection</code> instance, which is a wrapper around the JDBC <code>Connection</code> (but doesn&#8217;t implement the <code>Connection</code> interface)</p>
 </li>
 <li>
-<p><code>connection</code></p>
-<div class="ulist">
-<ul>
-<li>
-<p>the real JDBC <code>Connection</code> instance (a shortcut for <code>database.connection.wrappedConnection</code>)</p>
-</li>
-</ul>
-</div>
+<p><code>connection</code> - the real JDBC <code>Connection</code> instance (a shortcut for <code>database.connection.wrappedConnection</code>)</p>
 </li>
 <li>
-<p><code>sql</code></p>
-<div class="ulist">
-<ul>
-<li>
-<p>a <code>groovy.sql.Sql</code> instance which uses the current <code>connection</code> and can be used for arbitrary queries and updates</p>
-</li>
-</ul>
-</div>
+<p><code>sql</code> - a <code>groovy.sql.Sql</code> instance which uses the current <code>connection</code> and can be used for arbitrary queries and updates</p>
 </li>
 <li>
-<p><code>resourceAccessor</code></p>
-<div class="ulist">
-<ul>
-<li>
-<p>the current Liquibase <code>ResourceAccessor</code> instance</p>
-</li>
-</ul>
-</div>
+<p><code>resourceAccessor</code> - the current Liquibase <code>ResourceAccessor</code> instance</p>
 </li>
 <li>
-<p><code>ctx</code></p>
-<div class="ulist">
-<ul>
-<li>
-<p>the Spring <code>ApplicationContext</code></p>
-</li>
-</ul>
-</div>
+<p><code>ctx</code> - the Spring <code>ApplicationContext</code></p>
 </li>
 <li>
-<p><code>application</code></p>
-<div class="ulist">
-<ul>
-<li>
-<p>the <code>GrailsApplication</code></p>
-</li>
-</ul>
-</div>
+<p><code>application</code> - the <code>GrailsApplication</code></p>
 </li>
 <li>
-<p><code>changeSet</code></p>
-<div class="ulist">
-<ul>
-<li>
-<p>the current Liquibase <code>ChangeSet</code> instance</p>
-</li>
-</ul>
-</div>
+<p><code>changeSet</code> - the current Liquibase <code>ChangeSet</code> instance</p>
 </li>
 <li>
-<p><code>changeLog</code></p>
-<div class="ulist">
-<ul>
-<li>
-<p>the current Liquibase <code>DatabaseChangeLog</code> instance</p>
-</li>
-</ul>
-</div>
+<p><code>changeLog</code> - the current Liquibase <code>DatabaseChangeLog</code> instance</p>
 </li>
 </ul>
 </div>
@@ -591,24 +540,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="ulist">
 <ul>
 <li>
-<p><code>createDatabaseSnapshotGenerator()</code></p>
-<div class="ulist">
-<ul>
-<li>
-<p>retrieves the <code>DatabaseSnapshotGenerator</code> for the current <code>Database</code></p>
-</li>
-</ul>
-</div>
+<p><code>createDatabaseSnapshotGenerator()</code> - retrieves the <code>DatabaseSnapshotGenerator</code> for the current <code>Database</code></p>
 </li>
 <li>
-<p><code>createDatabaseSnapshot(String schemaName = null)</code></p>
-<div class="ulist">
-<ul>
-<li>
-<p>creates a <code>DatabaseSnapshot</code> for the current <code>Database</code> (and schema if specified)</p>
-</li>
-</ul>
-</div>
+<p><code>createDatabaseSnapshot(String schemaName = null)</code> - creates a <code>DatabaseSnapshot</code> for the current <code>Database</code> (and schema if specified)</p>
 </li>
 </ul>
 </div>
@@ -618,7 +553,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-08-24 14:56:45 +00:00
+Last updated 2018-08-27 09:43:39 +00:00
 </div>
 </div>
 </body>
