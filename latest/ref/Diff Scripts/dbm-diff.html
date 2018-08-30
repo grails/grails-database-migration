@@ -442,7 +442,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p>Executes against the database configured in <code>application.[yml|groovy]</code>  for the current environment (defaults to <code>dev</code>) and another configured datasource in <code>application.[yml|groovy]</code>.</p>
 </div>
 <div class="paragraph">
-<p>If a filename parameter is specified then the output will be written to the named file, otherwise it will write to the console. If the filename ends with .groovy a Groovy DSL file will be created, otherwise a standard XML file will be created.</p>
+<p>If a filename parameter is specified then the output will be written to the named file, otherwise it will be written to the console. If the filename ends with .groovy a Groovy DSL file will be created, otherwise a standard XML file will be created.</p>
 </div>
 <div class="paragraph">
 <p>File are written to the migrations folder, so specify the filename relative to the migrations folder (<code>grails-app/migrations</code> by default).</p>
@@ -477,10 +477,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p><code>defaultSchema</code> - The default schema name to use</p>
 </li>
 <li>
-<p><code>add</code> - if specified add an include in the root changelog file referencing the new file</p>
+<p><code>add</code> - If specified add an include in the root changelog file referencing the new file</p>
 </li>
 <li>
-<p><code>dataSource</code> - if provided will run the script for the specified dataSource.  Not needed for the default dataSource.</p>
+<p><code>dataSource</code> - If provided will run the script for the specified dataSource. Not needed for the default dataSource.</p>
 </li>
 </ul>
 </div>
@@ -508,7 +508,7 @@ Note that the <code>defaultSchema</code> and <code>dataSource</code> parameter n
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-For the <code>dataSource</code> parameter; If the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
+For the <code>dataSource</code> parameter, if the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
 </td>
 </tr>
 </table>
@@ -523,7 +523,7 @@ For the <code>dataSource</code> parameter; If the data source is configured as <
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-06-09 18:36:44 +00:00
+Last updated 2018-08-30 12:23:42 +00:00
 </div>
 </div>
 </body>

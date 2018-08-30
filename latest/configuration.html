@@ -504,6 +504,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <td class="tableblock halign-left valign-top"><p class="tableblock">A comma-delimited list of <a href="http://www.liquibase.org/manual/contexts">context</a> names. If specified, only changesets tagged with one of the context names will be run</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">updateAllOnStart</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">if <code>true</code> then changesets from the specified list of names will be run at startup for all dataSources. Useful for Grails Multitenancy with Multiple Databases (same db schema)</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">autoMigrateScripts</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">[<em>RunApp</em>]</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">the scripts when running auto-migrate. Useful to run auto-migrate during test phase with: [<em>RunApp</em>, <em>TestApp</em>]</p></td>
@@ -528,11 +533,6 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <td class="tableblock halign-left valign-top"><p class="tableblock"><em>databasechangeloglock</em></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">the Liquibase lock table name</p></td>
 </tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">loadPluginMigrations</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>false</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">if <code>true</code>, load migrations from the classpath (i.e. plugin migrations) using <code>GrailsClassLoaderResourceAccessor</code> instead of <code>FileSystemResourceAccessor</code> (War deployed mode always uses <code>GrailsClassLoaderResourceAccessor</code>)</p></td>
-</tr>
 </tbody>
 </table>
 <div class="admonitionblock note">
@@ -542,7 +542,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-All of the above configs can be used for a multiple datasources
+All of the above configs can be used for multiple datasources
 </td>
 </tr>
 </table>
@@ -555,9 +555,9 @@ All of the above configs can be used for a multiple datasources
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">dataSources:
-    dataSource:
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">dataSource:
         ...
+dataSources:
     reports:
         url: ...
         driverClassName: ...</code></pre>
@@ -572,12 +572,21 @@ All of the above configs can be used for a multiple datasources
 grails.plugin.databasemigration.reports.changelogFileName = changelog-reports.groovy</code></pre>
 </div>
 </div>
+<div class="paragraph">
+<p>The configuration for all data sources with same db schema would be:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">grails.plugin.databasemigration.updateAllOnStart = true
+grails.plugin.databasemigration.changelogFileName = changelog.groovy</code></pre>
+</div>
+</div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-06-09 18:36:44 +00:00
+Last updated 2018-08-30 12:23:42 +00:00
 </div>
 </div>
 </body>

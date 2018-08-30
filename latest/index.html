@@ -591,13 +591,13 @@ table.CodeRay td.code>pre{padding:0}
 <pre class="CodeRay highlight"><code data-lang="groovy">buildscript {
    dependencies {
       ...
-      classpath 'org.grails.plugins:database-migration:3.0.3'
+      classpath 'org.grails.plugins:database-migration:3.0.4'
    }
 }
 
 dependencies {
    ...
-     compile 'org.grails.plugins:database-migration:3.0.3'
+     compile 'org.grails.plugins:database-migration:3.0.4'
 }</code></pre>
 </div>
 </div>
@@ -608,7 +608,7 @@ dependencies {
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">dependencies {
    ...
-     compile 'org.liquibase:liquibase-core:3.5.3'
+     compile 'org.liquibase:liquibase-core:3.5.5'
 }</code></pre>
 </div>
 </div>
@@ -798,6 +798,11 @@ If you use the XML format (or use a non-default Groovy filename), be sure to cha
 <td class="tableblock halign-left valign-top"><p class="tableblock">A comma-delimited list of <a href="http://www.liquibase.org/manual/contexts">context</a> names. If specified, only changesets tagged with one of the context names will be run</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">updateAllOnStart</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">if <code>true</code> then changesets from the specified list of names will be run at startup for all dataSources. Useful for Grails Multitenancy with Multiple Databases (same db schema)</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">autoMigrateScripts</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">[<em>RunApp</em>]</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">the scripts when running auto-migrate. Useful to run auto-migrate during test phase with: [<em>RunApp</em>, <em>TestApp</em>]</p></td>
@@ -822,11 +827,6 @@ If you use the XML format (or use a non-default Groovy filename), be sure to cha
 <td class="tableblock halign-left valign-top"><p class="tableblock"><em>databasechangeloglock</em></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">the Liquibase lock table name</p></td>
 </tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">loadPluginMigrations</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>false</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">if <code>true</code>, load migrations from the classpath (i.e. plugin migrations) using <code>GrailsClassLoaderResourceAccessor</code> instead of <code>FileSystemResourceAccessor</code> (War deployed mode always uses <code>GrailsClassLoaderResourceAccessor</code>)</p></td>
-</tr>
 </tbody>
 </table>
 <div class="admonitionblock note">
@@ -836,7 +836,7 @@ If you use the XML format (or use a non-default Groovy filename), be sure to cha
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-All of the above configs can be used for a multiple datasources
+All of the above configs can be used for multiple datasources
 </td>
 </tr>
 </table>
@@ -849,10 +849,10 @@ All of the above configs can be used for a multiple datasources
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">dataSources</span>:
-    <span class="key">dataSource</span>:
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">dataSource</span>:
         ...
-    reports:
+dataSources:
+    <span class="key">reports</span>:
         <span class="key">url</span>: ...
         driverClassName: ...</code></pre>
 </div>
@@ -864,6 +864,15 @@ All of the above configs can be used for a multiple datasources
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">grails.plugin.databasemigration.reports.updateOnStart = <span class="predefined-constant">true</span>
 grails.plugin.databasemigration.reports.changelogFileName = changelog-reports.groovy</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The configuration for all data sources with same db schema would be:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">grails.plugin.databasemigration.updateAllOnStart = <span class="predefined-constant">true</span>
+grails.plugin.databasemigration.changelogFileName = changelog.groovy</code></pre>
 </div>
 </div>
 </div>
@@ -929,7 +938,7 @@ Setting the dbCreate setting to "none" is recommended when executing the dbm mig
 <p><code>dbm-gorm-diff</code> will dump to the console if no filename is specified, so you can copy/paste from there</p>
 </li>
 <li>
-<p>if you include the <code>--add</code> parameter when running the script with a filename it will register an include for the the filename in the main changelog for you</p>
+<p>if you include the <code>--add</code> parameter when running the script with a filename it will register an include for the filename in the main changelog for you</p>
 </li>
 </ul>
 </div>
@@ -1085,26 +1094,42 @@ beans = {
 <div class="sect2">
 <h3 id="_available_variables">5.2. Available variables</h3>
 <div class="paragraph">
-<p>These variables are available throughout the change closure:
-* <code>changeSet</code>
-<strong> the current Liquibase <code>ChangeSet</code> instance
-* <code>resourceAccessor</code>
-</strong> the current Liquibase <code>ResourceAccessor</code> instance
-* <code>ctx</code>
-<strong> the Spring <code>ApplicationContext</code>
-* <code>application</code>
-</strong> the <code>GrailsApplication</code></p>
+<p>These variables are available throughout the change closure:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>changeSet</code> - the current Liquibase <code>ChangeSet</code> instance</p>
+</li>
+<li>
+<p><code>resourceAccessor</code> - the current Liquibase <code>ResourceAccessor</code> instance</p>
+</li>
+<li>
+<p><code>ctx</code> - the Spring <code>ApplicationContext</code></p>
+</li>
+<li>
+<p><code>application</code> - the <code>GrailsApplication</code></p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
-<p>The <code>change</code> and <code>rollback</code> closures also have the following available:
-* <code>database</code>
-<strong> the current Liquibase <code>Database</code> instance
-* <code>databaseConnection</code>
-</strong> the current Liquibase <code>DatabaseConnection</code> instance, which is a wrapper around the JDBC <code>Connection</code> (but doesn&#8217;t implement the <code>Connection</code> interface)
-* <code>connection</code>
-<strong> the real JDBC <code>Connection</code> instance (a shortcut for <code>database.connection.wrappedConnection</code>)
-* <code>sql</code>
-</strong> a <code>groovy.sql.Sql</code> instance which uses the current <code>connection</code> and can be used for arbitrary queries and updates</p>
+<p>The <code>change</code> and <code>rollback</code> closures also have the following available:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>database</code> - the current Liquibase <code>Database</code> instance</p>
+</li>
+<li>
+<p><code>databaseConnection</code> - the current Liquibase <code>DatabaseConnection</code> instance, which is a wrapper around the JDBC <code>Connection</code> (but doesn&#8217;t implement the <code>Connection</code> interface)</p>
+</li>
+<li>
+<p><code>connection</code> - the real JDBC <code>Connection</code> instance (a shortcut for <code>database.connection.wrappedConnection</code>)</p>
+</li>
+<li>
+<p><code>sql</code> - a <code>groovy.sql.Sql</code> instance which uses the current <code>connection</code> and can be used for arbitrary queries and updates</p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
 <p><strong>init</strong></p>
@@ -1116,19 +1141,19 @@ beans = {
 <p><strong>validate</strong></p>
 </div>
 <div class="paragraph">
-<p>If there are any necessary validation checks before executing changes or rollbacks they should be done here. You can log warnings by calling <code>warn(String message)</code> and stop processing by calling <code>error(String message)</code>. It may make more sense to use one or more `preCondition`s instead of directly validating here.</p>
+<p>If there are any necessary validation checks before executing changes or rollbacks they should be done here. You can log warnings by calling <code>warn(String message)</code> and stop processing by calling <code>error(String message)</code>. It may make more sense to use one or more <code>preCondition</code>s instead of directly validating here.</p>
 </div>
 <div class="paragraph">
 <p><strong>change</strong></p>
 </div>
 <div class="paragraph">
-<p>All migration changes are done in the <code>change</code> closure. You can make changes directly (using the <code>sql</code> instance or the <code>connection</code>) and/or return one or more <code>SqlStatement`s. You can call `sqlStatement(SqlStatement statement)</code> multiple times to register instances to be run. You can also call the <code>sqlStatements(statements)</code> method with an array or list of instances to be run.</p>
+<p>All migration changes are done in the <code>change</code> closure. You can make changes directly (using the <code>sql</code> instance or the <code>connection</code>) and/or return one or more <code>SqlStatement</code>s. You can call <code>sqlStatement(SqlStatement statement)</code> multiple times to register instances to be run. You can also call the <code>sqlStatements(statements)</code> method with an array or list of instances to be run.</p>
 </div>
 <div class="paragraph">
 <p><strong>rollback</strong></p>
 </div>
 <div class="paragraph">
-<p>All rollback changes are done in the <code>rollback</code> closure. You can make changes directly (using the <code>sql</code> instance or the <code>connection</code>) and/or return one or more <code>SqlStatement`s. You can call `sqlStatement(SqlStatement statement)</code> multiple times to register instances to be run. You can also call the <code>sqlStatements(statements)</code> method with an array or list of instances to be run.</p>
+<p>All rollback changes are done in the <code>rollback</code> closure. You can make changes directly (using the <code>sql</code> instance or the <code>connection</code>) and/or return one or more <code>SqlStatement</code>s. You can call <code>sqlStatement(SqlStatement statement)</code> multiple times to register instances to be run. You can also call the <code>sqlStatements(statements)</code> method with an array or list of instances to be run.</p>
 </div>
 <div class="paragraph">
 <p><strong>confirm</strong></p>
@@ -1154,7 +1179,7 @@ beans = {
 <div class="sect2">
 <h3 id="_general_format_2">6.1. General format</h3>
 <div class="paragraph">
-<p>This is general format of a Groovy-based precondition:</p>
+<p>This is the general format of a Groovy-based precondition:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1193,11 +1218,23 @@ beans = {
 </div>
 </div>
 <div class="paragraph">
-<p>As you can see there are a few ways to indicate that a precondition wasn&#8217;t met:
-* use a simple assertion
-* use an assertion with a message
-* call the <code>fail(String message)</code> method (throws a <code>PreconditionFailedException</code>)
-* throw an exception (shouldn&#8217;t be necessary - use <code>assert</code> or <code>fail()</code> instead)</p>
+<p>As you can see there are a few ways to indicate that a precondition wasn&#8217;t met:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>use a simple assertion</p>
+</li>
+<li>
+<p>use an assertion with a message</p>
+</li>
+<li>
+<p>call the <code>fail(String message)</code> method (throws a <code>PreconditionFailedException</code>)</p>
+</li>
+<li>
+<p>throw an exception (shouldn&#8217;t be necessary - use <code>assert</code> or <code>fail()</code> instead)</p>
+</li>
+</ul>
 </div>
 </div>
 <div class="sect2">
@@ -1205,94 +1242,31 @@ beans = {
 <div class="ulist">
 <ul>
 <li>
-<p><code>database</code></p>
-<div class="ulist">
-<ul>
-<li>
-<p>the current Liquibase <code>Database</code> instance</p>
-</li>
-</ul>
-</div>
+<p><code>database</code> - the current Liquibase <code>Database</code> instance</p>
 </li>
 <li>
-<p><code>databaseConnection</code></p>
-<div class="ulist">
-<ul>
-<li>
-<p>the current Liquibase <code>DatabaseConnection</code> instance, which is a wrapper around the JDBC <code>Connection</code> (but doesn&#8217;t implement the <code>Connection</code> interface)</p>
-</li>
-</ul>
-</div>
+<p><code>databaseConnection</code> - the current Liquibase <code>DatabaseConnection</code> instance, which is a wrapper around the JDBC <code>Connection</code> (but doesn&#8217;t implement the <code>Connection</code> interface)</p>
 </li>
 <li>
-<p><code>connection</code></p>
-<div class="ulist">
-<ul>
-<li>
-<p>the real JDBC <code>Connection</code> instance (a shortcut for <code>database.connection.wrappedConnection</code>)</p>
-</li>
-</ul>
-</div>
+<p><code>connection</code> - the real JDBC <code>Connection</code> instance (a shortcut for <code>database.connection.wrappedConnection</code>)</p>
 </li>
 <li>
-<p><code>sql</code></p>
-<div class="ulist">
-<ul>
-<li>
-<p>a <code>groovy.sql.Sql</code> instance which uses the current <code>connection</code> and can be used for arbitrary queries and updates</p>
-</li>
-</ul>
-</div>
+<p><code>sql</code> - a <code>groovy.sql.Sql</code> instance which uses the current <code>connection</code> and can be used for arbitrary queries and updates</p>
 </li>
 <li>
-<p><code>resourceAccessor</code></p>
-<div class="ulist">
-<ul>
-<li>
-<p>the current Liquibase <code>ResourceAccessor</code> instance</p>
-</li>
-</ul>
-</div>
+<p><code>resourceAccessor</code> - the current Liquibase <code>ResourceAccessor</code> instance</p>
 </li>
 <li>
-<p><code>ctx</code></p>
-<div class="ulist">
-<ul>
-<li>
-<p>the Spring <code>ApplicationContext</code></p>
-</li>
-</ul>
-</div>
+<p><code>ctx</code> - the Spring <code>ApplicationContext</code></p>
 </li>
 <li>
-<p><code>application</code></p>
-<div class="ulist">
-<ul>
-<li>
-<p>the <code>GrailsApplication</code></p>
-</li>
-</ul>
-</div>
+<p><code>application</code> - the <code>GrailsApplication</code></p>
 </li>
 <li>
-<p><code>changeSet</code></p>
-<div class="ulist">
-<ul>
-<li>
-<p>the current Liquibase <code>ChangeSet</code> instance</p>
-</li>
-</ul>
-</div>
+<p><code>changeSet</code> - the current Liquibase <code>ChangeSet</code> instance</p>
 </li>
 <li>
-<p><code>changeLog</code></p>
-<div class="ulist">
-<ul>
-<li>
-<p>the current Liquibase <code>DatabaseChangeLog</code> instance</p>
-</li>
-</ul>
-</div>
+<p><code>changeLog</code> - the current Liquibase <code>DatabaseChangeLog</code> instance</p>
 </li>
 </ul>
 </div>
@@ -1302,24 +1276,10 @@ beans = {
 <div class="ulist">
 <ul>
 <li>
-<p><code>createDatabaseSnapshotGenerator()</code></p>
-<div class="ulist">
-<ul>
-<li>
-<p>retrieves the <code>DatabaseSnapshotGenerator</code> for the current <code>Database</code></p>
-</li>
-</ul>
-</div>
+<p><code>createDatabaseSnapshotGenerator()</code> - retrieves the <code>DatabaseSnapshotGenerator</code> for the current <code>Database</code></p>
 </li>
 <li>
-<p><code>createDatabaseSnapshot(String schemaName = null)</code></p>
-<div class="ulist">
-<ul>
-<li>
-<p>creates a <code>DatabaseSnapshot</code> for the current <code>Database</code> (and schema if specified)</p>
-</li>
-</ul>
-</div>
+<p><code>createDatabaseSnapshot(String schemaName = null)</code> - creates a <code>DatabaseSnapshot</code> for the current <code>Database</code> (and schema if specified)</p>
 </li>
 </ul>
 </div>
@@ -1428,7 +1388,7 @@ beans = {
 <p>Executes against the database configured in <code>application.[yml|groovy]</code>  for the current environment (defaults to <code>dev</code>) and another configured datasource in <code>application.[yml|groovy]</code>.</p>
 </div>
 <div class="paragraph">
-<p>If a filename parameter is specified then the output will be written to the named file, otherwise it will write to the console. If the filename ends with .groovy a Groovy DSL file will be created, otherwise a standard XML file will be created.</p>
+<p>If a filename parameter is specified then the output will be written to the named file, otherwise it will be written to the console. If the filename ends with .groovy a Groovy DSL file will be created, otherwise a standard XML file will be created.</p>
 </div>
 <div class="paragraph">
 <p>File are written to the migrations folder, so specify the filename relative to the migrations folder (<code>grails-app/migrations</code> by default).</p>
@@ -1463,10 +1423,10 @@ beans = {
 <p><code>defaultSchema</code> - The default schema name to use</p>
 </li>
 <li>
-<p><code>add</code> - if specified add an include in the root changelog file referencing the new file</p>
+<p><code>add</code> - If specified add an include in the root changelog file referencing the new file</p>
 </li>
 <li>
-<p><code>dataSource</code> - if provided will run the script for the specified dataSource.  Not needed for the default dataSource.</p>
+<p><code>dataSource</code> - If provided will run the script for the specified dataSource. Not needed for the default dataSource.</p>
 </li>
 </ul>
 </div>
@@ -1494,7 +1454,7 @@ Note that the <code>defaultSchema</code> and <code>dataSource</code> parameter n
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-For the <code>dataSource</code> parameter; If the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
+For the <code>dataSource</code> parameter, if the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
 </td>
 </tr>
 </table>
@@ -1585,7 +1545,7 @@ Note that the <code>defaultSchema</code> and <code>dataSource</code> parameter n
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-For the <code>dataSource</code> parameter; If the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
+For the <code>dataSource</code> parameter, if the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
 </td>
 </tr>
 </table>
@@ -1664,7 +1624,7 @@ Note that the <code>contexts</code> and <code>dataSource</code> parameter name a
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-For the <code>dataSource</code> parameter; If the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
+For the <code>dataSource</code> parameter, if the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
 </td>
 </tr>
 </table>
@@ -1691,7 +1651,7 @@ For the <code>dataSource</code> parameter; If the data source is configured as <
 <h5 id="_description_4">Description</h5>
 <div class="paragraph">
 <p>This script provides a template in which to place your migration behaviour code, whether
-grails code or raw SQL.</p>
+Grails code or raw SQL.</p>
 </div>
 <div class="paragraph">
 <p>Usage:</p>
@@ -1747,7 +1707,7 @@ This script only supports .groovy-style migrations at the moment.
 </div>
 </div>
 <div class="paragraph">
-<p>Required arguments: <em>none</em> .</p>
+<p>Required arguments: <em>none</em>.</p>
 </div>
 <div class="paragraph">
 <p>Optional arguments:</p>
@@ -1792,7 +1752,7 @@ Note that the <code>contexts</code>, <code>defaultSchema</code>, and <code>dataS
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-For the <code>dataSource</code> parameter if the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key` in <code>application.[yml|groovy]</code>
+For the <code>dataSource</code> parameter if the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>
 the suffix of <code>reports</code> will be used as the parameter value.
 </td>
 </tr>
@@ -1816,7 +1776,7 @@ the suffix of <code>reports</code> will be used as the parameter value.
 <div class="sect4">
 <h5 id="_description_6">Description</h5>
 <div class="paragraph">
-<p>Registers all changesets as having been run in the Liquibase control table. This is useful when then changes have already been applied, for example if you&#8217;ve just created a changelog from your database using the <a href="#ref-rollback-scripts-dbm-generate-changelog">dbm-generate-changelog</a> script.</p>
+<p>Registers all changesets as having been run in the Liquibase control table. This is useful when the changes have already been applied, for example if you&#8217;ve just created a changelog from your database using the <a href="#ref-rollback-scripts-dbm-generate-changelog">dbm-generate-changelog</a> script.</p>
 </div>
 <div class="paragraph">
 <p>Usage:</p>
@@ -1827,7 +1787,7 @@ the suffix of <code>reports</code> will be used as the parameter value.
 </div>
 </div>
 <div class="paragraph">
-<p>Required arguments: <em>none</em> .</p>
+<p>Required arguments: <em>none</em>.</p>
 </div>
 <div class="paragraph">
 <p>Optional arguments:</p>
@@ -1841,7 +1801,7 @@ the suffix of <code>reports</code> will be used as the parameter value.
 <p><code>defaultSchema</code> - The default schema name to use</p>
 </li>
 <li>
-<p><code>dataSource</code> - if provided will run the script for the specified dataSource.  Not needed for the default dataSource.</p>
+<p><code>dataSource</code> - If provided will run the script for the specified dataSource. Not needed for the default dataSource.</p>
 </li>
 </ul>
 </div>
@@ -1869,7 +1829,7 @@ Note that the <code>contexts</code>, <code>defaultSchema</code>, and <code>dataS
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-For the <code>dataSource</code> parameter; If the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
+For the <code>dataSource</code> parameter, if the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
 </td>
 </tr>
 </table>
@@ -1943,7 +1903,7 @@ For the <code>dataSource</code> parameter; If the data source is configured as <
 </div>
 </div>
 <div class="paragraph">
-<p>Required arguments: <em>none</em> .</p>
+<p>Required arguments: <em>none</em>.</p>
 </div>
 <div class="paragraph">
 <p>Optional arguments:</p>
@@ -1979,7 +1939,7 @@ Note that the <code>dataSource</code> parameter name and value must be quoted if
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-For the <code>dataSource</code> parameter; If the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
+For the <code>dataSource</code> parameter, if the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
 </td>
 </tr>
 </table>
@@ -2056,7 +2016,7 @@ Note that the <code>dataSource</code> parameter name and value must be quoted if
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-For the <code>dataSource</code> parameter; If the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
+For the <code>dataSource</code> parameter, if the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
 </td>
 </tr>
 </table>
@@ -2087,7 +2047,7 @@ For the <code>dataSource</code> parameter; If the data source is configured as <
 </div>
 </div>
 <div class="paragraph">
-<p>Required arguments: <em>none</em> .</p>
+<p>Required arguments: <em>none</em>.</p>
 </div>
 <div class="paragraph">
 <p>Optional arguments:</p>
@@ -2129,7 +2089,7 @@ Note that the <code>defaultSchema</code> and <code>dataSource</code> parameter n
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-For the <code>dataSource</code> parameter; If the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
+For the <code>dataSource</code> parameter, if the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
 </td>
 </tr>
 </table>
@@ -2160,7 +2120,7 @@ For the <code>dataSource</code> parameter; If the data source is configured as <
 </div>
 </div>
 <div class="paragraph">
-<p>Required arguments: <em>none</em> .</p>
+<p>Required arguments: <em>none</em>.</p>
 </div>
 <div class="paragraph">
 <p>Optional arguments:</p>
@@ -2202,7 +2162,7 @@ Note that the <code>defaultSchema</code> and <code>dataSource</code> parameter n
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-For the <code>dataSource</code> parameter; If the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
+For the <code>dataSource</code> parameter, if the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
 </td>
 </tr>
 </table>
@@ -2236,7 +2196,7 @@ For the <code>dataSource</code> parameter; If the data source is configured as <
 <p>Required arguments:</p>
 </div>
 <div class="paragraph">
-<p>Required arguments: <em>none</em> .</p>
+<p>Required arguments: <em>none</em>.</p>
 </div>
 <div class="paragraph">
 <p>Optional arguments:</p>
@@ -2289,7 +2249,7 @@ Note that the <code>defaultSchema</code> parameter name and value must be quoted
 </div>
 </div>
 <div class="paragraph">
-<p>Required arguments: <em>none</em> .</p>
+<p>Required arguments: <em>none</em>.</p>
 </div>
 <div class="paragraph">
 <p>Optional arguments:</p>
@@ -2334,7 +2294,7 @@ Note that the <code>contexts</code>, <code>defaultSchema</code>, and <code>dataS
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-For the <code>dataSource</code> parameter; If the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
+For the <code>dataSource</code> parameter, if the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
 </td>
 </tr>
 </table>
@@ -2440,7 +2400,7 @@ the suffix of <code>reports</code> will be used as the parameter value.
 </div>
 </div>
 <div class="paragraph">
-<p>Required arguments: <em>none</em> .</p>
+<p>Required arguments: <em>none</em>.</p>
 </div>
 <div class="paragraph">
 <p>Optional arguments:</p>
@@ -2479,7 +2439,7 @@ Note that the <code>defaultSchema</code> and <code>dataSource</code> parameter n
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-For the <code>dataSource</code> parameter; If the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
+For the <code>dataSource</code> parameter, if the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
 </td>
 </tr>
 </table>
@@ -2510,7 +2470,7 @@ For the <code>dataSource</code> parameter; If the data source is configured as <
 </div>
 </div>
 <div class="paragraph">
-<p>Required arguments: <em>none</em> .</p>
+<p>Required arguments: <em>none</em>.</p>
 </div>
 <div class="paragraph">
 <p>Optional arguments:</p>
@@ -2558,7 +2518,7 @@ Note that the <code>verbose</code>, <code>contexts</code>, <code>defaultSchema</
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-For the <code>dataSource</code> parameter; If the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
+For the <code>dataSource</code> parameter, if the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
 </td>
 </tr>
 </table>
@@ -2638,7 +2598,7 @@ Note that the <code>defaultSchema</code> and <code>dataSource</code> parameter n
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-For the <code>dataSource</code> parameter; If the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
+For the <code>dataSource</code> parameter, if the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
 </td>
 </tr>
 </table>
@@ -2672,7 +2632,7 @@ For the <code>dataSource</code> parameter; If the data source is configured as <
 </div>
 </div>
 <div class="paragraph">
-<p>Required arguments: <em>none</em> .</p>
+<p>Required arguments: <em>none</em>.</p>
 </div>
 <div class="paragraph">
 <p>Optional arguments:</p>
@@ -2708,7 +2668,7 @@ Note that the <code>dataSource</code> parameter name and value must be quoted if
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-For the <code>dataSource</code> parameter; If the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
+For the <code>dataSource</code> parameter, if the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
 </td>
 </tr>
 </table>
@@ -2787,7 +2747,7 @@ Note that the <code>contexts</code>, <code>defaultSchema</code>, and <code>dataS
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-For the <code>dataSource</code> parameter; If the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
+For the <code>dataSource</code> parameter, if the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
 </td>
 </tr>
 </table>
@@ -2875,7 +2835,7 @@ Note that the <code>diffTypes</code>, <code>defaultSchema</code>, and <code>data
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-For the <code>dataSource</code> parameter; If the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
+For the <code>dataSource</code> parameter, if the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
 </td>
 </tr>
 </table>
@@ -2957,7 +2917,7 @@ Note that the <code>dataSource</code> parameter name and value must be quoted if
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-For the <code>dataSource</code> parameter; If the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
+For the <code>dataSource</code> parameter, if the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
 </td>
 </tr>
 </table>
@@ -3040,7 +3000,7 @@ Note that the <code>contexts</code>, <code>defaultSchema</code>, and <code>dataS
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-For the <code>dataSource</code> parameter; If the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
+For the <code>dataSource</code> parameter, if the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
 </td>
 </tr>
 </table>
@@ -3120,7 +3080,7 @@ Note that the <code>contexts</code>, <code>defaultSchema</code>, and <code>dataS
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-For the <code>dataSource</code> parameter; If the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
+For the <code>dataSource</code> parameter, if the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
 </td>
 </tr>
 </table>
@@ -3206,7 +3166,7 @@ Note that the <code>contexts</code>, <code>defaultSchema</code>, and <code>dataS
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-For the <code>dataSource</code> parameter; If the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
+For the <code>dataSource</code> parameter, if the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
 </td>
 </tr>
 </table>
@@ -3295,7 +3255,7 @@ Note that the <code>contexts</code>, <code>defaultSchema</code>, <code>dataSourc
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-For the <code>dataSource</code> parameter; If the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>,
+For the <code>dataSource</code> parameter, if the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>,
 the value should be <code>reports</code>.
 </td>
 </tr>
@@ -3382,7 +3342,7 @@ Note that the <code>contexts</code>, <code>defaultSchema</code>, and <code>dataS
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-For the <code>dataSource</code> parameter; If the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
+For the <code>dataSource</code> parameter, if the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
 </td>
 </tr>
 </table>
@@ -3465,7 +3425,7 @@ Note that the <code>contexts</code>, <code>defaultSchema</code>, and <code>dataS
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-For the <code>dataSource</code> parameter; If the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
+For the <code>dataSource</code> parameter, if the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
 </td>
 </tr>
 </table>
@@ -3626,7 +3586,7 @@ Note that the <code>contexts</code>, <code>defaultSchema</code>, and <code>dataS
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-For the <code>dataSource</code> parameter; If the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
+For the <code>dataSource</code> parameter, if the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
 </td>
 </tr>
 </table>
@@ -3709,7 +3669,7 @@ Note that the <code>contexts</code>, <code>defaultSchema</code>, <code>dataSourc
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-For the <code>dataSource</code> parameter; If the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
+For the <code>dataSource</code> parameter, if the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
 </td>
 </tr>
 </table>
@@ -3791,7 +3751,7 @@ Note that the <code>contexts</code>, <code>defaultSchema</code>, and <code>dataS
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-For the <code>dataSource</code> parameter; If the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
+For the <code>dataSource</code> parameter, if the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
 </td>
 </tr>
 </table>
@@ -3867,7 +3827,7 @@ Note that the <code>contexts</code> and <code>defaultSchema</code> parameter nam
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-For the <code>dataSource</code> parameter; If the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
+For the <code>dataSource</code> parameter, if the data source is configured as <code>reports</code> underneath the <code>dataSources</code> key in <code>application.[yml|groovy]</code>, the value should be <code>reports</code>.
 </td>
 </tr>
 </table>
@@ -3885,7 +3845,7 @@ For the <code>dataSource</code> parameter; If the data source is configured as <
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-06-09 18:36:44 +00:00
+Last updated 2018-08-30 12:23:42 +00:00
 </div>
 </div>
 </body>

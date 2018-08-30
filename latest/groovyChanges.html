@@ -493,26 +493,42 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect2">
 <h3 id="_available_variables">Available variables</h3>
 <div class="paragraph">
-<p>These variables are available throughout the change closure:
-* <code>changeSet</code>
-<strong> the current Liquibase <code>ChangeSet</code> instance
-* <code>resourceAccessor</code>
-</strong> the current Liquibase <code>ResourceAccessor</code> instance
-* <code>ctx</code>
-<strong> the Spring <code>ApplicationContext</code>
-* <code>application</code>
-</strong> the <code>GrailsApplication</code></p>
+<p>These variables are available throughout the change closure:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>changeSet</code> - the current Liquibase <code>ChangeSet</code> instance</p>
+</li>
+<li>
+<p><code>resourceAccessor</code> - the current Liquibase <code>ResourceAccessor</code> instance</p>
+</li>
+<li>
+<p><code>ctx</code> - the Spring <code>ApplicationContext</code></p>
+</li>
+<li>
+<p><code>application</code> - the <code>GrailsApplication</code></p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
-<p>The <code>change</code> and <code>rollback</code> closures also have the following available:
-* <code>database</code>
-<strong> the current Liquibase <code>Database</code> instance
-* <code>databaseConnection</code>
-</strong> the current Liquibase <code>DatabaseConnection</code> instance, which is a wrapper around the JDBC <code>Connection</code> (but doesn&#8217;t implement the <code>Connection</code> interface)
-* <code>connection</code>
-<strong> the real JDBC <code>Connection</code> instance (a shortcut for <code>database.connection.wrappedConnection</code>)
-* <code>sql</code>
-</strong> a <code>groovy.sql.Sql</code> instance which uses the current <code>connection</code> and can be used for arbitrary queries and updates</p>
+<p>The <code>change</code> and <code>rollback</code> closures also have the following available:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>database</code> - the current Liquibase <code>Database</code> instance</p>
+</li>
+<li>
+<p><code>databaseConnection</code> - the current Liquibase <code>DatabaseConnection</code> instance, which is a wrapper around the JDBC <code>Connection</code> (but doesn&#8217;t implement the <code>Connection</code> interface)</p>
+</li>
+<li>
+<p><code>connection</code> - the real JDBC <code>Connection</code> instance (a shortcut for <code>database.connection.wrappedConnection</code>)</p>
+</li>
+<li>
+<p><code>sql</code> - a <code>groovy.sql.Sql</code> instance which uses the current <code>connection</code> and can be used for arbitrary queries and updates</p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
 <p><strong>init</strong></p>
@@ -524,19 +540,19 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p><strong>validate</strong></p>
 </div>
 <div class="paragraph">
-<p>If there are any necessary validation checks before executing changes or rollbacks they should be done here. You can log warnings by calling <code>warn(String message)</code> and stop processing by calling <code>error(String message)</code>. It may make more sense to use one or more `preCondition`s instead of directly validating here.</p>
+<p>If there are any necessary validation checks before executing changes or rollbacks they should be done here. You can log warnings by calling <code>warn(String message)</code> and stop processing by calling <code>error(String message)</code>. It may make more sense to use one or more <code>preCondition</code>s instead of directly validating here.</p>
 </div>
 <div class="paragraph">
 <p><strong>change</strong></p>
 </div>
 <div class="paragraph">
-<p>All migration changes are done in the <code>change</code> closure. You can make changes directly (using the <code>sql</code> instance or the <code>connection</code>) and/or return one or more <code>SqlStatement`s. You can call `sqlStatement(SqlStatement statement)</code> multiple times to register instances to be run. You can also call the <code>sqlStatements(statements)</code> method with an array or list of instances to be run.</p>
+<p>All migration changes are done in the <code>change</code> closure. You can make changes directly (using the <code>sql</code> instance or the <code>connection</code>) and/or return one or more <code>SqlStatement</code>s. You can call <code>sqlStatement(SqlStatement statement)</code> multiple times to register instances to be run. You can also call the <code>sqlStatements(statements)</code> method with an array or list of instances to be run.</p>
 </div>
 <div class="paragraph">
 <p><strong>rollback</strong></p>
 </div>
 <div class="paragraph">
-<p>All rollback changes are done in the <code>rollback</code> closure. You can make changes directly (using the <code>sql</code> instance or the <code>connection</code>) and/or return one or more <code>SqlStatement`s. You can call `sqlStatement(SqlStatement statement)</code> multiple times to register instances to be run. You can also call the <code>sqlStatements(statements)</code> method with an array or list of instances to be run.</p>
+<p>All rollback changes are done in the <code>rollback</code> closure. You can make changes directly (using the <code>sql</code> instance or the <code>connection</code>) and/or return one or more <code>SqlStatement</code>s. You can call <code>sqlStatement(SqlStatement statement)</code> multiple times to register instances to be run. You can also call the <code>sqlStatements(statements)</code> method with an array or list of instances to be run.</p>
 </div>
 <div class="paragraph">
 <p><strong>confirm</strong></p>
@@ -556,7 +572,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-06-09 18:36:44 +00:00
+Last updated 2018-08-30 12:23:42 +00:00
 </div>
 </div>
 </body>
