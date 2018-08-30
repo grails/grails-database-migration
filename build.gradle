@@ -21,7 +21,7 @@ apply plugin:"org.grails.grails-plugin"
 apply plugin:"org.grails.grails-plugin-publish"
 apply plugin:"org.grails.grails-gsp"
 
-version "3.0.4"
+version "3.0.5.BUILD-SNAPSHOT"
 group "org.grails.plugins"
 
 ext {
