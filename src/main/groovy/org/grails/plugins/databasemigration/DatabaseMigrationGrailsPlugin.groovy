@@ -94,9 +94,6 @@ class DatabaseMigrationGrailsPlugin extends Plugin {
     }
 
     private void configureLiquibase() {
-        if (!ServiceLocator.instance.packages.contains(CommonsLoggingLiquibaseLogger.package.name)) {
-            ServiceLocator.instance.addPackageToScan(CommonsLoggingLiquibaseLogger.package.name)
-        }
         if (!ServiceLocator.instance.packages.contains(GormDatabase.package.name)) {
             ServiceLocator.instance.addPackageToScan(GormDatabase.package.name)
         }
