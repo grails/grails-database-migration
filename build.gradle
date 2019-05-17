@@ -1,7 +1,4 @@
 buildscript {
-    ext {
-        grailsVersion = project.grailsVersion
-    }
     repositories {
         mavenLocal()
         maven { url "https://repo.grails.org/grails/core" }
@@ -15,23 +12,14 @@ plugins {
     id 'org.asciidoctor.convert' version '1.5.3'
 }
 
+version "4.0.0.BUILD-SNAPSHOT"
+group "org.grails.plugins"
+
 apply plugin:"eclipse"
 apply plugin:"idea"
 apply plugin:"org.grails.grails-plugin"
 apply plugin:"org.grails.grails-plugin-publish"
 apply plugin:"org.grails.grails-gsp"
-
-version "4.0.0.BUILD-SNAPSHOT"
-group "org.grails.plugins"
-
-ext {
-    grailsVersion = project.grailsVersion
-    gradleWrapperVersion = project.gradleWrapperVersion
-}
-
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
-
 
 repositories {
     mavenLocal()
@@ -39,18 +27,15 @@ repositories {
     maven { url "https://repo.grails.org/grails/core" }
 }
 
-dependencyManagement {
-    imports {
-        mavenBom "org.grails:grails-bom:$grailsVersion"
-    }
-    applyMavenExclusions false
-}
-
 configurations {
-    documentation
+    developmentOnly
+    runtimeClasspath {
+        extendsFrom developmentOnly
+    }
 }
 
 dependencies {
+    developmentOnly("org.springframework.boot:spring-boot-devtools")
     compile "org.liquibase:liquibase-core:$liquibaseVersion"
 
     compile('org.liquibase.ext:liquibase-hibernate5:3.6') {
@@ -78,6 +63,17 @@ dependencies {
     }
 
     documentation "org.codehaus.groovy:groovy-all:2.4.7"
+}
+
+bootRun {
+    jvmArgs(
+            '-Dspring.output.ansi.enabled=always',
+            '-noverify',
+            '-XX:TieredStopAtLevel=1',
+            '-Xmx1024m')
+    sourceResources sourceSets.main
+    String springProfilesActive = 'spring.profiles.active'
+    systemProperty springProfilesActive, System.getProperty(springProfilesActive)
 }
 
 grailsPublish {

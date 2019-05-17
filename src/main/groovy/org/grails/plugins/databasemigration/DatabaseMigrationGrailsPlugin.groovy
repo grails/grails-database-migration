@@ -22,7 +22,6 @@ import liquibase.servicelocator.ServiceLocator
 import org.grails.plugins.databasemigration.liquibase.GormDatabase
 import org.grails.plugins.databasemigration.liquibase.GrailsLiquibase
 import org.grails.plugins.databasemigration.liquibase.GroovyChangeLogParser
-import org.springframework.boot.liquibase.CommonsLoggingLiquibaseLogger
 import org.springframework.context.ApplicationContext
 
 import javax.sql.DataSource
@@ -31,7 +30,7 @@ class DatabaseMigrationGrailsPlugin extends Plugin {
 
     static final String CONFIG_MAIN_PREFIX = 'grails.plugin.databasemigration'
 
-    def grailsVersion = "3.0.0.BUILD-SNAPSHOT > *"
+    def grailsVersion = "4.0.0.BUILD-SNAPSHOT > *"
     def pluginExcludes = [
             "**/testapp/**",
             "grails-app/views/error.gsp"
