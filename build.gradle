@@ -72,18 +72,6 @@ dependencies {
 
     documentation "org.codehaus.groovy:groovy-all:2.4.7"
 }
-
-bootRun {
-    jvmArgs(
-            '-Dspring.output.ansi.enabled=always',
-            '-noverify',
-            '-XX:TieredStopAtLevel=1',
-            '-Xmx1024m')
-    sourceResources sourceSets.main
-    String springProfilesActive = 'spring.profiles.active'
-    systemProperty springProfilesActive, System.getProperty(springProfilesActive)
-}
-
 grailsPublish {
     userOrg = "grails"
     githubSlug = 'grails-plugins/grails-database-migration'
