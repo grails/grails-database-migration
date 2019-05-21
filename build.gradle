@@ -52,7 +52,7 @@ dependencies {
         exclude group: 'org.hibernate', module: 'hibernate-envers'
         exclude group: 'org.liquibase', module: 'liquibase-core'
     }
-    compileOnly 'org.hibernate:hibernate-core:5.1.1.Final'
+    compileOnly 'org.hibernate:hibernate-core:5.4.1.Final'
 
     compileOnly 'org.springframework.boot:spring-boot-starter-logging'
     compileOnly "org.springframework.boot:spring-boot-starter-actuator"
