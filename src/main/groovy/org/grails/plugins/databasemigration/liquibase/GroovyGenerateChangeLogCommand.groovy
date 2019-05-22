@@ -16,7 +16,8 @@
 package org.grails.plugins.databasemigration.liquibase
 
 import groovy.transform.CompileStatic
-import liquibase.command.GenerateChangeLogCommand
+import liquibase.command.CommandResult
+import liquibase.command.core.GenerateChangeLogCommand
 import liquibase.diff.DiffResult
 import liquibase.diff.output.changelog.DiffToChangeLog
 import liquibase.serializer.ChangeLogSerializerFactory
@@ -25,7 +26,7 @@ import liquibase.serializer.ChangeLogSerializerFactory
 class GroovyGenerateChangeLogCommand extends GenerateChangeLogCommand {
 
     @Override
-    protected Object run() throws Exception {
+    protected CommandResult run() throws Exception {
         DiffResult diffResult = createDiffResult()
 
         DiffToChangeLog changeLogWriter = new DiffToChangeLog(diffResult, diffOutputControl)
@@ -44,6 +45,6 @@ class GroovyGenerateChangeLogCommand extends GenerateChangeLogCommand {
             changeLogWriter.print(outputStream, serializer)
         }
 
-        return null
+        return new CommandResult("OK")
     }
 }

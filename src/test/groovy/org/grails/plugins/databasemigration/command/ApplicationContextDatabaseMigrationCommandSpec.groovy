@@ -15,7 +15,6 @@ import org.grails.config.PropertySourcesConfig
 import org.grails.plugins.databasemigration.liquibase.GormDatabase
 import org.grails.plugins.databasemigration.liquibase.GroovyChangeLogParser
 import org.h2.Driver
-import org.springframework.boot.liquibase.CommonsLoggingLiquibaseLogger
 import org.springframework.context.support.GenericApplicationContext
 import org.springframework.core.env.MapPropertySource
 import org.springframework.core.env.MutablePropertySources
@@ -31,9 +30,6 @@ abstract class ApplicationContextDatabaseMigrationCommandSpec extends DatabaseMi
     Config config
 
     def setup() {
-        if (!ServiceLocator.instance.packages.contains(CommonsLoggingLiquibaseLogger.package.name)) {
-            ServiceLocator.instance.addPackageToScan(CommonsLoggingLiquibaseLogger.package.name)
-        }
         if (!ServiceLocator.instance.packages.contains(GormDatabase.package.name)) {
             ServiceLocator.instance.addPackageToScan(GormDatabase.package.name)
         }

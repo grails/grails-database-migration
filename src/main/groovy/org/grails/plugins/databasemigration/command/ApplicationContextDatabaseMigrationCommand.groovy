@@ -33,7 +33,6 @@ import org.grails.plugins.databasemigration.liquibase.GroovyChangeLogParser
 import org.hibernate.dialect.Dialect
 import org.hibernate.engine.jdbc.spi.JdbcServices
 import org.hibernate.engine.spi.SessionFactoryImplementor
-import org.springframework.boot.liquibase.CommonsLoggingLiquibaseLogger
 import org.springframework.context.ConfigurableApplicationContext
 
 import static org.grails.plugins.databasemigration.DatabaseMigrationGrailsPlugin.getDataSourceName
@@ -116,9 +115,6 @@ trait ApplicationContextDatabaseMigrationCommand implements DatabaseMigrationCom
     }
 
     void configureLiquibase() {
-        if (!ServiceLocator.instance.packages.contains(CommonsLoggingLiquibaseLogger.package.name)) {
-            ServiceLocator.instance.addPackageToScan(CommonsLoggingLiquibaseLogger.package.name)
-        }
         if (!ServiceLocator.instance.packages.contains(GormDatabase.package.name)) {
             ServiceLocator.instance.addPackageToScan(GormDatabase.package.name)
         }
