@@ -27,7 +27,8 @@ dependencies {
 }
 ----
 
-You should also tell Gradle about the migrations folder
+You should also tell Gradle about the migrations folder. If using Grails 4, make sure this configuration is BEFORE the
+`dependencies` configuration, so that the `sourceSets` declaration takes effect.
 
 [source,groovy,subs="attributes"]
 ----
