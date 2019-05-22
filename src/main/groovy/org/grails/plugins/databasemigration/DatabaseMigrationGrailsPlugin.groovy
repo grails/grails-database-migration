@@ -22,7 +22,6 @@ import liquibase.servicelocator.ServiceLocator
 import org.grails.plugins.databasemigration.liquibase.GormDatabase
 import org.grails.plugins.databasemigration.liquibase.GrailsLiquibase
 import org.grails.plugins.databasemigration.liquibase.GroovyChangeLogParser
-import org.springframework.boot.liquibase.CommonsLoggingLiquibaseLogger
 import org.springframework.context.ApplicationContext
 
 import javax.sql.DataSource
@@ -94,9 +93,6 @@ class DatabaseMigrationGrailsPlugin extends Plugin {
     }
 
     private void configureLiquibase() {
-        if (!ServiceLocator.instance.packages.contains(CommonsLoggingLiquibaseLogger.package.name)) {
-            ServiceLocator.instance.addPackageToScan(CommonsLoggingLiquibaseLogger.package.name)
-        }
         if (!ServiceLocator.instance.packages.contains(GormDatabase.package.name)) {
             ServiceLocator.instance.addPackageToScan(GormDatabase.package.name)
         }

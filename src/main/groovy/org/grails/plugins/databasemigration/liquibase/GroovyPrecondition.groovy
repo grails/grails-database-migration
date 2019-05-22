@@ -22,6 +22,7 @@ import groovy.transform.CompileStatic
 import liquibase.CatalogAndSchema
 import liquibase.changelog.ChangeSet
 import liquibase.changelog.DatabaseChangeLog
+import liquibase.changelog.visitor.ChangeExecListener
 import liquibase.database.Database
 import liquibase.database.DatabaseConnection
 import liquibase.database.jvm.JdbcConnection
@@ -87,7 +88,7 @@ class GroovyPrecondition extends AbstractPrecondition {
     }
 
     @Override
-    void check(Database database, DatabaseChangeLog changeLog, ChangeSet changeSet) throws PreconditionFailedException, PreconditionErrorException {
+    void check(Database database, DatabaseChangeLog changeLog, ChangeSet changeSet, ChangeExecListener changeExecListener) throws PreconditionFailedException, PreconditionErrorException {
         this.database = database
         this.changeLog = changeLog
         this.changeSet = changeSet

@@ -22,7 +22,6 @@ import org.grails.cli.GrailsCli
 import org.grails.cli.profile.ExecutionContext
 import org.grails.config.CodeGenConfig
 import org.h2.Driver
-import org.springframework.boot.liquibase.CommonsLoggingLiquibaseLogger
 
 abstract class ScriptDatabaseMigrationCommandSpec extends DatabaseMigrationCommandSpec {
 
@@ -31,10 +30,6 @@ abstract class ScriptDatabaseMigrationCommandSpec extends DatabaseMigrationComma
     CodeGenConfig config
 
     def setup() {
-        if (!ServiceLocator.instance.packages.contains(CommonsLoggingLiquibaseLogger)) {
-            ServiceLocator.instance.addPackageToScan(CommonsLoggingLiquibaseLogger.package.name)
-        }
-
         def configMap = [
             'grails.plugin.databasemigration.changelogLocation': changeLogLocation.canonicalPath,
             'dataSource.url'                                   : 'jdbc:h2:mem:testDb',
