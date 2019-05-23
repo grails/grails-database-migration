@@ -53,6 +53,7 @@ if [[ -n $TRAVIS_TAG ]] || [[ $TRAVIS_BRANCH == 'master' && $TRAVIS_PULL_REQUEST
         git add "$version/*"
 
         git rm -rf "$majorVersion"
+        mkdir -p "$majorVersion"
         cp -r ../build/docs/. "./$majorVersion/"
         git add "$majorVersion/*"
 
