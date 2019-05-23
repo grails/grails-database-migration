@@ -38,7 +38,7 @@ databaseChangeLog = \\{
 
     changeSet\\(author: ".*?", id: ".*?"\\) \\{
         createTable\\(tableName: "AUTHOR"\\) \\{
-            column\\(autoIncrement: "true", name: "ID", type: "INT\\(10\\)"\\) \\{
+            column\\(autoIncrement: "true", name: "ID", type: "INT"\\) \\{
                 constraints\\(primaryKey: "true", primaryKeyName: "PK_AUTHOR"\\)
             \\}
 
@@ -50,7 +50,7 @@ databaseChangeLog = \\{
 
     changeSet\\(author: ".*?", id: ".*?"\\) \\{
         createTable\\(tableName: "BOOK"\\) \\{
-            column\\(autoIncrement: "true", name: "ID", type: "INT\\(10\\)"\\) \\{
+            column\\(autoIncrement: "true", name: "ID", type: "INT"\\) \\{
                 constraints\\(primaryKey: "true", primaryKeyName: "PK_BOOK"\\)
             \\}
 
@@ -58,7 +58,7 @@ databaseChangeLog = \\{
                 constraints\\(nullable: "false"\\)
             \\}
 
-            column\\(name: "PRICE", type: "INT\\(10\\)"\\) \\{
+            column\\(name: "PRICE", type: "INT"\\) \\{
                 constraints\\(nullable: "false"\\)
             \\}
         \\}
@@ -80,7 +80,7 @@ databaseChangeLog = \\{
 
     changeSet\\(author: ".*?", id: ".*?"\\) \\{
         createTable\\(tableName: "AUTHOR"\\) \\{
-            column\\(autoIncrement: "true", name: "ID", type: "INT\\(10\\)"\\) \\{
+            column\\(autoIncrement: "true", name: "ID", type: "INT"\\) \\{
                 constraints\\(primaryKey: "true", primaryKeyName: "PK_AUTHOR"\\)
             \\}
 
@@ -92,7 +92,7 @@ databaseChangeLog = \\{
 
     changeSet\\(author: ".*?", id: ".*?"\\) \\{
         createTable\\(tableName: "BOOK"\\) \\{
-            column\\(autoIncrement: "true", name: "ID", type: "INT\\(10\\)"\\) \\{
+            column\\(autoIncrement: "true", name: "ID", type: "INT"\\) \\{
                 constraints\\(primaryKey: "true", primaryKeyName: "PK_BOOK"\\)
             \\}
 
@@ -100,7 +100,7 @@ databaseChangeLog = \\{
                 constraints\\(nullable: "false"\\)
             \\}
 
-            column\\(name: "PRICE", type: "INT\\(10\\)"\\) \\{
+            column\\(name: "PRICE", type: "INT"\\) \\{
                 constraints\\(nullable: "false"\\)
             \\}
         \\}

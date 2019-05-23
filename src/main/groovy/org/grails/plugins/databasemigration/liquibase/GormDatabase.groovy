@@ -17,8 +17,13 @@ package org.grails.plugins.databasemigration.liquibase
 
 import groovy.transform.CompileStatic
 import liquibase.database.DatabaseConnection
+import liquibase.database.OfflineConnection
 import liquibase.exception.DatabaseException
 import liquibase.ext.hibernate.database.HibernateDatabase
+import liquibase.snapshot.DatabaseSnapshot
+import liquibase.snapshot.JdbcDatabaseSnapshot
+import liquibase.snapshot.SnapshotControl
+import liquibase.structure.DatabaseObject
 import org.hibernate.boot.Metadata
 import org.hibernate.boot.MetadataSources
 import org.hibernate.boot.registry.BootstrapServiceRegistryBuilder
@@ -33,13 +38,22 @@ class GormDatabase extends HibernateDatabase {
 
     private Dialect dialect
     private Metadata metadata
+    DatabaseConnection connection
 
     GormDatabase() {
     }
 
     GormDatabase(Dialect dialect, ServiceRegistry serviceRegistry) {
         this.dialect = dialect
-        this.metadata = new MetadataSources(serviceRegistry).getMetadataBuilder().build();
+        this.metadata = new MetadataSources(serviceRegistry).getMetadataBuilder().build()
+        SnapshotControl snapshotControl = new SnapshotControl(this, null, null)
+        GormDatabase database = this
+        OfflineConnection connection = new OfflineConnection("offline:gorm", null) {
+            DatabaseSnapshot getSnapshot(DatabaseObject[] examples) {
+                new JdbcDatabaseSnapshot(examples, database, snapshotControl)
+            }
+        }
+        this.connection = connection
     }
 
     @Override
