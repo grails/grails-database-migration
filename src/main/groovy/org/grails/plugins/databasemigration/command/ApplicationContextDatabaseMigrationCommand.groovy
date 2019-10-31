@@ -82,7 +82,7 @@ trait ApplicationContextDatabaseMigrationCommand implements DatabaseMigrationCom
         String dataSourceName = getDataSourceName(dataSource)
         String sessionFactoryName = "sessionFactory"
         if (!isDefaultDataSource(dataSource)) {
-            sessionFactoryName = sessionFactoryName + '_' + dataSourceName
+            sessionFactoryName = sessionFactoryName + '_' + dataSource
         }
 
         def serviceRegistry = applicationContext.getBean(sessionFactoryName, SessionFactoryImplementor).serviceRegistry.parentServiceRegistry
