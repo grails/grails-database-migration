@@ -25,19 +25,9 @@ import liquibase.serializer.ChangeLogSerializerFactory
 @CompileStatic
 class GroovyDiffToChangeLogCommand extends DiffToChangeLogCommand {
 
-    Closure callback
-
-    GroovyDiffToChangeLogCommand(Closure diffCallback = null) {
-        callback = diffCallback
-    }
-
     @Override
     protected CommandResult run() throws Exception {
         DiffResult diffResult = createDiffResult()
-
-        if (callback) {
-            callback.call(diffResult)
-        }
 
         if (!outputStream) {
             outputStream = System.out
