@@ -51,4 +51,9 @@ abstract class DatabaseMigrationCommandSpec extends Specification {
         changeLogLocation = File.createTempDir()
     }
 
+
+    protected static extractOutput(OutputCapture outputCapture){
+        // outputCapture may contain debug outputs
+        outputCapture.toString().getAt(outputCapture.toString().indexOf("databaseChangeLog")..-1)?.replaceAll(/\s/,"")
+    }
 }

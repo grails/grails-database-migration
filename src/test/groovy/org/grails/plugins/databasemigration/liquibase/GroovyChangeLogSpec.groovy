@@ -4,13 +4,13 @@ import grails.core.GrailsApplication
 import liquibase.exception.ValidationFailedException
 import org.grails.plugins.databasemigration.command.*
 
-
 class GroovyChangeLogSpec extends ApplicationContextDatabaseMigrationCommandSpec {
 
     static List<String> calledBlocks
 
     def setup() {
         calledBlocks = []
+        Locale.setDefault(new Locale("en", "US"))
     }
 
     def "updates a database with Groovy Change"() {
@@ -66,11 +66,9 @@ databaseChangeLog = {
             calledBlocks == ['validate', 'change']
     }
 
-
-
     def "stops processing by calling the error method"() {
         given:
-            def command = createCommand(DbmUpdateCommand)
+        DbmUpdateCommand command = (DbmUpdateCommand)createCommand(DbmUpdateCommand)
             command.changeLogFile << """
 databaseChangeLog = {
     changeSet(author: "John Smith", id: "1") {

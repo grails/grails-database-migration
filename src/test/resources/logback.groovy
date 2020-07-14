@@ -11,6 +11,8 @@ root(ERROR, ['STDOUT'])
 
 logger("org.grails", DEBUG, ['STDOUT'], false)
 logger("liquibase", DEBUG, ['STDOUT'], false)
+logger("org.grails.datastore.gorm.GormEnhancer", INFO, ['STDOUT'], false)
+logger("org.grails.plugin.datasource.TomcatJDBCPoolMBeanExporter", WARN, ['STDOUT'], false)
 
 
 

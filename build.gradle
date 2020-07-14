@@ -53,7 +53,7 @@ configurations {
 dependencies {
     compile "org.liquibase:liquibase-core:$liquibaseVersion"
 
-    compile('org.liquibase.ext:liquibase-hibernate5:3.7') {
+    compile("org.liquibase.ext:liquibase-hibernate5:$liquibaseVersion") {
         exclude group: 'org.hibernate', module: 'hibernate-core'
         exclude group: 'org.hibernate', module: 'hibernate-entitymanager'
         exclude group: 'org.hibernate', module: 'hibernate-envers'

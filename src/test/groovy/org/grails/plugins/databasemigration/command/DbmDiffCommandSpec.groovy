@@ -53,13 +53,14 @@ CREATE TABLE author (id INT AUTO_INCREMENT NOT NULL, name VARCHAR(255) NOT NULL,
             command.handle(getExecutionContext('other'))
 
         then:
-            outputCapture.toString() =~ '''
+        String expected = extractOutput(outputCapture)
+        expected =~ '''
 databaseChangeLog = \\{
 
     changeSet\\(author: ".+?", id: ".+?"\\) \\{
         createTable\\(tableName: "AUTHOR"\\) \\{
             column\\(autoIncrement: "true", name: "ID", type: "INT"\\) \\{
-                constraints\\(primaryKey: "true", primaryKeyName: "PK_AUTHOR"\\)
+                constraints\\(nullable:"false", primaryKey: "true", primaryKeyName: "PK_AUTHOR"\\)
             \\}
 
             column\\(name: "NAME", type: "VARCHAR\\(255\\)"\\) \\{
@@ -76,7 +77,7 @@ databaseChangeLog = \\{
         \\}
     \\}
 \\}
-'''.trim()
+'''.replaceAll(/\s/,"")
     }
 
     def "writes Change Log to update the database to a file given as arguments"() {
@@ -87,13 +88,13 @@ databaseChangeLog = \\{
             command.handle(getExecutionContext('other', outputChangeLog.name))
 
         then:
-            outputChangeLog.text =~ '''
+            outputChangeLog.text?.replaceAll(/\s/,"") =~ '''
 databaseChangeLog = \\{
 
     changeSet\\(author: ".+?", id: ".+?"\\) \\{
         createTable\\(tableName: "AUTHOR"\\) \\{
             column\\(autoIncrement: "true", name: "ID", type: "INT"\\) \\{
-                constraints\\(primaryKey: "true", primaryKeyName: "PK_AUTHOR"\\)
+                constraints\\(nullable:"false", primaryKey: "true", primaryKeyName: "PK_AUTHOR"\\)
             \\}
 
             column\\(name: "NAME", type: "VARCHAR\\(255\\)"\\) \\{
@@ -110,7 +111,7 @@ databaseChangeLog = \\{
         \\}
     \\}
 \\}
-'''.trim()
+'''.replaceAll(/\s/,"")
     }
 
     def "an error occurs if the otherEnv parameter is not specified"() {

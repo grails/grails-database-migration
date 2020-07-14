@@ -33,13 +33,13 @@ CREATE TABLE author (id INT AUTO_INCREMENT NOT NULL, name VARCHAR(255) NOT NULL,
             command.handle(getExecutionContext())
 
         then:
-            outputCapture.toString() =~ '''
+            extractOutput(outputCapture) =~ '''
 databaseChangeLog = \\{
 
     changeSet\\(author: ".*?", id: ".*?"\\) \\{
         createTable\\(tableName: "AUTHOR"\\) \\{
             column\\(autoIncrement: "true", name: "ID", type: "INT"\\) \\{
-                constraints\\(primaryKey: "true", primaryKeyName: "PK_AUTHOR"\\)
+                constraints\\(nullable: "false", primaryKey: "true", primaryKeyName: "PK_AUTHOR"\\)
             \\}
 
             column\\(name: "NAME", type: "VARCHAR\\(255\\)"\\) \\{
@@ -51,7 +51,7 @@ databaseChangeLog = \\{
     changeSet\\(author: ".*?", id: ".*?"\\) \\{
         createTable\\(tableName: "BOOK"\\) \\{
             column\\(autoIncrement: "true", name: "ID", type: "INT"\\) \\{
-                constraints\\(primaryKey: "true", primaryKeyName: "PK_BOOK"\\)
+                constraints\\(nullable: "false", primaryKey: "true", primaryKeyName: "PK_BOOK"\\)
             \\}
 
             column\\(name: "TITLE", type: "VARCHAR\\(255\\)"\\) \\{
@@ -64,7 +64,7 @@ databaseChangeLog = \\{
         \\}
     \\}
 \\}
-'''.trim()
+'''.replaceAll(/\s/, "")
     }
 
     def "generates an initial changelog from the database to a file given as arguments"() {
@@ -75,13 +75,13 @@ databaseChangeLog = \\{
             command.handle(getExecutionContext(outputChangeLog.name))
 
         then:
-            outputChangeLog.text =~ '''
+            outputChangeLog.text?.replaceAll(/\s/, "") =~ '''
 databaseChangeLog = \\{
 
     changeSet\\(author: ".*?", id: ".*?"\\) \\{
         createTable\\(tableName: "AUTHOR"\\) \\{
             column\\(autoIncrement: "true", name: "ID", type: "INT"\\) \\{
-                constraints\\(primaryKey: "true", primaryKeyName: "PK_AUTHOR"\\)
+                constraints\\(nullable: "false", primaryKey: "true", primaryKeyName: "PK_AUTHOR"\\)
             \\}
 
             column\\(name: "NAME", type: "VARCHAR\\(255\\)"\\) \\{
@@ -93,7 +93,7 @@ databaseChangeLog = \\{
     changeSet\\(author: ".*?", id: ".*?"\\) \\{
         createTable\\(tableName: "BOOK"\\) \\{
             column\\(autoIncrement: "true", name: "ID", type: "INT"\\) \\{
-                constraints\\(primaryKey: "true", primaryKeyName: "PK_BOOK"\\)
+                constraints\\(nullable: "false", primaryKey: "true", primaryKeyName: "PK_BOOK"\\)
             \\}
 
             column\\(name: "TITLE", type: "VARCHAR\\(255\\)"\\) \\{
@@ -106,6 +106,6 @@ databaseChangeLog = \\{
         \\}
     \\}
 \\}
-'''.trim()
+'''.replaceAll(/\s/, "")
     }
 }
