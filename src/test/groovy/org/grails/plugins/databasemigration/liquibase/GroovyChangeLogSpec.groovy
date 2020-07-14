@@ -70,20 +70,20 @@ databaseChangeLog = {
         given:
         DbmUpdateCommand command = (DbmUpdateCommand)createCommand(DbmUpdateCommand)
             command.changeLogFile << """
-                databaseChangeLog = {
-                    changeSet(author: "John Smith", id: "1") {
-                        grailsChange {
-                            validate {
-                                ${GroovyChangeLogSpec.name}.calledBlocks << 'validate'
-                                error('error message')
-                            }
-                            change {
-                                ${GroovyChangeLogSpec.name}.calledBlocks << 'change'
-                            }
-                        }
-                    }
-                }
-            """
+databaseChangeLog = {
+    changeSet(author: "John Smith", id: "1") {
+        grailsChange {
+            validate {
+                ${GroovyChangeLogSpec.name}.calledBlocks << 'validate'
+                error('error message')
+            }
+            change {
+                ${GroovyChangeLogSpec.name}.calledBlocks << 'change'
+            }
+        }
+    }
+}
+"""
         when:
             command.handle(getExecutionContext(DbmUpdateCommand))
 

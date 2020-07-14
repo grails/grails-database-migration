@@ -34,37 +34,37 @@ CREATE TABLE author (id INT AUTO_INCREMENT NOT NULL, name VARCHAR(255) NOT NULL,
 
         then:
             extractOutput(outputCapture) =~ '''
-                databaseChangeLog = \\{
-                
-                    changeSet\\(author: ".*?", id: ".*?"\\) \\{
-                        createTable\\(tableName: "AUTHOR"\\) \\{
-                            column\\(autoIncrement: "true", name: "ID", type: "INT"\\) \\{
-                                constraints\\(nullable: "false", primaryKey: "true", primaryKeyName: "PK_AUTHOR"\\)
-                            \\}
-                
-                            column\\(name: "NAME", type: "VARCHAR\\(255\\)"\\) \\{
-                                constraints\\(nullable: "false"\\)
-                            \\}
-                        \\}
-                    \\}
-                
-                    changeSet\\(author: ".*?", id: ".*?"\\) \\{
-                        createTable\\(tableName: "BOOK"\\) \\{
-                            column\\(autoIncrement: "true", name: "ID", type: "INT"\\) \\{
-                                constraints\\(nullable: "false", primaryKey: "true", primaryKeyName: "PK_BOOK"\\)
-                            \\}
-                
-                            column\\(name: "TITLE", type: "VARCHAR\\(255\\)"\\) \\{
-                                constraints\\(nullable: "false"\\)
-                            \\}
-                
-                            column\\(name: "PRICE", type: "INT"\\) \\{
-                                constraints\\(nullable: "false"\\)
-                            \\}
-                        \\}
-                    \\}
-                \\}
-                '''.replaceAll(/\s/, "")
+databaseChangeLog = \\{
+
+    changeSet\\(author: ".*?", id: ".*?"\\) \\{
+        createTable\\(tableName: "AUTHOR"\\) \\{
+            column\\(autoIncrement: "true", name: "ID", type: "INT"\\) \\{
+                constraints\\(nullable: "false", primaryKey: "true", primaryKeyName: "PK_AUTHOR"\\)
+            \\}
+
+            column\\(name: "NAME", type: "VARCHAR\\(255\\)"\\) \\{
+                constraints\\(nullable: "false"\\)
+            \\}
+        \\}
+    \\}
+
+    changeSet\\(author: ".*?", id: ".*?"\\) \\{
+        createTable\\(tableName: "BOOK"\\) \\{
+            column\\(autoIncrement: "true", name: "ID", type: "INT"\\) \\{
+                constraints\\(nullable: "false", primaryKey: "true", primaryKeyName: "PK_BOOK"\\)
+            \\}
+
+            column\\(name: "TITLE", type: "VARCHAR\\(255\\)"\\) \\{
+                constraints\\(nullable: "false"\\)
+            \\}
+
+            column\\(name: "PRICE", type: "INT"\\) \\{
+                constraints\\(nullable: "false"\\)
+            \\}
+        \\}
+    \\}
+\\}
+'''.replaceAll(/\s/, "")
     }
 
     def "generates an initial changelog from the database to a file given as arguments"() {
@@ -76,36 +76,36 @@ CREATE TABLE author (id INT AUTO_INCREMENT NOT NULL, name VARCHAR(255) NOT NULL,
 
         then:
             outputChangeLog.text?.replaceAll(/\s/, "") =~ '''
-                databaseChangeLog = \\{
-                
-                    changeSet\\(author: ".*?", id: ".*?"\\) \\{
-                        createTable\\(tableName: "AUTHOR"\\) \\{
-                            column\\(autoIncrement: "true", name: "ID", type: "INT"\\) \\{
-                                constraints\\(nullable: "false", primaryKey: "true", primaryKeyName: "PK_AUTHOR"\\)
-                            \\}
-                
-                            column\\(name: "NAME", type: "VARCHAR\\(255\\)"\\) \\{
-                                constraints\\(nullable: "false"\\)
-                            \\}
-                        \\}
-                    \\}
-                
-                    changeSet\\(author: ".*?", id: ".*?"\\) \\{
-                        createTable\\(tableName: "BOOK"\\) \\{
-                            column\\(autoIncrement: "true", name: "ID", type: "INT"\\) \\{
-                                constraints\\(nullable: "false", primaryKey: "true", primaryKeyName: "PK_BOOK"\\)
-                            \\}
-                
-                            column\\(name: "TITLE", type: "VARCHAR\\(255\\)"\\) \\{
-                                constraints\\(nullable: "false"\\)
-                            \\}
-                
-                            column\\(name: "PRICE", type: "INT"\\) \\{
-                                constraints\\(nullable: "false"\\)
-                            \\}
-                        \\}
-                    \\}
-                \\}
-                '''.replaceAll(/\s/, "")
+databaseChangeLog = \\{
+
+    changeSet\\(author: ".*?", id: ".*?"\\) \\{
+        createTable\\(tableName: "AUTHOR"\\) \\{
+            column\\(autoIncrement: "true", name: "ID", type: "INT"\\) \\{
+                constraints\\(nullable: "false", primaryKey: "true", primaryKeyName: "PK_AUTHOR"\\)
+            \\}
+
+            column\\(name: "NAME", type: "VARCHAR\\(255\\)"\\) \\{
+                constraints\\(nullable: "false"\\)
+            \\}
+        \\}
+    \\}
+
+    changeSet\\(author: ".*?", id: ".*?"\\) \\{
+        createTable\\(tableName: "BOOK"\\) \\{
+            column\\(autoIncrement: "true", name: "ID", type: "INT"\\) \\{
+                constraints\\(nullable: "false", primaryKey: "true", primaryKeyName: "PK_BOOK"\\)
+            \\}
+
+            column\\(name: "TITLE", type: "VARCHAR\\(255\\)"\\) \\{
+                constraints\\(nullable: "false"\\)
+            \\}
+
+            column\\(name: "PRICE", type: "INT"\\) \\{
+                constraints\\(nullable: "false"\\)
+            \\}
+        \\}
+    \\}
+\\}
+'''.replaceAll(/\s/, "")
     }
 }
