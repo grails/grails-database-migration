@@ -31,35 +31,35 @@ class DbmGormDiffCommandSpec extends ApplicationContextDatabaseMigrationCommandS
             command.handle(getExecutionContext())
 
         then:
-            def output = outputCapture.toString()
-            output =~ '''
-databaseChangeLog = \\{
-
-    changeSet\\(author: ".+?", id: ".+?"\\) \\{
-        createTable\\(tableName: "book"\\) \\{
-            column\\(autoIncrement: "true", name: "id", type: "BIGINT"\\) \\{
-                constraints\\(primaryKey: "true", primaryKeyName: "bookPK"\\)
-            \\}
-
-            column\\(name: "version", type: "BIGINT"\\) \\{
-                constraints\\(nullable: "false"\\)
-            \\}
-
-            column\\(name: "author_id", type: "BIGINT"\\) \\{
-                constraints\\(nullable: "false"\\)
-            \\}
-
-            column\\(name: "title", type: "VARCHAR\\(255\\)"\\) \\{
-                constraints\\(nullable: "false"\\)
-            \\}
-        \\}
-    \\}
-
-    changeSet\\(author: ".+?", id: ".+?"\\) \\{
-        addForeignKeyConstraint\\(baseColumnNames: "author_id", baseTableName: "book", constraintName: "FK.+?", deferrable: "false", initiallyDeferred: "false", referencedColumnNames: "id", referencedTableName: "author", validate: "true"\\)
-    \\}
-\\}
-'''.trim()
+            def output = extractOutput(outputCapture).replaceAll(/\s/,"")
+            output ==~ '''
+                databaseChangeLog = \\{
+                
+                    changeSet\\(author: ".+?", id: ".+?"\\) \\{
+                        createTable\\(tableName: "book"\\) \\{
+                            column\\(autoIncrement: "true", name: "id", type: "BIGINT"\\) \\{
+                                constraints\\(nullable: "false", primaryKey: "true", primaryKeyName: "bookPK"\\)
+                            \\}
+                
+                            column\\(name: "version", type: "BIGINT"\\) \\{
+                                constraints\\(nullable: "false"\\)
+                            \\}
+                
+                            column\\(name: "author_id", type: "BIGINT"\\) \\{
+                                constraints\\(nullable: "false"\\)
+                            \\}
+                
+                            column\\(name: "title", type: "VARCHAR\\(255\\)"\\) \\{
+                                constraints\\(nullable: "false"\\)
+                            \\}
+                        \\}
+                    \\}
+                
+                    changeSet\\(author: ".+?", id: ".+?"\\) \\{
+                        addForeignKeyConstraint\\(baseColumnNames: "author_id", baseTableName: "book", constraintName: "FK.+?", deferrable: "false", initiallyDeferred: "false", referencedColumnNames: "id", referencedTableName: "author", validate: "true"\\)
+                    \\}
+                \\}
+                '''.replaceAll(/\s/,"")
     }
 
     def "diffs GORM classes against a database and generates a changelog to a file given as arguments"() {
@@ -70,35 +70,35 @@ databaseChangeLog = \\{
             command.handle(getExecutionContext(filename))
 
         then:
-            def output = new File(changeLogLocation, filename).text
+            def output = new File(changeLogLocation, filename).text?.replaceAll(/\s/,"")
             output =~ '''
-databaseChangeLog = \\{
-
-    changeSet\\(author: ".+?", id: ".+?"\\) \\{
-        createTable\\(tableName: "book"\\) \\{
-            column\\(autoIncrement: "true", name: "id", type: "BIGINT"\\) \\{
-                constraints\\(primaryKey: "true", primaryKeyName: "bookPK"\\)
-            \\}
-
-            column\\(name: "version", type: "BIGINT"\\) \\{
-                constraints\\(nullable: "false"\\)
-            \\}
-
-            column\\(name: "author_id", type: "BIGINT"\\) \\{
-                constraints\\(nullable: "false"\\)
-            \\}
-
-            column\\(name: "title", type: "VARCHAR\\(255\\)"\\) \\{
-                constraints\\(nullable: "false"\\)
-            \\}
-        \\}
-    \\}
-
-    changeSet\\(author: ".+?", id: ".+?"\\) \\{
-        addForeignKeyConstraint\\(baseColumnNames: "author_id", baseTableName: "book", constraintName: "FK.+?", deferrable: "false", initiallyDeferred: "false", referencedColumnNames: "id", referencedTableName: "author", validate: "true"\\)
-    \\}
-\\}
-'''.trim()
+                databaseChangeLog = \\{
+                
+                    changeSet\\(author: ".+?", id: ".+?"\\) \\{
+                        createTable\\(tableName: "book"\\) \\{
+                            column\\(autoIncrement: "true", name: "id", type: "BIGINT"\\) \\{
+                                constraints\\(nullable:"false", primaryKey: "true", primaryKeyName: "bookPK"\\)
+                            \\}
+                
+                            column\\(name: "version", type: "BIGINT"\\) \\{
+                                constraints\\(nullable: "false"\\)
+                            \\}
+                
+                            column\\(name: "author_id", type: "BIGINT"\\) \\{
+                                constraints\\(nullable: "false"\\)
+                            \\}
+                
+                            column\\(name: "title", type: "VARCHAR\\(255\\)"\\) \\{
+                                constraints\\(nullable: "false"\\)
+                            \\}
+                        \\}
+                    \\}
+                
+                    changeSet\\(author: ".+?", id: ".+?"\\) \\{
+                        addForeignKeyConstraint\\(baseColumnNames: "author_id", baseTableName: "book", constraintName: "FK.+?", deferrable: "false", initiallyDeferred: "false", referencedColumnNames: "id", referencedTableName: "author", validate: "true"\\)
+                    \\}
+                \\}
+            '''.replaceAll(/\s/,"")
     }
 
     def "an error occurs if changeLogFile already exists"() {

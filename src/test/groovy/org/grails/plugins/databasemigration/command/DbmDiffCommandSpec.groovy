@@ -39,13 +39,11 @@ class DbmDiffCommandSpec extends ApplicationContextDatabaseMigrationCommandSpec 
         otherDbDataSource.driverClassName = Driver.name
         otherDbConnection = otherDbDataSource.connection
         otherDbSql = new Sql(otherDbConnection)
-        otherDbSql.executeUpdate '''
-CREATE TABLE book (id INT AUTO_INCREMENT NOT NULL, title VARCHAR(255) NOT NULL, CONSTRAINT PK_BOOK PRIMARY KEY (id))
-'''
+        otherDbSql.executeUpdate 'CREATE TABLE book (id INT AUTO_INCREMENT NOT NULL, title VARCHAR(255) NOT NULL, CONSTRAINT PK_BOOK PRIMARY KEY (id))'
         sql.executeUpdate '''
-CREATE TABLE book (id INT AUTO_INCREMENT NOT NULL, title VARCHAR(255) NOT NULL, price INT NOT NULL, CONSTRAINT PK_BOOK PRIMARY KEY (id));
-CREATE TABLE author (id INT AUTO_INCREMENT NOT NULL, name VARCHAR(255) NOT NULL, CONSTRAINT PK_AUTHOR PRIMARY KEY (id));
-'''
+            CREATE TABLE book (id INT AUTO_INCREMENT NOT NULL, title VARCHAR(255) NOT NULL, price INT NOT NULL, CONSTRAINT PK_BOOK PRIMARY KEY (id));
+            CREATE TABLE author (id INT AUTO_INCREMENT NOT NULL, name VARCHAR(255) NOT NULL, CONSTRAINT PK_AUTHOR PRIMARY KEY (id));
+            '''
     }
 
     def "writes Change Log to update the database to STDOUT"() {
@@ -53,30 +51,31 @@ CREATE TABLE author (id INT AUTO_INCREMENT NOT NULL, name VARCHAR(255) NOT NULL,
             command.handle(getExecutionContext('other'))
 
         then:
-            outputCapture.toString() =~ '''
-databaseChangeLog = \\{
-
-    changeSet\\(author: ".+?", id: ".+?"\\) \\{
-        createTable\\(tableName: "AUTHOR"\\) \\{
-            column\\(autoIncrement: "true", name: "ID", type: "INT"\\) \\{
-                constraints\\(primaryKey: "true", primaryKeyName: "PK_AUTHOR"\\)
+        String expected = extractOutput(outputCapture)
+        expected =~ '''
+            databaseChangeLog = \\{
+            
+                changeSet\\(author: ".+?", id: ".+?"\\) \\{
+                    createTable\\(tableName: "AUTHOR"\\) \\{
+                        column\\(autoIncrement: "true", name: "ID", type: "INT"\\) \\{
+                            constraints\\(nullable:"false", primaryKey: "true", primaryKeyName: "PK_AUTHOR"\\)
+                        \\}
+            
+                        column\\(name: "NAME", type: "VARCHAR\\(255\\)"\\) \\{
+                            constraints\\(nullable: "false"\\)
+                        \\}
+                    \\}
+                \\}
+            
+                changeSet\\(author: ".+?", id: ".+?"\\) \\{
+                    addColumn\\(tableName: "BOOK"\\) \\{
+                        column\\(name: "PRICE", type: "INTEGER"\\) \\{
+                            constraints\\(nullable: "false"\\)
+                        \\}
+                    \\}
+                \\}
             \\}
-
-            column\\(name: "NAME", type: "VARCHAR\\(255\\)"\\) \\{
-                constraints\\(nullable: "false"\\)
-            \\}
-        \\}
-    \\}
-
-    changeSet\\(author: ".+?", id: ".+?"\\) \\{
-        addColumn\\(tableName: "BOOK"\\) \\{
-            column\\(name: "PRICE", type: "INTEGER"\\) \\{
-                constraints\\(nullable: "false"\\)
-            \\}
-        \\}
-    \\}
-\\}
-'''.trim()
+        '''.replaceAll(/\s/,"")
     }
 
     def "writes Change Log to update the database to a file given as arguments"() {
@@ -87,13 +86,13 @@ databaseChangeLog = \\{
             command.handle(getExecutionContext('other', outputChangeLog.name))
 
         then:
-            outputChangeLog.text =~ '''
+            outputChangeLog.text?.replaceAll(/\s/,"") =~ '''
 databaseChangeLog = \\{
 
     changeSet\\(author: ".+?", id: ".+?"\\) \\{
         createTable\\(tableName: "AUTHOR"\\) \\{
             column\\(autoIncrement: "true", name: "ID", type: "INT"\\) \\{
-                constraints\\(primaryKey: "true", primaryKeyName: "PK_AUTHOR"\\)
+                constraints\\(nullable:"false", primaryKey: "true", primaryKeyName: "PK_AUTHOR"\\)
             \\}
 
             column\\(name: "NAME", type: "VARCHAR\\(255\\)"\\) \\{
@@ -110,7 +109,7 @@ databaseChangeLog = \\{
         \\}
     \\}
 \\}
-'''.trim()
+'''.replaceAll(/\s/,"")
     }
 
     def "an error occurs if the otherEnv parameter is not specified"() {
