@@ -125,6 +125,10 @@ List columnArgs = [
         parameter(name: 'defaultValueBoolean', type: STRING),
         parameter(name: 'defaultValueDate', type: STRING),
         parameter(name: 'autoIncrement', type: STRING),
+        parameter(name: 'beforeColumn', type: STRING),
+        parameter(name: 'afterColumn', type: STRING),
+        parameter(name: 'position', type: STRING),
+        parameter(name: 'descending', type: STRING),
 
 ]
 
