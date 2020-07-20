@@ -2,10 +2,10 @@ name: Java CI
 on:
   push:
     branches:
-      - githubactions
+      - master
   pull_request:
     branches:
-      - githubactions
+      - master
 jobs:
   build:
     runs-on: ubuntu-latest
