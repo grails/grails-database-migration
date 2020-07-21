@@ -1,0 +1,5 @@
+databasemigration
+org.grails.plugins.databasemigration
+org.grails.plugins.databasemigration.command
+org.grails.plugins.databasemigration.liquibase
+testapp
