@@ -129,15 +129,3 @@ jar {
 }
 
 configurations.testCompile.extendsFrom(configurations.compileOnly)
-
-task(bintrayUpload_stub) {
-    doLast{
-        println "******* bintrayUpload stub ********* "
-    }
-}
-
-task(publish_stub) {
-    doLast{
-        println "******* publish stub ********* "
-    }
-}
