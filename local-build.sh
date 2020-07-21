@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 rm -rf *.zip
-#./gradlew clean test integrationTest assemble
+./gradlew clean test integrationTest assemble
 
 filename=$(find build/libs -name "*.jar" | head -1)
 filename=$(basename "$filename")
@@ -13,34 +13,16 @@ echo "Publishing archives for branch $TRAVIS_BRANCH"
 
 echo "Publishing archives"
 
-./gradlew bintrayUpload || EXIT_STATUS=$?
-./gradlew publish || EXIT_STATUS=$?
+./gradlew bintrayUpload_stub || EXIT_STATUS=$?
+./gradlew publish_stub || EXIT_STATUS=$?
 
-#
-#  ./gradlew docs || EXIT_STATUS=$?
-#
-#  git config --global user.name "$GIT_NAME"
-#  git config --global user.email "$GIT_EMAIL"
-#  git config --global credential.helper "store --file=~/.git-credentials"
-#  echo "https://$GH_TOKEN:@github.com" > ~/.git-credentials
-#
-#  git clone https://${GH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git -b gh-pages gh-pages --single-branch > /dev/null
-#  cd gh-pages
-#
-#  # If this is the master branch then update the snapshot
-#  if [[ $TRAVIS_BRANCH == 'master' ]]; then
-#    mkdir -p snapshot
-#    cp -r ../build/docs/. ./snapshot/
-#
-#    git add snapshot/*
-#  fi
-#
-#  # If there is a tag present then this becomes the latest
-#  if [[ -n $TRAVIS_TAG ]]; then
-#        git rm -rf latest/
-#        mkdir -p latest
-#        cp -r ../build/docs/. ./latest/
-#        git add latest/*
+./gradlew docs || EXIT_STATUS=$?
+
+mkdir -p snapshot
+cp -r build/docs/. ./snapshot/
+
+mkdir -p latest
+cp -r build/docs/. ./latest/
 #
 #        version="$TRAVIS_TAG" # eg: v3.0.1
 #        version=${version:1} # 3.0.1
@@ -64,4 +46,4 @@ echo "Publishing archives"
 #    rm -rf gh-pages
 #fi
 #
-#exit $EXIT_STATUS
+exit $EXIT_STATUS
