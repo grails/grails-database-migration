@@ -1,4 +1,4 @@
-name: Java CI
+name: Clean and Assemble
 on:
   push:
     branches:
@@ -24,5 +24,9 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: ${{ matrix.java }}
-      - name: Build with Gradle
-        run: ./gradlew clean check --parallel --continue
+      - name: Gradle
+      - run: |
+          set -e
+          rm -rf build
+          rm -rf *.zip
+          ./gradlew clean test integrationTest assemble
