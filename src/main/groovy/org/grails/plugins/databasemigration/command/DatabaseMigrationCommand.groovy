@@ -48,6 +48,7 @@ import liquibase.lockservice.LockService
 import liquibase.lockservice.LockServiceFactory
 import liquibase.parser.ChangeLogParserFactory
 import liquibase.resource.ClassLoaderResourceAccessor
+import liquibase.resource.CompositeResourceAccessor
 import liquibase.resource.FileSystemResourceAccessor
 import liquibase.resource.ResourceAccessor
 import liquibase.statement.core.RawSqlStatement
@@ -185,7 +186,10 @@ trait DatabaseMigrationCommand {
     }
 
     ResourceAccessor createResourceAccessor() {
-        new FileSystemResourceAccessor(changeLogLocation.path)
+        new CompositeResourceAccessor(
+            new FileSystemResourceAccessor(changeLogLocation.path),
+            new ClassLoaderResourceAccessor())
+
     }
 
     void withDatabase(Map<String, String> dataSourceConfig = null, @ClosureParams(value = SimpleType, options = 'liquibase.database.Database') Closure closure) {
