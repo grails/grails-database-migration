@@ -1,0 +1,71 @@
+name: Java CI
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+  workflow_dispatch:
+    inputs:
+      message:
+        description: 'Snapshot information (e.g. New Core Snapshot Tue Dec 15 00:07:18 UTC 2020 f212f54)'
+        required: true
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        java: ['8']
+    env:
+      WORKSPACE: ${{ github.workspace }}
+      GRADLE_OPTS: -Xmx1500m -Dfile.encoding=UTF-8
+    steps:
+      - name: Print Dispatch Information
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          DISPATCH_INFORMATION: ${{ github.event.inputs.message }}
+        run: echo $DISPATCH_INFORMATION
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: ${{ matrix.java }}
+      - name: Run tests
+        run: |
+          ./gradlew clean
+          ./gradlew test integrationTest
+      - name: Publish Test Report
+        if: failure()
+        uses: scacap/action-surefire-report@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          report_paths: '**/build/test-results/test/TEST-*.xml'
+      - name: Run Assemble
+        run: ./gradlew assemble
+      - name: Publish to repo.grails.org
+        if: success() && github.event_name == 'push' && matrix.java == '8'
+        env:
+          ARTIFACTORY_USERNAME: ${{ secrets.ARTIFACTORY_USERNAME }}
+          ARTIFACTORY_PASSWORD: ${{ secrets.ARTIFACTORY_PASSWORD }}
+        run: |
+          ./gradlew publish
+          ./gradlew docs
+      - name: Publish to Github Pages
+        if: success() && github.event_name == 'push' && matrix.java == '8'
+        uses: micronaut-projects/github-pages-deploy-action@master
+        env:
+          TARGET_REPOSITORY: ${{ github.repository }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          BRANCH: gh-pages
+          FOLDER: ./build/docs
+          DOC_FOLDER: gh-pages
+          COMMIT_EMAIL: behlp@objectcomputing.com
+          COMMIT_NAME: Puneet Behl
