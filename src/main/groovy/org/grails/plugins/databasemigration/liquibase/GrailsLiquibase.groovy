@@ -46,8 +46,7 @@ class GrailsLiquibase extends SpringLiquibase {
 
     @Override
     protected Liquibase createLiquibase(Connection connection) throws LiquibaseException {
-        Liquibase liquibase = new Liquibase(getChangeLog(), new ClassLoaderResourceAccessor(), createDatabase
-                (connection, null))
+        Liquibase liquibase = new Liquibase(getChangeLog(), new ClassLoaderResourceAccessor(), createDatabase (connection, null))
         liquibase.setIgnoreClasspathPrefix(isIgnoreClasspathPrefix())
         if (parameters != null) {
             for (Map.Entry<String, String> entry : parameters.entrySet()) {
