@@ -68,7 +68,7 @@ dependencies {
 
     compileOnly "org.grails:grails-web-boot"
     compileOnly "org.grails:grails-dependencies"
-    compileOnly 'javax.servlet:javax.servlet-api:3.1.0'
+    compileOnly 'javax.servlet:javax.servlet-api:4.0.1'
     compileOnly "org.grails.plugins:hibernate5"
 
     testCompile "org.grails:grails-plugin-testing"
