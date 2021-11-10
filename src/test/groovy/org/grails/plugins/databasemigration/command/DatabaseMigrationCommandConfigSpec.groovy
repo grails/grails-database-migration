@@ -1,13 +1,10 @@
 package org.grails.plugins.databasemigration.command
 
-import grails.config.ConfigMap
-import grails.test.mixin.TestMixin
-import grails.test.mixin.support.GrailsUnitTestMixin
 import org.h2.Driver
 import spock.lang.Specification
+import org.grails.testing.GrailsUnitTest
 
-@TestMixin(GrailsUnitTestMixin)
-class DatabaseMigrationCommandConfigSpec extends Specification implements DatabaseMigrationCommand {
+class DatabaseMigrationCommandConfigSpec extends Specification implements DatabaseMigrationCommand, GrailsUnitTest {
 
     void cleanup() {
         config.remove('dataSource')
@@ -94,8 +91,4 @@ class DatabaseMigrationCommandConfigSpec extends Specification implements Databa
 
     }
 
-    @Override
-    ConfigMap getConfig() {
-        return grailsApplication.getConfig()
-    }
 }

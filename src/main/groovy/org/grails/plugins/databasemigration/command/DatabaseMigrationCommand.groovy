@@ -65,6 +65,7 @@ import org.grails.plugins.databasemigration.liquibase.GroovyGenerateChangeLogCom
 import java.nio.file.Path
 import java.text.DateFormat
 import java.text.ParseException
+import java.text.SimpleDateFormat
 
 import static org.grails.plugins.databasemigration.DatabaseMigrationGrailsPlugin.getDataSourceName
 import static org.grails.plugins.databasemigration.DatabaseMigrationGrailsPlugin.isDefaultDataSource
@@ -168,7 +169,8 @@ trait DatabaseMigrationCommand {
 
     Date parseDateTime(String date, String time) throws ParseException {
         time = time ?: '00:00:00'
-        Date.parse('yyyy-MM-dd HH:mm:ss', "$date $time")
+        DateFormat formatter = new SimpleDateFormat('yyyy-MM-dd HH:mm:ss')
+        formatter.parse("$date $time")
     }
 
     void withLiquibase(@ClosureParams(value = SimpleType, options = 'liquibase.Liquibase') Closure closure) {

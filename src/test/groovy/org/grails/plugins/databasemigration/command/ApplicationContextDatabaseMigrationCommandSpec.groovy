@@ -1,7 +1,9 @@
 package org.grails.plugins.databasemigration.command
 
 import grails.config.Config
+import grails.core.DefaultGrailsApplication
 import grails.core.GrailsApplication
+import grails.core.support.GrailsApplicationAware
 import grails.dev.commands.ApplicationCommand
 import grails.dev.commands.ExecutionContext
 import grails.orm.bootstrap.HibernateDatastoreSpringInitializer
@@ -20,7 +22,9 @@ import org.springframework.core.env.MapPropertySource
 import org.springframework.core.env.MutablePropertySources
 import spock.lang.AutoCleanup
 
-abstract class ApplicationContextDatabaseMigrationCommandSpec extends DatabaseMigrationCommandSpec {
+abstract class ApplicationContextDatabaseMigrationCommandSpec extends DatabaseMigrationCommandSpec implements GrailsApplicationAware {
+
+    GrailsApplication grailsApplication
 
     @AutoCleanup
     GenericApplicationContext applicationContext
@@ -37,6 +41,7 @@ abstract class ApplicationContextDatabaseMigrationCommandSpec extends DatabaseMi
         applicationContext = new GenericApplicationContext()
 
         applicationContext.beanFactory.registerSingleton('dataSource', dataSource)
+        applicationContext.beanFactory.registerSingleton(GrailsApplication.APPLICATION_ID, new DefaultGrailsApplication())
 
         def mutablePropertySources = new MutablePropertySources()
         mutablePropertySources.addFirst(new MapPropertySource('TestConfig', [
@@ -92,6 +97,8 @@ abstract class ApplicationContextDatabaseMigrationCommandSpec extends DatabaseMi
     void cleanup() {
 
     }
+
+
 }
 
 @Entity
