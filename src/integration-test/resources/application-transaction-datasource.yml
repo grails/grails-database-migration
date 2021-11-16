@@ -10,15 +10,15 @@ grails:
 server:
     port: 0
 ---
+dataSource:
+    pooled: true
+    jmxExport: true
+    driverClassName: org.h2.Driver
+    username: sa
+    password:
+    dbCreate: none
+    url: jdbc:h2:file:./testDb
 dataSources:
-    dataSource:
-        pooled: true
-        jmxExport: true
-        driverClassName: org.h2.Driver
-        username: sa
-        password:
-        dbCreate: none
-        url: jdbc:h2:mem:testDb
     other:
         pooled: true
         jmxExport: true
@@ -26,4 +26,4 @@ dataSources:
         username: sa
         password:
         dbCreate: none
-        url: jdbc:h2:mem:otherDb
+        url: jdbc:h2:file:./otherDb

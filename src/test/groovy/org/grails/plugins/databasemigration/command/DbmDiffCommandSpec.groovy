@@ -21,6 +21,7 @@ import org.grails.plugins.databasemigration.DatabaseMigrationException
 import org.h2.Driver
 import org.springframework.jdbc.datasource.DriverManagerDataSource
 import spock.lang.AutoCleanup
+import spock.lang.Ignore
 
 import java.sql.Connection
 

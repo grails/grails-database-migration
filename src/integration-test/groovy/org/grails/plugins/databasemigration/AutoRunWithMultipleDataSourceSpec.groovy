@@ -15,7 +15,7 @@
  */
 package org.grails.plugins.databasemigration
 
-import grails.test.mixin.integration.Integration
+import grails.testing.mixin.integration.Integration
 import groovy.sql.Sql
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ActiveProfiles
@@ -46,12 +46,16 @@ class AutoRunWithMultipleDataSourceSpec extends Specification {
     }
 
     def "runs app with a multiple datasource"() {
-        expect:
-            def changeSetIds = sql.rows('SELECT id FROM databasechangelog').collect { it.id }
+        when:
+            def changeSetIds = sql.rows('SELECT id FROM DATABASECHANGELOG').collect { it.id }
+
+        then:
             changeSetIds as Set == ['1', '2', '3', '4', '5'] as Set
 
-        and:
-            def secondChangeSetIds = secondSql.rows('SELECT id FROM databasechangelog').collect { it.id }
+        when:
+            def secondChangeSetIds = secondSql.rows('SELECT id FROM DATABASECHANGELOG').collect { it.id }
+
+        then:
             secondChangeSetIds as Set == ['second-1', 'second-2', 'second-3'] as Set
     }
 }

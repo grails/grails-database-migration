@@ -1,41 +1,27 @@
 buildscript {
-    ext {
-        grailsVersion = project.grailsVersion
-    }
     repositories {
-        mavenLocal()
         maven { url "https://repo.grails.org/grails/core" }
     }
     dependencies {
         classpath "org.grails:grails-gradle-plugin:$grailsVersion"
+        classpath "org.asciidoctor:asciidoctor-gradle-plugin:1.5.3"
     }
-}
-
-plugins {
-    id 'org.asciidoctor.convert' version '1.5.3'
 }
 
 apply plugin:"eclipse"
 apply plugin:"idea"
 apply plugin:"org.grails.grails-plugin"
-apply plugin:"org.grails.grails-plugin-publish"
+apply plugin:"org.grails.internal.grails-plugin-publish"
 apply plugin:"org.grails.grails-gsp"
+apply plugin: "org.asciidoctor.convert"
 
 version project.projectVersion
 group "org.grails.plugins"
 
-ext {
-    grailsVersion = project.grailsVersion
-    gradleWrapperVersion = project.gradleWrapperVersion
-}
-
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
-
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 repositories {
-    mavenLocal()
-    mavenCentral()
     maven { url "https://repo.grails.org/grails/core" }
 }
 
@@ -59,7 +45,7 @@ dependencies {
         exclude group: 'org.hibernate', module: 'hibernate-envers'
         exclude group: 'org.liquibase', module: 'liquibase-core'
     }
-    compileOnly 'org.hibernate:hibernate-core:5.1.1.Final'
+    compileOnly 'org.hibernate:hibernate-core:5.6.0.Final'
 
     compileOnly 'org.springframework.boot:spring-boot-starter-logging'
     compileOnly "org.springframework.boot:spring-boot-starter-actuator"
@@ -68,16 +54,20 @@ dependencies {
 
     compileOnly "org.grails:grails-web-boot"
     compileOnly "org.grails:grails-dependencies"
-    compileOnly 'javax.servlet:javax.servlet-api:3.1.0'
+    compileOnly 'javax.servlet:javax.servlet-api:4.0.1'
     compileOnly "org.grails.plugins:hibernate5"
 
-    testCompile "org.grails:grails-plugin-testing"
+    testCompile "org.grails:grails-gorm-testing-support"
+    testCompile "org.mockito:mockito-core"
+    testCompile "org.grails:grails-web-testing-support"
 
     provided("org.grails:grails-shell") {
         exclude group: 'org.slf4j', module: 'slf4j-simple'
     }
 
-    documentation "org.codehaus.groovy:groovy-all:2.4.7"
+    documentation "org.codehaus.groovy:groovy-all:2.5.14"
+
+    testCompile group: 'com.h2database', name: 'h2', version: '1.4.199'
 }
 
 grailsPublish {
@@ -106,6 +96,12 @@ asciidoctor {
             'artifactId'    : project.name,
             'sourcedir'     : "${projectDir}/src/main/groovy",
             'liquibaseVersion': liquibaseVersion
+}
+
+tasks.withType(GroovyCompile) {
+    configure(groovyOptions) {
+        forkOptions.jvmArgs = ['-Xmx1024m']
+    }
 }
 
 task apidocs(type: Groovydoc) {

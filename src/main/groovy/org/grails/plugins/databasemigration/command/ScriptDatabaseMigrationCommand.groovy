@@ -41,10 +41,10 @@ trait ScriptDatabaseMigrationCommand implements DatabaseMigrationCommand {
         this.executionContext = executionContext
         setConfig(executionContext.config)
 
-        commandLine = executionContext.commandLine
-        contexts = optionValue('contexts')
-        defaultSchema = optionValue('defaultSchema')
-        dataSource = optionValue('dataSource') ?: DEFAULT_DATASOURCE_NAME
+        this.commandLine = executionContext.commandLine
+        this.contexts = optionValue('contexts')
+        this.defaultSchema = optionValue('defaultSchema')
+        this.dataSource = optionValue('dataSource') ?: DEFAULT_DATASOURCE_NAME
 
         configureLiquibase()
         handle()

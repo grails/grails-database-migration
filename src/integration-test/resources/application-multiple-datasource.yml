@@ -8,15 +8,17 @@ grails:
 server:
     port: 0
 ---
+dataSource:
+    pooled: true
+    jmxExport: true
+    driverClassName: org.h2.Driver
+    username: sa
+    password:
+    dbCreate: none
+    url: jdbc:h2:file:./multipleFirstDb
+    logSql: true
+    formatSql: true
 dataSources:
-    dataSource:
-        pooled: true
-        jmxExport: true
-        driverClassName: org.h2.Driver
-        username: sa
-        password:
-        dbCreate: none
-        url: jdbc:h2:mem:multipleFirstDb
     second:
         pooled: true
         jmxExport: true
@@ -24,4 +26,4 @@ dataSources:
         username: sa
         password:
         dbCreate: none
-        url: jdbc:h2:mem:multipleSecondDb
+        url: jdbc:h2:file:./multipleSecondDb
