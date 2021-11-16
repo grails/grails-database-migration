@@ -65,7 +65,7 @@ dependencies {
         exclude group: 'org.slf4j', module: 'slf4j-simple'
     }
 
-    documentation "org.codehaus.groovy:groovy-all:2.5.14"
+    documentation "org.codehaus.groovy:groovy-all:3.0.9"
 
     testCompile group: 'com.h2database', name: 'h2', version: '1.4.200'
 }
