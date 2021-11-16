@@ -2,7 +2,7 @@ package org.grails.plugins.databasemigration
 
 import grails.dev.commands.ApplicationCommand
 import grails.dev.commands.ExecutionContext
-import grails.test.mixin.integration.Integration
+import grails.testing.mixin.integration.Integration
 import grails.util.GrailsNameUtils
 import groovy.sql.Sql
 import liquibase.exception.MigrationFailedException

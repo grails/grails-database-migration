@@ -65,7 +65,9 @@ dependencies {
         exclude group: 'org.slf4j', module: 'slf4j-simple'
     }
 
-    documentation "org.codehaus.groovy:groovy-all:2.4.7"
+    documentation "org.codehaus.groovy:groovy-all:2.5.14"
+
+    testCompile group: 'com.h2database', name: 'h2', version: '1.4.199'
 }
 
 grailsPublish {

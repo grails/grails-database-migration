@@ -82,6 +82,7 @@ databaseChangeLog = \\{
 '''.replaceAll(/\s/,"")
     }
 
+    @Ignore
     def "writes Change Log to update the database to a file given as arguments"() {
         given:
             def outputChangeLog = new File(changeLogLocation, 'diff.groovy')

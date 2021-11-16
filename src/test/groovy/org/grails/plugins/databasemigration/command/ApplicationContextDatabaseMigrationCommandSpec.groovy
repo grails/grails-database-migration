@@ -47,7 +47,7 @@ abstract class ApplicationContextDatabaseMigrationCommandSpec extends DatabaseMi
         mutablePropertySources.addFirst(new MapPropertySource('TestConfig', [
             'grails.plugin.databasemigration.changelogLocation': changeLogLocation.canonicalPath,
             'dataSource.dbCreate'                              : '',
-            'dataSource.url'                                   : 'jdbc:h2:mem:testDb',
+            'environments.test.dataSource.url'                 : 'jdbc:h2:mem:testDb',
             'dataSource.username'                              : 'sa',
             'dataSource.password'                              : '',
             'dataSource.driverClassName'                       : Driver.name,
