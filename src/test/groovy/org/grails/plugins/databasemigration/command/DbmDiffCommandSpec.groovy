@@ -49,7 +49,6 @@ CREATE TABLE author (id INT AUTO_INCREMENT NOT NULL, name VARCHAR(255) NOT NULL,
 '''
     }
 
-    @Ignore
     def "writes Change Log to update the database to STDOUT"() {
         when:
             command.handle(getExecutionContext('other'))
@@ -82,7 +81,6 @@ databaseChangeLog = \\{
 '''.replaceAll(/\s/,"")
     }
 
-    @Ignore
     def "writes Change Log to update the database to a file given as arguments"() {
         given:
             def outputChangeLog = new File(changeLogLocation, 'diff.groovy')

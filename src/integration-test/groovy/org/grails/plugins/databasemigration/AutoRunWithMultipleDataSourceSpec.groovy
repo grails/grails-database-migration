@@ -46,12 +46,16 @@ class AutoRunWithMultipleDataSourceSpec extends Specification {
     }
 
     def "runs app with a multiple datasource"() {
-        expect:
+        when:
             def changeSetIds = sql.rows('SELECT id FROM DATABASECHANGELOG').collect { it.id }
+
+        then:
             changeSetIds as Set == ['1', '2', '3', '4', '5'] as Set
 
-        and:
+        when:
             def secondChangeSetIds = secondSql.rows('SELECT id FROM DATABASECHANGELOG').collect { it.id }
+
+        then:
             secondChangeSetIds as Set == ['second-1', 'second-2', 'second-3'] as Set
     }
 }
