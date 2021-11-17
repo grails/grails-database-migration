@@ -36,7 +36,7 @@ class DbmStatusCommandSpec extends ApplicationContextDatabaseMigrationCommandSpe
             command.handle(getExecutionContext())
 
         then:
-            output.contains('2 change sets have not been applied')
+            output.toString().contains('2 change sets have not been applied')
     }
 
     def "outputs count or list of unrun change sets to a file given as arguments"() {

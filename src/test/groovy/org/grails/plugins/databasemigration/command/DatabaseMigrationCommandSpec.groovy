@@ -16,8 +16,6 @@
 package org.grails.plugins.databasemigration.command
 
 import groovy.sql.Sql
-import io.github.joke.spockoutputcapture.CapturedOutput
-import io.github.joke.spockoutputcapture.OutputCapture
 import org.h2.Driver
 import org.springframework.jdbc.datasource.DriverManagerDataSource
 import spock.lang.AutoCleanup
@@ -27,8 +25,6 @@ import javax.sql.DataSource
 import java.sql.Connection
 
 abstract class DatabaseMigrationCommandSpec extends Specification {
-
-    @OutputCapture CapturedOutput output
 
     DataSource dataSource
 
@@ -41,18 +37,43 @@ abstract class DatabaseMigrationCommandSpec extends Specification {
     @AutoCleanup('deleteDir')
     File changeLogLocation
 
+    private def oldOut
+    ByteArrayOutputStream baos
+
     def setup() {
+
+        oldOut = System.out
+        baos = new ByteArrayOutputStream()
+        System.out = new PrintStream(baos)
+
         dataSource = new DriverManagerDataSource('jdbc:h2:mem:testDb', 'sa', '')
         dataSource.driverClassName = Driver.name
         connection = dataSource.connection
         sql = new Sql(connection)
 
         changeLogLocation = File.createTempDir()
+
+
+    }
+
+    Object getOutput() {
+        new Object() {
+
+            @Override
+            String toString() {
+                return baos.toString("UTF-8")
+            }
+        }
+    }
+
+    def cleanup() {
+        System.out = oldOut
     }
 
 
-    protected static extractOutput(CapturedOutput output){
+    protected static extractOutput(Object output){
         // outputCapture may contain debug outputs
-        output.toString().getAt(output.toString().indexOf("databaseChangeLog")..-1)?.replaceAll(/\s/,"")
+        final String outputString = output.toString()
+        outputString.getAt(outputString.indexOf("databaseChangeLog")..-1)?.replaceAll(/\s/,"")
     }
 }
