@@ -19,7 +19,10 @@ import grails.dev.commands.ApplicationCommand
 
 class DbmChangelogSyncCommandSpec extends ApplicationContextDatabaseMigrationCommandSpec {
 
-    final Class<ApplicationCommand> commandClass = DbmChangelogSyncCommand
+    @Override
+    protected Class<ApplicationCommand> getCommandClass() {
+        return DbmChangelogSyncCommand
+    }
 
     def "marks all changes as executed in the database"() {
         given:

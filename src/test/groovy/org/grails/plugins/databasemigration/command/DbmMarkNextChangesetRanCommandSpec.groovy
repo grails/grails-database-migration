@@ -19,7 +19,10 @@ import grails.dev.commands.ApplicationCommand
 
 class DbmMarkNextChangesetRanCommandSpec extends ApplicationContextDatabaseMigrationCommandSpec {
 
-    final Class<ApplicationCommand> commandClass = DbmMarkNextChangesetRanCommand
+    @Override
+    protected Class<ApplicationCommand> getCommandClass() {
+        return DbmMarkNextChangesetRanCommand
+    }
 
     def "marks the next change changes as executed in the database"() {
         given:

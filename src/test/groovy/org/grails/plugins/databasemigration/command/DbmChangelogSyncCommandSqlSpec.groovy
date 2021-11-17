@@ -20,7 +20,10 @@ import spock.lang.AutoCleanup
 
 class DbmChangelogSyncCommandSqlSpec extends ApplicationContextDatabaseMigrationCommandSpec {
 
-    final Class<ApplicationCommand> commandClass = DbmChangelogSyncSqlCommand
+    @Override
+    protected Class<ApplicationCommand> getCommandClass() {
+        return DbmChangelogSyncSqlCommand
+    }
 
     @AutoCleanup('delete')
     File outputFile = File.createTempFile('sync', 'sql')
@@ -33,9 +36,9 @@ class DbmChangelogSyncCommandSqlSpec extends ApplicationContextDatabaseMigration
             command.handle(getExecutionContext())
 
         then:
-            def output = outputCapture.toString()
-            output =~ /INSERT INTO .+'changeSet1'/
-            output =~ /INSERT INTO .+'changeSet2'/
+            def outputString = output.toString()
+            outputString =~ /INSERT INTO .+'changeSet1'/
+            outputString =~ /INSERT INTO .+'changeSet2'/
     }
 
     def "writes SQL to mark all changes as executed in the database to a file given as arguments"() {
@@ -46,9 +49,9 @@ class DbmChangelogSyncCommandSqlSpec extends ApplicationContextDatabaseMigration
             command.handle(getExecutionContext(outputFile.canonicalPath))
 
         then:
-            def output = outputFile.text
-            output =~ /INSERT INTO .+'changeSet1'/
-            output =~ /INSERT INTO .+'changeSet2'/
+            def outputString = outputFile.text
+            outputString =~ /INSERT INTO .+'changeSet1'/
+            outputString =~ /INSERT INTO .+'changeSet2'/
     }
 
     static final String CHANGE_LOG_CONTENT = '''

@@ -3,13 +3,14 @@ buildscript {
         maven { url "https://repo.grails.org/grails/core" }
     }
     dependencies {
-        classpath "org.grails:grails-gradle-plugin:$grailsVersion"
+        classpath "org.grails:grails-gradle-plugin:$grailsGradlePluginVersion"
         classpath "org.asciidoctor:asciidoctor-gradle-plugin:1.6.1"
     }
 }
 
 apply plugin:"eclipse"
 apply plugin:"idea"
+apply plugin:"java-library"
 apply plugin:"org.grails.grails-plugin"
 apply plugin:"org.grails.internal.grails-plugin-publish"
 apply plugin:"org.grails.grails-gsp"
@@ -37,37 +38,38 @@ configurations {
 }
 
 dependencies {
-    compile "org.liquibase:liquibase-core:$liquibaseVersion"
+    api "org.liquibase:liquibase-core:$liquibaseVersion"
 
-    compile("org.liquibase.ext:liquibase-hibernate5:$liquibaseHibernateVersion") {
+    api("org.liquibase.ext:liquibase-hibernate5:$liquibaseHibernateVersion") {
         exclude group: 'org.hibernate', module: 'hibernate-core'
         exclude group: 'org.hibernate', module: 'hibernate-entitymanager'
         exclude group: 'org.hibernate', module: 'hibernate-envers'
         exclude group: 'org.liquibase', module: 'liquibase-core'
     }
-    compileOnly 'org.hibernate:hibernate-core:5.6.0.Final'
+    implementation "org.hibernate:hibernate-core:5.5.7.Final"
 
-    compileOnly 'org.springframework.boot:spring-boot-starter-logging'
-    compileOnly "org.springframework.boot:spring-boot-starter-actuator"
-    compileOnly "org.springframework.boot:spring-boot-autoconfigure"
-    compileOnly "org.springframework.boot:spring-boot-starter-tomcat"
+    implementation 'org.springframework.boot:spring-boot-starter-logging'
+    implementation "org.springframework.boot:spring-boot-starter-actuator"
+    implementation "org.springframework.boot:spring-boot-autoconfigure"
+    implementation "org.springframework.boot:spring-boot-starter-tomcat"
 
-    compileOnly "org.grails:grails-web-boot"
-    compileOnly "org.grails:grails-dependencies"
-    compileOnly 'javax.servlet:javax.servlet-api:4.0.1'
-    compileOnly "org.grails.plugins:hibernate5"
+    implementation "org.grails:grails-web-boot"
+    implementation "org.grails:grails-dependencies"
+    implementation 'javax.servlet:javax.servlet-api:4.0.1'
+    implementation "org.grails.plugins:hibernate5"
 
-    testCompile "org.grails:grails-gorm-testing-support"
-    testCompile "org.mockito:mockito-core"
-    testCompile "org.grails:grails-web-testing-support"
+    testImplementation "org.grails:grails-gorm-testing-support"
+    testImplementation "org.mockito:mockito-core"
+    testImplementation "org.grails:grails-web-testing-support"
+    testImplementation 'io.github.joke:spock-outputcapture:2.2.0'
 
-    compile("org.grails:grails-shell") {
+    api("org.grails:grails-shell") {
         exclude group: 'org.slf4j', module: 'slf4j-simple'
     }
 
-    documentation "org.codehaus.groovy:groovy-all:2.5.14"
+    documentation "org.codehaus.groovy:groovy:$groovyVersion"
 
-    testCompile group: 'com.h2database', name: 'h2', version: '1.4.200'
+    testImplementation group: 'com.h2database', name: 'h2', version: '1.4.200'
 }
 
 grailsPublish {
@@ -104,6 +106,10 @@ tasks.withType(GroovyCompile) {
     }
 }
 
+tasks.withType(Test) {
+    useJUnitPlatform()
+}
+
 task apidocs(type: Groovydoc) {
     source project.files('src/main/groovy')
 
@@ -124,4 +130,3 @@ jar {
     exclude "testapp/**/**"
 }
 
-configurations.testCompile.extendsFrom(configurations.compileOnly)

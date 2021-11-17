@@ -21,7 +21,10 @@ import spock.lang.AutoCleanup
 
 class DbmFutureRollbackCountSqlCommandSpec extends ApplicationContextDatabaseMigrationCommandSpec {
 
-    final Class<ApplicationCommand> commandClass = DbmFutureRollbackCountSqlCommand
+    @Override
+    protected Class<ApplicationCommand> getCommandClass() {
+        return DbmFutureRollbackCountSqlCommand
+    }
 
     @AutoCleanup('delete')
     File outputFile = File.createTempFile('rollback', 'sql')
@@ -34,7 +37,7 @@ class DbmFutureRollbackCountSqlCommandSpec extends ApplicationContextDatabaseMig
             command.handle(getExecutionContext('1'))
 
         then:
-            def output = outputCapture.toString()
+            def output = output.toString()
             output.contains('DROP TABLE PUBLIC.author;')
             !output.contains('DROP TABLE PUBLIC.book;')
     }

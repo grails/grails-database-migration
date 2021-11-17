@@ -19,7 +19,10 @@ import grails.dev.commands.ApplicationCommand
 
 class DbmDropAllCommandSpec extends ApplicationContextDatabaseMigrationCommandSpec {
 
-    final Class<ApplicationCommand> commandClass = DbmDropAllCommand
+    @Override
+    protected Class<ApplicationCommand> getCommandClass() {
+        return DbmDropAllCommand
+    }
 
     def "drops all database objects"() {
         given:

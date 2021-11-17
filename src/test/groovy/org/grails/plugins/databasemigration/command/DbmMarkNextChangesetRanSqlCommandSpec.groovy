@@ -20,7 +20,10 @@ import spock.lang.AutoCleanup
 
 class DbmMarkNextChangesetRanSqlCommandSpec extends ApplicationContextDatabaseMigrationCommandSpec {
 
-    final Class<ApplicationCommand> commandClass = DbmMarkNextChangesetRanSqlCommand
+    @Override
+    protected Class<ApplicationCommand> getCommandClass() {
+        return DbmMarkNextChangesetRanSqlCommand
+    }
 
     @AutoCleanup('delete')
     File outputFile = File.createTempFile('update', 'sql')
@@ -33,7 +36,7 @@ class DbmMarkNextChangesetRanSqlCommandSpec extends ApplicationContextDatabaseMi
             command.handle(getExecutionContext())
 
         then:
-            def output = outputCapture.toString()
+            def output = output.toString()
             output =~ /INSERT INTO .+'changeSet1'/
             !(output =~ /INSERT INTO .+'changeSet2'/)
     }

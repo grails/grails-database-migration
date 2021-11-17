@@ -36,7 +36,7 @@ databaseChangeLog = {
 
         then:
             calledBlocks == ['init', 'validate', 'change']
-            outputCapture.toString().contains('confirmation message')
+            output.contains('confirmation message')
     }
 
 
@@ -62,7 +62,7 @@ databaseChangeLog = {
             command.handle(getExecutionContext(DbmUpdateCommand))
 
         then:
-            outputCapture.toString().contains('warn message')
+            output.contains('warn message')
             calledBlocks == ['validate', 'change']
     }
 

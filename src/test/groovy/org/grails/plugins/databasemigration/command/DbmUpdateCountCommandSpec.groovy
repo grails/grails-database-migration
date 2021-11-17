@@ -20,7 +20,10 @@ import org.grails.plugins.databasemigration.DatabaseMigrationException
 
 class DbmUpdateCountCommandSpec extends ApplicationContextDatabaseMigrationCommandSpec {
 
-    final Class<ApplicationCommand> commandClass = DbmUpdateCountCommand
+    @Override
+    protected Class<ApplicationCommand> getCommandClass() {
+        return DbmUpdateCountCommand
+    }
 
     def "applies next NUM changes to the database"() {
         given:

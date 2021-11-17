@@ -20,7 +20,10 @@ import org.grails.plugins.databasemigration.DatabaseMigrationException
 
 class DbmRollbackToDateCommandSpec extends ApplicationContextDatabaseMigrationCommandSpec {
 
-    final Class<ApplicationCommand> commandClass = DbmRollbackToDateCommand
+    @Override
+    protected Class<ApplicationCommand> getCommandClass() {
+        return DbmRollbackToDateCommand
+    }
 
     def setup() {
         command.changeLogFile << CHANGE_LOG_CONTENT

@@ -19,7 +19,10 @@ import grails.dev.commands.ApplicationCommand
 
 class DbmClearChecksumsCommandSpec extends ApplicationContextDatabaseMigrationCommandSpec {
 
-    final Class<ApplicationCommand> commandClass = DbmClearChecksumsCommand
+    @Override
+    protected Class<ApplicationCommand> getCommandClass() {
+        return DbmClearChecksumsCommand
+    }
 
     def "removes all saved checksums from database log"() {
         given:

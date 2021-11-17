@@ -19,7 +19,10 @@ import grails.dev.commands.ApplicationCommand
 
 class DbmUpdateCommandSpec extends ApplicationContextDatabaseMigrationCommandSpec {
 
-    final Class<ApplicationCommand> commandClass = DbmUpdateCommand
+    @Override
+    protected Class<ApplicationCommand> getCommandClass() {
+        return DbmUpdateCommand
+    }
 
     def "updates database to current version"() {
         given:
