@@ -61,7 +61,6 @@ dependencies {
     testImplementation "org.grails:grails-gorm-testing-support"
     testImplementation "org.mockito:mockito-core"
     testImplementation "org.grails:grails-web-testing-support"
-    testImplementation 'io.github.joke:spock-outputcapture:2.2.0'
 
     api("org.grails:grails-shell") {
         exclude group: 'org.slf4j', module: 'slf4j-simple'

@@ -33,7 +33,7 @@ class DbmListLocksCommandSpec extends ApplicationContextDatabaseMigrationCommand
             command.handle(getExecutionContext())
 
         then:
-            output.contains '- No locks'
+            output.toString().contains '- No locks'
     }
 
     def "lists locks on the database changelog when the lock exists"() {
