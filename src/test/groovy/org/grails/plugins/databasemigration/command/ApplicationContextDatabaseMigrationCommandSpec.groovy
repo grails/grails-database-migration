@@ -67,7 +67,7 @@ abstract class ApplicationContextDatabaseMigrationCommandSpec extends DatabaseMi
         groovyChangeLogParser.applicationContext = applicationContext
         groovyChangeLogParser.config = config
 
-        if (commandClass) {
+        if (commandClass != null) {
             command = createCommand(commandClass)
         }
     }

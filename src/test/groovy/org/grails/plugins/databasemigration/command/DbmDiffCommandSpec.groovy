@@ -21,13 +21,15 @@ import org.grails.plugins.databasemigration.DatabaseMigrationException
 import org.h2.Driver
 import org.springframework.jdbc.datasource.DriverManagerDataSource
 import spock.lang.AutoCleanup
-import spock.lang.Ignore
 
 import java.sql.Connection
 
 class DbmDiffCommandSpec extends ApplicationContextDatabaseMigrationCommandSpec {
 
-    final Class<ApplicationCommand> commandClass = DbmDiffCommand
+    @Override
+    protected Class<ApplicationCommand> getCommandClass() {
+        return DbmDiffCommand
+    }
 
     @AutoCleanup
     Connection otherDbConnection
@@ -54,7 +56,7 @@ CREATE TABLE author (id INT AUTO_INCREMENT NOT NULL, name VARCHAR(255) NOT NULL,
             command.handle(getExecutionContext('other'))
 
         then:
-        String expected = extractOutput(outputCapture)
+        String expected = extractOutput(output)
         expected =~ '''
 databaseChangeLog = \\{
 

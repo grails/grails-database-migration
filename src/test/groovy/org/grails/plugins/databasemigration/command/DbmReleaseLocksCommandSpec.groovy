@@ -19,7 +19,10 @@ import grails.dev.commands.ApplicationCommand
 
 class DbmReleaseLocksCommandSpec extends ApplicationContextDatabaseMigrationCommandSpec {
 
-    final Class<ApplicationCommand> commandClass = DbmReleaseLocksCommand
+    @Override
+    protected Class<ApplicationCommand> getCommandClass() {
+        return DbmReleaseLocksCommand
+    }
 
     def "releases all locks on the database changelog"() {
         given:

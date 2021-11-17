@@ -21,7 +21,10 @@ import spock.lang.AutoCleanup
 
 class DbmUpdateCountSqlCommandSpec extends ApplicationContextDatabaseMigrationCommandSpec {
 
-    final Class<ApplicationCommand> commandClass = DbmUpdateCountSqlCommand
+    @Override
+    protected Class<ApplicationCommand> getCommandClass() {
+        return DbmUpdateCountSqlCommand
+    }
 
     @AutoCleanup('delete')
     File outputFile = File.createTempFile('update', 'sql')
@@ -34,7 +37,7 @@ class DbmUpdateCountSqlCommandSpec extends ApplicationContextDatabaseMigrationCo
             command.handle(getExecutionContext('1'))
 
         then:
-            def output = outputCapture.toString()
+            def output = output.toString()
             output.contains('CREATE TABLE PUBLIC.author (id BIGINT AUTO_INCREMENT NOT NULL, version BIGINT NOT NULL, name VARCHAR(255) NOT NULL, CONSTRAINT authorPK PRIMARY KEY (id));')
             !output.contains('CREATE TABLE PUBLIC.book (id BIGINT AUTO_INCREMENT NOT NULL, version BIGINT NOT NULL, author_id BIGINT NOT NULL, title VARCHAR(255) NOT NULL, CONSTRAINT bookPK PRIMARY KEY (id));')
     }

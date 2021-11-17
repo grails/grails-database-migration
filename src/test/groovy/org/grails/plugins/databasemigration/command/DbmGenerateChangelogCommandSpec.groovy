@@ -19,7 +19,10 @@ import grails.dev.commands.ApplicationCommand
 
 class DbmGenerateChangelogCommandSpec extends ApplicationContextDatabaseMigrationCommandSpec {
 
-    final Class<ApplicationCommand> commandClass = DbmGenerateChangelogCommand
+    @Override
+    protected Class<ApplicationCommand> getCommandClass() {
+        return DbmGenerateChangelogCommand
+    }
 
     def setup() {
         sql.executeUpdate '''
@@ -33,7 +36,7 @@ CREATE TABLE author (id INT AUTO_INCREMENT NOT NULL, name VARCHAR(255) NOT NULL,
             command.handle(getExecutionContext())
 
         then:
-            extractOutput(outputCapture) =~ '''
+            extractOutput(output) =~ '''
 databaseChangeLog = \\{
 
     changeSet\\(author: ".*?", id: ".*?"\\) \\{

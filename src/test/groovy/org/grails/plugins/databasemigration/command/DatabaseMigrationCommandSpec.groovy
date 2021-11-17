@@ -16,9 +16,9 @@
 package org.grails.plugins.databasemigration.command
 
 import groovy.sql.Sql
+import io.github.joke.spockoutputcapture.CapturedOutput
+import io.github.joke.spockoutputcapture.OutputCapture
 import org.h2.Driver
-import org.junit.Rule
-import org.springframework.boot.test.rule.OutputCapture
 import org.springframework.jdbc.datasource.DriverManagerDataSource
 import spock.lang.AutoCleanup
 import spock.lang.Specification
@@ -28,8 +28,7 @@ import java.sql.Connection
 
 abstract class DatabaseMigrationCommandSpec extends Specification {
 
-    @Rule
-    OutputCapture outputCapture = new OutputCapture()
+    @OutputCapture CapturedOutput output
 
     DataSource dataSource
 
@@ -52,8 +51,8 @@ abstract class DatabaseMigrationCommandSpec extends Specification {
     }
 
 
-    protected static extractOutput(OutputCapture outputCapture){
+    protected static extractOutput(CapturedOutput output){
         // outputCapture may contain debug outputs
-        outputCapture.toString().getAt(outputCapture.toString().indexOf("databaseChangeLog")..-1)?.replaceAll(/\s/,"")
+        output.toString().getAt(output.toString().indexOf("databaseChangeLog")..-1)?.replaceAll(/\s/,"")
     }
 }

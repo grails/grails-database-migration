@@ -20,14 +20,17 @@ import org.grails.plugins.databasemigration.DatabaseMigrationException
 
 class DbmGenerateGormChangelogCommandSpec extends ApplicationContextDatabaseMigrationCommandSpec {
 
-    final Class<ApplicationCommand> commandClass = DbmGenerateGormChangelogCommand
+    @Override
+    protected Class<ApplicationCommand> getCommandClass() {
+        return DbmGenerateGormChangelogCommand
+    }
 
     def "writes Change Log to copy the current state of the database to STDOUT"() {
         when:
             command.handle(getExecutionContext())
 
         then:
-        extractOutput(outputCapture) =~ '''
+        extractOutput(output) =~ '''
 databaseChangeLog = \\{
 
     changeSet\\(author: ".+?", id: ".+?"\\) \\{

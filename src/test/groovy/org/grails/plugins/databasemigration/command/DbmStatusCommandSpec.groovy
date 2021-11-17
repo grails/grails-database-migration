@@ -20,7 +20,10 @@ import spock.lang.AutoCleanup
 
 class DbmStatusCommandSpec extends ApplicationContextDatabaseMigrationCommandSpec {
 
-    final Class<ApplicationCommand> commandClass = DbmStatusCommand
+    @Override
+    protected Class<ApplicationCommand> getCommandClass() {
+        return DbmStatusCommand
+    }
 
     @AutoCleanup('delete')
     File outputFile = File.createTempFile('update', 'sql')
@@ -33,7 +36,7 @@ class DbmStatusCommandSpec extends ApplicationContextDatabaseMigrationCommandSpe
             command.handle(getExecutionContext())
 
         then:
-            outputCapture.toString().contains('2 change sets have not been applied')
+            output.contains('2 change sets have not been applied')
     }
 
     def "outputs count or list of unrun change sets to a file given as arguments"() {

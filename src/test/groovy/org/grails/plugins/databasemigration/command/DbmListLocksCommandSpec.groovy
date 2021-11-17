@@ -20,7 +20,10 @@ import spock.lang.AutoCleanup
 
 class DbmListLocksCommandSpec extends ApplicationContextDatabaseMigrationCommandSpec {
 
-    final Class<ApplicationCommand> commandClass = DbmListLocksCommand
+    @Override
+    protected Class<ApplicationCommand> getCommandClass() {
+        return DbmListLocksCommand
+    }
 
     @AutoCleanup('delete')
     File outputFile = File.createTempFile('locks', 'txt')
@@ -30,7 +33,7 @@ class DbmListLocksCommandSpec extends ApplicationContextDatabaseMigrationCommand
             command.handle(getExecutionContext())
 
         then:
-            outputCapture.toString().contains '- No locks'
+            output.contains '- No locks'
     }
 
     def "lists locks on the database changelog when the lock exists"() {
@@ -42,7 +45,7 @@ class DbmListLocksCommandSpec extends ApplicationContextDatabaseMigrationCommand
             command.handle(getExecutionContext())
 
         then:
-            outputCapture.toString() =~ '- John Smith at .+?'
+            output.toString() =~ '- John Smith at .+?'
     }
 
     def "lists locks to a file given as arguments"() {

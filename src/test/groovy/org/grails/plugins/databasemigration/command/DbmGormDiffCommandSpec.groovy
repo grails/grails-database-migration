@@ -20,7 +20,10 @@ import org.grails.plugins.databasemigration.DatabaseMigrationException
 
 class DbmGormDiffCommandSpec extends ApplicationContextDatabaseMigrationCommandSpec {
 
-    final Class<ApplicationCommand> commandClass = DbmGormDiffCommand
+    @Override
+    protected Class<ApplicationCommand> getCommandClass() {
+        return DbmGormDiffCommand
+    }
 
     def setup() {
         sql.executeUpdate 'CREATE TABLE PUBLIC.author (id BIGINT AUTO_INCREMENT NOT NULL, version BIGINT NOT NULL, name VARCHAR(255) NOT NULL, CONSTRAINT authorPK PRIMARY KEY (id));'
@@ -31,7 +34,7 @@ class DbmGormDiffCommandSpec extends ApplicationContextDatabaseMigrationCommandS
             command.handle(getExecutionContext())
 
         then:
-            def output = extractOutput(outputCapture).replaceAll(/\s/,"")
+            def output = extractOutput(output).replaceAll(/\s/,"")
             output ==~ '''
 databaseChangeLog = \\{
 

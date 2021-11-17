@@ -5,7 +5,11 @@ import org.grails.plugins.databasemigration.DatabaseMigrationException
 import spock.lang.AutoCleanup
 
 class DbmPreviousChangesetSqlCommandSpec extends ApplicationContextDatabaseMigrationCommandSpec {
-    final Class<ApplicationCommand> commandClass = DbmPreviousChangesetSqlCommand
+
+    @Override
+    protected Class<ApplicationCommand> getCommandClass() {
+        return DbmPreviousChangesetSqlCommand
+    }
 
     @AutoCleanup('delete')
     File outputFile = File.createTempFile('previous', 'sql')
@@ -26,7 +30,7 @@ class DbmPreviousChangesetSqlCommandSpec extends ApplicationContextDatabaseMigra
         command.handle(getExecutionContext('1'))
 
         then:
-        def output = outputCapture.toString()
+        def output = output.toString()
         output.contains('CREATE TABLE PUBLIC.book (id BIGINT AUTO_INCREMENT NOT NULL, version BIGINT NOT NULL, author_id BIGINT NOT NULL, title VARCHAR(255) NOT NULL, CONSTRAINT bookPK PRIMARY KEY (id));')
     }
 

@@ -20,7 +20,10 @@ import spock.lang.AutoCleanup
 
 class DbmUpdateSqlCommandSpec extends ApplicationContextDatabaseMigrationCommandSpec {
 
-    final Class<ApplicationCommand> commandClass = DbmUpdateSqlCommand
+    @Override
+    protected Class<ApplicationCommand> getCommandClass() {
+        return DbmUpdateSqlCommand
+    }
 
     @AutoCleanup('delete')
     File outputFile = File.createTempFile('update', 'sql')
@@ -33,7 +36,7 @@ class DbmUpdateSqlCommandSpec extends ApplicationContextDatabaseMigrationCommand
             command.handle(getExecutionContext())
 
         then:
-            def output = outputCapture.toString()
+            def output = output.toString()
             output.contains('CREATE TABLE PUBLIC.author (id BIGINT AUTO_INCREMENT NOT NULL, version BIGINT NOT NULL, name VARCHAR(255) NOT NULL, CONSTRAINT authorPK PRIMARY KEY (id));')
             output.contains('CREATE TABLE PUBLIC.book (id BIGINT AUTO_INCREMENT NOT NULL, version BIGINT NOT NULL, author_id BIGINT NOT NULL, title VARCHAR(255) NOT NULL, CONSTRAINT bookPK PRIMARY KEY (id));')
             output.contains('ALTER TABLE PUBLIC.book ADD CONSTRAINT FK_4sac2ubmnqva85r8bk8fxdvbf FOREIGN KEY (author_id) REFERENCES PUBLIC.author (id);')
@@ -49,7 +52,7 @@ class DbmUpdateSqlCommandSpec extends ApplicationContextDatabaseMigrationCommand
             command.handle(getExecutionContext('--contexts=test'))
 
         then:
-            def output = outputCapture.toString()
+            def output = output.toString()
             output.contains('CREATE TABLE PUBLIC.author (id BIGINT AUTO_INCREMENT NOT NULL, version BIGINT NOT NULL, name VARCHAR(255) NOT NULL, CONSTRAINT authorPK PRIMARY KEY (id));')
             output.contains('CREATE TABLE PUBLIC.book (id BIGINT AUTO_INCREMENT NOT NULL, version BIGINT NOT NULL, author_id BIGINT NOT NULL, title VARCHAR(255) NOT NULL, CONSTRAINT bookPK PRIMARY KEY (id));')
             output.contains('ALTER TABLE PUBLIC.book ADD CONSTRAINT FK_4sac2ubmnqva85r8bk8fxdvbf FOREIGN KEY (author_id) REFERENCES PUBLIC.author (id);')

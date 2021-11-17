@@ -20,7 +20,10 @@ import liquibase.exception.ChangeLogParseException
 
 class DbmValidateCommandSpec extends ApplicationContextDatabaseMigrationCommandSpec {
 
-    final Class<ApplicationCommand> commandClass = DbmValidateCommand
+    @Override
+    protected Class<ApplicationCommand> getCommandClass() {
+        return DbmValidateCommand
+    }
 
     def "checks the valid changelog"() {
         given:

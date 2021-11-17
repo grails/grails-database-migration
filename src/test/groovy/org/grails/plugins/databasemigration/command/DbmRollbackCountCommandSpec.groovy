@@ -20,7 +20,10 @@ import org.grails.plugins.databasemigration.DatabaseMigrationException
 
 class DbmRollbackCountCommandSpec extends ApplicationContextDatabaseMigrationCommandSpec {
 
-    final Class<ApplicationCommand> commandClass = DbmRollbackCountCommand
+    @Override
+    protected Class<ApplicationCommand> getCommandClass() {
+        return DbmRollbackCountCommand
+    }
 
     def setup() {
         command.changeLogFile << CHANGE_LOG_CONTENT
