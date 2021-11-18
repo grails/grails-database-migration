@@ -24,12 +24,15 @@ import liquibase.Contexts
 import liquibase.LabelExpression
 import liquibase.Liquibase
 import liquibase.RuntimeEnvironment
+import liquibase.Scope
 import liquibase.changelog.ChangeLogIterator
 import liquibase.changelog.DatabaseChangeLog
 import liquibase.changelog.filter.ContextChangeSetFilter
 import liquibase.changelog.filter.CountChangeSetFilter
 import liquibase.changelog.filter.DbmsChangeSetFilter
-import liquibase.command.CommandExecutionException
+import liquibase.command.CommandScope
+import liquibase.command.core.InternalDiffChangelogCommandStep
+import liquibase.command.core.InternalGenerateChangelogCommandStep
 import liquibase.database.Database
 import liquibase.database.DatabaseConnection
 import liquibase.database.DatabaseFactory
@@ -55,12 +58,9 @@ import liquibase.statement.core.RawSqlStatement
 import liquibase.structure.core.Catalog
 import liquibase.util.LiquibaseUtil
 import liquibase.util.StreamUtil
-import liquibase.util.file.FilenameUtils
 import org.grails.build.parsing.CommandLine
 import org.grails.plugins.databasemigration.DatabaseMigrationException
 import org.grails.plugins.databasemigration.NoopVisitor
-import org.grails.plugins.databasemigration.liquibase.GroovyDiffToChangeLogCommand
-import org.grails.plugins.databasemigration.liquibase.GroovyGenerateChangeLogCommand
 
 import java.nio.file.Path
 import java.text.DateFormat
@@ -122,7 +122,7 @@ trait DatabaseMigrationCommand {
         if (!filename) {
             return null
         }
-        if (FilenameUtils.getExtension(filename)) {
+        if (getExtension(filename)) {
             return new File(changeLogLocation, filename)
         }
         if (dataSource) {
@@ -239,42 +239,39 @@ trait DatabaseMigrationCommand {
     void doGenerateChangeLog(File changeLogFile, Database originalDatabase) {
         def changeLogFilePath = changeLogFile?.path
         def compareControl = new CompareControl([] as CompareControl.SchemaComparison[], null as String)
-
-        def command = new GroovyGenerateChangeLogCommand()
-        command.setReferenceDatabase(originalDatabase).setOutputStream(System.out).setCompareControl(compareControl)
-        command.setChangeLogFile(changeLogFilePath).setDiffOutputControl(createDiffOutputControl())
-
-        try {
-            command.execute()
-        } catch (CommandExecutionException e) {
-            throw new LiquibaseException(e.message, e.cause)
-        }
+        final CommandScope commandScope = new CommandScope("groovyGenerateChangeLog")
+        commandScope.addArgumentValue(InternalGenerateChangelogCommandStep.REFERENCE_DATABASE_ARG, originalDatabase)
+        commandScope.addArgumentValue(InternalGenerateChangelogCommandStep.CHANGELOG_FILE_ARG, changeLogFilePath)
+        commandScope.addArgumentValue(InternalGenerateChangelogCommandStep.COMPARE_CONTROL_ARG, compareControl)
+        commandScope.addArgumentValue(InternalGenerateChangelogCommandStep.DIFF_OUTPUT_CONTROL_ARG, createDiffOutputControl())
+        commandScope.setOutput(System.out)
+        commandScope.execute()
     }
 
     void doDiffToChangeLog(File changeLogFile, Database referenceDatabase, Database targetDatabase) {
         def changeLogFilePath = changeLogFile?.path
         def compareControl = new CompareControl([] as CompareControl.SchemaComparison[], null as String)
-
-        def command = new GroovyDiffToChangeLogCommand()
-        command.setReferenceDatabase(referenceDatabase).setTargetDatabase(targetDatabase).setCompareControl(compareControl).setOutputStream(System.out)
-        command.setChangeLogFile(changeLogFilePath).setDiffOutputControl(createDiffOutputControl())
-
-        try {
-            command.execute()
-        } catch (CommandExecutionException e) {
-            throw new LiquibaseException(e.message, e.cause)
-        }
+        final CommandScope commandScope = new CommandScope("groovyDiffChangelog")
+        commandScope.addArgumentValue(InternalDiffChangelogCommandStep.REFERENCE_DATABASE_ARG, referenceDatabase)
+        commandScope.addArgumentValue(InternalDiffChangelogCommandStep.TARGET_DATABASE_ARG, targetDatabase)
+        commandScope.addArgumentValue(InternalDiffChangelogCommandStep.CHANGELOG_FILE_ARG, changeLogFilePath)
+        commandScope.addArgumentValue(InternalDiffChangelogCommandStep.COMPARE_CONTROL_ARG, compareControl)
+        commandScope.addArgumentValue(InternalDiffChangelogCommandStep.DIFF_OUTPUT_CONTROL_ARG, createDiffOutputControl())
+        commandScope.setOutput(System.out)
+        commandScope.execute()
     }
 
     void doGeneratePreviousChangesetSql(Writer output, Database database, Liquibase liquibase, String count, String skip) {
         Contexts contexts = new Contexts(contexts)
         LabelExpression labelExpression = liquibase.changeLogParameters.labels
         liquibase.changeLogParameters.setContexts(contexts)
-        LoggingExecutor outputTemplate = new LoggingExecutor(ExecutorService.getInstance().getExecutor(database), output, database)
-        Executor oldTemplate = ExecutorService.getInstance().getExecutor(database)
-        ExecutorService.getInstance().setExecutor(database, outputTemplate)
 
-        outputHeader((String) "Previous $count SQL Changeset(s) Skipping $skip Script", liquibase, database)
+        final ExecutorService executorService = Scope.getCurrentScope().getSingleton(ExecutorService.class)
+        final Executor oldTemplate = executorService.getExecutor("jdbc", database)
+        final LoggingExecutor outputTemplate = new LoggingExecutor(oldTemplate, output, database)
+        executorService.setExecutor("jdbc", database, outputTemplate)
+
+        outputHeader(outputTemplate, (String) "Previous $count SQL Changeset(s) Skipping $skip Script", liquibase, database)
 
         LockService lockService = LockServiceFactory.getInstance().getLockService(database)
         lockService.waitForLock()
@@ -298,15 +295,14 @@ trait DatabaseMigrationCommand {
         } finally {
             try {
                 lockService.releaseLock()
-                ExecutorService.instance.setExecutor(database, oldTemplate)
+                executorService.setExecutor("jdbc", database, oldTemplate)
             } catch (LockException e) {
                 throw new LiquibaseException(e.message, e.cause)
             }
         }
     }
 
-    void outputHeader(String message, Liquibase liquibase, Database database) throws DatabaseException {
-        Executor executor = ExecutorService.getInstance().getExecutor(database)
+    void outputHeader(Executor executor, String message, Liquibase liquibase, Database database) throws DatabaseException {
         executor.comment("*********************************************************************")
         executor.comment(message)
         executor.comment("*********************************************************************")
@@ -351,7 +347,7 @@ trait DatabaseMigrationCommand {
         }
 
         def relativePath = changeLogLocation.toPath().relativize(destChangeLogFile.toPath()).toString()
-        def extension = FilenameUtils.getExtension(srcChangeLogFile.name)?.toLowerCase()
+        def extension = getExtension(srcChangeLogFile.name)?.toLowerCase()
 
         switch (extension) {
             case ['yaml', 'yml']:
@@ -378,5 +374,15 @@ trait DatabaseMigrationCommand {
     String getConfigPrefix() {
         return isDefaultDataSource(dataSource) ?
                 'grails.plugin.databasemigration' : "grails.plugin.databasemigration.${dataSource}"
+    }
+
+    private String getExtension(String fileName) {
+        String extension = ""
+
+        int i = fileName.lastIndexOf('.')
+        if (i > 0) {
+            extension = fileName.substring(i+1)
+        }
+        extension
     }
 }
