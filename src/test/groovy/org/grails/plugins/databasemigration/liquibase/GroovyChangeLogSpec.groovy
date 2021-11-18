@@ -30,7 +30,6 @@ databaseChangeLog = {
     }
 }
 """
-
         when:
             command.handle(getExecutionContext(DbmUpdateCommand))
 
@@ -105,7 +104,7 @@ databaseChangeLog = {
         grailsChange {
             change {
                 assert changeSet.id == '4'
-                assert resourceAccessor.toString().startsWith('liquibase.resource.CompositeResourceAccessor(liquibase.resource.FileSystemResourceAccessor(${changeLogLocation.canonicalPath.replace('\\', '\\\\')}),liquibase.resource.ClassLoaderResourceAccessor(')
+                assert resourceAccessor.toString().startsWith('CompositeResourceAccessor{')
                 assert ctx.hashCode() == ${applicationContext.hashCode()}
                 assert application.hashCode() == ${applicationContext.getBean(GrailsApplication).hashCode()}
                 ${GroovyChangeLogSpec.name}.calledBlocks << 'change'
@@ -195,7 +194,7 @@ databaseChangeLog = {
         grailsChange {
             rollback {
                 assert changeSet.id == '9'
-                assert resourceAccessor.toString().startsWith('liquibase.resource.CompositeResourceAccessor(liquibase.resource.FileSystemResourceAccessor(${changeLogLocation.canonicalPath.replace('\\', '\\\\')}),liquibase.resource.ClassLoaderResourceAccessor(')
+                assert resourceAccessor.toString().startsWith('CompositeResourceAccessor{')
                 assert ctx.hashCode() == ${applicationContext.hashCode()}
                 assert application.hashCode() == ${applicationContext.getBean(GrailsApplication).hashCode()}
                 ${GroovyChangeLogSpec.name}.calledBlocks << 'rollback'
