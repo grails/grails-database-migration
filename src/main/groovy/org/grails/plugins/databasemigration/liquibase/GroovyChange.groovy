@@ -19,6 +19,7 @@ import grails.config.Config
 import grails.core.GrailsApplication
 import groovy.sql.Sql
 import groovy.transform.CompileStatic
+import liquibase.Scope
 import liquibase.change.AbstractChange
 import liquibase.change.ChangeMetaData
 import liquibase.change.CheckSum
@@ -299,7 +300,7 @@ class GroovyChange extends AbstractChange {
      * @return Whether the database executor is instance of LoggingExecutor
      */
     protected boolean shouldRun() {
-        !(ExecutorService.getInstance().getExecutor(database) instanceof LoggingExecutor)
+        !(Scope.getCurrentScope().getSingleton(ExecutorService.class).getExecutor("jdbc", database) instanceof LoggingExecutor)
     }
 
     /**

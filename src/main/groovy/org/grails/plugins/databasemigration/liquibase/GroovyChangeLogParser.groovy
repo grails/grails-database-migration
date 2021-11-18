@@ -45,7 +45,7 @@ class GroovyChangeLogParser extends AbstractChangeLogParser {
         def inputStream = null
         def changeLogText = null
         try {
-            inputStream = StreamUtil.singleInputStream(physicalChangeLogLocation, resourceAccessor)
+            inputStream = resourceAccessor.openStream(null, physicalChangeLogLocation)
             changeLogText = inputStream?.text
         } finally {
             IOUtils.closeQuietly(inputStream)
