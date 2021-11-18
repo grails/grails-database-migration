@@ -21,11 +21,9 @@ import grails.util.GrailsNameUtils
 import groovy.transform.CompileStatic
 import liquibase.parser.ChangeLogParser
 import liquibase.parser.ChangeLogParserFactory
-import liquibase.servicelocator.ServiceLocator
 import org.grails.cli.profile.ExecutionContext
 import org.grails.config.CodeGenConfig
 import org.grails.plugins.databasemigration.EnvironmentAwareCodeGenConfig
-import org.grails.plugins.databasemigration.liquibase.GormDatabase
 import org.grails.plugins.databasemigration.liquibase.GroovyChangeLogParser
 
 import static org.grails.plugins.databasemigration.PluginConstants.DEFAULT_DATASOURCE_NAME
@@ -51,9 +49,6 @@ trait ScriptDatabaseMigrationCommand implements DatabaseMigrationCommand {
     }
 
     void configureLiquibase() {
-        if (!ServiceLocator.instance.packages.contains(GormDatabase.package.name)) {
-            ServiceLocator.instance.addPackageToScan(GormDatabase.package.name)
-        }
         GroovyChangeLogParser groovyChangeLogParser = ChangeLogParserFactory.instance.parsers.find { ChangeLogParser changeLogParser -> changeLogParser instanceof GroovyChangeLogParser } as GroovyChangeLogParser
         groovyChangeLogParser.config = config
     }
