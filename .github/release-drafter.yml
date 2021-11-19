@@ -16,6 +16,17 @@ categories:
       - "type: dependency upgrade"
       - "dependencies"
 change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
+version-resolver:
+  major:
+    labels:
+      - 'type: major'
+  minor:
+    labels:
+      - 'type: minor'
+  patch:
+    labels:
+      - 'type: patch'
+  default: patch
 template: |
   ## Changes
 
