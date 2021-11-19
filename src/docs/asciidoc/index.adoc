@@ -1,3 +1,5 @@
+:includedir: _includes
+
 = Grails Database Migration Plugin
 :source-highlighter: coderay
 :numbered:

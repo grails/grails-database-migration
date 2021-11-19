@@ -13,7 +13,7 @@ buildscript {
 
 dependencies {
    ...
-     compile '{groupId}:{artifactId}:{version}'
+     implementation '{groupId}:{artifactId}:{version}'
 }
 ----
 
@@ -23,7 +23,7 @@ It is also recommended to add a direct dependency to liquibase because Spring Bo
 ----
 dependencies {
    ...
-     compile 'org.liquibase:liquibase-core:{liquibaseVersion}'
+     implementation 'org.liquibase:liquibase-core:{liquibaseVersion}'
 }
 ----
 

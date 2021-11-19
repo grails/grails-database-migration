@@ -57,7 +57,7 @@ class GormDatabase extends HibernateDatabase {
     }
 
     @Override
-    public Dialect getDialect() {
+    Dialect getDialect() {
         dialect
     }
 

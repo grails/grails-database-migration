@@ -1,3 +1,6 @@
+:includedir: _includes
+:integrationtestresources: ../../integration-test/resources
+
 == Configuration
 
 There are a few configuration options for the plugin. All configurations are prefixed with `grails.plugin.databasemigration`:
@@ -24,20 +27,15 @@ There are a few configuration options for the plugin. All configurations are pre
 |databaseChangeLogLockTableName |'databasechangeloglock' |the Liquibase lock table name
 |==================================
 
-NOTE: All of the above configs can be used for multiple datasources
+NOTE: All the above configs can be used for multiple datasources
 
 
 *Multiple DataSource Example:*
 
 If a reports dataSource is configured in application.yml
-[source,groovy]
+[source,yaml]
 ----
-dataSource:
-        ...
-dataSources:
-    reports:
-        url: ...
-        driverClassName: ...
+include::{integrationtestresources}/application-multiple-datasource.yml[lines=11..29]
 ----
 
 The configuration for this data source would be:
