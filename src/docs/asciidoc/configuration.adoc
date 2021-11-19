@@ -32,7 +32,7 @@ NOTE: All the above configs can be used for multiple datasources
 
 *Multiple DataSource Example:*
 
-If a reports dataSource is configured in application.yml
+If secondary dataSource named "second" is configured in application.yml
 [source,yaml]
 ----
 include::{integrationtestresources}/application-multiple-datasource.yml[lines=11..29]
@@ -42,7 +42,7 @@ The configuration for this data source would be:
 [source,groovy]
 ----
 grails.plugin.databasemigration.reports.updateOnStart = true
-grails.plugin.databasemigration.reports.changelogFileName = changelog-reports.groovy
+grails.plugin.databasemigration.reports.changelogFileName = changelog-second.groovy
 ----
 The configuration for all data sources with same db schema would be:
 [source,groovy]
