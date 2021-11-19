@@ -88,6 +88,7 @@ grailsPublish {
 
 asciidoctor {
     baseDirFollowsSourceFile()
+    outputDir = "$buildDir/asciidoc"
 
     resources {
         from('src/docs/images')
@@ -127,7 +128,7 @@ tasks.withType(Groovydoc) {
 
 task docs(type:Copy, group: 'documentation')  {
     dependsOn(groovydoc, asciidoctor)
-    from "$buildDir/asciidoc/html5"
+    from "$buildDir/asciidoc"
     into "$buildDir/docs"
 }
 
