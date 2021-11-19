@@ -15,6 +15,10 @@ categories:
     labels:
       - "type: dependency upgrade"
       - "dependencies"
+  - title: ⚙️ Build/CI
+    labels:
+      - "type: ci"
+      - "type: build"
 change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
 version-resolver:
   major:
@@ -28,7 +32,7 @@ version-resolver:
       - 'type: patch'
   default: patch
 template: |
-  ## Changes
+  ## What's Changed
 
   $CHANGES
 
