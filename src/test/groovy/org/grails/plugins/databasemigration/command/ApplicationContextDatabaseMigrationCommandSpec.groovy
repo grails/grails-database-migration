@@ -11,10 +11,8 @@ import grails.persistence.Entity
 import grails.util.GrailsNameUtils
 import liquibase.parser.ChangeLogParser
 import liquibase.parser.ChangeLogParserFactory
-import liquibase.servicelocator.ServiceLocator
 import org.grails.build.parsing.CommandLineParser
 import org.grails.config.PropertySourcesConfig
-import org.grails.plugins.databasemigration.liquibase.GormDatabase
 import org.grails.plugins.databasemigration.liquibase.GroovyChangeLogParser
 import org.h2.Driver
 import org.springframework.context.support.GenericApplicationContext
@@ -34,10 +32,6 @@ abstract class ApplicationContextDatabaseMigrationCommandSpec extends DatabaseMi
     Config config
 
     def setup() {
-        if (!ServiceLocator.instance.packages.contains(GormDatabase.package.name)) {
-            ServiceLocator.instance.addPackageToScan(GormDatabase.package.name)
-        }
-
         applicationContext = new GenericApplicationContext()
 
         applicationContext.beanFactory.registerSingleton('dataSource', dataSource)

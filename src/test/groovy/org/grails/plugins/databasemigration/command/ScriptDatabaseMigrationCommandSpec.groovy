@@ -16,7 +16,6 @@
 package org.grails.plugins.databasemigration.command
 
 import grails.util.GrailsNameUtils
-import liquibase.servicelocator.ServiceLocator
 import org.grails.build.parsing.CommandLineParser
 import org.grails.cli.GrailsCli
 import org.grails.cli.profile.ExecutionContext

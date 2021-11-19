@@ -18,7 +18,6 @@ package org.grails.plugins.databasemigration
 import grails.plugins.Plugin
 import liquibase.parser.ChangeLogParser
 import liquibase.parser.ChangeLogParserFactory
-import liquibase.servicelocator.ServiceLocator
 import org.grails.plugins.databasemigration.liquibase.GormDatabase
 import org.grails.plugins.databasemigration.liquibase.GrailsLiquibase
 import org.grails.plugins.databasemigration.liquibase.GroovyChangeLogParser
@@ -93,9 +92,6 @@ class DatabaseMigrationGrailsPlugin extends Plugin {
     }
 
     private void configureLiquibase() {
-        if (!ServiceLocator.instance.packages.contains(GormDatabase.package.name)) {
-            ServiceLocator.instance.addPackageToScan(GormDatabase.package.name)
-        }
         def groovyChangeLogParser = ChangeLogParserFactory.instance.parsers.find { ChangeLogParser changeLogParser -> changeLogParser instanceof GroovyChangeLogParser } as GroovyChangeLogParser
         groovyChangeLogParser.applicationContext = applicationContext
         groovyChangeLogParser.config = config

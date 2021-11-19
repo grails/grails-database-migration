@@ -24,7 +24,6 @@ import liquibase.exception.ChangeLogParseException
 import liquibase.parser.core.ParsedNode
 import liquibase.parser.core.xml.AbstractChangeLogParser
 import liquibase.resource.ResourceAccessor
-import liquibase.util.StreamUtil
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.springframework.context.ApplicationContext
 
@@ -45,7 +44,7 @@ class GroovyChangeLogParser extends AbstractChangeLogParser {
         def inputStream = null
         def changeLogText = null
         try {
-            inputStream = StreamUtil.singleInputStream(physicalChangeLogLocation, resourceAccessor)
+            inputStream = resourceAccessor.openStreams(null, physicalChangeLogLocation).first()
             changeLogText = inputStream?.text
         } finally {
             IOUtils.closeQuietly(inputStream)

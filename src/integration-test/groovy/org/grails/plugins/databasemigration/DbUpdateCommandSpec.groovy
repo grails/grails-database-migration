@@ -5,6 +5,7 @@ import grails.dev.commands.ExecutionContext
 import grails.testing.mixin.integration.Integration
 import grails.util.GrailsNameUtils
 import groovy.sql.Sql
+import liquibase.exception.LiquibaseException
 import liquibase.exception.MigrationFailedException
 import org.grails.build.parsing.CommandLineParser
 import org.grails.plugins.databasemigration.command.DbmUpdateCommand
@@ -42,7 +43,8 @@ class DbUpdateCommandSpec extends Specification {
         command.handle()
 
         then:
-        def e = thrown(MigrationFailedException)
+        def e = thrown(LiquibaseException)
+        e.cause instanceof MigrationFailedException
         sql.firstRow('SELECT COUNT(*) AS num FROM DATABASECHANGELOG WHERE id=?;', 'create-person-grails').num == 1
         sql.firstRow('SELECT COUNT(*) AS num FROM person;').num == 1
         sql.firstRow('SELECT COUNT(*) AS num FROM account;').num == 0
