@@ -27,21 +27,15 @@ jobs:
           DISPATCH_INFORMATION: ${{ github.event.inputs.message }}
         run: echo $DISPATCH_INFORMATION
       - uses: actions/checkout@v2
-      - uses: actions/cache@v2
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
       - name: Set up JDK
         uses: actions/setup-java@v2
         with:
           distribution: 'adopt'
           java-version: ${{ matrix.java }}
       - name: Run tests
-        run: |
-          ./gradlew clean
-          ./gradlew test integrationTest
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: clean check
       - name: Publish Test Report
         if: failure()
         uses: scacap/action-surefire-report@v1
@@ -49,15 +43,22 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           report_paths: '**/build/test-results/test/TEST-*.xml'
       - name: Run Assemble
-        run: ./gradlew assemble
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: assemble
       - name: Publish to repo.grails.org
+        uses: gradle/gradle-build-action@v2
         if: success() && github.event_name == 'push' && matrix.java == '8'
         env:
           ARTIFACTORY_USERNAME: ${{ secrets.ARTIFACTORY_USERNAME }}
           ARTIFACTORY_PASSWORD: ${{ secrets.ARTIFACTORY_PASSWORD }}
-        run: |
-          ./gradlew publish
-          ./gradlew docs
+        with:
+          arguments: publish
+      - name: Generate Documentation
+        uses: gradle/gradle-build-action@v2
+        if: success() && github.event_name == 'push' && matrix.java == '8'
+        with:
+          arguments: docs
       - name: Publish to Github Pages
         if: success() && github.event_name == 'push' && matrix.java == '8'
         uses: micronaut-projects/github-pages-deploy-action@master
