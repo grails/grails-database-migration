@@ -2,7 +2,12 @@ package org.grails.plugins.databasemigration.liquibase
 
 import grails.core.GrailsApplication
 import liquibase.exception.ValidationFailedException
-import org.grails.plugins.databasemigration.command.*
+import org.grails.plugins.databasemigration.command.ApplicationContextDatabaseMigrationCommandSpec
+import org.grails.plugins.databasemigration.command.DbmChangelogSyncCommand
+import org.grails.plugins.databasemigration.command.DbmRollbackCommand
+import org.grails.plugins.databasemigration.command.DbmTagCommand
+import org.grails.plugins.databasemigration.command.DbmUpdateCommand
+import org.grails.plugins.databasemigration.command.DbmUpdateCountCommand
 
 class GroovyChangeLogSpec extends ApplicationContextDatabaseMigrationCommandSpec {
 
@@ -15,8 +20,8 @@ class GroovyChangeLogSpec extends ApplicationContextDatabaseMigrationCommandSpec
 
     def "updates a database with Groovy Change"() {
         given:
-            def command = createCommand(DbmUpdateCommand)
-            command.changeLogFile << """
+        def command = createCommand(DbmUpdateCommand)
+        command.changeLogFile << """
 databaseChangeLog = {
     changeSet(author: "John Smith", id: "1") {
         grailsChange {
@@ -31,18 +36,18 @@ databaseChangeLog = {
 }
 """
         when:
-            command.handle(getExecutionContext(DbmUpdateCommand))
+        command.handle(getExecutionContext(DbmUpdateCommand))
 
         then:
-            calledBlocks == ['init', 'validate', 'change']
-            output.toString().contains('confirmation message')
+        calledBlocks == ['init', 'validate', 'change']
+        output.toString().contains('confirmation message')
     }
 
 
     def "outputs a warning message by calling the warn method"() {
         given:
-            def command = createCommand(DbmUpdateCommand)
-            command.changeLogFile << """
+        def command = createCommand(DbmUpdateCommand)
+        command.changeLogFile << """
 databaseChangeLog = {
     changeSet(author: "John Smith", id: "2") {
         grailsChange {
@@ -58,17 +63,17 @@ databaseChangeLog = {
 }
 """
         when:
-            command.handle(getExecutionContext(DbmUpdateCommand))
+        command.handle(getExecutionContext(DbmUpdateCommand))
 
         then:
-            output.toString().contains('warn message')
-            calledBlocks == ['validate', 'change']
+        output.toString().contains('warn message')
+        calledBlocks == ['validate', 'change']
     }
 
     def "stops processing by calling the error method"() {
         given:
-        DbmUpdateCommand command = (DbmUpdateCommand)createCommand(DbmUpdateCommand)
-            command.changeLogFile << """
+        DbmUpdateCommand command = (DbmUpdateCommand) createCommand(DbmUpdateCommand)
+        command.changeLogFile << """
 databaseChangeLog = {
     changeSet(author: "John Smith", id: "1") {
         grailsChange {
@@ -84,21 +89,21 @@ databaseChangeLog = {
 }
 """
         when:
-            command.handle(getExecutionContext(DbmUpdateCommand))
+        command.handle(getExecutionContext(DbmUpdateCommand))
 
         then:
-            def e = thrown(ValidationFailedException)
+        def e = thrown(ValidationFailedException)
 
-            e.message.contains('1 changes have validation failures')
-            e.message.contains('error message, changelog.groovy::1::John Smith')
-            calledBlocks == ['validate']
+        e.message.contains('1 changes have validation failures')
+        e.message.contains('error message, changelog.groovy::1::John Smith')
+        calledBlocks == ['validate']
     }
 
 
     def "can use bind variables in the change block"() {
         given:
-            def command = createCommand(DbmUpdateCommand)
-            command.changeLogFile << """
+        def command = createCommand(DbmUpdateCommand)
+        command.changeLogFile << """
 databaseChangeLog = {
     changeSet(author: "John Smith", id: "4") {
         grailsChange {
@@ -114,17 +119,17 @@ databaseChangeLog = {
 }
 """
         when:
-            command.handle(getExecutionContext(DbmUpdateCommand))
+        command.handle(getExecutionContext(DbmUpdateCommand))
 
         then:
-            calledBlocks == ['change']
+        calledBlocks == ['change']
     }
 
 
     def "executes sql statements in the change block"() {
         given:
-            def command = createCommand(DbmUpdateCommand)
-            command.changeLogFile << """
+        def command = createCommand(DbmUpdateCommand)
+        command.changeLogFile << """
 import groovy.sql.Sql
 import liquibase.statement.core.InsertStatement
 
@@ -144,17 +149,17 @@ databaseChangeLog = {
 """
 
         when:
-            command.handle(getExecutionContext(DbmUpdateCommand))
+        command.handle(getExecutionContext(DbmUpdateCommand))
 
         then:
-            sql.rows('SELECT id FROM book').collect { it.id } as Set == [1, 2, 3, 4, 5] as Set
+        sql.rows('SELECT id FROM book').collect { it.id } as Set == [1, 2, 3, 4, 5] as Set
     }
 
-    
+
     def "rolls back a database with Groovy Change"() {
         given:
-            def command = createCommand(DbmRollbackCommand)
-            command.changeLogFile << """
+        def command = createCommand(DbmRollbackCommand)
+        command.changeLogFile << """
 databaseChangeLog = {
     changeSet(author: "John Smith", id: "6") {
     }
@@ -170,23 +175,23 @@ databaseChangeLog = {
     }
 }
 """
-            createCommand(DbmUpdateCountCommand).handle(getExecutionContext(DbmUpdateCountCommand, '1'))
-            createCommand(DbmTagCommand).handle(getExecutionContext(DbmTagCommand, 'test tag'))
-            createCommand(DbmChangelogSyncCommand).handle(getExecutionContext(DbmChangelogSyncCommand))
-            calledBlocks = []
+        createCommand(DbmUpdateCountCommand).handle(getExecutionContext(DbmUpdateCountCommand, '1'))
+        createCommand(DbmTagCommand).handle(getExecutionContext(DbmTagCommand, 'test tag'))
+        createCommand(DbmChangelogSyncCommand).handle(getExecutionContext(DbmChangelogSyncCommand))
+        calledBlocks = []
 
         when:
-            command.handle(getExecutionContext(DbmRollbackCommand, 'test tag'))
+        command.handle(getExecutionContext(DbmRollbackCommand, 'test tag'))
 
         then:
-            calledBlocks == ['init', 'rollback']
+        calledBlocks == ['init', 'rollback']
     }
 
-    
+
     def "can use bind variables in the rollback block"() {
         given:
-            def command = createCommand(DbmRollbackCommand)
-            command.changeLogFile << """
+        def command = createCommand(DbmRollbackCommand)
+        command.changeLogFile << """
 databaseChangeLog = {
     changeSet(author: "John Smith", id: "8") {
     }
@@ -203,15 +208,15 @@ databaseChangeLog = {
     }
 }
 """
-            createCommand(DbmUpdateCountCommand).handle(getExecutionContext(DbmUpdateCountCommand, '1'))
-            createCommand(DbmTagCommand).handle(getExecutionContext(DbmTagCommand, 'test tag'))
-            createCommand(DbmChangelogSyncCommand).handle(getExecutionContext(DbmChangelogSyncCommand))
-            calledBlocks = []
+        createCommand(DbmUpdateCountCommand).handle(getExecutionContext(DbmUpdateCountCommand, '1'))
+        createCommand(DbmTagCommand).handle(getExecutionContext(DbmTagCommand, 'test tag'))
+        createCommand(DbmChangelogSyncCommand).handle(getExecutionContext(DbmChangelogSyncCommand))
+        calledBlocks = []
 
         when:
-            command.handle(getExecutionContext(DbmRollbackCommand, 'test tag'))
+        command.handle(getExecutionContext(DbmRollbackCommand, 'test tag'))
 
         then:
-            calledBlocks == ['rollback']
+        calledBlocks == ['rollback']
     }
 }

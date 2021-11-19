@@ -189,7 +189,7 @@ trait DatabaseMigrationCommand {
 
     ResourceAccessor createResourceAccessor() {
         new CompositeResourceAccessor(
-            new FileSystemResourceAccessor(changeLogLocation.path),
+            new FileSystemResourceAccessor(changeLogLocation),
             new ClassLoaderResourceAccessor())
 
     }
