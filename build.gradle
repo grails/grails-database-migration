@@ -4,7 +4,7 @@ buildscript {
     }
     dependencies {
         classpath "org.grails:grails-gradle-plugin:$grailsGradlePluginVersion"
-        classpath "org.asciidoctor:asciidoctor-gradle-plugin:1.6.1"
+        classpath "org.asciidoctor:asciidoctor-gradle-jvm:3.3.2"
         classpath "org.gradle:test-retry-gradle-plugin:1.3.1"
     }
 }
@@ -15,7 +15,7 @@ apply plugin:"java-library"
 apply plugin:"org.grails.grails-plugin"
 apply plugin:"org.grails.internal.grails-plugin-publish"
 apply plugin:"org.grails.grails-gsp"
-apply plugin: "org.asciidoctor.convert"
+apply plugin: "org.asciidoctor.jvm.convert"
 apply plugin: "org.gradle.test-retry"
 
 version project.projectVersion
@@ -48,6 +48,9 @@ dependencies {
         exclude group: 'org.hibernate', module: 'hibernate-envers'
         exclude group: 'org.liquibase', module: 'liquibase-core'
     }
+    api("org.grails:grails-shell") {
+        exclude group: 'org.slf4j', module: 'slf4j-simple'
+    }
     implementation "org.hibernate:hibernate-core:5.6.1.Final"
 
     implementation 'org.springframework.boot:spring-boot-starter-logging'
@@ -63,14 +66,13 @@ dependencies {
     testImplementation "org.grails:grails-gorm-testing-support"
     testImplementation "org.mockito:mockito-core"
     testImplementation "org.grails:grails-web-testing-support"
+    testImplementation group: 'com.h2database', name: 'h2', version: '1.4.200'
 
-    api("org.grails:grails-shell") {
-        exclude group: 'org.slf4j', module: 'slf4j-simple'
-    }
 
     documentation "org.codehaus.groovy:groovy:$groovyVersion"
+    documentation "org.codehaus.groovy:groovy-ant:$groovyVersion"
+    documentation "org.codehaus.groovy:groovy-templates:$groovyVersion"
 
-    testImplementation group: 'com.h2database', name: 'h2', version: '1.4.200'
 }
 
 grailsPublish {
@@ -85,6 +87,8 @@ grailsPublish {
 }
 
 asciidoctor {
+    baseDirFollowsSourceFile()
+
     resources {
         from('src/docs/images')
         into "./images"
@@ -111,18 +115,18 @@ tasks.withType(Test) {
     useJUnitPlatform()
 }
 
-task apidocs(type: Groovydoc) {
-    source project.files('src/main/groovy')
-
-    destinationDir = new File(buildDir, 'docs/api')
-    // Might need a classpath
-    docTitle = "Grails Database Migration Plugin ${version}"
-
-    classpath = configurations.documentation
-    groovyClasspath = configurations.documentation
+tasks.withType(Groovydoc) {
+    configure {
+        docTitle = "Grails Database Migration Plugin ${version}"
+        source = project.files('src/main/groovy')
+        destinationDir = new File(buildDir, 'docs/api')
+        classpath = configurations.documentation
+        groovyClasspath = configurations.documentation
+    }
 }
 
-task docs(type:Copy, dependsOn:[apidocs, asciidoctor])  {
+task docs(type:Copy, group: 'documentation')  {
+    dependsOn(groovydoc, asciidoctor)
     from "$buildDir/asciidoc/html5"
     into "$buildDir/docs"
 }
