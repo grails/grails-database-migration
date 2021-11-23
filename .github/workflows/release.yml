@@ -42,7 +42,7 @@ jobs:
           SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
           SIGNING_PASSPHRASE: ${{ secrets.SIGNING_PASSPHRASE }}
         with:
-          arguments: publishToSonatype closeAndReleaseSonatypeStagingRepository -Psigning.secretKeyRingFile="${GITHUB_WORKSPACE}/secring.gpg"
+          arguments: publishToSonatype closeAndReleaseSonatypeStagingRepository -Psigning.secretKeyRingFile="${{ github.workspace }}/secring.gpg"
       - name: Publish Documentation
         uses: gradle/gradle-build-action@v2
         with:
