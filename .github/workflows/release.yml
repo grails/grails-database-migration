@@ -32,7 +32,7 @@ jobs:
       - name: Generate secring file
         env:
           SECRING_FILE: ${{ secrets.SECRING_FILE }}
-        run: echo $SECRING_FILE | base64 -d > secring.gpg
+        run: echo $SECRING_FILE | base64 -d > ${{ github.workspace }}/secring.gpg
       - name: Publish to Sonatyoe OSSRH
         uses: gradle/gradle-build-action@v2
         env:
