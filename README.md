@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/grails-plugins/grails-database-migration.svg)](https://travis-ci.org/grails-plugins/grails-database-migration)
+[![Java CI](https://github.com/grails/grails-database-migration/actions/workflows/gradle.yml/badge.svg)](https://github.com/grails/grails-database-migration/actions/workflows/gradle.yml)
 
 # Grails Database Migration Plugin
 
