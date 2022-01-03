@@ -36,4 +36,4 @@ One popular approach is to have a root changelog named changlog.groovy (or chang
 
 ## Package distribution
 
-Software is distributed on [Bintray](https://bintray.com/grails/plugins/database-migration)
+Software is distributed on [Maven Central](https://mvnrepository.com/artifact/org.grails.plugins/database-migration)
