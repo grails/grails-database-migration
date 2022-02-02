@@ -48,7 +48,7 @@ dependencies {
         exclude group: 'org.hibernate', module: 'hibernate-envers'
         exclude group: 'org.liquibase', module: 'liquibase-core'
     }
-    api("org.grails:grails-shell") {
+    compileOnlyApi("org.grails:grails-shell") {
         exclude group: 'org.slf4j', module: 'slf4j-simple'
     }
     compileOnly "org.hibernate:hibernate-core:5.6.5.Final"
