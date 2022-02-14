@@ -9,6 +9,9 @@ buildscript {
     }
 }
 
+version project.projectVersion
+group "org.grails.plugins"
+
 apply plugin:"eclipse"
 apply plugin:"idea"
 apply plugin:"java-library"
@@ -17,9 +20,6 @@ apply plugin:"org.grails.internal.grails-plugin-publish"
 apply plugin:"org.grails.grails-gsp"
 apply plugin: "org.asciidoctor.jvm.convert"
 apply plugin: "org.gradle.test-retry"
-
-version project.projectVersion
-group "org.grails.plugins"
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
