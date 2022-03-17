@@ -47,6 +47,8 @@ dependencies {
         exclude group: 'org.hibernate', module: 'hibernate-entitymanager'
         exclude group: 'org.hibernate', module: 'hibernate-envers'
         exclude group: 'org.liquibase', module: 'liquibase-core'
+        exclude group: 'org.liquibase', module: 'liquibase-test-harness'
+        exclude group: 'com.h2database', module: 'h2'
     }
     api("org.grails:grails-shell") {
         exclude group: 'org.slf4j', module: 'slf4j-simple'
