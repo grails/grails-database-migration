@@ -59,11 +59,10 @@ class GroovyDiffToChangeLogCommandStep extends InternalDiffChangelogCommandStep 
         ObjectQuotingStrategy originalStrategy = referenceDatabase.getObjectQuotingStrategy();
         try {
             referenceDatabase.setObjectQuotingStrategy(ObjectQuotingStrategy.QUOTE_ALL_OBJECTS);
-            def serializer = ChangeLogSerializerFactory.instance.getSerializer('groovy')
             if (StringUtil.trimToNull(changeLogFile) == null) {
-                createDiffToChangeLogObject(diffResult, commandScope).print(outputStream, serializer)
+                createDiffToChangeLogObject(diffResult, commandScope).print(outputStream, ChangeLogSerializerFactory.instance.getSerializer('groovy'))
             } else {
-                createDiffToChangeLogObject(diffResult, commandScope).print(changeLogFile, serializer)
+                createDiffToChangeLogObject(diffResult, commandScope).print(changeLogFile, ChangeLogSerializerFactory.instance.getSerializer(changeLogFile))
             }
         }
         finally {
