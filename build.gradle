@@ -53,7 +53,7 @@ dependencies {
     api("org.grails:grails-shell") {
         exclude group: 'org.slf4j', module: 'slf4j-simple'
     }
-    compileOnly "org.hibernate:hibernate-core:5.6.7.Final"
+    compileOnly "org.hibernate:hibernate-core:5.6.8.Final"
 
     compileOnly 'org.springframework.boot:spring-boot-starter-logging'
     compileOnly "org.springframework.boot:spring-boot-starter-actuator"
@@ -66,7 +66,7 @@ dependencies {
     compileOnly "org.grails.plugins:hibernate5"
 
     testImplementation "org.springframework.boot:spring-boot-starter-tomcat"
-    testImplementation "org.hibernate:hibernate-core:5.6.7.Final"
+    testImplementation "org.hibernate:hibernate-core:5.6.8.Final"
     testImplementation "org.grails.plugins:hibernate5"
 
     testImplementation "org.grails:grails-gorm-testing-support"
