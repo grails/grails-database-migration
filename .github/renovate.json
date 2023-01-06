@@ -20,6 +20,12 @@
       ],
       "groupName": "spock framework monorepo"
     },
+     {
+      "matchPackagePatterns": [
+        "^org\\.liquibase"
+      ],
+      "groupName": "liquibase monorepo"
+    },
     {
       "matchPackageNames": [
         "org.grails:grails-bom",
