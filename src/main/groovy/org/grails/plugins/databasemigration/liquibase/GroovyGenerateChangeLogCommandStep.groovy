@@ -65,13 +65,12 @@ class GroovyGenerateChangeLogCommandStep extends InternalGenerateChangelogComman
         ObjectQuotingStrategy originalStrategy = referenceDatabase.getObjectQuotingStrategy();
         try {
             referenceDatabase.setObjectQuotingStrategy(ObjectQuotingStrategy.QUOTE_ALL_OBJECTS);
-            def serializer = ChangeLogSerializerFactory.instance.getSerializer('groovy')
             if (StringUtil.trimToNull(changeLogFile) != null) {
-                changeLogWriter.print(changeLogFile, serializer)
+                changeLogWriter.print(changeLogFile, ChangeLogSerializerFactory.instance.getSerializer(changeLogFile))
             } else {
                 PrintStream outputStream = new PrintStream(resultsBuilder.getOutputStream());
                 try {
-                    changeLogWriter.print(outputStream, serializer);
+                    changeLogWriter.print(outputStream, ChangeLogSerializerFactory.instance.getSerializer('groovy'))
                 } finally {
                     outputStream.flush()
                 }
