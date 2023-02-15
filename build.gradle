@@ -5,7 +5,6 @@ buildscript {
     dependencies {
         classpath "org.grails:grails-gradle-plugin:$grailsGradlePluginVersion"
         classpath "org.asciidoctor:asciidoctor-gradle-jvm:3.3.2"
-        classpath "org.gradle:test-retry-gradle-plugin:1.5.0"
     }
 }
 
@@ -19,7 +18,6 @@ apply plugin:"org.grails.grails-plugin"
 apply plugin:"org.grails.internal.grails-plugin-publish"
 apply plugin:"org.grails.grails-gsp"
 apply plugin: "org.asciidoctor.jvm.convert"
-apply plugin: "org.gradle.test-retry"
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
