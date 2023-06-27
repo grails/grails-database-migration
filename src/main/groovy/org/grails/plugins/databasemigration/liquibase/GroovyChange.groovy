@@ -88,8 +88,6 @@ class GroovyChange extends AbstractChange {
 
     @Override
     void load(ParsedNode parsedNode, ResourceAccessor resourceAccessor) throws ParsedNodeException {
-        this.resourceAccessor = resourceAccessor
-
         ctx = parsedNode.getChildValue(null, 'applicationContext', ApplicationContext)
         dataSourceName = parsedNode.getChildValue(null, DATA_SOURCE_NAME_KEY, String)
         initClosure = parsedNode.getChildValue(null, 'init', Closure)
