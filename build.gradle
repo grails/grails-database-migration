@@ -19,8 +19,8 @@ apply plugin:"org.grails.internal.grails-plugin-publish"
 apply plugin:"org.grails.grails-gsp"
 apply plugin: "org.asciidoctor.jvm.convert"
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+sourceCompatibility = 1.11
+targetCompatibility = 1.11
 
 repositories {
     maven { url "https://repo.grails.org/grails/core" }
