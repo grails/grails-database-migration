@@ -10,9 +10,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        java: ['8', '11', '14']
     env:
       WORKSPACE: ${{ github.workspace }}
       GRADLE_OPTS: -Xmx1500m -Dfile.encoding=UTF-8
@@ -27,7 +24,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'adopt'
-          java-version: ${{ matrix.java }}
+          java-version: '11'
       - name: Run Tests
         if: github.event_name == 'pull_request'
         id: tests
@@ -50,7 +47,7 @@ jobs:
           report_paths: '**/build/test-results/test/TEST-*.xml'
       - name: Publish to repo.grails.org
         uses: gradle/gradle-build-action@v2
-        if: steps.build.outcome == 'success' && github.event_name == 'push' && matrix.java == '8'
+        if: steps.build.outcome == 'success' && github.event_name == 'push'
         env:
           ARTIFACTORY_USERNAME: ${{ secrets.ARTIFACTORY_USERNAME }}
           ARTIFACTORY_PASSWORD: ${{ secrets.ARTIFACTORY_PASSWORD }}
@@ -59,12 +56,12 @@ jobs:
       - name: Generate Documentation
         id: docs
         uses: gradle/gradle-build-action@v2
-        if: success() && github.event_name == 'push' && matrix.java == '8'
+        if: success() && github.event_name == 'push'
         with:
           arguments: docs
       - name: Publish to Github Pages
-        if: steps.publish.outcome == 'success' && github.event_name == 'push' && matrix.java == '8'
-        uses: micronaut-projects/github-pages-deploy-action@master
+        if: steps.publish.outcome == 'success' && github.event_name == 'push'
+        uses: micronaut-projects/github-pages-deploy-action@grails
         env:
           TARGET_REPOSITORY: ${{ github.repository }}
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
