@@ -38,6 +38,7 @@
         "org.grails:grails-docs",
         "org.grails:grails-encoder",
         "org.grails:grails-gradle-model",
+        "org.grails:grails-gradle-plugin",
         "org.grails:grails-logging",
         "org.grails:grails-plugin-codecs",
         "org.grails:grails-plugin-controllers",
