@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 original authors
+ * Copyright 2015-2024 original authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,10 +15,6 @@
  */
 package org.grails.plugins.databasemigration.command
 
-import grails.util.GrailsNameUtils
-import org.grails.build.parsing.CommandLineParser
-import org.grails.cli.GrailsCli
-import org.grails.cli.profile.ExecutionContext
 import org.grails.config.CodeGenConfig
 import org.h2.Driver
 
@@ -48,9 +44,4 @@ abstract class ScriptDatabaseMigrationCommandSpec extends DatabaseMigrationComma
 
     abstract protected Class<ScriptDatabaseMigrationCommand> getCommandClass()
 
-    protected ExecutionContext getExecutionContext(String... args) {
-        def executionContext = new GrailsCli.ExecutionContextImpl(config)
-        executionContext.commandLine = new CommandLineParser().parse(([GrailsNameUtils.getScriptName(GrailsNameUtils.getLogicalName(commandClass.name, 'Command'))] + args.toList()) as String[])
-        executionContext
-    }
 }

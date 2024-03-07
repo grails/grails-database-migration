@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 original authors
+ * Copyright 2015-2024 original authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,39 +19,14 @@ import grails.config.ConfigMap
 import grails.util.Environment
 import grails.util.GrailsNameUtils
 import groovy.transform.CompileStatic
-import liquibase.parser.ChangeLogParser
-import liquibase.parser.ChangeLogParserFactory
-import org.grails.cli.profile.ExecutionContext
 import org.grails.config.CodeGenConfig
 import org.grails.plugins.databasemigration.EnvironmentAwareCodeGenConfig
-import org.grails.plugins.databasemigration.liquibase.GroovyChangeLogParser
-
-import static org.grails.plugins.databasemigration.PluginConstants.DEFAULT_DATASOURCE_NAME
 
 @CompileStatic
 trait ScriptDatabaseMigrationCommand implements DatabaseMigrationCommand {
 
     ConfigMap config
     ConfigMap sourceConfig
-    ExecutionContext executionContext
-
-    void handle(ExecutionContext executionContext) {
-        this.executionContext = executionContext
-        setConfig(executionContext.config)
-
-        this.commandLine = executionContext.commandLine
-        this.contexts = optionValue('contexts')
-        this.defaultSchema = optionValue('defaultSchema')
-        this.dataSource = optionValue('dataSource') ?: DEFAULT_DATASOURCE_NAME
-
-        configureLiquibase()
-        handle()
-    }
-
-    void configureLiquibase() {
-        GroovyChangeLogParser groovyChangeLogParser = ChangeLogParserFactory.instance.parsers.find { ChangeLogParser changeLogParser -> changeLogParser instanceof GroovyChangeLogParser } as GroovyChangeLogParser
-        groovyChangeLogParser.config = config
-    }
 
     abstract void handle()
 
