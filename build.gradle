@@ -50,7 +50,7 @@ dependencies {
         exclude group: 'org.liquibase', module: 'liquibase-test-harness'
         exclude group: 'com.h2database', module: 'h2'
     }
-    api("org.grails:grails-shell") {
+    compileOnlyApi("org.grails:grails-shell") {
         exclude group: 'org.slf4j', module: 'slf4j-simple'
     }
     compileOnly "org.hibernate:hibernate-core:5.6.7.Final"
