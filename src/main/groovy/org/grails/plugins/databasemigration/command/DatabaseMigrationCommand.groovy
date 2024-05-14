@@ -44,6 +44,7 @@ import liquibase.diff.output.StandardObjectChangeFilter
 import liquibase.exception.DatabaseException
 import liquibase.exception.LiquibaseException
 import liquibase.exception.LockException
+import liquibase.exception.UnexpectedLiquibaseException
 import liquibase.executor.Executor
 import liquibase.executor.ExecutorService
 import liquibase.executor.LoggingExecutor
@@ -55,9 +56,11 @@ import liquibase.resource.CompositeResourceAccessor
 import liquibase.resource.FileSystemResourceAccessor
 import liquibase.resource.ResourceAccessor
 import liquibase.statement.core.RawSqlStatement
+import liquibase.structure.DatabaseObject
 import liquibase.structure.core.Catalog
 import liquibase.util.LiquibaseUtil
 import liquibase.util.StreamUtil
+import liquibase.util.StringUtil
 import org.grails.build.parsing.CommandLine
 import org.grails.plugins.databasemigration.DatabaseMigrationException
 import org.grails.plugins.databasemigration.NoopVisitor
@@ -248,9 +251,36 @@ trait DatabaseMigrationCommand {
         commandScope.execute()
     }
 
+    void addSuppressedFields(CompareControl compareControl, String filter) {
+        filter = StringUtil.trimToNull(filter)
+        if (filter == null) {
+            return
+        }
+
+        for (String subfilter : filter.split("\\s*,\\s*")) {
+            String[] split = subfilter.split(":")
+            if (split.length != 2) {
+                throw new UnexpectedLiquibaseException("Unable to parse suppressed field: ${subfilter}")
+            } else {
+                String className = StringUtil.upperCaseFirst(split[0])
+                className = "liquibase.structure.core."+className
+                try {
+                    Class<DatabaseObject> clazz = (Class<DatabaseObject>) Class.forName(className)
+                    compareControl.addSuppressedField(clazz, split[1])
+                } catch (ClassNotFoundException e) {
+                    throw new UnexpectedLiquibaseException(e)
+                }
+            }
+        }
+    }
+
     void doDiffToChangeLog(File changeLogFile, Database referenceDatabase, Database targetDatabase) {
         def changeLogFilePath = changeLogFile?.path
         def compareControl = new CompareControl([] as CompareControl.SchemaComparison[], null as String)
+
+        String suppressFields = config.getProperty("${configPrefix}.suppressFields".toString(), String)
+        addSuppressedFields(compareControl, suppressFields)
+
         final CommandScope commandScope = new CommandScope("groovyDiffChangelog")
         commandScope.addArgumentValue(InternalDiffChangelogCommandStep.REFERENCE_DATABASE_ARG, referenceDatabase)
         commandScope.addArgumentValue(InternalDiffChangelogCommandStep.TARGET_DATABASE_ARG, targetDatabase)
