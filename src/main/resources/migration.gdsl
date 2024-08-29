@@ -63,7 +63,7 @@ provideChildsOf("change") {
     property name: "changeSet", type: "liquibase.changelog.ChangeSet"
     property name: "resourceAccessor", type: "liquibase.resource.ResourceAccessor"
     property name: "ctx", type: "org.springframework.context.ApplicationContext"
-    property name: "application", type: "org.codehaus.groovy.grails.commons.GrailsApplication"
+    property name: "application", type: "grails.core.GrailsApplication"
     property name: "database", type: "liquibase.database.Database"
     property name: "databaseConnection", type: "liquibase.database.DatabaseConnection"
     property name: "connection", type: "java.sql.Connection"

@@ -31,8 +31,14 @@ import liquibase.changelog.filter.ContextChangeSetFilter
 import liquibase.changelog.filter.CountChangeSetFilter
 import liquibase.changelog.filter.DbmsChangeSetFilter
 import liquibase.command.CommandScope
-import liquibase.command.core.InternalDiffChangelogCommandStep
-import liquibase.command.core.InternalGenerateChangelogCommandStep
+import liquibase.command.core.DiffChangelogCommandStep
+import liquibase.command.core.DiffCommandStep
+import liquibase.command.core.GenerateChangelogCommandStep
+import liquibase.command.core.helpers.DbUrlConnectionArgumentsCommandStep
+import liquibase.command.core.helpers.DbUrlConnectionCommandStep
+import liquibase.command.core.helpers.DiffOutputControlCommandStep
+import liquibase.command.core.helpers.PreCompareCommandStep
+import liquibase.command.core.helpers.ReferenceDbUrlConnectionCommandStep
 import liquibase.database.Database
 import liquibase.database.DatabaseConnection
 import liquibase.database.DatabaseFactory
@@ -240,10 +246,14 @@ trait DatabaseMigrationCommand {
         def changeLogFilePath = changeLogFile?.path
         def compareControl = new CompareControl([] as CompareControl.SchemaComparison[], null as String)
         final CommandScope commandScope = new CommandScope("groovyGenerateChangeLog")
-        commandScope.addArgumentValue(InternalGenerateChangelogCommandStep.REFERENCE_DATABASE_ARG, originalDatabase)
-        commandScope.addArgumentValue(InternalGenerateChangelogCommandStep.CHANGELOG_FILE_ARG, changeLogFilePath)
-        commandScope.addArgumentValue(InternalGenerateChangelogCommandStep.COMPARE_CONTROL_ARG, compareControl)
-        commandScope.addArgumentValue(InternalGenerateChangelogCommandStep.DIFF_OUTPUT_CONTROL_ARG, createDiffOutputControl())
+        commandScope.addArgumentValue(ReferenceDbUrlConnectionCommandStep.REFERENCE_DATABASE_ARG, originalDatabase)
+        commandScope.addArgumentValue(GenerateChangelogCommandStep.CHANGELOG_FILE_ARG, changeLogFilePath)
+        commandScope.addArgumentValue(PreCompareCommandStep.COMPARE_CONTROL_ARG, compareControl)
+
+        DiffOutputControl diffOutputControl = createDiffOutputControl()
+        commandScope.addArgumentValue(DiffOutputControlCommandStep.INCLUDE_SCHEMA_ARG, diffOutputControl.getIncludeSchema());
+        commandScope.addArgumentValue(DiffOutputControlCommandStep.INCLUDE_CATALOG_ARG, diffOutputControl.getIncludeCatalog());
+        commandScope.addArgumentValue(DiffOutputControlCommandStep.INCLUDE_TABLESPACE_ARG, diffOutputControl.getIncludeTablespace());
         commandScope.setOutput(System.out)
         commandScope.execute()
     }
@@ -252,11 +262,15 @@ trait DatabaseMigrationCommand {
         def changeLogFilePath = changeLogFile?.path
         def compareControl = new CompareControl([] as CompareControl.SchemaComparison[], null as String)
         final CommandScope commandScope = new CommandScope("groovyDiffChangelog")
-        commandScope.addArgumentValue(InternalDiffChangelogCommandStep.REFERENCE_DATABASE_ARG, referenceDatabase)
-        commandScope.addArgumentValue(InternalDiffChangelogCommandStep.TARGET_DATABASE_ARG, targetDatabase)
-        commandScope.addArgumentValue(InternalDiffChangelogCommandStep.CHANGELOG_FILE_ARG, changeLogFilePath)
-        commandScope.addArgumentValue(InternalDiffChangelogCommandStep.COMPARE_CONTROL_ARG, compareControl)
-        commandScope.addArgumentValue(InternalDiffChangelogCommandStep.DIFF_OUTPUT_CONTROL_ARG, createDiffOutputControl())
+        commandScope.addArgumentValue(ReferenceDbUrlConnectionCommandStep.REFERENCE_DATABASE_ARG, referenceDatabase)
+        commandScope.addArgumentValue(DbUrlConnectionArgumentsCommandStep.DATABASE_ARG, targetDatabase)
+        commandScope.addArgumentValue(DiffChangelogCommandStep.CHANGELOG_FILE_ARG, changeLogFilePath)
+        commandScope.addArgumentValue(PreCompareCommandStep.COMPARE_CONTROL_ARG, compareControl)
+
+        DiffOutputControl diffOutputControl = createDiffOutputControl()
+        commandScope.addArgumentValue(DiffOutputControlCommandStep.INCLUDE_SCHEMA_ARG, diffOutputControl.getIncludeSchema());
+        commandScope.addArgumentValue(DiffOutputControlCommandStep.INCLUDE_CATALOG_ARG, diffOutputControl.getIncludeCatalog());
+        commandScope.addArgumentValue(DiffOutputControlCommandStep.INCLUDE_TABLESPACE_ARG, diffOutputControl.getIncludeTablespace());
         commandScope.setOutput(System.out)
         commandScope.execute()
     }
