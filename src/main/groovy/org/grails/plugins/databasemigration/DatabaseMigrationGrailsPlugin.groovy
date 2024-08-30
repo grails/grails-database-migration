@@ -18,7 +18,6 @@ package org.grails.plugins.databasemigration
 import grails.plugins.Plugin
 import liquibase.parser.ChangeLogParser
 import liquibase.parser.ChangeLogParserFactory
-import org.grails.plugins.databasemigration.liquibase.GormDatabase
 import org.grails.plugins.databasemigration.liquibase.GrailsLiquibase
 import org.grails.plugins.databasemigration.liquibase.GroovyChangeLogParser
 import org.springframework.context.ApplicationContext

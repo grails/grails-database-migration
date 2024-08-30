@@ -19,7 +19,6 @@ package org.grails.plugins.databasemigration.liquibase
 import liquibase.exception.ValidationFailedException
 import org.grails.plugins.databasemigration.command.ApplicationContextDatabaseMigrationCommandSpec
 import org.grails.plugins.databasemigration.command.DbmUpdateCommand
-import spock.lang.Shared
 
 class GroovyPreconditionSpec extends ApplicationContextDatabaseMigrationCommandSpec {
 

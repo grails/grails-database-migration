@@ -16,28 +16,18 @@
 package org.grails.plugins.databasemigration.liquibase
 
 import groovy.transform.CompileStatic
-import liquibase.command.CommandBuilder
-import liquibase.command.CommandDefinition
-import liquibase.command.CommandResult
 import liquibase.command.CommandResultsBuilder
 import liquibase.command.CommandScope
-import liquibase.command.core.DiffCommandStep
-import liquibase.command.core.DiffToChangeLogCommand
 import liquibase.command.core.DiffChangelogCommandStep
+import liquibase.command.core.DiffCommandStep
 import liquibase.command.core.InternalSnapshotCommandStep
 import liquibase.command.core.helpers.DiffOutputControlCommandStep
 import liquibase.command.core.helpers.ReferenceDbUrlConnectionCommandStep
 import liquibase.database.Database
 import liquibase.database.ObjectQuotingStrategy
-import liquibase.diff.DiffGeneratorFactory
 import liquibase.diff.DiffResult
-import liquibase.diff.compare.CompareControl
 import liquibase.diff.output.DiffOutputControl
-import liquibase.diff.output.changelog.DiffToChangeLog
-import liquibase.exception.DatabaseException
 import liquibase.serializer.ChangeLogSerializerFactory
-import liquibase.snapshot.DatabaseSnapshot
-import liquibase.snapshot.InvalidExampleException
 import org.apache.commons.lang3.StringUtils
 
 @CompileStatic

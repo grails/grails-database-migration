@@ -26,7 +26,6 @@ import liquibase.snapshot.SnapshotControl
 import liquibase.structure.DatabaseObject
 import org.hibernate.boot.Metadata
 import org.hibernate.boot.MetadataSources
-import org.hibernate.boot.registry.BootstrapServiceRegistryBuilder
 import org.hibernate.dialect.Dialect
 import org.hibernate.service.ServiceRegistry
 
