@@ -34,6 +34,7 @@ import liquibase.command.CommandScope
 import liquibase.command.core.DiffChangelogCommandStep
 import liquibase.command.core.DiffCommandStep
 import liquibase.command.core.GenerateChangelogCommandStep
+import liquibase.command.core.helpers.AbstractChangelogCommandStep
 import liquibase.command.core.helpers.DbUrlConnectionArgumentsCommandStep
 import liquibase.command.core.helpers.DbUrlConnectionCommandStep
 import liquibase.command.core.helpers.DiffOutputControlCommandStep
@@ -245,34 +246,55 @@ trait DatabaseMigrationCommand {
     void doGenerateChangeLog(File changeLogFile, Database originalDatabase) {
         def changeLogFilePath = changeLogFile?.path
         def compareControl = new CompareControl([] as CompareControl.SchemaComparison[], null as String)
-        final CommandScope commandScope = new CommandScope("groovyGenerateChangeLog")
-        commandScope.addArgumentValue(ReferenceDbUrlConnectionCommandStep.REFERENCE_DATABASE_ARG, originalDatabase)
-        commandScope.addArgumentValue(GenerateChangelogCommandStep.CHANGELOG_FILE_ARG, changeLogFilePath)
-        commandScope.addArgumentValue(PreCompareCommandStep.COMPARE_CONTROL_ARG, compareControl)
-
         DiffOutputControl diffOutputControl = createDiffOutputControl()
-        commandScope.addArgumentValue(DiffOutputControlCommandStep.INCLUDE_SCHEMA_ARG, diffOutputControl.getIncludeSchema());
-        commandScope.addArgumentValue(DiffOutputControlCommandStep.INCLUDE_CATALOG_ARG, diffOutputControl.getIncludeCatalog());
-        commandScope.addArgumentValue(DiffOutputControlCommandStep.INCLUDE_TABLESPACE_ARG, diffOutputControl.getIncludeTablespace());
-        commandScope.setOutput(System.out)
-        commandScope.execute()
+
+        final CommandScope command = new CommandScope("groovyGenerateChangeLog");
+        command
+                .addArgumentValue(ReferenceDbUrlConnectionCommandStep.REFERENCE_DATABASE_ARG, originalDatabase)
+                .addArgumentValue(DbUrlConnectionArgumentsCommandStep.DATABASE_ARG, originalDatabase)
+                .addArgumentValue(PreCompareCommandStep.SNAPSHOT_TYPES_ARG, DiffCommandStep.parseSnapshotTypes(null as String))
+                .addArgumentValue(PreCompareCommandStep.COMPARE_CONTROL_ARG, compareControl)
+                .addArgumentValue(DiffChangelogCommandStep.CHANGELOG_FILE_ARG, changeLogFilePath)
+                .addArgumentValue(DiffOutputControlCommandStep.INCLUDE_CATALOG_ARG, diffOutputControl.getIncludeCatalog())
+                .addArgumentValue(DiffOutputControlCommandStep.INCLUDE_SCHEMA_ARG, diffOutputControl.getIncludeSchema())
+                .addArgumentValue(DiffOutputControlCommandStep.INCLUDE_TABLESPACE_ARG, diffOutputControl.getIncludeTablespace())
+                .addArgumentValue(GenerateChangelogCommandStep.OVERWRITE_OUTPUT_FILE_ARG, GenerateChangelogCommandStep.OVERWRITE_OUTPUT_FILE_ARG.getDefaultValue())
+                .addArgumentValue(GenerateChangelogCommandStep.RUN_ON_CHANGE_TYPES_ARG, AbstractChangelogCommandStep.RUN_ON_CHANGE_TYPES_ARG.getDefaultValue())
+                .addArgumentValue(GenerateChangelogCommandStep.REPLACE_IF_EXISTS_TYPES_ARG, AbstractChangelogCommandStep.REPLACE_IF_EXISTS_TYPES_ARG.getDefaultValue());
+
+
+        if(diffOutputControl.isReplaceIfExistsSet()) {
+            command.addArgumentValue(GenerateChangelogCommandStep.USE_OR_REPLACE_OPTION, true)
+        }
+        command.setOutput(System.out)
+        command.execute()
     }
 
     void doDiffToChangeLog(File changeLogFile, Database referenceDatabase, Database targetDatabase) {
         def changeLogFilePath = changeLogFile?.path
         def compareControl = new CompareControl([] as CompareControl.SchemaComparison[], null as String)
-        final CommandScope commandScope = new CommandScope("groovyDiffChangelog")
-        commandScope.addArgumentValue(ReferenceDbUrlConnectionCommandStep.REFERENCE_DATABASE_ARG, referenceDatabase)
-        commandScope.addArgumentValue(DbUrlConnectionArgumentsCommandStep.DATABASE_ARG, targetDatabase)
-        commandScope.addArgumentValue(DiffChangelogCommandStep.CHANGELOG_FILE_ARG, changeLogFilePath)
-        commandScope.addArgumentValue(PreCompareCommandStep.COMPARE_CONTROL_ARG, compareControl)
-
         DiffOutputControl diffOutputControl = createDiffOutputControl()
-        commandScope.addArgumentValue(DiffOutputControlCommandStep.INCLUDE_SCHEMA_ARG, diffOutputControl.getIncludeSchema());
-        commandScope.addArgumentValue(DiffOutputControlCommandStep.INCLUDE_CATALOG_ARG, diffOutputControl.getIncludeCatalog());
-        commandScope.addArgumentValue(DiffOutputControlCommandStep.INCLUDE_TABLESPACE_ARG, diffOutputControl.getIncludeTablespace());
-        commandScope.setOutput(System.out)
-        commandScope.execute()
+
+        final CommandScope command = new CommandScope("groovyDiffChangelog");
+        command
+                .addArgumentValue(ReferenceDbUrlConnectionCommandStep.REFERENCE_DATABASE_ARG, referenceDatabase)
+                .addArgumentValue(DbUrlConnectionArgumentsCommandStep.DATABASE_ARG, targetDatabase)
+                .addArgumentValue(PreCompareCommandStep.SNAPSHOT_TYPES_ARG, DiffCommandStep.parseSnapshotTypes(null as String))
+                .addArgumentValue(PreCompareCommandStep.COMPARE_CONTROL_ARG, compareControl)
+                .addArgumentValue(PreCompareCommandStep.OBJECT_CHANGE_FILTER_ARG, diffOutputControl.objectChangeFilter)
+                .addArgumentValue(DiffChangelogCommandStep.CHANGELOG_FILE_ARG, changeLogFilePath)
+                .addArgumentValue(DiffOutputControlCommandStep.INCLUDE_CATALOG_ARG, diffOutputControl.getIncludeCatalog())
+                .addArgumentValue(DiffOutputControlCommandStep.INCLUDE_SCHEMA_ARG, diffOutputControl.getIncludeSchema())
+                .addArgumentValue(DiffOutputControlCommandStep.INCLUDE_TABLESPACE_ARG, diffOutputControl.getIncludeTablespace())
+                .addArgumentValue(GenerateChangelogCommandStep.RUN_ON_CHANGE_TYPES_ARG, AbstractChangelogCommandStep.RUN_ON_CHANGE_TYPES_ARG.getDefaultValue())
+                .addArgumentValue(GenerateChangelogCommandStep.REPLACE_IF_EXISTS_TYPES_ARG, AbstractChangelogCommandStep.REPLACE_IF_EXISTS_TYPES_ARG.getDefaultValue());
+
+        if(diffOutputControl.isReplaceIfExistsSet()) {
+            command.addArgumentValue(GenerateChangelogCommandStep.USE_OR_REPLACE_OPTION, true)
+        }
+        command.setOutput(System.out)
+        command.execute()
+
     }
 
     void doGeneratePreviousChangesetSql(Writer output, Database database, Liquibase liquibase, String count, String skip) {
