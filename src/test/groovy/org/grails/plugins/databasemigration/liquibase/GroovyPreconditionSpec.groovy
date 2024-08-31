@@ -16,7 +16,7 @@
 
 package org.grails.plugins.databasemigration.liquibase
 
-import liquibase.exception.ValidationFailedException
+import liquibase.exception.CommandExecutionException
 import org.grails.plugins.databasemigration.command.ApplicationContextDatabaseMigrationCommandSpec
 import org.grails.plugins.databasemigration.command.DbmUpdateCommand
 
@@ -232,7 +232,7 @@ databaseChangeLog = {
             command.handle(getExecutionContext(DbmUpdateCommand))
 
         then:
-            def e = thrown(ValidationFailedException)
+            def e = thrown(CommandExecutionException)
             e.message.contains('1 preconditions failed')
             executedChangeSets == []
     }
