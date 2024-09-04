@@ -23,7 +23,8 @@ It is also recommended to add a direct dependency to liquibase because Spring Bo
 ----
 dependencies {
    ...
-     implementation 'org.liquibase:liquibase-core:{liquibaseVersion}'
+     implementation "org.liquibase:liquibase-core:{liquibaseHibernate5Version}"
+     implementation "org.liquibase.ext:liquibase-hibernate5:{liquibaseHibernate5Version}"
 }
 ----
 

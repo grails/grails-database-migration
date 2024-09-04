@@ -66,9 +66,9 @@ configurations {
 }
 
 dependencies {
-    api "org.liquibase:liquibase-core:$liquibaseVersion"
+    api "org.liquibase:liquibase-core:$liquibaseHibernate5Version"
 
-    api("org.liquibase.ext:liquibase-hibernate5:$liquibaseHibernateVersion") {
+    api("org.liquibase.ext:liquibase-hibernate5:$liquibaseHibernate5Version") {
         exclude group: 'org.hibernate', module: 'hibernate-core'
         exclude group: 'org.hibernate', module: 'hibernate-entitymanager'
         exclude group: 'org.hibernate', module: 'hibernate-envers'
@@ -92,8 +92,8 @@ dependencies {
     compileOnly "org.grails.plugins:hibernate5:$gormVersion"
     testImplementation "io.micronaut:micronaut-inject-groovy:$micronautVersion"
     testImplementation "io.micronaut:micronaut-inject:$micronautVersion"
-    testImplementation "org.liquibase.ext:liquibase-hibernate5:$liquibaseHibernateVersion"
-    testImplementation "org.liquibase:liquibase-core:$liquibaseVersion"
+    testImplementation "org.liquibase.ext:liquibase-hibernate5:$liquibaseHibernate5Version"
+    testImplementation "org.liquibase:liquibase-core:$liquibaseHibernate5Version"
 
 
     testImplementation "org.springframework.boot:spring-boot-starter-tomcat"
@@ -131,7 +131,7 @@ grailsPublish {
 
 asciidoctor {
     baseDirFollowsSourceFile()
-    outputDir = "$buildDir/asciidoc"
+    outputDir = layout.buildDirectory.dir('asciidoc').get().getAsFile()
 
     resources {
         from('src/docs/images')
@@ -146,7 +146,7 @@ asciidoctor {
             'groupId'       : project.group,
             'artifactId'    : project.name,
             'sourcedir'     : "${projectDir}/src/main/groovy",
-            'liquibaseVersion': liquibaseVersion
+            'liquibaseHibernate5Version': liquibaseHibernate5Version
 }
 
 tasks.withType(GroovyCompile) {
