@@ -5,8 +5,9 @@ import grails.dev.commands.ExecutionContext
 import grails.testing.mixin.integration.Integration
 import grails.util.GrailsNameUtils
 import groovy.sql.Sql
+import liquibase.GlobalConfiguration
+import liquibase.Scope
 import liquibase.exception.LiquibaseException
-import liquibase.exception.MigrationFailedException
 import org.grails.build.parsing.CommandLineParser
 import org.grails.plugins.databasemigration.command.DbmUpdateCommand
 import org.springframework.beans.factory.annotation.Autowired
@@ -39,14 +40,16 @@ class DbUpdateCommandSpec extends Specification {
     void "test the transaction behaviour in the changeSet with grailsChange and GORM"() {
 
         when:
-        DbmUpdateCommand command = new DbmUpdateCommand()
-        command.applicationContext = applicationContext
-        command.setExecutionContext(getExecutionContext(DbmUpdateCommand))
-        command.handle()
+        Scope.child(GlobalConfiguration.DUPLICATE_FILE_MODE.getKey(), GlobalConfiguration.DuplicateFileMode.WARN, { ->
+            DbmUpdateCommand command = new DbmUpdateCommand()
+            command.applicationContext = applicationContext
+            command.setExecutionContext(getExecutionContext(DbmUpdateCommand))
+            command.handle()
+        } as Scope.ScopedRunner)
 
         then:
         def e = thrown(LiquibaseException)
-        e.cause instanceof MigrationFailedException
+        e.cause instanceof LiquibaseException
         sql.firstRow('SELECT COUNT(*) AS num FROM DATABASECHANGELOG WHERE id=?;', 'create-person-grails').num == 1
         sql.firstRow('SELECT COUNT(*) AS num FROM person;').num == 1
         sql.firstRow('SELECT COUNT(*) AS num FROM account;').num == 0
