@@ -11,6 +11,7 @@ import org.grails.build.parsing.CommandLineParser
 import org.grails.plugins.databasemigration.command.DbmUpdateCommand
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationContext
+import org.springframework.stereotype.Component
 import org.springframework.test.context.ActiveProfiles
 import spock.lang.AutoCleanup
 import spock.lang.Specification
@@ -19,6 +20,7 @@ import javax.sql.DataSource
 
 @Integration
 @ActiveProfiles('transaction-datasource')
+@Component
 class DbUpdateCommandSpec extends Specification {
 
     @Autowired

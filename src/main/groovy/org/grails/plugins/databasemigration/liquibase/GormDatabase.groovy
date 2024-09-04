@@ -24,6 +24,7 @@ import liquibase.snapshot.DatabaseSnapshot
 import liquibase.snapshot.JdbcDatabaseSnapshot
 import liquibase.snapshot.SnapshotControl
 import liquibase.structure.DatabaseObject
+import org.grails.orm.hibernate.HibernateDatastore
 import org.hibernate.boot.Metadata
 import org.hibernate.boot.MetadataSources
 import org.hibernate.dialect.Dialect
@@ -42,9 +43,9 @@ class GormDatabase extends HibernateDatabase {
     GormDatabase() {
     }
 
-    GormDatabase(Dialect dialect, ServiceRegistry serviceRegistry) {
+    GormDatabase(Dialect dialect, ServiceRegistry serviceRegistry, HibernateDatastore hibernateDatastore) {
         this.dialect = dialect
-        this.metadata = new MetadataSources(serviceRegistry).getMetadataBuilder().build()
+        this.metadata = hibernateDatastore.getMetadata()
         SnapshotControl snapshotControl = new SnapshotControl(this, null, null)
         GormDatabase database = this
         OfflineConnection connection = new OfflineConnection("offline:gorm", null) {
