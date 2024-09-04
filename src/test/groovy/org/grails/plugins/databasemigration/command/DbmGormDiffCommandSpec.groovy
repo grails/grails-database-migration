@@ -34,8 +34,7 @@ class DbmGormDiffCommandSpec extends ApplicationContextDatabaseMigrationCommandS
             command.handle(getExecutionContext())
 
         then:
-            def output = extractOutput(output).replaceAll(/\s/,"")
-            output ==~ '''
+        extractOutput(output) =~ '''
 databaseChangeLog = \\{
 
     changeSet\\(author: ".+?", id: ".+?"\\) \\{
