@@ -32,7 +32,6 @@ apply plugin:"org.grails.grails-gsp"
 apply plugin: "org.asciidoctor.jvm.convert"
 
 repositories {
-    mavenLocal()
     maven { url "https://repo.grails.org/grails/core" }
     mavenCentral()
 }
@@ -48,10 +47,6 @@ configurations {
     documentation
 
     configureEach {
-        resolutionStrategy.dependencySubstitution {
-            substitute module("org.codehaus.groovy:groovy-all") using module("org.apache.groovy:groovy:$groovyVersion")
-        }
-
         resolutionStrategy.eachDependency { DependencyResolveDetails details ->
             if ((details.requested.group == 'org.codehaus.groovy' || details.requested.group == 'org.apache.groovy') && details.requested.name != 'groovy-bom') {
                 details.useTarget(group: 'org.apache.groovy', name: details.requested.name, version: "$groovyVersion")
@@ -109,6 +104,7 @@ dependencies {
     documentation "org.apache.groovy:groovy:$groovyVersion"
     documentation "org.apache.groovy:groovy-ant:$groovyVersion"
     documentation "org.apache.groovy:groovy-templates:$groovyVersion"
+    documentation "com.github.javaparser:javaparser-core:$javaParserCoreVersion"
 
 }
 
