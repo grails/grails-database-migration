@@ -67,7 +67,7 @@ abstract class ApplicationContextDatabaseMigrationCommandSpec extends DatabaseMi
     }
 
     protected ApplicationCommand createCommand(Class<ApplicationCommand> applicationCommand) {
-        def command = applicationCommand.newInstance()
+        def command = applicationCommand.getDeclaredConstructor().newInstance()
         command.applicationContext = applicationContext
         command.changeLogFile.parentFile.mkdirs()
         return command
