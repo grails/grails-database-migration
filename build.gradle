@@ -4,7 +4,7 @@ buildscript {
     }
     dependencies {
         classpath "org.grails:grails-gradle-plugin:$grailsGradlePluginVersion"
-        classpath "org.asciidoctor:asciidoctor-gradle-jvm:4.0.2"
+        classpath "org.asciidoctor:asciidoctor-gradle-jvm:4.0.3"
     }
 
     configurations.configureEach {
