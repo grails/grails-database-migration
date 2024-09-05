@@ -67,7 +67,7 @@ dependencies {
     testImplementation "org.grails:grails-gorm-testing-support"
     testImplementation "org.mockito:mockito-core"
     testImplementation "org.grails:grails-web-testing-support"
-    testImplementation group: 'com.h2database', name: 'h2', version: '1.4.200'
+    testImplementation group: 'com.h2database', name: 'h2', version: '2.3.232'
 
 
     documentation "org.codehaus.groovy:groovy:$groovyVersion"
