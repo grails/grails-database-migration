@@ -48,7 +48,7 @@ dependencies {
         exclude group: 'org.liquibase', module: 'liquibase-test-harness'
         exclude group: 'com.h2database', module: 'h2'
     }
-    compileOnly "org.hibernate:hibernate-core:5.6.15.Final"
+    compileOnly "org.hibernate:hibernate-core:6.6.0.Final"
 
     compileOnly 'org.springframework.boot:spring-boot-starter-logging'
     compileOnly "org.springframework.boot:spring-boot-starter-actuator"
@@ -61,7 +61,7 @@ dependencies {
     compileOnly "org.grails.plugins:hibernate5"
 
     testImplementation "org.springframework.boot:spring-boot-starter-tomcat"
-    testImplementation "org.hibernate:hibernate-core:5.6.15.Final"
+    testImplementation "org.hibernate:hibernate-core:6.6.0.Final"
     testImplementation "org.grails.plugins:hibernate5"
 
     testImplementation "org.grails:grails-gorm-testing-support"
