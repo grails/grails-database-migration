@@ -72,7 +72,7 @@ dependencies {
         exclude group: 'com.h2database', module: 'h2'
     }
     api "jakarta.annotation:jakarta.annotation-api:$jakartaAnnotationApiVersion"
-    api 'org.apache.commons:commons-lang3:3.16.0'
+    api 'org.apache.commons:commons-lang3:3.17.0'
 
     compileOnly "org.hibernate:hibernate-core-jakarta:$hibernate5Version"
 
