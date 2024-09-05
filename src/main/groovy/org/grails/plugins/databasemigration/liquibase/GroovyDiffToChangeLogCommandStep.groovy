@@ -16,53 +16,49 @@
 package org.grails.plugins.databasemigration.liquibase
 
 import groovy.transform.CompileStatic
-import liquibase.command.CommandBuilder
-import liquibase.command.CommandDefinition
-import liquibase.command.CommandResult
 import liquibase.command.CommandResultsBuilder
 import liquibase.command.CommandScope
-import liquibase.command.core.DiffToChangeLogCommand
-import liquibase.command.core.InternalDiffChangelogCommandStep
+import liquibase.command.core.DiffChangelogCommandStep
+import liquibase.command.core.DiffCommandStep
 import liquibase.command.core.InternalSnapshotCommandStep
+import liquibase.command.core.helpers.DiffOutputControlCommandStep
+import liquibase.command.core.helpers.ReferenceDbUrlConnectionCommandStep
 import liquibase.database.Database
 import liquibase.database.ObjectQuotingStrategy
-import liquibase.diff.DiffGeneratorFactory
 import liquibase.diff.DiffResult
-import liquibase.diff.compare.CompareControl
 import liquibase.diff.output.DiffOutputControl
-import liquibase.diff.output.changelog.DiffToChangeLog
-import liquibase.exception.DatabaseException
 import liquibase.serializer.ChangeLogSerializerFactory
-import liquibase.snapshot.DatabaseSnapshot
-import liquibase.snapshot.InvalidExampleException
-import liquibase.util.StringUtil
+import org.apache.commons.lang3.StringUtils
 
 @CompileStatic
-class GroovyDiffToChangeLogCommandStep extends InternalDiffChangelogCommandStep {
+class GroovyDiffToChangeLogCommandStep extends DiffChangelogCommandStep {
 
     public static final String[] COMMAND_NAME = new String[] {"groovyDiffChangelog"}
 
     @Override
     void run(CommandResultsBuilder resultsBuilder) {
         CommandScope commandScope = resultsBuilder.getCommandScope()
-        Database referenceDatabase = commandScope.getArgumentValue(REFERENCE_DATABASE_ARG);
+        Database referenceDatabase = commandScope.getArgumentValue(ReferenceDbUrlConnectionCommandStep.REFERENCE_DATABASE_ARG);
         String changeLogFile = commandScope.getArgumentValue(CHANGELOG_FILE_ARG);
 
         InternalSnapshotCommandStep.logUnsupportedDatabase(referenceDatabase, this.getClass());
 
-        DiffResult diffResult = createDiffResult(commandScope);
+        DiffCommandStep diffCommandStep = new DiffCommandStep()
+
+        DiffResult diffResult = diffCommandStep.createDiffResult(resultsBuilder);
 
         PrintStream outputStream = new PrintStream(resultsBuilder.getOutputStream());
 
-        outputBestPracticeMessage();
-
         ObjectQuotingStrategy originalStrategy = referenceDatabase.getObjectQuotingStrategy();
+
+        DiffOutputControl diffOutputControl = (DiffOutputControl) resultsBuilder.getResult(DiffOutputControlCommandStep.DIFF_OUTPUT_CONTROL.getName())
+
         try {
             referenceDatabase.setObjectQuotingStrategy(ObjectQuotingStrategy.QUOTE_ALL_OBJECTS);
-            if (StringUtil.trimToNull(changeLogFile) == null) {
-                createDiffToChangeLogObject(diffResult, commandScope).print(outputStream, ChangeLogSerializerFactory.instance.getSerializer('groovy'))
+            if (StringUtils.trimToNull(changeLogFile) == null) {
+                createDiffToChangeLogObject(diffResult, diffOutputControl, false).print(outputStream, ChangeLogSerializerFactory.instance.getSerializer('groovy'))
             } else {
-                createDiffToChangeLogObject(diffResult, commandScope).print(changeLogFile, ChangeLogSerializerFactory.instance.getSerializer(changeLogFile))
+                createDiffToChangeLogObject(diffResult, diffOutputControl, false).print(changeLogFile, ChangeLogSerializerFactory.instance.getSerializer(changeLogFile))
             }
         }
         finally {

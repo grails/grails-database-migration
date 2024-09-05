@@ -6,6 +6,18 @@ buildscript {
         classpath "org.grails:grails-gradle-plugin:$grailsGradlePluginVersion"
         classpath "org.asciidoctor:asciidoctor-gradle-jvm:4.0.2"
     }
+
+    configurations.configureEach {
+        resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+            // This is a workaround for dependencies exposing a different version of Groovy
+            // than the one used by Gradle. This causes issues with the Groovy compiler.
+            if (details.requested.group == 'org.apache.groovy' || details.requested.group == 'org.codehaus.groovy') {
+                details.useTarget(group: "org.codehaus.groovy", name: details.requested.name, version: GroovySystem.version)
+                details.because "Use Groovy 3.0.x library shipped with Gradle"
+            }
+        }
+    }
+
 }
 
 version project.projectVersion
@@ -19,11 +31,9 @@ apply plugin:"org.grails.internal.grails-plugin-publish"
 apply plugin:"org.grails.grails-gsp"
 apply plugin: "org.asciidoctor.jvm.convert"
 
-sourceCompatibility = 1.11
-targetCompatibility = 1.11
-
 repositories {
     maven { url "https://repo.grails.org/grails/core" }
+    mavenCentral()
 }
 
 dependencyManagement {
@@ -35,12 +45,25 @@ dependencyManagement {
 
 configurations {
     documentation
+
+    configureEach {
+        resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+            if ((details.requested.group == 'org.codehaus.groovy' || details.requested.group == 'org.apache.groovy') && details.requested.name != 'groovy-bom') {
+                details.useTarget(group: 'org.apache.groovy', name: details.requested.name, version: "$groovyVersion")
+                details.because "The dependency coordinates are changed in Apache Groovy 4, plus ensure version"
+            }
+
+            if (details.requested.group == "io.micronaut" && details.requested.name == "micronaut-inject-groovy") {
+                details.useVersion("4.6.1")
+            }
+        }
+    }
 }
 
 dependencies {
-    api "org.liquibase:liquibase-core:$liquibaseVersion"
+    api "org.liquibase:liquibase-core:$liquibaseHibernate5Version"
 
-    api("org.liquibase.ext:liquibase-hibernate5:$liquibaseHibernateVersion") {
+    api("org.liquibase.ext:liquibase-hibernate5:$liquibaseHibernate5Version") {
         exclude group: 'org.hibernate', module: 'hibernate-core'
         exclude group: 'org.hibernate', module: 'hibernate-entitymanager'
         exclude group: 'org.hibernate', module: 'hibernate-envers'
@@ -48,32 +71,47 @@ dependencies {
         exclude group: 'org.liquibase', module: 'liquibase-test-harness'
         exclude group: 'com.h2database', module: 'h2'
     }
-    compileOnly "org.hibernate:hibernate-core:5.6.15.Final"
+    api "jakarta.annotation:jakarta.annotation-api:$jakartaAnnotationApiVersion"
+    api 'org.apache.commons:commons-lang3:3.16.0'
 
-    compileOnly 'org.springframework.boot:spring-boot-starter-logging'
+    compileOnly "org.hibernate:hibernate-core-jakarta:$hibernate5Version"
+
+    compileOnly "org.springframework.boot:spring-boot-starter-logging"
     compileOnly "org.springframework.boot:spring-boot-starter-actuator"
     compileOnly "org.springframework.boot:spring-boot-autoconfigure"
     compileOnly "org.springframework.boot:spring-boot-starter-tomcat"
 
     compileOnly "org.grails:grails-web-boot"
     compileOnly "org.grails:grails-dependencies"
-    compileOnly 'javax.servlet:javax.servlet-api:4.0.1'
-    compileOnly "org.grails.plugins:hibernate5"
+    compileOnly "jakarta.servlet:jakarta.servlet-api:$servletApiVersion"
+    compileOnly "org.grails.plugins:hibernate5:$gormVersion"
+    testImplementation "io.micronaut:micronaut-inject-groovy:$micronautVersion"
+    testImplementation "io.micronaut:micronaut-inject:$micronautVersion"
+    testImplementation "org.liquibase.ext:liquibase-hibernate5:$liquibaseHibernate5Version"
+    testImplementation "org.liquibase:liquibase-core:$liquibaseHibernate5Version"
+
 
     testImplementation "org.springframework.boot:spring-boot-starter-tomcat"
-    testImplementation "org.hibernate:hibernate-core:5.6.15.Final"
-    testImplementation "org.grails.plugins:hibernate5"
+    testImplementation "org.hibernate:hibernate-core-jakarta:$hibernate5Version"
+    testImplementation "org.grails.plugins:hibernate5:$gormVersion"
 
     testImplementation "org.grails:grails-gorm-testing-support"
     testImplementation "org.mockito:mockito-core"
     testImplementation "org.grails:grails-web-testing-support"
-    testImplementation group: 'com.h2database', name: 'h2', version: '1.4.200'
+    testImplementation "com.h2database:h2:$h2Version"
 
 
-    documentation "org.codehaus.groovy:groovy:$groovyVersion"
-    documentation "org.codehaus.groovy:groovy-ant:$groovyVersion"
-    documentation "org.codehaus.groovy:groovy-templates:$groovyVersion"
+    documentation "org.apache.groovy:groovy:$groovyVersion"
+    documentation "org.apache.groovy:groovy-ant:$groovyVersion"
+    documentation "org.apache.groovy:groovy-templates:$groovyVersion"
+    documentation "com.github.javaparser:javaparser-core:$javaParserCoreVersion"
 
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
 }
 
 grailsPublish {
@@ -89,7 +127,7 @@ grailsPublish {
 
 asciidoctor {
     baseDirFollowsSourceFile()
-    outputDir = "$buildDir/asciidoc"
+    outputDir = layout.buildDirectory.dir('asciidoc').get().getAsFile()
 
     resources {
         from('src/docs/images')
@@ -104,7 +142,7 @@ asciidoctor {
             'groupId'       : project.group,
             'artifactId'    : project.name,
             'sourcedir'     : "${projectDir}/src/main/groovy",
-            'liquibaseVersion': liquibaseVersion
+            'liquibaseHibernate5Version': liquibaseHibernate5Version
 }
 
 tasks.withType(GroovyCompile) {
@@ -121,7 +159,7 @@ tasks.withType(Groovydoc) {
     configure {
         docTitle = "Grails Database Migration Plugin ${version}"
         source = project.files('src/main/groovy')
-        destinationDir = new File(buildDir, 'docs/api')
+        destinationDir = layout.buildDirectory.dir('docs/api').get().getAsFile()
         classpath = configurations.documentation
         groovyClasspath = configurations.documentation
     }
@@ -129,8 +167,8 @@ tasks.withType(Groovydoc) {
 
 task docs(type:Copy, group: 'documentation')  {
     dependsOn(groovydoc, asciidoctor)
-    from "$buildDir/asciidoc"
-    into "$buildDir/docs"
+    from "${project.layout.buildDirectory.get()}/asciidoc"
+    into "${project.layout.buildDirectory.get()}/docs"
 }
 
 jar {

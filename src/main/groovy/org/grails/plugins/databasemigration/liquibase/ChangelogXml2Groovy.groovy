@@ -15,6 +15,7 @@
 package org.grails.plugins.databasemigration.liquibase
 
 import groovy.transform.CompileStatic
+import groovy.xml.XmlParser
 
 /**
  * Generates a Groovy DSL version of a Liquibase XML changelog.

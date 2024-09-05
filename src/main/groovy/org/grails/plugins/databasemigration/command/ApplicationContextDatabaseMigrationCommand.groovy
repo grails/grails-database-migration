@@ -26,6 +26,7 @@ import liquibase.database.Database
 import liquibase.parser.ChangeLogParser
 import liquibase.parser.ChangeLogParserFactory
 import org.grails.config.PropertySourcesConfig
+import org.grails.orm.hibernate.HibernateDatastore
 import org.grails.plugins.databasemigration.DatabaseMigrationTransactionManager
 import org.grails.plugins.databasemigration.liquibase.GormDatabase
 import org.grails.plugins.databasemigration.liquibase.GroovyChangeLogParser
@@ -87,7 +88,10 @@ trait ApplicationContextDatabaseMigrationCommand implements DatabaseMigrationCom
 
         Dialect dialect = serviceRegistry.getService(JdbcServices.class).dialect
 
-        Database database = new GormDatabase(dialect, serviceRegistry)
+        HibernateDatastore hibernateDatastore = applicationContext.getBean("hibernateDatastore", HibernateDatastore)
+        hibernateDatastore = hibernateDatastore.getDatastoreForConnection(dataSourceName)
+
+        Database database = new GormDatabase(dialect, serviceRegistry, hibernateDatastore)
         configureDatabase(database)
 
         return database

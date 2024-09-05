@@ -75,6 +75,7 @@ class GroovyPrecondition extends AbstractPrecondition {
 
         ctx = parsedNode.getChildValue(null, 'applicationContext', ApplicationContext)
         checkClosure = parsedNode.getChildValue(null, 'check', Closure)
+        checkClosure?.setResolveStrategy(Closure.DELEGATE_FIRST)
     }
 
     @Override

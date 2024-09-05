@@ -90,10 +90,19 @@ class GroovyChange extends AbstractChange {
     void load(ParsedNode parsedNode, ResourceAccessor resourceAccessor) throws ParsedNodeException {
         ctx = parsedNode.getChildValue(null, 'applicationContext', ApplicationContext)
         dataSourceName = parsedNode.getChildValue(null, DATA_SOURCE_NAME_KEY, String)
+
         initClosure = parsedNode.getChildValue(null, 'init', Closure)
+        initClosure?.setResolveStrategy(Closure.DELEGATE_FIRST)
+
         validateClosure = parsedNode.getChildValue(null, 'validate', Closure)
+        validateClosure?.setResolveStrategy(Closure.DELEGATE_FIRST)
+
         changeClosure = parsedNode.getChildValue(null, 'change', Closure)
+        changeClosure?.setResolveStrategy(Closure.DELEGATE_FIRST)
+
         rollbackClosure = parsedNode.getChildValue(null, 'rollback', Closure)
+        rollbackClosure?.setResolveStrategy(Closure.DELEGATE_FIRST)
+
         confirmationMessage = parsedNode.getChildValue(null, 'confirm', String)
         checksumString = parsedNode.getChildValue(null, 'checksum', String)
     }
