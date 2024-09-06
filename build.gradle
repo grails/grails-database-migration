@@ -6,18 +6,6 @@ buildscript {
         classpath "org.grails:grails-gradle-plugin:$grailsGradlePluginVersion"
         classpath "org.asciidoctor:asciidoctor-gradle-jvm:4.0.3"
     }
-
-    configurations.configureEach {
-        resolutionStrategy.eachDependency { DependencyResolveDetails details ->
-            // This is a workaround for dependencies exposing a different version of Groovy
-            // than the one used by Gradle. This causes issues with the Groovy compiler.
-            if (details.requested.group == 'org.apache.groovy' || details.requested.group == 'org.codehaus.groovy') {
-                details.useTarget(group: "org.codehaus.groovy", name: details.requested.name, version: GroovySystem.version)
-                details.because "Use Groovy 3.0.x library shipped with Gradle"
-            }
-        }
-    }
-
 }
 
 version project.projectVersion
