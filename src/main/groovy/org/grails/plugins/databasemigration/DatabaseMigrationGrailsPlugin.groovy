@@ -28,7 +28,7 @@ class DatabaseMigrationGrailsPlugin extends Plugin {
 
     static final String CONFIG_MAIN_PREFIX = 'grails.plugin.databasemigration'
 
-    def grailsVersion = "3.0.0.BUILD-SNAPSHOT > *"
+    def grailsVersion = "7.0.0 > *"
     def pluginExcludes = [
             "**/testapp/**",
             "grails-app/views/error.gsp"
@@ -36,7 +36,7 @@ class DatabaseMigrationGrailsPlugin extends Plugin {
 
     def title = "Grails Database Migration Plugin" // Headline display name of the plugin
     def author = "Kazuki YAMAMOTO"
-    def authorEmail = "yam.kazuki@gmail.com"
+    def authorEmail = ""
     def description = 'Grails Database Migration Plugin'
     def documentation = "http://grails.org/plugin/database-migration"
     def license = "APACHE"
