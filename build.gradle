@@ -4,7 +4,7 @@ buildscript {
     }
     dependencies {
         classpath "org.grails:grails-gradle-plugin:$grailsGradlePluginVersion"
-        classpath "org.asciidoctor:asciidoctor-gradle-jvm:4.0.3"
+        classpath "org.asciidoctor:asciidoctor-gradle-jvm:$asciidoctorJvmVersion"
     }
 }
 
@@ -24,82 +24,42 @@ repositories {
     mavenCentral()
 }
 
-dependencyManagement {
-    imports {
-        mavenBom "org.grails:grails-bom:$grailsVersion"
-    }
-    applyMavenExclusions false
-}
-
 configurations {
     documentation
-
-    configureEach {
-        resolutionStrategy.eachDependency { DependencyResolveDetails details ->
-            if ((details.requested.group == 'org.codehaus.groovy' || details.requested.group == 'org.apache.groovy') && details.requested.name != 'groovy-bom') {
-                details.useTarget(group: 'org.apache.groovy', name: details.requested.name, version: "$groovyVersion")
-                details.because "The dependency coordinates are changed in Apache Groovy 4, plus ensure version"
-            }
-
-            if (details.requested.group == "io.micronaut" && details.requested.name == "micronaut-inject-groovy") {
-                details.useVersion("4.6.1")
-            }
-        }
-    }
 }
 
 dependencies {
-    api "org.liquibase:liquibase-core:$liquibaseHibernate5Version"
+    implementation platform("org.grails:grails-bom:$grailsVersion")
 
+    api "org.liquibase:liquibase-core:$liquibaseHibernate5Version"
     api("org.liquibase.ext:liquibase-hibernate5:$liquibaseHibernate5Version") {
         exclude group: 'org.hibernate', module: 'hibernate-core'
         exclude group: 'org.hibernate', module: 'hibernate-entitymanager'
         exclude group: 'org.hibernate', module: 'hibernate-envers'
-        exclude group: 'org.liquibase', module: 'liquibase-core'
-        exclude group: 'org.liquibase', module: 'liquibase-test-harness'
         exclude group: 'com.h2database', module: 'h2'
     }
-    api "jakarta.annotation:jakarta.annotation-api:$jakartaAnnotationApiVersion"
-    api 'org.apache.commons:commons-lang3:3.17.0'
-
-    compileOnly "org.hibernate:hibernate-core-jakarta:$hibernate5Version"
+    api "org.apache.commons:commons-lang3"
 
     compileOnly "org.springframework.boot:spring-boot-starter-logging"
-    compileOnly "org.springframework.boot:spring-boot-starter-actuator"
     compileOnly "org.springframework.boot:spring-boot-autoconfigure"
-    compileOnly "org.springframework.boot:spring-boot-starter-tomcat"
-
-    compileOnly "org.grails:grails-web-boot"
-    compileOnly "org.grails:grails-dependencies"
-    compileOnly "jakarta.servlet:jakarta.servlet-api:$servletApiVersion"
-    compileOnly "org.grails.plugins:hibernate5:$gormVersion"
-    testImplementation "io.micronaut:micronaut-inject-groovy:$micronautVersion"
-    testImplementation "io.micronaut:micronaut-inject:$micronautVersion"
-    testImplementation "org.liquibase.ext:liquibase-hibernate5:$liquibaseHibernate5Version"
-    testImplementation "org.liquibase:liquibase-core:$liquibaseHibernate5Version"
-
+    compileOnly "org.grails.plugins:hibernate5"
+    compileOnly "org.apache.groovy:groovy-sql"
+    compileOnly "org.apache.groovy:groovy-xml"
 
     testImplementation "org.springframework.boot:spring-boot-starter-tomcat"
-    testImplementation "org.hibernate:hibernate-core-jakarta:$hibernate5Version"
-    testImplementation "org.grails.plugins:hibernate5:$gormVersion"
-
+    testImplementation "org.grails.plugins:hibernate5"
     testImplementation "org.grails:grails-gorm-testing-support"
-    testImplementation "org.mockito:mockito-core"
     testImplementation "org.grails:grails-web-testing-support"
     testImplementation "com.h2database:h2:$h2Version"
 
-
-    documentation "org.apache.groovy:groovy:$groovyVersion"
-    documentation "org.apache.groovy:groovy-ant:$groovyVersion"
-    documentation "org.apache.groovy:groovy-templates:$groovyVersion"
-    documentation "com.github.javaparser:javaparser-core:$javaParserCoreVersion"
-
+    documentation "org.apache.groovy:groovy"
+    documentation "org.apache.groovy:groovy-ant"
+    documentation "org.apache.groovy:groovy-templates"
+    documentation "com.github.javaparser:javaparser-core"
 }
 
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
-    }
+compileJava {
+    options.release = 17
 }
 
 grailsPublish {
