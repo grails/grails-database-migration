@@ -32,7 +32,7 @@ class DbmUpdateCommandSpec extends ApplicationContextDatabaseMigrationCommandSpe
             command.handle(getExecutionContext())
 
         then:
-            def tables = sql.rows('SELECT table_name FROM information_schema.tables WHERE table_type = \'TABLE\'').collect { it.table_name.toLowerCase() }
+            def tables = sql.rows('SELECT table_name FROM information_schema.tables WHERE table_class = \'org.h2.mvstore.db.MVTable\'').collect { it.table_name.toLowerCase() }
             tables as Set == ['book', 'author', 'databasechangeloglock', 'databasechangelog'] as Set
 
         and:
@@ -48,7 +48,7 @@ class DbmUpdateCommandSpec extends ApplicationContextDatabaseMigrationCommandSpe
             command.handle(getExecutionContext('--contexts=test'))
 
         then:
-            def tables = sql.rows('SELECT table_name FROM information_schema.tables WHERE table_type = \'TABLE\'').collect { it.table_name.toLowerCase() }
+            def tables = sql.rows('SELECT table_name FROM information_schema.tables WHERE table_class = \'org.h2.mvstore.db.MVTable\'').collect { it.table_name.toLowerCase() }
             tables as Set == ['book', 'author', 'databasechangeloglock', 'databasechangelog'] as Set
 
         and:

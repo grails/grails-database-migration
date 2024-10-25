@@ -31,7 +31,7 @@ class DbmRollbackToDateCommandSpec extends ApplicationContextDatabaseMigrationCo
         new DbmUpdateCommand(applicationContext: applicationContext).handle(getExecutionContext())
         sql.executeUpdate('UPDATE PUBLIC.DATABASECHANGELOG SET DATEEXECUTED = \'2015-01-02 12:00:00\' WHERE ID = \'1\'')
 
-        def tables = sql.rows('SELECT table_name FROM information_schema.tables WHERE table_type = \'TABLE\'').collect { it.table_name.toLowerCase() }
+        def tables = sql.rows('SELECT table_name FROM information_schema.tables WHERE table_class = \'org.h2.mvstore.db.MVTable\'').collect { it.table_name.toLowerCase() }
         assert tables as Set == ['book', 'author', 'databasechangeloglock', 'databasechangelog'] as Set
     }
 
@@ -40,7 +40,7 @@ class DbmRollbackToDateCommandSpec extends ApplicationContextDatabaseMigrationCo
             command.handle(getExecutionContext(args as String[]))
 
         then:
-            def tables = sql.rows('SELECT table_name FROM information_schema.tables WHERE table_type = \'TABLE\'').collect { it.table_name.toLowerCase() }
+            def tables = sql.rows('SELECT table_name FROM information_schema.tables WHERE table_class = \'org.h2.mvstore.db.MVTable\'').collect { it.table_name.toLowerCase() }
             tables as Set == ['author', 'databasechangeloglock', 'databasechangelog'] as Set
 
         where:

@@ -32,7 +32,7 @@ class DbmRollbackCommandSpec extends ApplicationContextDatabaseMigrationCommandS
         new DbmTagCommand(applicationContext: applicationContext).handle(getExecutionContext('test-tag'))
         new DbmUpdateCommand(applicationContext: applicationContext).handle(getExecutionContext())
 
-        def tables = sql.rows('SELECT table_name FROM information_schema.tables WHERE table_type = \'TABLE\'').collect { it.table_name.toLowerCase() }
+        def tables = sql.rows('SELECT table_name FROM information_schema.tables WHERE table_class = \'org.h2.mvstore.db.MVTable\'').collect { it.table_name.toLowerCase() }
         assert tables as Set == ['book', 'author', 'databasechangeloglock', 'databasechangelog'] as Set
     }
 
@@ -41,7 +41,7 @@ class DbmRollbackCommandSpec extends ApplicationContextDatabaseMigrationCommandS
             command.handle(getExecutionContext('test-tag'))
 
         then:
-            def tables = sql.rows('SELECT table_name FROM information_schema.tables WHERE table_type = \'TABLE\'').collect { it.table_name.toLowerCase() }
+            def tables = sql.rows('SELECT table_name FROM information_schema.tables WHERE table_class = \'org.h2.mvstore.db.MVTable\'').collect { it.table_name.toLowerCase() }
             tables as Set == ['author', 'databasechangeloglock', 'databasechangelog'] as Set
     }
 
