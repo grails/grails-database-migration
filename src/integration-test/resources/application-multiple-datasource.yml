@@ -12,7 +12,6 @@ dataSource:
     pooled: true
     jmxExport: true
     driverClassName: org.h2.Driver
-    dialect: org.hibernate.dialect.H2Dialect
     username: sa
     password:
     dbCreate: none
@@ -24,7 +23,6 @@ dataSources:
         pooled: true
         jmxExport: true
         driverClassName: org.h2.Driver
-        dialect: org.hibernate.dialect.H2Dialect
         username: sa
         password:
         dbCreate: none
