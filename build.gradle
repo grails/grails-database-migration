@@ -50,7 +50,7 @@ dependencies {
     testImplementation "org.grails.plugins:hibernate5"
     testImplementation "org.grails:grails-gorm-testing-support"
     testImplementation "org.grails:grails-web-testing-support"
-    testImplementation "com.h2database:h2:$h2Version"
+    testImplementation "com.h2database:h2"
 
     documentation "org.apache.groovy:groovy"
     documentation "org.apache.groovy:groovy-ant"
